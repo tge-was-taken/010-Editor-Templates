@@ -11,8 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-#include "types.h"
-#include "utils.h"
+#include "../common/include.h"
 
 typedef struct
 {
