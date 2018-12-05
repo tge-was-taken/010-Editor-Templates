@@ -1,0 +1,4 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+*.bt linguist-language=C++
+*.1sc linguist-language=C++
