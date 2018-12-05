@@ -1,0 +1,113 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: p5d_spr6.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse Persona 5 Dancing spr6 files
+//  Category: 
+// File Mask: *.spr6
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../common/include.h"
+
+LittleEndian();
+
+#define SPR6_MAGIC 0x36525053
+
+typedef struct
+{
+    SetRandomBackColor();
+    u32 Magic;
+    Assert( Magic == SPR6_MAGIC, "Header magic value does not match" );
+    u16 Field04; // 0
+    u16 Field08; // 1
+    u32 FileSize;
+    u16 Field0C; // always 24, maybe texture struct size?
+    u16 TextureCount;
+    u16 SpriteCount;
+    u16 PanelCount;
+    u32 TextureOffset;
+    u32 PanelOffset;
+    u32 Field1C; // padding, or offset
+    Assert( Field1C == 0, "Field1C != 0" );
+
+    FSeek( TextureOffset );
+    struct Spr6Texture Textures[ TextureCount ];
+
+    FSeek( PanelOffset );
+    struct Spr6Panel Panels[ PanelCount ];
+
+    struct Spr6SpriteEntry SpriteEntries[ SpriteCount ];
+
+} Spr6File;
+
+typedef struct
+{
+    SetRandomBackColor();
+    char Name[ 20 ];
+    u32 Field00;
+    u32 Field04;
+    u16 Field08;
+    u16 Field0A;
+    u32 DataSize;
+    u32 Field14;
+    u32 DataOffset;
+
+    local u32 lastPos = FTell();
+    FSeek( DataOffset );
+    char Data[ DataSize ];
+    FSeek( lastPos );
+} Spr6Texture;
+
+typedef struct
+{
+    SetRandomBackColor();
+    char Name[ 20 ];
+    u16 Field08;
+    u16 Field0A;
+    u16 Field0C;
+    u16 Field0E;
+    u32 Field10;
+    u32 Field14;
+} Spr6Panel;
+
+typedef struct
+{
+    SetRandomBackColor();
+    u32 Field00;
+    u32 Offset;
+    
+    local u32 lastPos = FTell();
+    FSeek( Offset );
+    struct Spr6Sprite Sprite;
+    FSeek( lastPos );
+
+} Spr6SpriteEntry <optimize=false>;
+
+typedef struct
+{
+    SetRandomBackColor();
+    u16 Field00;
+    u16 TextureId;
+    char Description[ 32 ];
+    s32 Field30;
+    s32 Field34;
+    s32 Field38;
+    s32 Field3C;
+    s32 Field40;
+    s32 Field44;
+    s32 Field48;
+    s32 Field4C;
+    s32 Field50;
+    s32 Field54;
+    s32 Field58;
+    s32 Field5C;
+    s32 Field60;
+    s32 Field64;
+    s32 Field68;
+} Spr6Sprite;
+
+Spr6File File;

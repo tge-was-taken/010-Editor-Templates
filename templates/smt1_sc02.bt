@@ -1,0 +1,254 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: smt1_sc02.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse SMT1 (PSX) sc02 files
+//  Category: 
+// File Mask: *.sc02
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+// Random
+local uint __RandomSeed = 0xDEADBABE;
+local uint __RandomBit = 0;
+local uint __RandomCount = 0;
+ 
+uint MyRandom( uint to )
+{
+    ++__RandomCount;
+    __RandomBit  = ( (__RandomSeed >> 0 ) ^ ( __RandomSeed >> 2 ) ^ ( __RandomSeed >> 3 ) ^ ( __RandomSeed >> 5 ) ) & 1;
+    __RandomSeed = ( ( ( ( __RandomBit << 15 ) | ( __RandomSeed >> 1 ) ) + ( 0xBABE / __RandomCount ) ) % to );
+
+    while( __RandomSeed < 0 )
+        __RandomSeed += to;
+
+    return __RandomSeed;
+}
+
+uint RandomColor()
+{
+    return MyRandom( 0xFFFFFFFF );
+}
+
+//---------------------------------------------
+// Simple types
+//---------------------------------------------
+typedef uint32 u64;
+typedef uint32 u32;
+typedef uint16 u16;
+typedef uchar u8;
+
+typedef struct( u32 base )
+{
+    local u32 Base = base;
+    u16 Value;
+
+} RelOffset16 <read=ReadRelOffset16>;
+
+string ReadRelOffset16( RelOffset16& offset )
+{
+    local char buffer[255];
+    SPrintf( buffer, "0x%08X", ( offset.Value * 2 ) + offset.Base );
+
+    return buffer;
+}
+
+//---------------------------------------------
+// Script global variables & functions
+//---------------------------------------------
+local u32 i;
+local u32 j;
+local u32 gSavedPos[32];
+local u32 gSavedPosIndex = 0;
+
+void FSeekOffset( RelOffset16& offset )
+{
+    FSeek( offset.Value + offset.Base );
+}
+
+void PushFPos()
+{
+    gSavedPos[++gSavedPosIndex] = FTell();
+}
+
+void PopFPos()
+{
+    FSeek( gSavedPos[gSavedPosIndex--] );
+}
+
+//---------------------------------------------
+// Structure definitions
+//---------------------------------------------
+
+struct Header2;
+struct Header3;
+
+typedef struct
+{
+    u32 Magic;
+
+    struct
+    {
+        u32 Offset; // Offsets are relative to Field10
+
+        // Read local copy of offsets
+        local u32 offsetBase = ReadUInt( 0x0C );
+        local u32 offsetCount = ( ReadUInt( 0x08 ) - Offset ) / 2;
+        local u32 offsets[ offsetCount ];
+        for ( i = 0; i < offsetCount; ++i )
+            offsets[ i ] = ReadUShort(  Offset + ( i * 2 ) );
+    
+        // Find entry sizes
+        local u32 entrySizes[ offsetCount ];
+        local u32 nextOffset;
+        for ( i = 0; i < offsetCount; ++i )
+        {
+            if ( offsets[ i ] == 0xFFFF ) // 0049.sc02 has a 0xFFFF offset
+            {
+                entrySizes[ i ] = 0;
+                continue;
+            }
+
+            nextOffset = 0xFFFFFFFF;
+    
+            for ( j = 0; j < offsetCount; ++j )
+            {
+                if ( offsets[ j ] != 0xFFFF && offsets[ j ] > offsets[ i ] && offsets[ j ] < nextOffset )
+                    nextOffset = offsets[ j ];
+            }
+    
+            if ( nextOffset == 0xFFFFFFFF )
+            {
+                nextOffset = ReadUInt( 0x10 ) - offsetBase;
+            }
+    
+            entrySizes[ i ] = nextOffset - offsets[ i ];
+        }
+    
+        for ( i = 0; i < offsetCount; ++i )
+        {
+            struct
+            {
+                PushFPos();
+                FSeek( Offset + ( i * 2 ) );
+                SetBackColor( RandomColor() );
+                RelOffset16 Offset( offsetBase );
+    
+                if ( entrySizes[ i ] != 0 )
+                {
+                    FSeekOffset( Offset );
+                    u8 Value[ entrySizes[i] ];
+                }
+
+                PopFPos();
+            } Entry;
+        }
+        
+    } OffsetTable;
+
+    struct
+    {
+        u32 Offset;
+
+        PushFPos();
+        FSeek( Offset );
+        Header2 Value;
+        PopFPos();
+        
+    } Header2Offset;
+
+    u32 OffsetTableEndOffset;
+    
+    struct
+    {
+        u32 Offset;
+       
+        PushFPos();
+        FSeek( Offset );
+        Header3 Value;
+        PopFPos();
+
+    } Header3Offset;
+    
+    u32 Field14; // Offset
+} Header <bgcolor=0xad0ca8>;
+
+// Pointed to by Field0C
+typedef struct
+{
+    u16 Field00;
+    u16 Field02;
+} Header2 <bgcolor=0xad0ca8>;
+
+// Pointed to by Field10
+typedef struct
+{
+    local u32 start = FTell();
+
+    RelOffset16 BaseOffset( start ); // in multiples of 2, relative to start of struct
+    u16 Field04; // sometimes zero, otherwise F95
+
+    // Read local copy of offsets
+    local u32 offsetsStart = FTell();
+    local u32 offsetCount = 0;
+
+    // In some files the base offset is 0? see 0048.sc02
+    if ( BaseOffset.Value > 0 )
+        offsetCount = BaseOffset.Value - 2;
+
+    local u32 offsets[ offsetCount ];
+    for ( i = 0; i < offsetCount; ++i )
+        offsets[ i ] = ReadUShort( offsetsStart + ( i * 2 ) );
+
+    // Find entry sizes
+    local u32 entrySizes[ offsetCount ];
+    local u32 nextOffset;
+    for ( i = 0; i < offsetCount; ++i )
+    {
+        nextOffset = 0xFFFFFFFF;
+
+        for ( j = 0; j < offsetCount; ++j )
+        {
+            if ( offsets[ j ] > offsets[ i ] && offsets[ j ] < nextOffset )
+                nextOffset = offsets[ j ];
+        }
+
+        if ( nextOffset == 0xFFFFFFFF )
+        {
+            // Last offset
+            // TODO
+            nextOffset = offsets[ i ];
+        }
+
+        entrySizes[ i ] = nextOffset - offsets[ i ];
+    }
+
+    local u32 offsetBase = start + BaseOffset.Value * 2;
+
+    for ( i = 0; i < offsetCount; ++i )
+    {
+        struct
+        {
+            SetBackColor( RandomColor() );
+
+            RelOffset16 Offset( offsetBase );
+
+            PushFPos();
+            //FSeekOffset( Offset );
+            FSeek( Offset.Base + ( Offset.Value * 2 ) );
+            u8 Value[ entrySizes[i] * 2 ];
+            PopFPos();
+        } Entry;
+    }
+
+    // relative offset base is at this point, after the offsets
+    // offsets point to text data?
+} Header3 <bgcolor=0xFd0ca8>;
+
+//---------------------------------------------
+// Parse file structure
+//---------------------------------------------
+Header header;

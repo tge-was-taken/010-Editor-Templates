@@ -1,0 +1,142 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Script File
+//
+//      File: Analyzer.1sc
+//   Authors: TGE
+//   Version: 1.0.0
+//   Purpose: Analyzing binary data into value types.
+//  Category: 
+//   History: 
+//------------------------------------------------
+
+#include "../common/include.h"
+
+enum FieldValueType
+{
+    FieldValueType_Invalid = 0,
+    FieldValueType_Byte,
+    FieldValueType_Short,
+    FieldValueType_Int,
+    FieldValueType_Float
+};
+
+// Globals
+u32 gInFile = GetFileNum();
+u32 gOutFile = FileNew();
+FileSelect( gInFile );
+u32 gStartOffset = GetSelStart();
+u32 gEndOffset = gStartOffset + GetSelSize();
+FieldValueType gValueTypes[4096];
+
+// Map FieldValueType to its byte size.
+u32 GetValueTypeSize( FieldValueType type )
+{
+    switch ( type )
+    {
+        case FieldValueType_Byte: return 1;
+        case FieldValueType_Short: return 2;
+        case FieldValueType_Int: 
+        case FieldValueType_Float:
+            return 4;
+
+        default:
+            return 0;
+    }
+}
+
+// Match floats by checking if the high bits fall within a common range.
+bool IsFloat( u32 value )
+{
+    u32 highBits = ( value & 0xFF000000 );
+    return highBits >= 0x30000000 && highBits <= 0xD0000000;
+}
+
+// Match shorts whose value is less than 0x1000
+bool IsShort( u32 value )
+{
+    return  ( ( value & 0xF0000000 ) == 0 && ( value & 0x0FFF0000 ) != 0 ) &&
+            ( ( value & 0x0000F000 ) == 0 && ( value & 0x00000FFF ) != 0 );
+}
+
+// Match byte patterns where each byte is less than 0x10
+bool IsBytes( u32 value )
+{
+    u32 mask = 0xF0F0F0F0;
+    if ( ( value & mask ) == 0 )
+    {
+        u32 count = 0;
+        u32 i;
+        for ( i = 0; i < 4; ++i )
+            count += ( value & ( 0x0F << ( i * 8 ) ) ) != 0;
+
+        return count >= 3;
+    }
+
+    return false;
+}
+
+void AnalyzeRange( u32 startOffset, u32 endOffset )
+{
+    int value;
+    int numRemainingBytes;
+    int i;
+    int fieldIndex = 0;
+    int offset = startOffset;
+    
+    while ( offset < endOffset )
+    {
+        // Assume int by default
+        value = ReadInt( offset );   
+        numRemainingBytes = endOffset - offset;
+    
+        // Analyze type
+        if ( numRemainingBytes >= 4 && IsFloat( value )  )
+        {
+            gValueTypes[ fieldIndex++ ] = FieldValueType_Float;
+            offset += 4;
+        }
+        else if ( IsBytes( value ) )
+        {
+            for ( i = 0; i < 4; ++i )
+            {
+                gValueTypes[ fieldIndex++ ] = FieldValueType_Byte;
+                offset += 1;
+            }
+        }
+        else if ( numRemainingBytes > 2 && IsShort( value ) || numRemainingBytes == 2 )
+        {
+            gValueTypes[ fieldIndex++ ] = FieldValueType_Short;
+            offset += 2;
+    
+            if ( numRemainingBytes >= 4 )
+            {
+                gValueTypes[ fieldIndex++ ] = FieldValueType_Short;
+                offset += 2;
+            }
+        }
+        else if ( numRemainingBytes >= 4 )
+        {
+            gValueTypes[ fieldIndex++ ] = FieldValueType_Int;
+            offset += 4;
+        }
+        else
+        {
+            gValueTypes[ fieldIndex++ ] = FieldValueType_Byte;
+            offset += 1;
+        }
+    }
+}
+
+void AnalyzeSelection()
+{
+	AnalyzeRange( gStartOffset, gEndOffset );
+}
+
+void FlushToClipboard()
+{
+	FileSelect( gOutFile );
+	SetSelection( 0, FileSize() );
+	CutToClipboard();
+	FileClose();
+	FileSelect( gInFile );
+}

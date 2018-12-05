@@ -1,0 +1,124 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: p5_staff_bin.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse Persona 5 staff.bin file
+//  Category: 
+// File Mask: staff.bin
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../common/include.h"
+
+const byte ADDRESS_SIZE = sizeof( int );
+const byte SEQ_BASE = 0x07;
+const byte SEQ_BASE_NUM_LOOP = 2;
+const byte SEQ_FLAG_ODD = 1 << 3;
+
+void DecodeRelocationTable( u8 relocationTable[], int addressBaseOffset, int addressLocs[] )
+{
+    local int addressLocsIndex = 0;
+	local int prevRelocSum = 0;
+    local int reloc;
+    local int baseLoopMult;
+    local int numLoop;
+    local int i;
+    local int j;
+
+	for ( i = 0; i < sizeof( relocationTable ); i++ )
+	{
+		reloc = relocationTable[i];
+
+		// Check if the value is odd
+		if ( ( reloc % 2 ) != 0 )
+		{
+			// Check if the value indicates a sequence run of addresses
+			if ( ( reloc & SEQ_BASE ) == SEQ_BASE )
+			{
+				// Get the base loop multiplier
+				baseLoopMult = ( reloc & 0xF0 ) >> 4;
+
+				// Get the number of loops, base loop number is 2
+				numLoop = SEQ_BASE_NUM_LOOP + ( baseLoopMult * SEQ_BASE_NUM_LOOP );
+
+				// Check if the number of loops is odd
+				if ( ( reloc & SEQ_FLAG_ODD ) == SEQ_FLAG_ODD )
+				{
+					// If so then add an extra loop cycle.
+					numLoop += 1;
+				}
+
+				for ( j = 0; j < numLoop; j++ )
+				{
+                    addressLocs[ addressLocsIndex++ ] = addressBaseOffset + prevRelocSum + ADDRESS_SIZE;
+					prevRelocSum += ADDRESS_SIZE;
+				}
+
+				// Continue the loop early so we skip adding the reloc value to the list later on
+				continue;
+			}
+			// If value isn't a sequence run then read the next byte and bitwise OR it onto the value
+
+			// Decrement the reloc value to remove the extra bit added to make it an odd number
+			reloc -= 1;
+			reloc |= relocationTable[++i] << 8;
+		}
+		else
+		{
+			// If the value isn't odd, shift the value 1 bit to the left
+			reloc <<= 1;
+		}
+
+        addressLocs[ addressLocsIndex++ ] = addressBaseOffset + prevRelocSum + reloc;
+		prevRelocSum += reloc;
+	}
+}
+
+typedef struct
+{
+    SetRandomBackColor();
+	u32 Field00; // 0x00000413
+	u32 RelocationTableOffset;
+	u32 RelocationTableSize;
+	u32 StringCount;
+	u32 StringLengthTableOffset;
+	u32 StringBufferOffset;
+	u32 StringBufferSize;
+	
+	FSeek( RelocationTableOffset );
+    SetRandomBackColor();
+	u8 RelocationTable[ RelocationTableSize ];
+
+    local int relocationTableDecoded[RelocationTableSize * 4];
+    DecodeRelocationTable( RelocationTable, 0, relocationTableDecoded );
+	
+	FSeek( StringLengthTableOffset );
+    SetRandomBackColor();
+	u8 StringLengths[ StringCount ];
+	
+	FSeek( StringBufferOffset );
+	local u32 i;
+    struct
+    {
+	    for ( i = 0; i < StringCount; ++i )
+	    {
+            struct StaffString String( StringLengths[i] );
+	    }
+    } String;
+} StaffFile;
+
+typedef struct( u32 length )
+{
+    SetRandomBackColor();
+	u8 Data[ length ];
+} StaffString <read=StaffStringToString>;
+
+string StaffStringToString( StaffString& value )
+{
+    return value.Data;
+}
+
+StaffFile File;

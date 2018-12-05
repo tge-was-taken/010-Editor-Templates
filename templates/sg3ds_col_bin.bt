@@ -1,0 +1,36 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: sg3ds_col_bin.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse Sonic Generations (3DS) *col.bin files
+//  Category: 
+// File Mask: *col.bin
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../common/include.h"
+
+typedef struct
+{
+    while ( FTell() < FileSize() )
+    {
+        struct
+        {
+            SetRandomBackColor();
+            u32 KnotCount;
+            Vector3 InitialPosition;
+            struct Knot Knots[ KnotCount ];
+        } Line;
+    }
+} CollisionFile;
+
+typedef struct
+{
+    Vector3 Direction;
+    Vector3 Offset;
+} Knot;
+
+CollisionFile File;

@@ -1,0 +1,79 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: mgr_dat.bt
+//   Authors: TGE
+//   Version: 1.0.0
+//   Purpose: Parsing Metal Gear Rising: Revengeance DAT files.
+//  Category: Archive
+// File Mask: *.dat
+//  ID Bytes: 44 41 54 00
+//   History: 
+//------------------------------------------------
+
+#include "../common/include.h"
+
+const u32 DAT_MAGIC = MakeFourCC( "DAT\0" );
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    u32 Magic;
+    Assert( Magic == DAT_MAGIC, "Header magic value doesn't match" );
+    u32 ResourceCount;
+    u32 ResourceOffsetListOffset;
+    u32 ResourceTypeListOffset;
+    u32 ResourceNameListOffset;
+    u32 ResourceSizeListOffset;
+    u32 ResourceMetadataOffset;
+
+    FSeek( ResourceOffsetListOffset );
+    SetRandomBackColor();
+    u32 ResourceOffsets[ ResourceCount ]; // Each offset is aligned to 4096 bytes
+
+    FSeek( ResourceTypeListOffset );
+    SetRandomBackColor();
+    struct { string Type; } ResourceTypes[ ResourceCount ];
+
+    FSeek( ResourceNameListOffset );
+    SetRandomBackColor();
+    u32 ResourceMaxNameLength;
+    struct { char Name[ ResourceMaxNameLength ]; } ResourceNames[ ResourceCount ];
+
+    FSeek( ResourceSizeListOffset );
+    SetRandomBackColor();
+    u32 ResourceSizes[ ResourceCount ];
+
+    FSeek( ResourceMetadataOffset );
+    struct DatMetadata Metadata( ResourceCount );
+
+    // 16 byte alignment
+    
+} DatFile;
+
+typedef struct( u32 resourceCount )
+{
+    SetRandomBackColor();
+    local u32 offset = FTell();
+
+    u32 Field00;                                // Seemingly random number in the 0x1A to 0x1E range
+    u32 ResourceIndicesListOffset;  
+    u32 ResourceHashListOffset;     
+    u32 ResourceIdListOffset;      
+    
+    FSeek( offset + ResourceIndicesListOffset );
+    struct
+    {
+    while ( ( FTell() - offset )!= ResourceHashListOffset )
+        u16 ResourceIndices;                    // Hmm.. do these indicate a relationship between resources? But why is the amount of these seemingly random?
+    } ResourceIndices;
+
+    FSeek( offset + ResourceHashListOffset );
+    u32 ResourceHashes[ resourceCount ];        // Unknown hash type
+
+    FSeek( offset + ResourceIdListOffset );
+    u16 ResourceIds[ resourceCount ];           // These indices correspond to the hashes
+} DatMetadata;
+
+DatFile File;

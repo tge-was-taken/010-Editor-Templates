@@ -1,0 +1,27 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: bully_dir.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse Bully *.dir files
+//  Category: 
+// File Mask: *.dir
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct
+{
+    local int fileCount = 0;
+    while ( !FEof() )
+    {
+        struct
+        {
+            int Field00;
+            int SectorIndex;
+            char FileName[24];
+            ++fileCount;
+        } File;
+    }
+} Dir;

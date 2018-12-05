@@ -1,0 +1,346 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Script File
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+//   History: 
+//------------------------------------------------
+
+//---------------------------------------------
+// Primitive types
+//---------------------------------------------
+typedef char bool;
+typedef char s8;
+typedef uchar u8;
+typedef int16 s16;
+typedef uint16 u16;
+typedef int16 s16;
+typedef int32 s32;
+typedef uint32 u32;
+typedef int64 s64;
+typedef uint64 u64;
+typedef float f32;
+typedef double f64;
+
+// Setup
+string modelFileName = GetFileName();
+string objFileName = FileNameSetExtension( modelFileName, ".obj" );
+int modelFileHandle = FileOpen( modelFileName );
+int objFileHandle = FileNew( "", false );
+FileSelect( modelFileHandle );
+RunTemplate( "../templates/sa2b_model.bt" );
+
+int entryIndex = 0;
+int chunkIndex = 0;
+int chunkType = 0;
+int vertexIndex = 0;
+int stripIndex = 0;
+int stripIndexIndex = 0;
+int triangleCount = 0;
+int triangleA = 0;
+int triangleB = 0;
+int triangleC = 0;
+bool stripClockwise = false;
+
+// Generic helpers
+void FileCloseIndexed( int index )
+{
+    FileSelect( index );
+    FileClose();
+}
+
+void FileSaveIndexed( int index, string fileName )
+{
+    FileSelect( index );
+    FileSave( fileName );
+}
+
+s32 GetId()
+{
+    return Entries[entryIndex].Id;
+}
+
+void SetId( s32 id )
+{
+    Entries[entryIndex].Id = id;
+}
+
+bool HasObject()
+{
+    return Entries[entryIndex].Object.Offset.Valid;
+}
+
+bool HasModel()
+{
+    return Entries[entryIndex].Object.Value.Model.Offset.Valid;
+}
+
+bool HasVertexList()
+{
+    return Entries[entryIndex].Object.Value.Model.Value.
+            VertexList.Offset.Valid;
+}
+
+bool HasPolygonList()
+{
+    return Entries[entryIndex].Object.Value.Model.Value.
+            PolygonList.Offset.Valid;
+}
+
+// Vertex data
+u8 GetVertexChunkType()
+{
+    return Entries[entryIndex].Object.Value.Model.Value.
+            VertexList.Value.Chunk[chunkIndex].Type;
+}
+
+void SetVertexChunkType(u8 value)
+{
+    Entries[entryIndex].Object.Value.Model.Value.
+            VertexList.Value.Chunk[chunkIndex].Type = value;
+}
+
+bool HasVertexUserFlags()
+{
+    return  chunkType == ChunkType_VertexUF32 || 
+            chunkType == ChunkType_VertexNUF32 ||
+            chunkType == ChunkType_VertexN32UF;
+}
+
+bool HasVertexNinjaFlags()
+{
+    return  chunkType == ChunkType_VertexNF32 || 
+            chunkType == ChunkType_VertexNNF32;
+}
+
+u16 GetVertexCount()
+{
+    Assert( exists( Entries[entryIndex].Object.Value.Model.Value.
+            VertexList.Value.Chunk[chunkIndex] ) );
+
+    Assert( exists( Entries[entryIndex].Object.Value.Model.Value.
+            VertexList.Value.Chunk[chunkIndex].VertexCount ) );
+
+    return Entries[entryIndex].Object.Value.Model.Value.
+            VertexList.Value.Chunk[chunkIndex].VertexCount;
+}
+
+u32 GetVertexUserFlags()
+{
+    return Entries[entryIndex].Object.Value.Model.Value.
+            VertexList.Value.Chunk[chunkIndex].Vertex[vertexIndex].UserFlags;
+}
+
+u32 GetVertexNinjaFlags()
+{
+    return Entries[entryIndex].Object.Value.Model.Value.
+            VertexList.Value.Chunk[chunkIndex].Vertex[vertexIndex].NinjaFlags;
+}
+
+float GetVertexPositionX()
+{
+    return Entries[entryIndex].Object.Value.Model.Value.
+            VertexList.Value.Chunk[chunkIndex].Vertex[vertexIndex].Position.X;
+}
+
+float GetVertexPositionY()
+{
+    return Entries[entryIndex].Object.Value.Model.Value.
+            VertexList.Value.Chunk[chunkIndex].Vertex[vertexIndex].Position.Y;
+}
+
+float GetVertexPositionZ()
+{
+    return Entries[entryIndex].Object.Value.Model.Value.
+            VertexList.Value.Chunk[chunkIndex].Vertex[vertexIndex].Position.Z;
+}
+
+void SetVertexNinjaFlags( u32 value )
+{
+    Entries[entryIndex].Object.Value.Model.Value.VertexList.Value.Chunk[chunkIndex].
+        Vertex[vertexIndex].NinjaFlags = value;
+}
+
+bool HasVertexContinueFlagSet()
+{
+    Assert( exists(Entries[entryIndex].Object.Value.Model.Value.
+            VertexList.Value.Chunk[chunkIndex].Flags) );
+    return Entries[entryIndex].Object.Value.Model.Value.
+            VertexList.Value.Chunk[chunkIndex].Flags.Continue;
+}
+
+void SetVertexContinueFlag( bool value )
+{
+    Entries[entryIndex].Object.Value.Model.Value.
+                VertexList.Value.Chunk[chunkIndex].Flags.Continue = value;
+}
+
+void SetVertexWeightStatusFlag( u8 value )
+{
+    Entries[entryIndex].Object.Value.Model.Value.
+                VertexList.Value.Chunk[chunkIndex].Flags.Status = value;
+}
+
+// Polygon data
+u8 GetPolygonChunkType()
+{
+    return Entries[entryIndex].Object.Value.Model.Value.
+            PolygonList.Value.Chunk[chunkIndex].Type;
+}
+
+u32 GetPolygonStripCount()
+{
+    return Entries[entryIndex].Object.Value.Model.Value.
+            PolygonList.Value.Chunk[chunkIndex].Flags2.StripCount;
+}
+
+u32 GetPolygonStripIndexCount()
+{
+    return Entries[entryIndex].Object.Value.Model.Value.
+            PolygonList.Value.Chunk[chunkIndex].Strip[stripIndex].indexCount;
+}
+
+bool GetPolygonStripInitialWindingOrder()
+{
+    return Entries[entryIndex].Object.Value.Model.Value.
+            PolygonList.Value.Chunk[chunkIndex].Strip[stripIndex].IndexCount >= 0;
+}
+
+u32 GetPolygonStripIndex()
+{
+    return Entries[entryIndex].Object.Value.Model.Value.
+            PolygonList.Value.Chunk[chunkIndex].Strip[stripIndex].Index[stripIndexIndex];
+}
+
+void ExportObj()
+{
+    for ( entryIndex = 0; entryIndex < 1; ++entryIndex )
+    {
+        Printf( "Entry index: %d\n", entryIndex );
+    
+        if ( !HasObject() || !HasModel() || !HasVertexList() || !HasPolygonList() )
+            continue;
+    
+        chunkIndex = 0;
+        chunkType = GetVertexChunkType();
+        
+        do
+        {
+            Printf( "Vertex chunk type: %d\n", chunkType );
+            Assert( ( chunkType == ChunkType_Null || chunkType == ChunkType_End ) ||
+                ( chunkType >= ChunkType_VertexSH && chunkType <= ChunkType_VertexN32UF ) );
+    
+            for ( vertexIndex = 0; vertexIndex < GetVertexCount(); ++vertexIndex )
+            {
+                // Write vertices
+                FPrintf( objFileHandle, "v %f %f %f\n", 
+                    GetVertexPositionX(), 
+                    GetVertexPositionY(), 
+                    GetVertexPositionZ() );
+            }
+    
+            ++chunkIndex;
+            chunkType = GetVertexChunkType();
+        }
+        while ( chunkType != 255 );
+    
+        chunkIndex = 0;
+        chunkType = GetPolygonChunkType();
+    
+        do
+        {
+            Printf( "Polygon chunk type: %d\n", chunkType );
+            Assert( ( chunkType == ChunkType_Null || chunkType == ChunkType_End ) ||
+                ( chunkType == ChunkType_DrawPolygonList ) ||
+                ( chunkType == ChunkType_TextureId || chunkType == ChunkType_TextureId2 ) ||
+                ( chunkType >= ChunkType_MaterialDiffuse && chunkType <= ChunkType_MaterialDiffuseAmbientSpecular2 ) ||
+                ( chunkType >= ChunkType_Strip && chunkType <= ChunkType_StripUVH2 ) );
+    
+            if ( chunkType == ChunkType_DrawPolygonList )
+            {
+                Printf( "ChunkType_DrawPolygonList not implemented!!\n" );
+            }
+            else if ( chunkType == ChunkType_TextureId )
+            {
+                Printf( "ChunkType_TextureId not implemented!!\n" );
+            }
+            else if ( chunkType >= ChunkType_MaterialDiffuse && chunkType <= ChunkType_MaterialDiffuseAmbientSpecular2 )
+            {
+                Printf( "ChunkType_Material* not implemented!!\n" );
+            }
+            else if ( chunkType >= ChunkType_Strip && chunkType <= ChunkType_StripUVH2 )
+            {
+                for ( stripIndex = 0; stripIndex < GetPolygonStripCount(); ++stripIndex )
+                {
+                    triangleCount = GetPolygonStripIndexCount() - 2;
+                    stripClockwise = GetPolygonStripInitialWindingOrder();
+    
+                    stripIndexIndex = 0;
+                    triangleA = GetPolygonStripIndex();
+                    ++stripIndexIndex;
+                    triangleB = GetPolygonStripIndex();
+                    ++stripIndexIndex;
+    
+                    while ( triangleCount-- > 0 )
+                    {
+                        triangleC = GetPolygonStripIndex();
+                        ++stripIndexIndex;
+    
+                        if ( stripClockwise )
+                        {
+                            FPrintf( objFileHandle, "f %d %d %d\n", 
+                                triangleA,
+                                triangleB,
+                                triangleC );
+                        }
+                        else
+                        {
+                            FPrintf( objFileHandle, "f %d %d %d\n", 
+                                triangleA,
+                                triangleC,
+                                triangleB );
+                        }
+    
+                        stripClockwise = !stripClockwise;
+                        triangleA = triangleB;
+                        triangleB = triangleC;
+                    }
+                }
+            }
+        
+            ++chunkIndex;
+            chunkType = GetPolygonChunkType();
+        }
+        while ( chunkType != 255 );
+    }
+
+    // Save obj
+    FileSaveIndexed( objFileHandle, objFileName );
+    FileCloseIndexed( objFileHandle );
+}
+
+s32 lowestId = 0xFFFFFFF;
+void ScaleIds(u32 base)
+{
+    for ( entryIndex = 0; entryIndex < EntryCount; ++entryIndex )
+    {
+        if ( GetId() == -1 )
+            continue;        
+
+        if ( GetId() < lowestId )
+            lowestId = GetId();
+    }
+
+    for ( entryIndex = 0; entryIndex < EntryCount; ++entryIndex )
+    {
+        if ( GetId() == -1 )
+            continue; 
+
+        SetId( ( GetId() - lowestId ) + base );
+    }
+}
+
+ScaleIds( 0 );

@@ -1,0 +1,59 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: sa2pc_cube2.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse Sonic Adventure 2 PC cube2 file
+//  Category: 
+// File Mask: cube2
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../common/include.h"
+
+typedef struct
+{
+    u32 Length;
+    u8 Contents[ Length ];
+} String;
+
+typedef struct
+{
+    String Unknown1;
+    String Unknown2;
+    u32 GeometryCount;
+    struct Geometry Geometries[ GeometryCount ];
+} Model <optimize=false>;
+
+typedef struct
+{
+    String Name;
+    u32 MeshCount;
+    struct Mesh Meshes[ MeshCount ];
+} Geometry <optimize=false>;
+
+typedef struct
+{
+    String MaterialName;
+    Vector4 Ambient;
+    Vector4 Diffuse;
+    Vector4 Specular;
+    Vector4 Emission;
+    String TextureName;
+    u32 VertexCount;
+    struct Vertex Vertices[ VertexCount ];
+    u32 IndexCount;
+    u32 Indices[ IndexCount ];
+} Mesh <optimize=false>;
+
+typedef struct
+{
+    Vector3 Position;
+    Vector3 Normal;
+    u32 Color;
+    Vector2 UV;
+} Vertex;
+
+Model File;

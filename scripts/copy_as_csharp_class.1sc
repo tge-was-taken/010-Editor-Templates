@@ -1,0 +1,254 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Script File
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+//   History: 
+//------------------------------------------------
+
+#include "analyzer.1sc"
+
+// Constants
+const string CLASS_NAME_BINARYREADER                = "EndianBinaryReader"; // Specifies the class type name of the BinaryReader to use.
+const string CLASS_NAME_BINARYWRITER                = "EndianBinaryWriter"; // Specifies the class type name of the BinaryWriter to use.
+const bool   SHOULD_WRITE_FILE_CONSTRUCTOR          = true;                 // If true, the '%ClassName%( string filePath ) constructor gets generated.
+const bool   SHOULD_WRITE_STREAM_CONSTRUCTOR        = true;                 // If true, the '%ClassName%( Stream stream, bool leaveOpen ) constructor gets generated.
+const bool   SHOULD_WRITE_FILE_SAVE_METHOD          = true;                 // If true, the 'void Save( string filePath )' method gets generated.
+const bool   SHOULD_WRITE_STREAM_SAVE_METHOD        = true;                 // If true, the 'void Save( Stream stream )' method gets generated.
+const bool   READER_WRITER_HAS_ENDIANNESS_PARAMETER = true;                 // If true, the endianness of the file will be passed as the last parameter into the read/writer constructor.
+const bool   SHOULD_ADD_ENDIANNESS_PARAMETER        = false;                // If true, the 'Endianness endianness' parameter is added to all public read/write functions.
+
+string GetEndiannessEnum()
+{
+    if ( SHOULD_ADD_ENDIANNESS_PARAMETER )
+        return "endianness"; // parameter name
+
+    if ( IsBigEndian() )
+        return "Endianness.BigEndian";
+    else
+        return "Endianness.LittleEndian";
+}
+
+string GetCSharpPrimitiveValueTypeName( FieldValueType type )
+{
+    switch ( type )
+    {
+        case FieldValueType_Byte:  return "byte";
+        case FieldValueType_Short: return "short";
+        case FieldValueType_Int:   return "int";
+        case FieldValueType_Float: return "float";
+        default: return "";
+    }
+}
+
+string GetCSharpFullyQualifiedValueTypeName( FieldValueType type )
+{
+    switch ( type )
+    {
+        case FieldValueType_Byte:  return "Byte";
+        case FieldValueType_Short: return "Int16";
+        case FieldValueType_Int:   return "Int32";
+        case FieldValueType_Float: return "Single";
+        default: return "";
+    }
+}
+
+void WriteClassStart( string name )
+{
+    FPrintf( gOutFile, "\npublic class %s\n{\n", name );
+}
+
+void WriteClassEnd()
+{
+    FPrintf( gOutFile, "}\n" );
+}
+
+void WriteProperty( string type, string name )
+{
+    FPrintf(  gOutFile, "    public %s %s { get; set; }\n", type, name ); 
+}
+
+void WriteProperties()
+{
+    FieldValueType valueType = gValueTypes[0];
+    u32 valueSize;
+    u32 offset = gStartOffset;
+    string fieldName;
+    u32 i = 0;
+
+    while ( valueType != FieldValueType_Invalid )
+    {
+        SPrintf( fieldName, "Field%02X", offset - gStartOffset );
+        WriteProperty( GetCSharpPrimitiveValueTypeName( valueType ), fieldName );
+        offset += GetValueTypeSize( valueType );
+        valueType = gValueTypes[++i];
+    }
+}
+
+void WriteMethodStart( string modifier, string name, string parameters )
+{
+    if ( parameters != "" )
+        FPrintf( gOutFile, "\n    %s void %s( %s )\n    {\n", modifier, name, parameters );
+    else
+        FPrintf( gOutFile, "\n    %s void %s()\n    {\n", modifier, name );
+}
+
+void WriteConstructorStart( string modifier, string name, string parameters )
+{
+	FPrintf( gOutFile, "\n    %s %s( %s )\n    {\n", modifier, name, parameters );
+}
+
+void WriteMethodEnd()
+{
+    FPrintf( gOutFile, "    }\n" );
+}
+
+void WriteFileConstructor( string className )
+{
+    if ( SHOULD_ADD_ENDIANNESS_PARAMETER )
+        WriteConstructorStart( "public", className, "string filePath, Endianness endianness" );
+    else
+        WriteConstructorStart( "public", className, "string filePath" );
+
+    if ( READER_WRITER_HAS_ENDIANNESS_PARAMETER )
+        FPrintf( gOutFile, "		using ( var reader = new %s( File.Open( filePath ), %s ) )\n", CLASS_NAME_BINARYREADER, GetEndiannessEnum() );
+    else
+        FPrintf( gOutFile, "		using ( var reader = new %s( File.Open( filePath ) ) )\n", CLASS_NAME_BINARYREADER );
+
+    FPrintf( gOutFile, "            Read( reader );\n" );
+    WriteMethodEnd();
+}
+
+void WriteStreamConstructor( string className )
+{
+    if ( SHOULD_ADD_ENDIANNESS_PARAMETER )
+        WriteConstructorStart( "public", className, "Stream stream, bool leaveOpen, Endianness endianness" );
+    else
+        WriteConstructorStart( "public", className, "Stream stream, bool leaveOpen" );
+
+    if ( READER_WRITER_HAS_ENDIANNESS_PARAMETER )
+        FPrintf( gOutFile, "		using ( var reader = new %s( stream, Encoding.Default, leaveOpen, %s ) )\n", CLASS_NAME_BINARYREADER, GetEndiannessEnum() );
+    else
+        FPrintf( gOutFile, "		using ( var reader = new %s( stream, Encoding.Default, leaveOpen ) )\n", CLASS_NAME_BINARYREADER );
+
+    FPrintf( gOutFile, "            Read( reader );\n" );
+    WriteMethodEnd();
+}
+
+void WriteFileSaveMethod()
+{
+    if ( SHOULD_ADD_ENDIANNESS_PARAMETER )
+        WriteMethodStart( "public", "Save", "string filePath, Endianness endianness" );
+    else
+        WriteMethodStart( "public", "Save", "string filePath" );
+
+    if ( READER_WRITER_HAS_ENDIANNESS_PARAMETER )
+        FPrintf( gOutFile, "		using ( var writer = new %s( File.Create( filePath ), %s ) )\n", CLASS_NAME_BINARYWRITER, GetEndiannessEnum() );
+    else
+        FPrintf( gOutFile, "		using ( var writer = new %s( File.Create( filePath ) ) )\n", CLASS_NAME_BINARYWRITER );
+
+    FPrintf( gOutFile, "            Write( writer );\n" );
+    WriteMethodEnd();
+}
+
+void WriteStreamSaveMethod()
+{
+    if ( SHOULD_ADD_ENDIANNESS_PARAMETER )
+        WriteMethodStart( "public", "Save", "Stream stream, Endianness endianness" );
+    else
+        WriteMethodStart( "public", "Save", "Stream stream" );
+
+    if ( READER_WRITER_HAS_ENDIANNESS_PARAMETER )
+        FPrintf( gOutFile, "		using ( var writer = new %s( stream, Encoding.Default, true, %s ) )\n", CLASS_NAME_BINARYWRITER, GetEndiannessEnum() );
+    else
+        FPrintf( gOutFile, "		using ( var writer = new %s( stream, Encoding.Default, true ) )\n", CLASS_NAME_BINARYWRITER );
+
+    FPrintf( gOutFile, "            Write( writer );\n" );
+    WriteMethodEnd();
+}
+
+void WriteReaderMethodCall( string fieldName, FieldValueType type ) 
+{
+    FPrintf( gOutFile, "		%s = reader.Read%s();\n", fieldName, GetCSharpFullyQualifiedValueTypeName( type ) );
+}
+
+void WriteReadMethod()
+{
+    WriteMethodStart( "internal", "Read", CLASS_NAME_BINARYREADER + " reader" );
+
+    FieldValueType valueType = gValueTypes[0];
+    u32 valueSize;
+    u32 offset = gStartOffset;
+    string fieldName;
+    u32 i = 0;
+
+    while ( valueType != FieldValueType_Invalid )
+    {
+        SPrintf( fieldName, "Field%02X", offset - gStartOffset );
+        WriteReaderMethodCall( fieldName, valueType );
+        offset += GetValueTypeSize( valueType );
+        valueType = gValueTypes[++i];
+    }
+
+    WriteMethodEnd();
+}
+
+
+void WriteWriterMethodCall( string fieldName )
+{
+    FPrintf( gOutFile, "		writer.Write( %s );\n", fieldName );
+}
+
+void WriteWriteMethod()
+{
+    WriteMethodStart( "internal", "Write", CLASS_NAME_BINARYWRITER + " writer" );
+
+    FieldValueType valueType = gValueTypes[0];
+    u32 valueSize;
+    u32 offset = gStartOffset;
+    string fieldName;
+    u32 i = 0;
+
+    while ( valueType != FieldValueType_Invalid )
+    {
+        SPrintf( fieldName, "Field%02X", offset - gStartOffset );
+        WriteWriterMethodCall( fieldName );
+        offset += GetValueTypeSize( valueType );
+        valueType = gValueTypes[++i];
+    }
+
+    WriteMethodEnd();
+}
+
+void WriteClass()
+{
+    string className;
+    SPrintf( className, "Struct%08X", gStartOffset );
+
+    WriteClassStart( className );
+    WriteProperties();
+
+    if ( SHOULD_WRITE_FILE_CONSTRUCTOR )
+        WriteFileConstructor( className );
+
+    if ( SHOULD_WRITE_STREAM_CONSTRUCTOR )
+        WriteStreamConstructor( className );
+
+    if ( SHOULD_WRITE_FILE_SAVE_METHOD )
+        WriteFileSaveMethod();
+
+    if ( SHOULD_WRITE_STREAM_SAVE_METHOD )
+        WriteStreamSaveMethod();
+
+    WriteReadMethod();
+    WriteWriteMethod();
+    
+    WriteClassEnd();
+}
+
+AnalyzeSelection();
+WriteClass();
+FlushToClipboard();

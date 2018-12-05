@@ -1,0 +1,141 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: p5_spd.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse Persona 5 SPD files 
+//  Category: 
+// File Mask: *.spd
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//---------------------------------------------
+// Primitive types
+//---------------------------------------------
+typedef char bool;
+typedef char s8;
+typedef uchar u8;
+typedef int16 s16;
+typedef uint16 u16;
+typedef int16 s16;
+typedef int32 s32;
+typedef uint32 u32;
+typedef int64 s64;
+typedef uint64 u64;
+typedef float f32;
+typedef double f64;
+
+//---------------------------------------------
+// Random
+//---------------------------------------------
+local uint __RandomSeed = 0xDEADBABE;
+local uint __RandomBit = 0;
+local uint __RandomCount = 0;
+ 
+uint MyRandom( uint to )
+{
+    ++__RandomCount;
+    __RandomBit  = ( (__RandomSeed >> 0 ) ^ ( __RandomSeed >> 2 ) ^ ( __RandomSeed >> 3 ) ^ ( __RandomSeed >> 5 ) ) & 1;
+    __RandomSeed = ( ( ( ( __RandomBit << 15 ) | ( __RandomSeed >> 1 ) ) + ( 0xBABE / __RandomCount ) ) % to );
+
+    while( __RandomSeed < 0 )
+        __RandomSeed += to;
+
+    return __RandomSeed;
+}
+
+uint RandomColor()
+{
+    return MyRandom( 0xFFFFFFFF );
+}
+
+void SetRandomBackColor()
+{
+    SetBackColor( RandomColor() );
+}
+
+struct SpriteTexture;
+struct SpriteEntry;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+	char Magic[4];      // 'SPR0'
+	u32 Field04;        // always 2, maybe version
+	u32 FileSize;
+	u32 Field0C;        // 0
+	u32 Field10;        // 0x20, offset
+	u16 TextureCount;   // 1
+	u16 EntryCount;     // number of entries in the file
+	u32 TextureOffset;  // 0x20, offset
+	u32 EntryOffset;    // 0x80, offset
+
+    FSeek( TextureOffset );
+    SpriteTexture Textures[ TextureCount ];
+
+    FSeek( EntryOffset );
+    SpriteEntry Entries[ EntryCount ];
+
+} SprFile <optimize=false>;
+
+typedef struct 
+{
+    SetRandomBackColor();
+
+	u32 Id;                 // starts at 1
+	u32 Field04;            // 0?
+	u32 Offset;             // offset of data in file
+	u32 Size;               // size of data in file
+	u32 Width;              // width of the texture
+	u32 Height;             // height of the texture
+	u32 Field18;            // 0?
+	u32 Field1C;            // 0?
+	char Description[16];   // For debugging
+
+    local u64 seekBack = FTell();
+    FSeek( Offset );
+    u8 Data[ Size ];
+    FSeek( seekBack );
+
+} SpriteTexture <optimize=false>;
+
+typedef struct 
+{
+    SetRandomBackColor();
+
+	u32 Id;                 // starts at 1
+	u32 Field04;            // 1?
+	u32 Field08;            // 4?
+	u32 Field0C;            // 0
+	u32 Field10;            // 0
+	u32 Field14;            // 0
+	u32 Field18;            // 0
+	u32 Field1C;            // 0
+	u32 Field20;            // 1
+	u32 Field24;            // 1
+	u32 Field28;            // 119
+	u32 Field2C;            // 44
+	u32 Field30;            // 0
+	u32 Field34;            // 0
+	u32 Field38;            // 119
+	u32 Field3C;            // 44
+	u32 Field40;            // 0
+	u32 Field44;            // 0
+	u32 Field48;            // 0
+	u32 Field4C;            // 0
+	u32 Field50;            // 0xFFFFFFFF
+	u32 Field54;            // 0xFFFFFFFF
+	u32 Field58;            // 0xFFFFFFFF
+	u32 Field5C;            // 0xFFFFFFFF
+	u32 Field60;            // 0
+	u32 Field64;            // 0
+	u32 Field68;            // 0
+	u32 Field6C;            // 0
+	char Description[48];
+
+} SpriteEntry <optimize=false>;
+
+SprFile File;

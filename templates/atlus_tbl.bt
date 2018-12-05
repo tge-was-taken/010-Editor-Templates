@@ -1,0 +1,67 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: atlus_tbl.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse Atlus Table files.
+//  Category: Table
+// File Mask: *.tbl
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//---------------------------------------------
+// Helper functions
+//---------------------------------------------
+void AlignPosition( int alignment )
+{
+    local long position = FTell();
+    local long alignedPosition = position + ( alignment - 1 ) & ~( alignment - 1 );
+    FSeek( alignedPosition );
+}
+
+local uint __RandomSeed = 0xDEADBABE;
+local uint __RandomBit = 0;
+local uint __RandomCount = 0;
+ 
+uint MyRandom( uint to )
+{
+    ++__RandomCount;
+    __RandomBit  = ( (__RandomSeed >> 0 ) ^ ( __RandomSeed >> 2 ) ^ ( __RandomSeed >> 3 ) ^ ( __RandomSeed >> 5 ) ) & 1;
+    __RandomSeed = ( ( ( ( __RandomBit << 15 ) | ( __RandomSeed >> 1 ) ) + ( 0xBABE / __RandomCount ) ) % to );
+
+    while( __RandomSeed < 0 )
+        __RandomSeed += to;
+
+    return __RandomSeed;
+}
+
+//---------------------------------------------
+// Parse file structure
+//---------------------------------------------
+
+typedef struct TableSegment
+{
+    uint Size;
+    byte Data[ Size ];
+    AlignPosition( 16 );
+};
+
+// Test endianness
+LittleEndian();
+local uint sizeTest = ReadUInt( 0 );
+if ( sizeTest & 0xFF000000 )
+{
+    BigEndian();
+}
+
+struct
+{
+    while ( !FEof() )
+    {
+        SetBackColor( MyRandom( 0xFFFFFFFF ) );
+        TableSegment Segment;
+    }
+
+} Table;

@@ -1,0 +1,125 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: smt3_elf.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse structures in SMT3: Nocturne ELF file
+//  Category: 
+// File Mask: *.elf
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//---------------------------------------------
+// Type definitions
+//---------------------------------------------
+typedef byte u08;
+typedef ushort u16;
+typedef uint u32;
+
+typedef struct b08
+{
+    u08 bit0 : 1;
+    u08 bit1 : 1;
+    u08 bit2 : 1;
+    u08 bit3 : 1;
+    u08 bit4 : 1;
+    u08 bit5 : 1;
+    u08 bit6 : 1;
+    u08 bit7 : 1;
+};
+
+typedef struct b16
+{
+    u08 bit0 : 1;
+    u08 bit1 : 1;
+    u08 bit2 : 1;
+    u08 bit3 : 1;
+    u08 bit4 : 1;
+    u08 bit5 : 1;
+    u08 bit6 : 1;
+    u08 bit7 : 1;
+    u08 bit8 : 1;
+    u08 bit9 : 1;
+    u08 bit10 : 1;
+    u08 bit11 : 1;
+    u08 bit12 : 1;
+    u08 bit13 : 1;
+    u08 bit14 : 1;
+    u08 bit15 : 1;
+};
+
+typedef struct b32
+{
+    u08 bit0 : 1;
+    u08 bit1 : 1;
+    u08 bit2 : 1;
+    u08 bit3 : 1;
+    u08 bit4 : 1;
+    u08 bit5 : 1;
+    u08 bit6 : 1;
+    u08 bit7 : 1;
+    u08 bit8 : 1;
+    u08 bit9 : 1;
+    u08 bit10 : 1;
+    u08 bit11 : 1;
+    u08 bit12 : 1;
+    u08 bit13 : 1;
+    u08 bit14 : 1;
+    u08 bit15 : 1;
+    u08 bit16 : 1;
+    u08 bit17 : 1;
+    u08 bit18 : 1;
+    u08 bit19 : 1;
+    u08 bit20 : 1;
+    u08 bit21 : 1;
+    u08 bit22 : 1;
+    u08 bit23 : 1;
+    u08 bit24 : 1;
+    u08 bit25 : 1;
+    u08 bit26 : 1;
+    u08 bit27 : 1;
+    u08 bit28 : 1;
+    u08 bit29 : 1;
+    u08 bit30 : 1;
+    u08 bit31 : 1;
+};
+
+//---------------------------------------------
+// Helper functions
+//---------------------------------------------
+uint MyRandom( uint to )
+{
+    ++__RandomCount;
+    __RandomBit  = ( (__RandomSeed >> 0 ) ^ ( __RandomSeed >> 2 ) ^ ( __RandomSeed >> 3 ) ^ ( __RandomSeed >> 5 ) ) & 1;
+    __RandomSeed = ( ( ( ( __RandomBit << 15 ) | ( __RandomSeed >> 1 ) ) + ( 0xBABE / __RandomCount ) ) % to );
+
+    while( __RandomSeed < 0 )
+        __RandomSeed += to;
+
+    return __RandomSeed;
+}
+
+// Table definitions
+typedef struct Encounter
+{
+    u16 Field00;
+    u08 Field02;
+    u08 Field03;
+    u16 Field04;
+    u16 Field06;
+    u16 Field08;
+    u16 Field0A;
+    u16 UnitIds[ 10 ];
+    u16 Field20;
+    u16 FieldIdMajor;
+    u16 FieldIdMinor;
+};
+
+struct 
+{
+    FSeek( 0x2B0000 );
+    Encounter Encounters[ 1270 ];
+
+} Tables;

@@ -1,0 +1,1013 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: dds3_model.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse PS2 DDS3 engine games (SMT3, DDS1 & 2, Raidou 1 & 2) model resources
+//  Category: 
+// File Mask: *.pb, *.md, *.ab, *.tmx, *.txp
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../common/include.h"
+
+BitfieldDisablePadding();
+
+local u32 gBaseOffset = 0;
+
+typedef struct
+{
+    u8 FileType;
+    u8 IsCompressed;
+    u16 UserId;
+    u32 FileSize;
+    u32 Magic;
+    u32 MemorySize;
+} TCommonHeader;
+
+typedef struct
+{
+    SetRandomBackColor();
+    u8 FileType;
+    u8 IsCompressed;
+    u16 UserId;
+    u32 FileSize;
+    u32 Magic;
+    u32 MemorySize;
+    u8 Data[ FileSize - 16 ];
+} TUnknownChunk;
+
+// Model pack info
+typedef struct
+{
+    SetRandomBackColor();
+    u8 FileType;
+    u8 IsCompressed;
+    u16 UserId;
+    u32 FileSize;
+    u32 Magic;
+    u32 MemorySize;
+    //u8 Data[ FileSize - 16 ];
+    gBaseOffset = FTell();
+    u32 BOM; // 0xFFFFFFFE
+    u32 InfoOffset; // offset
+    u16 ModelCount;
+    u16 Field1A;
+    u16 EffectInfoCount; // Effect = particle or IPU
+    u16 EffectCount;
+    u16 AnimationCount;
+    u16 Field22;
+
+    if ( InfoOffset != 0 )
+    {
+        FSeek( gBaseOffset + InfoOffset );     
+        struct TModelPackEffectInfo EffectInfo[ EffectInfoCount ];
+    }
+} TModelPackInfo;
+
+typedef struct
+{
+    SetRandomBackColor();
+    s32 Id;
+    u32 Size;
+    s16 Fields[ ( Size - 8 ) / 2 ];
+} TModelPackEffectInfo <optimize=false>;
+
+// Texture pack
+typedef struct
+{
+    SetRandomBackColor();
+    u8 FileType;
+    u8 IsCompressed;
+    u16 UserId;
+    u32 FileSize;
+    u32 Magic;
+    u32 MemorySize;
+
+    u32 TextureCount;
+    struct
+    {
+        local u32 i;
+        local u32 next;
+        for ( i = 0; i < TextureCount; ++i )
+        {   
+            struct
+            {
+                SetRandomBackColor();
+                u32 Offset;
+                next = FTell();
+                FSeek( gBaseOffset + Offset );
+                struct TTexture Value;
+                FSeek( next );
+            } Texture;
+        }
+    } Textures;
+} TTexturePack;
+
+
+// Texture
+enum<u8> ETextureWrapMode
+{
+    Repeat = 0x00,
+    Clamp = 0x01,
+    Repeat2 = 0x0F,
+};
+
+typedef struct
+{
+    SetRandomBackColor();
+    u8 FileType;
+    u8 IsCompressed;
+    u16 UserId;
+    u32 FileSize;
+    u32 Magic;
+    u32 MemorySize;
+    u8 PaletteCount;
+    u8 PaletteFormat;
+    u16 Width;
+    u16 Height;
+    u8 PixelFormat;
+    u8 MipMapCount;
+    u16 MipKL;
+    u8 Reserved;
+    struct
+    {
+        ETextureWrapMode X : 4;
+        ETextureWrapMode Y : 4;
+    } WrapModes;
+    u32 UserTextureId;
+    u32 UserClutId;
+    char UserComment[28];
+    u8 Data[ FileSize - 64 ];
+} TTexture;
+
+// Model
+typedef struct( u32 hasHeader )
+{
+    SetRandomBackColor();
+
+    if ( hasHeader )
+    {
+        u8 FileType;
+        u8 IsCompressed;
+        u16 UserId;
+        u32 FileSize;
+        u32 Magic;
+        u32 MemorySize;
+    }
+
+    u32 RelocationTableOffset;
+    u32 RelocationTableSize;
+    u32 Padding[2];
+    
+    // Hacky fix for field models
+    if ( hasHeader ) 
+    {
+        gBaseOffset = FTell();
+    }
+
+    u32 NodesOffset;
+    u32 MaterialsOffset;
+    u32 MorpherMeshCount;
+    u32 ExtensionsOffset;
+
+    
+    local u32 i;
+    local u32 nodeCount;
+
+    if ( NodesOffset != 0 )
+    {
+        // Read nodes
+        struct
+        {
+            SetRandomBackColor();
+            FSeek( gBaseOffset + NodesOffset );
+            u32 NodeCount;
+            nodeCount = NodeCount;
+            FAlign( 16 );
+            for ( i = 0; i < nodeCount; ++i )
+            {
+                struct TNode Node;
+            } 
+        } Nodes;
+    }
+
+    if ( MaterialsOffset != 0 )
+    {
+        // Read materials
+        struct
+        {
+            SetRandomBackColor();
+            FSeek( gBaseOffset + MaterialsOffset );
+            u32 MaterialCount;
+            for ( i = 0; i < MaterialCount; ++i )
+            {
+                struct TMaterial Material;
+            } 
+        } Materials;
+    }
+
+    if ( ExtensionsOffset != 0 )
+    {
+        // Read extensions
+        struct
+        {
+            SetRandomBackColor();
+            FSeek( gBaseOffset + ExtensionsOffset );
+
+            local u32 extensionStart;
+            local u32 done = false;
+            while ( !done )
+            {
+                struct
+                {
+                    extensionStart = FTell();
+                    u32 ExtensionType;
+                    u32 Size;
+    
+                    if ( ExtensionType == 0 )
+                    {
+                        done = true;
+                        break;
+                    }
+        
+                    switch ( ExtensionType )
+                    {
+                        case MakeFourCC( "NDNM" ):
+                            for ( i = 0; i < nodeCount; ++i )
+                            {
+                                struct TNodeName NodeName;
+                            }
+                            break;
+
+                        default:
+                            // MPOSP, ...
+                            u8 Data[ Size ];
+                            break;
+                    }
+    
+                    FSeek( extensionStart + Size );
+                } Extension;
+            }
+        } Extensions;
+    }
+
+    if ( RelocationTableOffset != 0 )
+    {
+        // Read relocation table
+        SetRandomBackColor();
+        FSeek( gBaseOffset + RelocationTableOffset );
+        u8 RelocationTable[ RelocationTableSize ];
+    }
+
+} TModel;
+
+typedef struct 
+{
+    SetRandomBackColor();
+    u32 Field00; Assert( Field00 == 1, "Node Field00 isnt 1" );
+    u32 Field04; Assert( Field04 == 0, "Node Field04 isnt 0" );
+    s32 Index;
+    s32 ParentIndex;
+    Vector4 Rotation;
+    Vector4 Position;
+    Vector4 Scale;
+    u32 BoundingBoxOffset;
+    u32 GeometryOffset;
+    u32 Field48; Assert( Field48 == 0, "Node Field48 isnt 0" );
+    u32 Field4C; Assert( Field4C == 0, "Node Field4C isnt 0" );
+
+    local u32 end = FTell();
+
+    if ( BoundingBoxOffset != 0 )
+    {
+        SetRandomBackColor();
+        FSeek( gBaseOffset + BoundingBoxOffset );
+        BoundingBox MeshBoundingBox;
+    }
+
+
+    if ( GeometryOffset != 0 )
+    {
+        SetRandomBackColor();
+        FSeek( gBaseOffset + GeometryOffset );
+        struct TGeometry Geometry;
+    }
+
+    FSeek( end );
+} TNode;
+
+typedef struct
+{
+    u32 MeshesOffset;
+
+    if ( MeshesOffset != 0 )
+    {
+        struct
+        {
+            SetRandomBackColor();
+            FSeek( gBaseOffset + MeshesOffset );
+            u16 MeshCount;
+            u16 Field02;
+
+            //if ( Field02 != 0 )
+            //    Printf( "TGeometry: Field02 isn't 0 (%d)\n", Field02 ); 
+
+            local u32 next = FTell();
+            local u32 meshIndex;
+            for ( meshIndex = 0; meshIndex < MeshCount; ++meshIndex )
+            {
+                struct
+                {
+                    u32 MeshOffset;
+                    next = FTell();
+
+                    if ( MeshOffset != 0 )
+                    {
+                        SetRandomBackColor();
+                        FSeek( gBaseOffset + MeshOffset );
+                        u32 MeshType;
+
+                        switch ( MeshType )
+                        {
+                            case 1: struct TMeshType1 Mesh; break;
+                            case 2: struct TMeshType2 Mesh; break;
+                            case 5: struct TMeshType5 Mesh; break;
+                            case 7: struct TMeshType7 Mesh; break;
+                            case 8: struct TMeshType8 Mesh; break;
+                            default: Printf( "Unhandled mesh type: %d\n", MeshType ); break;
+                        }
+                    }
+    
+                    FSeek( next );
+                } Mesh;
+            } 
+        } Meshes;
+    }
+} TGeometry;
+
+typedef struct
+{
+    u16 PacketStreamSize;
+    u16 MaterialId;
+    u32 PacketStreamOffset;
+    FAlign( 16 );
+    
+    if ( PacketStreamOffset != 0 )
+    {
+        FSeek( gBaseOffset + PacketStreamOffset );
+
+        local u32 packetStreamEnd = FTell() + ( PacketStreamSize * 16 );
+
+        struct
+        {
+            local u8 vifCmd;
+
+            while ( FTell() < packetStreamEnd )
+            {
+                vifCmd = ReadByte( FTell() + 3 );
+                if ( vifCmd == 0 && Align( FTell(), 16 ) == packetStreamEnd )
+                {
+                    // Packet stream padding, stop reading
+                    break;
+                }
+
+                struct
+                {
+                    // Each batch consists out a few vif tags and packets
+                    // Header:                  { 0, 0, 1, 1, 1, Short, 3, 6, { TriangleCount, VertexCount, Flags@h, Flags@l } }
+                    // B?           Indices:    { 1, 0, 1, 1, TriangleCount, Byte, 3, 6, { { A, B, C, 0 }, { A, B, C, 0 }, .... } }
+                    // B?           Positions:  { 17, 0, 1, 1, VertexCount, Float, 2, 6, { { X, Y, Z }, { X, Y, Z }, ... } }
+                    // B5 (!B14)    Normals:    { 32, 0, 1, 1, VertexCount, Float, 2, 6, { { X, Y, Z }, { X, Y, Z }, ... } }
+                    // B4           TexCoords:  { 47, 0, 1, 1, VertexCount, Float, 1, 6, { { X, Y }, { X, Y }, ... }
+                    // B11          Colors:     { 85, 0, 1, 1, VertexCount, Byte, 3, 6, { R, G, B, A }, { R, G, B, A }, ... } }
+                    // End:                     { 0x0C, 0, 0x14 }
+
+                    SetRandomBackColor();
+                    local u8 batchDone = false;
+
+                    while ( !batchDone )
+                    {
+                        vifCmd = ReadByte( FTell() + 3 );
+                        
+                        switch ( vifCmd & 0xF0 )
+                        {
+                            case 0x10:
+                                if ( vifCmd != 0x14 ) 
+                                    Printf( "Unexpected 0x10 tag at %08X\n", FTell() );
+
+                                struct TVifTag VifTag; 
+                                break;
+
+                            case 0x60:
+                            case 0x70:
+                                struct TVifPacket VifPacket; 
+
+                                if ( VifPacket.Address == 0 )
+                                {
+                                    //Printf( "Mesh Type 1 Batch Flags: %08X\n", 
+                                    //    (uint)VifPacket.Values[0].Value.Elements[2] | (uint)VifPacket.Values[0].Value.Elements[3] << 16 );
+
+                                    local u32 flg = VifPacket.Values[0].Value.Elements[2];
+                                    //if ( flg != 0x78 && flg != 0x68 && flg != 0x79 && flg != 0x878 && flg != 0x868 && flg != 0x4078 && flg != 0x479 && flg != 0x58 && flg != 0x4878 && flg != 0x858 && flg != 0x69 ) Assert( false );
+                                }
+                                break;
+            
+                            default:
+                                struct TVifTag VifTag; 
+                                break;
+                        }
+            
+                        if ( vifCmd == 0x14  )
+                        {
+                            batchDone = true;                   
+                        }
+                    }
+                } Batch;
+            }
+        } Batches;
+    }
+} TMeshType1;
+
+typedef struct
+{
+    u16 PacketStreamSize;
+    u16 MaterialId;
+    u32 PacketStreamOffset;
+    u32 UsedNodeCount;
+    u16 UsedNodes[ UsedNodeCount ];
+
+    if ( PacketStreamOffset != 0 )
+    {
+        FSeek( gBaseOffset + PacketStreamOffset );
+
+        local u32 packetStreamEnd = FTell() + ( PacketStreamSize * 16 );
+
+        struct
+        {
+            local u8 vifCmd;
+            local u32 usedNodeIndex;
+
+            while ( FTell() < packetStreamEnd )
+            {
+                vifCmd = ReadByte( FTell() + 3 );
+                if ( vifCmd == 0 && Align( FTell(), 16 ) == packetStreamEnd )
+                {
+                    // Packet stream padding, stop reading
+                    break;
+                }
+
+                struct
+                {
+                    for ( usedNodeIndex = 0; usedNodeIndex < UsedNodeCount; ++usedNodeIndex )
+                    {
+                        struct
+                        {                   
+                            SetRandomBackColor();
+                            local u8 batchDone = false;
+
+                            struct TVifPacket MeshHeaderPacket; Assert( MeshHeaderPacket.Command == 6 );
+        
+                            while ( !batchDone )
+                            {
+                                vifCmd = ReadByte( FTell() + 3 );
+                                
+                                switch ( vifCmd & 0xF0 )
+                                {
+                                    case 0x10:
+                                        if ( vifCmd != 0x14 ) 
+                                            Printf( "Unexpected 0x10 tag at %08X\n", FTell() );
+        
+                                        struct TVifTag VifTag; 
+                                        break;
+        
+                                    case 0x60:
+                                    case 0x70:
+                                        struct TVifPacket VifPacket; 
+        
+                                        if ( VifPacket.Address == 0 )
+                                        {
+                                            Printf( "Mesh Type 2 Batch Flags: %08X\n", 
+                                                (uint)VifPacket.Values[0].Value.Elements[2] | (uint)VifPacket.Values[0].Value.Elements[3] << 16 );
+        
+                                            local u32 flg = VifPacket.Values[0].Value.Elements[2];
+                                            if ( flg != 0x78 && flg != 0x68 && flg != 0x79 && flg != 0x878 && flg != 0x868 && flg != 0x4078 && flg != 0x479 && flg != 0x58 ) Assert( false );
+                                        }
+                                        break;
+                    
+                                    default:
+                                        struct TVifTag VifTag; 
+                                        break;
+                                }
+                    
+                                if ( vifCmd == 0x14  )
+                                {
+                                    batchDone = true;                   
+                                }
+                            }
+                        } NodeBatch;
+                    }
+                } Batch;
+            }
+        } Batches;
+    }
+} TMeshType2;
+
+typedef struct
+{
+    u16 Field00;
+    u16 MaterialId;
+    u16 ShapeCount;
+    u16 Field06;
+    u32 Field08;
+    u16 TriangleCount;
+    u16 VertexCount;
+    u32 Flags;
+    FAlign( 16 );
+
+
+    //Printf( "Type 5 Flags: %08X\n", Flags );
+
+    struct
+    {
+        SetRandomBackColor();
+        local u32 triangleIndex;
+        for ( triangleIndex = 0; triangleIndex < TriangleCount; ++triangleIndex )
+        {
+            struct
+            {
+                u16 A;
+                u16 B;
+                u16 C;
+            } Triangle;
+        }
+
+        FAlign( 16 );
+    } Triangles;
+
+    local u32 shapeIndex = 0;
+
+    struct
+    {
+        for ( shapeIndex = 0; shapeIndex < ShapeCount; ++shapeIndex )
+        {
+            SetRandomBackColor();
+            struct
+            {
+                Vector3 Positions[ VertexCount ];
+                FAlign( 16 );
+                Vector3 Normals[ VertexCount ];
+                FAlign( 16 );
+            } Shape;
+        }
+
+        for ( shapeIndex = 0; shapeIndex < ShapeCount; ++shapeIndex )
+        {
+            SetRandomBackColor();
+            struct
+            {
+                Vector2 TexCoords[ VertexCount ];
+                FAlign( 16 );
+            } ShapeTexCoords;
+        }
+    } Shapes;
+
+} TMeshType5;
+
+typedef struct
+{
+    u16 Field00;
+    u16 MaterialId;
+    u32 Field04;
+    u32 Field08;
+    u16 TriangleCount;
+    u16 VertexCount;
+    u32 Flags;
+    u16 UsedNodeCount;
+    u16 UsedNodes[ UsedNodeCount ];
+    FAlign( 16 );
+
+    //Printf( "Vertex Count: %d Triangle Count: %d\n", VertexCount, TriangleCount );
+
+    //Printf( "Type 7 Flags: %08X Used Node Count: %d\n", Flags, UsedNodeCount );
+
+    struct
+    {
+        SetRandomBackColor();
+        local u32 triangleIndex;
+        for ( triangleIndex = 0; triangleIndex < TriangleCount; ++triangleIndex )
+        {
+            struct
+            {
+                u16 A;
+                u16 B;
+                u16 C;
+            } Triangle;
+        }
+
+        FAlign( 16 );
+    } Triangles;
+
+    local u32 curVertexCount = 0;
+
+    struct
+    {
+        while ( curVertexCount < VertexCount )
+        {    
+            struct
+            {
+                struct TVifPacket MeshHeaderPacket; Assert( MeshHeaderPacket.Command == 6 );
+                curVertexCount += MeshHeaderPacket.Values[0].Value.Elements[1];
+    
+                local u32 batchIndex;
+                local u8 batchDone = false;
+                local u8 vifCmd;
+        
+                for ( batchIndex = 0; batchIndex < UsedNodeCount; ++batchIndex )
+                {
+                    Printf( "%d\n", batchIndex );
+                    struct
+                    {
+                        SetRandomBackColor();
+        
+                        batchDone = false;
+                        while ( !batchDone )
+                        {
+                            vifCmd = ReadByte( FTell() + 3 );
+        
+                            if ( vifCmd > 0x20 && vifCmd < 0x60 )
+                            {
+                                Printf( "Hit invalid vif cmd: %08X\n", vifCmd );
+                                batchDone = true;     
+                                FAlign( 16 );              
+                                break;
+                            }
+                            
+                            switch ( vifCmd & 0xF0 )
+                            {
+                                case 0x60:
+                                case 0x70:
+                                    struct TVifPacket VifPacket; 
+
+                                    Printf( "   Address: %08X Size: %08X Count: %d\n", VifPacket.Address * 8, VifPacket.size, VifPacket.Count );
+                                    break;
+                
+                                default:
+                                    struct TVifTag VifTag; 
+                                    break;
+                            }
+            
+                            if ( vifCmd == 0x14 || vifCmd == 0x17 )
+                            {
+                                batchDone = true;                   
+                            }
+                        }
+
+ 
+                    } NodeBatch <optimize=false>;
+                }
+    
+                struct TVifPacket TexCoordsPacket;  Assert( TexCoordsPacket.Command == 6 );
+                struct TVifTag TexCoordsKickTag;    Assert( TexCoordsKickTag.Command == 0x17 );
+                struct TVifTag FlushTag;            Assert( FlushTag.Command == 0x10 );
+
+                Printf( "   Address: %08X Size: %08X Count: %d (TexCoord)\n", TexCoordsPacket.Address * 8,
+                                        TexCoordsPacket.size, TexCoordsPacket.Count);
+                FAlign( 16 );
+            } Batch <optimize=false>;
+        }
+    } Batches;
+
+    if ( ( Flags & 0x00001000 ) == 0x00001000 )
+    {
+        Vector2 TexCoords2[ VertexCount ];
+    }
+    
+} TMeshType7;
+
+typedef struct
+{
+    u16 Field00;
+    u16 MaterialId;
+    u32 Field04;
+    u32 Field08;
+    u16 TriangleCount;
+    u16 VertexCount;
+    u32 Flags;
+    FAlign( 16 );
+
+    //Printf( "Type 8 Flags: %08X\n", Flags );
+
+    struct
+    {
+        SetRandomBackColor();
+        local u32 triangleIndex;
+        for ( triangleIndex = 0; triangleIndex < TriangleCount; ++triangleIndex )
+        {
+            struct
+            {
+                u16 A;
+                u16 B;
+                u16 C;
+            } Triangle;
+        }
+
+        FAlign( 16 );
+    } Triangles;
+
+    struct
+    {
+        local u32 batchIndex;
+        local u8 batchDone = false;
+        local u8 vifCmd;
+        local u32 curVertexCount = 0;
+
+        while ( curVertexCount < VertexCount )
+        {
+            struct
+            {
+                SetRandomBackColor();
+
+                struct TVifPacket MeshHeaderPacket; Assert( MeshHeaderPacket.Command == 6 );
+                curVertexCount += MeshHeaderPacket.Values[0].Value.Elements[0];
+
+                batchDone = false;
+                while ( !batchDone )
+                {
+                    // Mesh header packet contains material id
+
+                    vifCmd = ReadByte( FTell() + 3 );
+
+                    if ( vifCmd > 0x20 && vifCmd < 0x60 )
+                    {
+                        Printf( "Hit invalid vif cmd: %08X\n", vifCmd );
+                        batchDone = true;     
+                        FAlign( 16 );              
+                        break;
+                    }
+                    
+                    switch ( vifCmd & 0xF0 )
+                    {
+                        case 0x60:
+                        case 0x70:
+                            struct TVifPacket VifPacket; 
+                            break;
+        
+                        default:
+                            struct TVifTag VifTag; 
+                            break;
+                    }
+    
+                    if ( vifCmd == 0x10 )
+                    {
+                        batchDone = true;
+                        FAlign( 16 );                
+                    }
+                }
+            } Batch <optimize=false>;
+        }
+    } Batches <optimize=false>;
+
+    if ( ( Flags & 0x00001000 ) == 0x00001000 )
+    {
+        Vector2 TexCoords2[ VertexCount ];
+    }
+    
+} TMeshType8;
+
+typedef struct
+{
+    u16 Immediate;
+    u8 Count;
+    u8 Command;
+} TVifTag;
+
+enum<u8> EVifUnpackElementFormat
+{
+    EVifUnpackElementFormat_Float = 0x0,
+    EVifUnpackElementFormat_Short = 0x1,
+    EVifUnpackElementFormat_Byte = 0x2,
+    EVifUnpackElementFormat_RGBA5A1 = 0x3
+};
+
+// TVifPacket: Vif unpack tag + associated data
+typedef struct
+{
+    // Vif unpack tag header
+    u16 Address : 9; // Multiply by 8 to get true address
+    u8 Unused : 5;
+    u8 Sign : 1;
+    u8 Flag : 1;
+    u8 Count;
+    EVifUnpackElementFormat ElementFormat : 2;
+    u8 ElementCount : 2;
+    u8 Command : 4;
+
+    // Packet data
+    local u32 valueIndex = 0;
+    local u32 elementCount = ElementCount + 1;
+
+    struct
+    {
+        for ( valueIndex = 0; valueIndex < Count; ++valueIndex )
+        {
+            struct
+            {
+                switch ( ElementFormat )
+                {
+                    case EVifUnpackElementFormat_Float: f32 Values[ elementCount ]; break;
+                    case EVifUnpackElementFormat_Short: 
+                        if ( Sign ) s16 Elements[ elementCount ];
+                        else        u16 Elements[ elementCount ];
+                        break;
+                    case EVifUnpackElementFormat_Byte: 
+                        if ( Sign ) s8 Elements[ elementCount ];
+                        else        u8 Elements[ elementCount ];
+                        break;
+                }
+            } Value;
+        }
+    } Values;
+
+    local u32 size = sizeof( Values );
+} TVifPacket;
+
+typedef struct
+{
+    SetRandomBackColor();
+    u32 Id;
+    u32 Flags;
+    
+    local u32 i;
+    for ( i = 0; i < 31; i++ )
+    {
+        if ( Flags & ( 1 << i ) )
+        {
+            switch (i)
+            {
+                case 16:
+                    u32 Color1;
+                    break;
+                case 17:
+                    u32 Color2;
+                    break;
+                case 18:
+                    u32 TextureId;
+                    break;
+                case 19:
+                    f32 FloatArray1[5];
+                    break;
+                case 20:
+                    u32 Color3;
+                    break;
+                case 21:
+                    u16 ShortArray[2];
+                    break;
+                case 22:
+                    f32 FloatArray2[5];
+                    break;
+                case 23:
+                    u32 Color4;
+                    break;
+                case 25:
+                    f32 Float1;
+                    break;
+                case 26:
+                    f32 FloatArray3[2];
+                    break;
+                default:
+                    Assert( false );
+                    break;
+            }
+        }
+    }
+} TMaterial;
+
+
+typedef struct
+{
+    SetRandomBackColor();
+    string Name;
+    FAlign( 4 );
+    u32 Id;
+} TNodeName;
+
+// Field model
+typedef struct
+{
+    SetRandomBackColor();
+    u32 FileType;
+    u32 Magic;
+    u32 DataSize;
+    u32 RelocationTableOffset;
+    u32 Field10;
+    u32 ResourceListCount;
+    u32 ResourceListOffset;
+    u32 Field1C;
+
+    if ( ResourceListOffset != 0 )
+    {
+        FSeek( gBaseOffset + ResourceListOffset );
+        struct TFieldResourceList ResourceLists[ ResourceListCount ];
+    }
+} TFieldScene;
+
+typedef struct
+{
+    SetRandomBackColor();
+    u32 Type;
+    u32 Count;
+    u32 Offset;
+    local u32 next = FTell();
+
+    if ( Offset != 0 )
+    {
+        FSeek( gBaseOffset + Offset );
+        struct TFieldResource Resource[ Count ];
+    }
+
+    FSeek( next );
+} TFieldResourceList <optimize=false>;
+
+typedef struct
+{
+    SetRandomBackColor();
+    u32 Id;
+    u32 Type;
+    StringOffset Name( gBaseOffset );
+    u32 Field0C;
+    u32 TransformOffset;
+    u32 Field14;
+    u32 Field18;
+    u32 Field1C;
+    u32 DataOffset;
+
+    local u32 resourceEnd = FTell();
+
+    if ( DataOffset != 0 )
+    {
+        FSeek( gBaseOffset + DataOffset );
+        switch ( Type )
+        {
+            case 2:
+                TModel Model( false );
+                break;
+        }
+    }
+
+    FSeek( resourceEnd );
+} TFieldResource <optimize=false>;
+
+
+// Read file
+struct
+{
+    local u32 chunkStart;
+    local u32 chunkType;
+    local u32 chunkSize;
+
+    while ( !FEof() )
+    {
+        chunkStart = FTell();
+        chunkSize = ReadInt( chunkStart + 4 );
+        chunkType = ReadInt( chunkStart + 8 );
+
+        if ( chunkSize == MakeFourCC( "FLD1" ) ||
+             chunkSize == MakeFourCC( "FLD2" ) )
+        {
+            struct TFieldScene FieldScene;
+            break;
+        }
+
+        gBaseOffset = chunkStart;
+
+        switch ( chunkType )
+        {
+            case MakeFourCC( "PIB0" ):
+                struct TModelPackInfo ModelPackInfo;
+                break;
+
+            case MakeFourCC( "TXP0" ):
+                struct TTexturePack TexturePack;
+                break;
+
+            case MakeFourCC( "TMX0" ):
+                SetRandomBackColor();
+                struct TTexture Texture;
+                break;
+
+            case MakeFourCC( "MD00" ):
+                struct TModel Model( true );
+                break;
+
+            default:
+                struct TUnknownChunk UnknownChunk;
+                break;
+        }
+
+        FSeek( chunkStart + chunkSize );
+        FAlign( 64 );
+    }
+} File;

@@ -1,0 +1,1003 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: sasr_zif.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse Sonic All Stars Racing zif files
+//  Category: 
+// File Mask: *.zif
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//---------------------------------------------
+// Script global variables & functions
+//---------------------------------------------
+local uint32 gBaseOffset[32];
+local uint32 gBaseOffsetIndex = 0;
+local uint32 gSavedPos[32];
+local uint32 gSavedPosIndex = 0;
+
+//
+// Offset
+//
+void PushBaseOffset()
+{
+    local long base = FTell();
+    gBaseOffset[++gBaseOffsetIndex] = base;
+
+    Printf( "push base -> %08X\n", base );
+}
+
+void PopBaseOffset()
+{
+    gBaseOffsetIndex--;
+
+    Printf( "pop base -> %08X\n", gBaseOffset[gBaseOffsetIndex] );
+}
+
+void SeekToOffsetValue( uint offset )
+{
+    FSeek( offset + gBaseOffset[gBaseOffsetIndex] );
+}
+
+struct Offset_t;
+
+void SeekToOffset( Offset_t& offset )
+{
+    FSeek( offset.Value + offset.Base );
+}
+
+uint32 OffsetToAbs( Offset_t& offset )
+{
+    return offset.Value + gBaseOffset[gBaseOffsetIndex] ;
+}
+
+//
+// Saving file position
+//
+void PushFPos()
+{
+    gSavedPos[++gSavedPosIndex] = FTell();
+}
+
+void PopFPos()
+{
+    FSeek( gSavedPos[gSavedPosIndex--] );
+}
+
+//------------------------------------------------
+// Types
+//------------------------------------------------
+
+typedef uint32 ZIGOffset_t <read=ReadZIGOffset>;
+
+typedef struct
+{
+    local uint32 Base = gBaseOffset[gBaseOffsetIndex];
+    uint32 Value;
+
+} Offset_t <read=ReadOffset>;
+
+typedef struct( uint32 base )
+{
+    local uint32 Base = base;
+    uint32 Value;
+} VarOffset_t;
+
+typedef struct
+{
+	// 0x00
+	char FourCC[4];
+	
+	// 0x04
+	uint32 ChunkSize; // including chunk header and alignment
+	
+	// 0x08
+	uint32 ContentSize; // excluding chunk header and alignment
+	
+	// 0x0C
+	uint32 Field0C; // always 0x44332211	
+} ForestChunkHeader_t <bgcolor=0x602c25>;
+
+struct ForestEntry_t;
+
+typedef struct
+{
+	// 0x00 
+	uint32 ForestCount;
+	ForestEntry_t Entries[ForestCount];
+} ForestList_t <bgcolor=0x823931, optimize=false>;
+
+struct ForestHeader_t;
+
+struct StringOffset_t;
+
+typedef struct
+{		
+	// 0x00
+	uint32 Hash; // hash maybe?
+	
+	// 0x04
+	StringOffset_t Name;
+	
+	// 0x08
+    struct
+    {
+        Offset_t Offset;
+        
+        PushFPos();
+        SeekToOffset( Offset );
+
+        PushBaseOffset();
+        ForestHeader_t Value;
+        PopBaseOffset();
+
+        PopFPos();
+        
+    } Forest;
+	
+	// sometimes 0
+	uint32 Field0C;
+} ForestEntry_t <bgcolor=0xa3473c, optimize=false>;
+
+struct ForestContentType0Header_t;
+struct Texture_t;
+struct ForestContentType2Header_t;
+
+typedef struct 
+{
+	// 0x00
+	uint32 ContentType0Count; // count
+	
+	// 0x04
+    struct
+    {
+        // Read array offset
+	    Offset_t Offset; // offset to array of offsets to ForestContentType0Header_t       
+        PushFPos();
+
+        // Read array
+        SeekToOffset( Offset );
+        local int i = 0;
+        for ( i = 0; i < ContentType0Count; i++ )
+        {
+            struct
+            {
+                // Read offset
+                SetBackColor( 0xb25c98 );
+                Offset_t Offset;
+                PushFPos();
+                
+                // Read value at offset
+                SeekToOffset( Offset );
+                ForestContentType0Header_t Value;
+                
+                // Restore file position to read next offset
+                PopFPos();
+            } Item;
+        }
+        
+        // Restore file position
+        PopFPos();
+
+    } ContentType0Array;
+	
+	// 0x08
+	uint32 TextureCount; // count
+	
+	// 0x0C
+    struct
+    {
+	    Offset_t Offset; // offset to array of offsets to Texture_t
+        PushFPos();
+
+        // Read array
+        SeekToOffset( Offset );
+        local int i = 0;
+        for ( i = 0; i < TextureCount; i++ )
+        {
+            struct
+            {
+                // Read offset
+                SetBackColor( 0x5c5c84 );
+                Offset_t Offset;
+                PushFPos();
+                
+                // Read value at offset
+                SeekToOffset( Offset );
+                Texture_t Value;
+                
+                // Restore file position to read next offset
+                PopFPos();
+            } Item;
+        }
+        
+        // Restore file position
+        PopFPos();
+    } Textures;
+	
+	// 0x10
+	uint32 ContentType2Count; // count
+	
+	// 0x14
+    struct
+    {
+	    Offset_t Offset; // offset to array of ForestContentType2Header_t
+        PushFPos();
+
+        // Read array
+        SeekToOffset( Offset );
+        ForestContentType2Header_t Value[ ContentType2Count ];
+        
+        // Restore file position
+        PopFPos();
+    } ContentType2Array;
+	
+	// 0x18
+	uint32 ContentType3Count; // count
+	
+	// 0x1C
+    struct
+    {
+	    Offset_t Offset; // offset to ?
+    } ContentType3Array;
+	
+	// 0x20 
+	uint32 Field20; // 0?
+} ForestHeader_t <bgcolor=0xc64649, optimize=false>;
+
+struct Node_t;
+struct ForestContentType9_t;
+struct Camera_t;
+struct AnimationEntry_t;
+
+typedef struct
+{
+    float X;
+    float Y;
+    float Z;
+    float W;
+} Vector4_t;
+
+typedef struct
+{
+	// 0x00 
+	uint32 Field00; // 0?
+	
+	// 0x04
+	uint32 Hash; // hash?
+	
+	// 0x08
+	uint32 NodeCount; // count
+	
+	// 0x0C
+    struct
+    {
+	    Offset_t Offset; // offset to array of offsets to Node_t
+        PushFPos();
+
+        // Read array
+        SeekToOffset( Offset );
+        local int i = 0;
+        for ( i = 0; i < NodeCount; i++ )
+        {
+            struct
+            {
+                // Read offset
+                SetBackColor( 0x7f467c );
+                Offset_t Offset;
+                PushFPos();
+                
+                // Read value at offset
+                SeekToOffset( Offset );
+                Node_t Value;
+                
+                // Restore file position to read next offset
+                PopFPos();
+            } Item;
+        }
+        
+        // Restore file position
+        PopFPos();
+    } Nodes;
+	
+	// 0x10
+    struct 
+    {
+       	Offset_t Offset;
+
+        PushFPos();
+        SeekToOffset( Offset );
+
+        SetBackColor( 0xd389cf );     
+        Vector4_t Value[ NodeCount ];
+
+        PopFPos();
+
+    } NodeTranslations;
+	
+	// 0x14
+    struct 
+    {
+       	Offset_t Offset; 
+
+        PushFPos();
+        SeekToOffset( Offset );
+
+        SetBackColor( 0xbc7ab9 );
+        Vector4_t Value[ NodeCount ];
+
+        PopFPos();
+
+    } NodeRotations;
+	
+	// 0x18
+    struct 
+    {
+       	Offset_t Offset; 
+
+        PushFPos();
+        SeekToOffset( Offset );
+
+        SetBackColor( 0xb791b5 );
+        Vector4_t Value[ NodeCount ];
+
+        PopFPos();
+
+    } NodeScales;
+	
+	// 0x1C
+	uint32 Field1C; // count
+	
+	// 0x20
+	uint32 ContentType9Count; // count
+	
+	// 0x24
+    struct
+    {
+	    Offset_t Offset; // offset to array of offsets to Camera_t
+        PushFPos();
+
+        // Read array
+        SeekToOffset( Offset );
+        local int i = 0;
+        for ( i = 0; i < ContentType9Count; i++ )
+        {
+            struct
+            {
+                // Read offset
+                SetBackColor( 0x9c9e53 );
+                Offset_t Offset;
+                PushFPos();
+                
+                // Read value at offset
+                SeekToOffset( Offset );
+                ForestContentType9_t Value;
+                
+                // Restore file position to read next offset
+                PopFPos();
+            } Item;
+        }
+        
+        // Restore file position
+        PopFPos();
+    } ContentType9;
+	
+	// 0x28
+	uint32 Field28; // count
+	
+	// 0x2C
+	Offset_t Field2C; // offset to ?
+	
+	// 0x30
+	uint32 CameraCount; // count
+	
+	// 0x34
+    struct
+    {
+	    Offset_t Offset; // offset to array of offsets to Camera_t
+        PushFPos();
+
+        // Read array
+        SeekToOffset( Offset );
+        local int i = 0;
+        for ( i = 0; i < CameraCount; i++ )
+        {
+            struct
+            {
+                // Read offset
+                SetBackColor( 0x9c9e53 );
+                Offset_t Offset;
+                PushFPos();
+                
+                // Read value at offset
+                SeekToOffset( Offset );
+                Camera_t Value;
+                
+                // Restore file position to read next offset
+                PopFPos();
+            } Item;
+        }
+        
+        // Restore file position
+        PopFPos();
+    } Cameras;
+	
+	// 0x38
+	uint32 Field38; // count
+	
+	// 0x3C
+	Offset_t Field3C; // offset to ?
+	
+	// 0x40
+	uint32 Field40; // count
+	
+	// 0x44
+	Offset_t Field44; // offset to ?
+	
+	// 0x48
+	Offset_t Field48; // offset to ?
+	
+	// 0x4C
+	uint32 AnimationCount; // count
+	
+	// 0x50
+    struct
+    {
+	    Offset_t Offset; // offset to array of AnimationEntry_t
+        PushFPos();
+
+        // Read array
+        SeekToOffset( Offset );
+        AnimationEntry_t Value[ AnimationCount ];
+        
+        // Restore file position
+        PopFPos();
+    } Animations;
+	
+	// 0x54
+	uint32 Field54; // count
+	
+	// 0x58
+    struct
+    {
+	    Offset_t Offset;
+        PushFPos();
+
+        SeekToOffset( Offset );
+        uint32 Value[Field54];
+        
+        // Restore file position
+        PopFPos();
+    } Field58;
+	
+	// 0x5C
+	uint32 Field5C; // count
+	
+	// 0x60
+    struct
+    {
+	    Offset_t Offset;
+        PushFPos();
+
+        SeekToOffset( Offset );
+        uint32 Value[Field54 * 3];
+        
+        // Restore file position
+        PopFPos();
+    } Field60;
+
+} ForestContentType0Header_t <bgcolor=0x8c3271>;
+
+typedef struct 
+{
+	// 0x00
+	StringOffset_t Name; // offset to a string
+	
+	// 0x04
+	uint32 Field04; // 0
+	
+	// 0x08
+	ZIGOffset_t Offset; // offset into .zig file
+	
+	// 0x0C
+	uint32 Field0C; // 0
+} Texture_t <bgcolor=0x1f1f60>;
+
+typedef struct 
+{
+	// 0x00
+	uint32 Hash;
+	
+	// 0x04
+	uint32 Count;
+	
+	// 0x08
+    struct
+    {
+        Offset_t Offset; // array of uint32 hashes?
+        
+        PushFPos();
+
+        SeekToOffset( Offset );
+        uint32 Value[Count];
+
+        PopFPos();
+
+    } Hashes;
+    
+
+} ForestContentType2Header_t <bgcolor=0x1e4760, optimize=false>;
+
+typedef struct ForestContentType3Header_t
+{
+	// reserved
+};
+
+typedef struct
+{
+    float Field00;
+    Offset_t Field04;
+    uint16 Field08;
+    uint16 Field0A;
+    float Field0C;
+    uint32 Field10;
+    uint16 Field14;
+    uint16 Field16;
+    float Field18;
+    Offset_t Field1C;
+    uint16 Field20;
+    uint16 Field22;
+    uint32 Field24;
+    uint32 Field28;
+
+} Group_t;
+
+struct Shape_t;
+
+typedef struct 
+{
+	// 0x02
+	uint16 ParentId;
+	
+	// 0x00
+	uint16 Id;
+	
+	// 0x04
+	uint16 Field04; // number of children?
+	
+	// 0x06
+	uint16 Type; 
+	
+	// 0x08
+	uint32 Hash;
+	
+	// 0x0C
+	StringOffset_t Name;
+	
+	// 0x10
+	uint32 Field10; // 0
+
+    SetBackColor( 0x107211 );
+    if ( Type == 8 )
+    {
+        struct
+        {
+            Offset_t Offset;
+            
+            PushFPos();
+    
+            SeekToOffset( Offset );
+            Shape_t Value;
+    
+            PopFPos();
+    
+        } Shape;
+    }
+    else if ( Type == 0x10 ) // group
+    {
+        // 0x14
+        uint32 Field14;
+
+        if ( Field14 > 0 )
+        {
+            struct
+            {
+                Offset_t Offset;
+                
+                PushFPos();
+        
+                SeekToOffset( Offset );
+                Group_t Value;
+        
+                PopFPos();
+        
+            } Group;
+           
+            float Field1C[21];
+        }
+    }
+
+} Node_t <bgcolor=0x34540b>;
+
+typedef struct
+{
+    float Matrix[ 4 * 4 ];
+    float Field40[ 9 ];
+    uint16 Field64;
+    uint16 Field66;
+    uint32 Field68;
+    uint32 Field6C;
+
+} ForestContentType9_t;
+
+typedef struct
+{
+	// 0x00
+	uint32 Field00;
+	
+	// 0x04
+	float Field04;
+	
+	// 0x08
+	float Field08;
+	
+	// 0x0C
+	float Field0C;
+	
+	// 0x10
+	float Field10;
+} Camera_t <bgcolor=0x646627>;
+
+struct Animation_t;
+
+typedef struct  // animation?
+{
+	// 0x00
+    struct
+    {
+        Offset_t Offset;
+        
+        PushFPos();
+
+        SeekToOffset( Offset );
+        Animation_t Animation;
+
+        PopFPos();
+
+    } Animation;
+	
+	// 0x04
+	StringOffset_t Name;
+	
+	// 0x08
+	uint32 Hash;
+} AnimationEntry_t <optimize=false>;
+
+struct NodeAnimationTrack_t;
+
+typedef struct // animation?
+{
+	// 0x00
+	uint32 Field00; // count
+	
+	// 0x04
+	uint32 FrameCount; // count
+	
+	// 0x08
+	uint32 NodeCount; // count
+	
+	// 0x0C
+	uint32 Field0C; // 0?
+	
+	// 0x10
+	uint32 Field10; // 0?
+	
+	// 0x14
+	Offset_t DataOffset; // offset
+    
+    /*
+    struct
+    {
+        Offset_t Offset;
+        
+        PushFPos();
+
+        SeekToOffset( Offset );
+        char Value[  
+
+        PopFPos();
+
+    } Data;
+    */
+
+    // 0x16
+    char Field16; // count
+
+    // 0x17
+    char Field17; // count
+
+	// 0x18
+	char Field18; // count
+
+    // 0x19
+    char Field19; // count
+
+    if ( Field00 == 6 )
+    {
+        local uint32 length = 0;
+        if ( Field10 == 2 )
+        {
+            length = 24;
+        }
+        else
+        {
+            length = 4;
+        }
+
+        uint16 UnknownData[ length ];
+    }
+
+    local uint32 dataOffsetAbs = OffsetToAbs( DataOffset );
+    local uint32 trackCount = 0;
+    while ( ReadUShort() != 0 && FTell() <= dataOffsetAbs )
+    {
+        NodeAnimationTrack_t Track;
+        trackCount++;
+    }
+
+    /*
+    local uint32 keyFrameTotal = 0;
+    local uint32 trackIndex = 0;
+    for ( trackIndex = 0; trackIndex < trackCount; trackIndex++ )
+    {
+        keyFrameTotal += Track[trackIndex].KeyFrameCount;
+    }
+
+    PushFPos();
+
+    SeekToOffset( DataOffset );
+    char Data[ keyFrameTotal * 0x2C ];
+
+    PopFPos();
+    */
+
+} Animation_t <bgcolor=0xad0ca8, optimize=false>;
+
+typedef struct 
+{
+    uint16 EndTime;
+    uint16 KeyFrameCount;
+    uint16 KeyFrameTimes[ KeyFrameCount ];
+} NodeAnimationTrack_t <optimize=false>;
+
+struct Mesh_t;
+
+typedef struct
+{
+	// 0x00
+	float Field00[4];
+	
+	// 0x10
+	uint32 MeshCount; // count
+	
+	// 0x14
+    struct
+    {
+	    Offset_t Offset; // offset to array of offsets to Mesh_t
+        PushFPos();
+
+        // Read array
+        SeekToOffset( Offset );
+        local int i = 0;
+        for ( i = 0; i < MeshCount; i++ )
+        {
+            struct
+            {
+                // Read offset
+                SetBackColor( 0x9c9e53 );
+                Offset_t Offset;
+                PushFPos();
+                
+                // Read value at offset
+                SeekToOffset( Offset );
+                Mesh_t Value;
+                
+                // Restore file position to read next offset
+                PopFPos();
+            } Mesh;
+        }
+        
+        // Restore file position
+        PopFPos();
+    } Meshes;
+	
+	// 0x18
+	uint32 Field18; // 0?
+	
+	// 0x1C
+	Offset_t Field1C; // offset
+	
+	// 0x20
+	Offset_t Field20; // offset
+	
+	// 0x24
+	StringOffset_t Name; // offset
+} Shape_t <bgcolor=0x107172>;
+
+struct MeshVertexBufferDescriptor_t;
+
+typedef struct
+{
+	// 0x00
+	float Field00[24];
+	
+	// 0x60
+	uint32 Field60[8];
+	
+	// 0x80
+	uint32 Field80;
+	
+	// 0x84
+	uint32 Field84;
+	
+	// 0x88
+	Offset_t Field88; // offset
+	
+	// 0x8C
+	uint32 ElementCount; // count
+
+    //local int hasExternalData = ReadUInt( startof(this) + 0xA0 ) == 3;
+    local int hasExternalData = true;
+	
+	// 0x90
+    if ( hasExternalData )
+	    ZIGOffset_t ElementBufferOffset; // offset into .zig
+    else
+        Offset_t ElementBufferOffset;
+	
+	// 0x94
+	uint32 Field94; // 0
+	
+	// 0x98
+    struct
+    {
+	    Offset_t Offset; // offset to array of offsets to Mesh_t
+        PushFPos();
+
+        SeekToOffset( Offset );
+        MeshVertexBufferDescriptor_t Value( hasExternalData );
+        
+        // Restore file position
+        PopFPos();
+    } VertexBufferDescriptor;
+	
+	// 0x9C
+	uint32 Field9C; // count
+	
+	// 0x100
+	uint32 Field100; // count
+	
+	// 0x104
+	uint32 Field104; // -1?
+} Mesh_t <bgcolor=0x16a0a3>;
+
+typedef struct( int hasExternalData )
+{
+	// 0x00
+	Offset_t Field00; // offset
+	
+	// 0x04
+	uint32 Field04; // 0?
+	
+	// 0x08
+	uint32 Field08; // count
+	
+	// 0x0C
+	uint32 VertexStride; // count
+	
+	// 0x10
+	uint32 VertexCount;
+	
+	// 0x14
+    if ( hasExternalData )
+	    ZIGOffset_t VertexBufferOffset;
+    else
+        Offset_t VertexBufferOffset;
+	
+	// 0x18 
+	uint32 Field18; // 0?
+	
+	// 0x1C
+	uint32 Field1C; // 0?
+	
+	// 0x20
+	Offset_t Field20; // offset
+	
+	// 0x24
+	uint32 Field24; // count
+	
+	// 0x28
+	Offset_t Field28; // offset
+	
+	// 0x2C
+	uint32 Field2C; // 0?
+	
+	// 0x30
+	uint32 Field30; // 0?
+	
+	// 0x34
+	uint32 Field34; // 0?
+}  MeshVertexBufferDescriptor_t <bgcolor=0x17c1c4>;
+
+//------------------------------------------------
+// Display-time read functions
+//------------------------------------------------
+string ReadOffset( Offset_t& offset )
+{
+    local char buffer[255];
+    SPrintf( buffer, "0x%08X (0x%08X)", offset.Value, offset.Value + offset.Base );
+
+    return buffer;
+}
+
+string ReadZIGOffset( ZIGOffset_t& offset )
+{
+    local char buffer[255];
+    SPrintf( buffer, "0x%08X (0x%08X)", offset, offset + 4 );
+
+    return buffer;
+}
+
+typedef struct
+{
+    Offset_t Offset;
+    
+    local long temp = FTell();
+    
+    SeekToOffset( Offset );
+    string String;
+
+    FSeek( temp );
+} StringOffset_t <read=ReadStringOffset, optimize=false>;
+
+string ReadStringOffset( StringOffset_t& stringOffset )
+{
+    return stringOffset.String;
+}
+
+//---------------------------------------------
+// Parse file structure
+//---------------------------------------------
+
+SetBackColor( 0x4f2520 );
+uint32 FileSize;
+
+struct
+{
+    while ( !FEof() )
+    {
+        PushBaseOffset();
+
+        struct
+        {
+            ForestChunkHeader_t Header;
+            
+            PushBaseOffset();
+            switch ( Header.FourCC )
+            {
+                case "FORE":
+                ForestList_t Contents;
+                break;
+            }
+            PopBaseOffset();
+
+            SeekToOffsetValue( Header.ChunkSize );
+        }
+        Chunk;
+
+        PopBaseOffset();
+    }
+} Chunks;

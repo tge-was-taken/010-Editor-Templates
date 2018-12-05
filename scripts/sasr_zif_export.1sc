@@ -1,0 +1,178 @@
+//------------------------------------------------
+//--- 010 Editor v7.0 Script File
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+//   History: 
+//------------------------------------------------
+
+void FileCloseIndexed( int index )
+{
+    FileSelect( index );
+    FileClose();
+}
+
+void FileSaveIndexed( int index, string fileName )
+{
+    FileSelect( index );
+    FileSave( fileName );
+}
+
+//
+// Forward declare variables
+// because locals don't work apparently :c
+//
+int forestIndex;
+int forestCount;
+string forestName;
+int contentType0Index;
+int contentType0Count;
+int nodeIndex;
+int nodeCount;
+int nodeType;
+string nodeName;
+int meshCount;
+int meshIndex;
+string shapeName;
+int elementCount;
+int elementBufferOffset;
+int vertexStride;
+int vertexCount;
+int vertexBufferOffset;
+int vertexIndex;
+int elementIndex;
+float x;
+float y;
+float z;
+short a;
+short b;
+short c;
+int lineIndex = 0;
+int elementBaseIndex = 1;
+int hasExternalData;
+
+//
+// Open .zig file
+//
+//string zifFileName = InputOpenFileName( "Select .zif", "(*.zif)" );
+string zifFileName = GetFileName();
+string zigFileName = FileNameSetExtension( zifFileName, ".zig" );
+string objFileName = FileNameSetExtension( zifFileName, ".obj" );
+
+int zifFileHandle = FileOpen( zifFileName );
+int zigFileHandle = FileOpen( zigFileName );
+int objFileHandle = FileNew( "", false );
+
+// Open zif
+FileSelect( zifFileHandle );
+RunTemplate( "../templates/sasr_zif.bt" );
+
+forestCount = Chunks.Chunk[0].Contents.ForestCount;
+
+for ( forestIndex = 0; forestIndex < forestCount; forestIndex++ )
+{
+    forestName = Chunks.Chunk[0].Contents.Entries[ forestIndex ].Name.String;
+    contentType0Count = Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Count;
+
+    Printf( "Forest: %s\n", forestName );
+    FPrintf( objFileHandle, "# Forest: %s\n", forestName );
+
+    for ( contentType0Index = 0; contentType0Index < contentType0Count; contentType0Index++ )
+    {
+        Assert( exists(Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.NodeCount),
+                "Node count doesn't exist" );
+
+        nodeCount = Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.NodeCount;
+    
+        for ( nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++ )
+        {
+            Assert( exists(Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.Nodes.Item[ nodeIndex ].Value.Type),
+                "Node type doesn't exist" );
+
+            nodeType = Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.Nodes.Item[ nodeIndex ].Value.Type;
+
+            if ( nodeType == 8 )
+            {
+                nodeName = Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.Nodes.Item[ nodeIndex ].Value.Name.String;
+                Printf( "Node: %s\n", nodeName );
+                FPrintf( objFileHandle, "# Node: %s\n", nodeName );
+
+                shapeName = Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.Nodes.Item[ nodeIndex ].Value.Shape.Value.Name.String;
+                Printf( "Shape: %s\n", shapeName );
+                FPrintf( objFileHandle, "# Shape: %s\n", shapeName );
+
+                meshCount = Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.Nodes.Item[ nodeIndex ].Value.Shape.Value.MeshCount;
+                for ( meshIndex = 0; meshIndex < meshCount; meshIndex++ )
+                {
+                    FPrintf( objFileHandle, "# Mesh %0d\n", meshIndex );
+                    FPrintf( objFileHandle, "o %s_Mesh%0d\n", shapeName, meshIndex );
+                
+                    elementCount = Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.Nodes.Item[ nodeIndex ].Value.Shape.Value.Meshes.Mesh[ meshIndex ].Value.ElementCount;
+
+                    //hasExternalData = Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.Nodes.Item[ nodeIndex ].Value.Shape.Value.Meshes.Mesh[ meshIndex ].Value.Field100 == 3;
+                    hasExternalData = true;
+                    if ( hasExternalData )
+                    {
+                        elementBufferOffset = Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.Nodes.Item[ nodeIndex ].Value.Shape.Value.Meshes.Mesh[ meshIndex ].Value.ElementBufferOffset + 4;
+                    }
+                    else
+                    {
+                        elementBufferOffset = Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.Nodes.Item[ nodeIndex ].Value.Shape.Value.Meshes.Mesh[ meshIndex ].Value.ElementBufferOffset.Value +
+                                              Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.Nodes.Item[ nodeIndex ].Value.Shape.Value.Meshes.Mesh[ meshIndex ].Value.ElementBufferOffset.Base;
+                    }
+                    
+                    vertexStride = Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.Nodes.Item[ nodeIndex ].Value.Shape.Value.Meshes.Mesh[ meshIndex ].Value.VertexBufferDescriptor.Value.VertexStride;
+                    vertexCount = Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.Nodes.Item[ nodeIndex ].Value.Shape.Value.Meshes.Mesh[ meshIndex ].Value.VertexBufferDescriptor.Value.VertexCount;
+
+                    if ( hasExternalData )
+                    {
+                        vertexBufferOffset = Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.Nodes.Item[ nodeIndex ].Value.Shape.Value.Meshes.Mesh[ meshIndex ].Value.VertexBufferDescriptor.Value.VertexBufferOffset + 4;
+                        FileSelect( zigFileHandle );   
+                    }
+                    else
+                    {
+                        vertexBufferOffset = Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.Nodes.Item[ nodeIndex ].Value.Shape.Value.Meshes.Mesh[ meshIndex ].Value.VertexBufferDescriptor.Value.VertexBufferOffset.Value +
+                                             Chunks.Chunk[0].Contents.Entries[ forestIndex ].Forest.Value.ContentType0Array.Item[ contentType0Index ].Value.Nodes.Item[ nodeIndex ].Value.Shape.Value.Meshes.Mesh[ meshIndex ].Value.VertexBufferDescriptor.Value.VertexBufferOffset.Base;
+                    }                 
+
+                    FPrintf( objFileHandle, "# Mesh %d\n", meshIndex );
+                    FPrintf( objFileHandle, "# Vertex Count %d Vertex Stride %d Offset %08X\n", vertexCount, vertexStride, vertexBufferOffset );
+
+                    
+                    for ( vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++ )
+                    {
+                        x = ReadFloat( vertexBufferOffset + ( ( vertexIndex * vertexStride ) ) );
+                        y = ReadFloat( vertexBufferOffset + ( ( vertexIndex * vertexStride ) ) + sizeof(float) );
+                        z = ReadFloat( vertexBufferOffset + ( ( vertexIndex * vertexStride ) ) + ( sizeof(float) * 2 ) );
+
+                        FPrintf( objFileHandle, "v %f %f %f\n", x, y, z );
+                    }
+
+                    FPrintf( objFileHandle, "# Element Count %d Offset %08X\n", elementCount, elementBufferOffset );
+                    for ( elementIndex = 0; elementIndex < ( elementCount / 3 ); elementIndex++ )
+                    {
+                        a = ReadUShort( elementBufferOffset + ( elementIndex * 6 ) );
+                        b = ReadUShort( elementBufferOffset + ( elementIndex * 6 ) + sizeof(ushort) );
+                        c = ReadUShort( elementBufferOffset + ( elementIndex * 6 ) + ( sizeof(ushort) * 2 ) );    
+
+                        FPrintf( objFileHandle, "f %d %d %d\n", a + elementBaseIndex, b + elementBaseIndex, c + elementBaseIndex );                  
+                    }
+
+                    elementBaseIndex += vertexCount;
+
+                    if ( hasExternalData )
+                        FileSelect( zifFileHandle );
+                }
+            }
+        }
+    }
+}
+
+//FileCloseIndexed( zifFileHandle );
+FileCloseIndexed( zigFileHandle );
+
+FileSaveIndexed( objFileHandle, objFileName );
+FileCloseIndexed( objFileHandle );

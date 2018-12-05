@@ -1,0 +1,1453 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: sa2b_model.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse Sonic Adventure 2 Battle (PC) models
+//  Category: 
+// File Mask: 
+//  ID Bytes: *mdl.bin
+//   History: 
+//------------------------------------------------
+
+//---------------------------------------------
+// Primitive types
+//---------------------------------------------
+typedef char bool;
+typedef char s8;
+typedef uchar u8;
+typedef int16 s16;
+typedef uint16 u16;
+typedef int16 s16;
+typedef int32 s32;
+typedef uint32 u32;
+typedef int64 s64;
+typedef uint64 u64;
+typedef float f32;
+typedef double f64;
+
+//---------------------------------------------
+// Script global variables & functions
+//---------------------------------------------
+local u32 i;
+local u32 j;
+local u32 gSavedPos[128];
+local u32 gSavedPosIndex = 0;
+local u32 gOffsetBase = 0;
+
+struct Offset32;
+void FSeekOffset( Offset32& offset )
+{
+    FSeek( offset.Value + gOffsetBase );
+}
+
+void PushFPos()
+{
+    gSavedPos[++gSavedPosIndex] = FTell();
+}
+
+void PushFPosSeekOffset( Offset32& offset )
+{
+    PushFPos();
+    FSeekOffset( offset );
+}
+
+void PopFPos()
+{
+    FSeek( gSavedPos[gSavedPosIndex--] );
+}
+
+void HexPrint( u32 num )
+{
+    Printf( "0x%08X\n", num );
+}
+
+//---------------------------------------------
+// Random
+//---------------------------------------------
+local uint __RandomSeed = 0xDEADBABE;
+local uint __RandomBit = 0;
+local uint __RandomCount = 0;
+ 
+uint MyRandom( uint to )
+{
+    ++__RandomCount;
+    __RandomBit  = ( (__RandomSeed >> 0 ) ^ ( __RandomSeed >> 2 ) ^ ( __RandomSeed >> 3 ) ^ ( __RandomSeed >> 5 ) ) & 1;
+    __RandomSeed = ( ( ( ( __RandomBit << 15 ) | ( __RandomSeed >> 1 ) ) + ( 0xBABE / __RandomCount ) ) % to );
+
+    while( __RandomSeed < 0 )
+        __RandomSeed += to;
+
+    return __RandomSeed;
+}
+
+uint RandomColor()
+{
+    return MyRandom( 0xFFFFFFFF );
+}
+
+void SetRandomBackColor()
+{
+    SetBackColor( RandomColor() );
+}
+
+//---------------------------------------------
+// Basic type definitions
+//---------------------------------------------
+typedef struct
+{
+    u32 Value;
+    local u32 AbsoluteValue = Value + gOffsetBase;
+    local u8 Valid = AbsoluteValue != 0;
+} Offset32 <read=ReadOffset32>;
+
+string ReadOffset32( Offset32& offset )
+{
+    local char buffer[12];
+    SPrintf( buffer, "0x%08X", offset.AbsoluteValue );
+
+    return buffer;
+}
+
+typedef struct
+{
+    f32 X;
+    f32 Y;
+} Vector2 <read=ReadVector2>;
+
+string ReadVector2( Vector2& value )
+{
+    local char buffer[255];
+    SPrintf( buffer, "[%.6f, %.6f]", value.X, value.Y );
+
+    return buffer;
+}
+
+typedef struct
+{
+    f32 X;
+    f32 Y;
+    f32 Z;
+} Vector3 <read=ReadVector3>;
+
+string ReadVector3( Vector3& value )
+{
+    local char buffer[255];
+    SPrintf( buffer, "[%.6f, %.6f, %.6f]", value.X, value.Y, value.Z );
+
+    return buffer;
+}
+
+// Rotation in BAMS
+typedef struct
+{
+    s32 X;
+    s32 Y;
+    s32 Z;
+} Rotation3 <read=ReadRotation3>;
+
+float AngleToDegrees( s32 angle )
+{
+    return  ( angle * 360.0f ) / 65536.0f;
+}
+
+s32 DegreesToAngle( float degrees )
+{
+    return ((s32)((degrees * 65536.0f) / 360.0f));
+}
+
+string ReadRotation3( Rotation3& value )
+{
+    local char buffer[255];
+    SPrintf( buffer, "[%.6f, %.6f, %.6f]", 
+        AngleToDegrees( value.X ), 
+        AngleToDegrees( value.Y ), 
+        AngleToDegrees( value.Z ));
+
+    return buffer;
+}
+
+typedef struct
+{
+    s8 Reserved : 2;
+    s16 X : 10;
+    s16 Y : 10;
+    s16 Z : 10;
+} Normal32 <read=ReadNormal32>;
+
+string ReadNormal32( Normal32& value )
+{
+    local char buffer[255];
+    SPrintf( buffer, "[%.6f, %.6f, %.6f]", 
+        ( value.X / 1023.0f ), 
+        ( value.Y / 1023.0f ), 
+        ( value.Z / 1023.0f ));
+
+    return buffer;
+}
+
+typedef struct
+{
+    u8 A;
+    u8 R;
+    u8 G;
+    u8 B;
+} ARGB;
+
+typedef struct
+{
+    u8 N; // Unused - Noop
+    u8 R;
+    u8 G;
+    u8 B;
+} NRGB;
+
+typedef struct
+{
+    u8 E; // Exponent. Range:0-16 
+    u8 R;
+    u8 G;
+    u8 B;
+} ERGB;
+
+typedef struct
+{
+    u8 A;
+    u8 G;
+    u8 B;
+    u8 A;
+} Color8888;
+
+typedef struct
+{
+    u8 R : 5;
+    u8 G : 6;
+    u8 B : 5;
+} Color565;
+
+typedef struct
+{
+    u8 A : 4;
+    u8 R : 4;
+    u8 G : 4;
+    u8 B : 4;
+} Color4444;
+
+typedef struct
+{
+    u16 A;
+    u16 B;
+    u16 C;
+} Triangle;
+
+typedef struct
+{
+    u16 A;
+    u16 B;
+    u16 C;
+    u16 D;
+} Polygon;
+
+typedef struct
+{
+    s8 U;
+    s8 V;
+} UV16 <read=ReadUV16>;
+
+string ReadUV16( UV16& uv )
+{
+    local char buffer[255];
+    SPrintf( buffer, "[%.6f, %.6f]", 
+        ( value.X / 255.0f ), 
+        ( value.Y / 255.0f ));
+
+    return buffer;
+}
+
+typedef struct
+{
+    s16 U;
+    s16 V;
+} UV32 <read=ReadUV32>;
+
+string ReadUV32( UV32& uv )
+{
+    local char buffer[255];
+    SPrintf( buffer, "[%.6f, %.6f]", 
+        ( value.X / 1023.0f ), 
+        ( value.Y / 1023.0f ));
+
+    return buffer;
+}
+
+//---------------------------------------------
+// Format type definitions
+//---------------------------------------------
+BitfieldDisablePadding();
+
+enum NodeFlags
+{
+    // NJD_EVAL_UNIT_POS
+    NodeFlags_IgnoreTranslation = 1 << 0,
+
+    // NJD_EVAL_UNIT_ANG
+    NodeFlags_IgnoreRotation = 1 << 1,
+
+    // NJD_EVAL_UNIT_SCL
+    NodeFlags_IgnoreScale = 1 << 2,
+
+    // NJD_EVAL_HIDE
+    NodeFlags_Hide = 1 << 3,
+
+    // NJD_EVAL_BREAK
+    NodeFlags_IgnoreChildren = 1 << 4,
+
+    // NJD_EVAL_ZXY_ANG
+    NodeFlags_UseZXYRotation = 1 << 5,
+
+    // NJD_EVAL_SKIP
+    NodeFlags_Skip = 1 << 6,
+
+    // NJD_EVAL_SHAPE_SKIP
+    NodeFlags_SkipShape = 1 << 7,
+
+    // NJD_EVAL_CLIP
+    NodeFlags_Clip = 1 << 8,
+
+    // NJD_EVAL_MODIFIER
+    NodeFlags_Modifier = 1 << 9,
+};
+
+enum SrcAlphaOp
+{
+    // NJD_SA_ZERO
+    SrcAlphaOp_Zero = 0,
+
+    // NJD_SA_ONE
+    SrcAlphaOp_One = 1 << 29,
+
+    // NJD_SA_OTHER
+    SrcAlphaOp_Other = 1 << 30,
+
+    // NJD_SA_INV_OTHER
+    SrcAlphaOp_InverseOther = SrcAlphaOp_Other | SrcAlphaOp_One,
+
+    // NJD_SA_SRC
+    SrcAlphaOp_Src = 1 << 31,
+
+    // NJD_SA_INV_SRC
+    SrcAlphaOp_InverseSrc = SrcAlphaOp_Src | SrcAlphaOp_One,
+
+    // NJD_SA_DST
+    SrcAlphaOp_Dst,
+
+    // NJD_SA_INV_DST
+    SrcAlphaOp_InverseDst = SrcAlphaOp_Src | SrcAlphaOp_One | SrcAlphaOp_One,
+};
+
+enum DstAlphaOp
+{
+    // NJD_SA_ZERO
+    DstAlphaOp_Zero = 0,
+
+    // NJD_SA_ONE
+    DstAlphaOp_One = 1 << 26,
+
+    // NJD_SA_OTHER
+    DstAlphaOp_Other = 1 << 27,
+
+    // NJD_SA_INV_OTHER
+    DstAlphaOp_InverseOther = DstAlphaOp_Other | DstAlphaOp_One,
+
+    // NJD_SA_SRC
+    DstAlphaOp_Src = 1 << 28,
+
+    // NJD_SA_INV_SRC
+    DstAlphaOp_InverseSrc = DstAlphaOp_Src | DstAlphaOp_One,
+
+    // NJD_SA_DST
+    DstAlphaOp_Dst,
+
+    // NJD_SA_INV_DST
+    DstAlphaOp_InverseDst = DstAlphaOp_Src | DstAlphaOp_One | DstAlphaOp_One,
+};
+
+//enum FilterMode
+//{
+//    // NJD_FILTER_POINT
+//    FilterMode_Point = 0,
+//    
+//    // NJD_FILTER_BILINEAR
+//    FilterMode_Bilinear = 1 << 13,
+//
+//    // NJD_FILTER_TRILINEAR
+//    FilterMode_Trilinear = 1 << 14,
+//
+//    // NJD_FILTER_BLEND
+//    FilterMode_Blend = FilterMode_Trilinear | FilterMode_Bilinear
+//};
+
+// Used by vertex chunk if Ninja flags are used
+enum<u8> WeightStatusFlag
+{
+    WeightStatus_Start = 0,
+    WeightStatus_Middle = 1,
+    WeightStatus_End = 2
+};
+
+enum<u8> ChunkType
+{
+    //
+    // Null chunk
+    // <Format>=[ChunkHead(16)](16 bits chunk) 
+    //
+
+    // NJD_CN (16 bits)
+    ChunkType_Null = 0,
+
+    //
+    // Chunk bits (16 bits)
+    // <Format>=[bits(8)|ChunkHead(8)](16 bits chunk)
+    //
+
+    // NJD_CB_BA
+    // 13-11 = SRC Alpha Instruction(3)
+    // 10- 8 = DST Alpha Instruction(3)
+    ChunkType_BlendAlpha = 1,
+    
+    // NJD_CB_DA
+    // 11- 8 = Mipmap 'D' adjust(4) 
+    ChunkType_MipmapDAdjust = 2,
+
+    // NJD_CB_EXP
+    // 12- 8 = Exponent(5) range:0-16
+    ChunkType_SpecularExponent = 3,
+
+    // NJD_CB_CP
+    // 15- 8 = Cache Number range:0-255
+    ChunkType_CachePolygonList = 4,
+
+    // NJD_CB_DP
+    // 15- 8 = Cache Number range:0-255 
+    ChunkType_DrawPolygonList = 5,
+
+    //
+    // Chunk tiny (32 bits)
+    // <Format>=[headbits(8)|ChunkHead(8)][texbits(3)|TexId(13)] (32 bits chunk)
+    //
+    
+    /* TID : Set Texture                      */
+    /*     <headbits>                         */
+    /*       15-14 = FlipUV(2)                */
+    /*       13-12 = ClampUV(2)               */
+    /*       11- 8 = Mipmap 'D' adjust(4)     */
+    /*     <texbits>                          */
+    /*       15-14 = Filter Mode(2)           */
+    /*       13    = Super Sample(1)          */
+    /*     (TexId Max = 8191)                 */
+    // NJD_CT_TID
+    ChunkType_TextureId = 8,
+    ChunkType_TextureId2 = 9,
+
+    //
+    // Chunk material
+    /* <Format>=[ChunkHead][Size][Data]                        */
+    /*       13-11 = SRC Alpha Instruction(3)                  */
+    /*       10- 8 = DST Alpha Instruction(3)                  */
+    /* D  : Diffuse (ARGB)                            bit 0    */
+    /* A  : Ambient (RGB)                             bit 1    */
+    /* S  : Specular(ERGB) E:exponent(5) range:0-16   bit 2    */
+    //
+    ChunkType_MaterialDiffuse = 17,                 /* [CHead][4(Size)][ARGB]              */
+    ChunkType_MaterialAmbient = 18,                 /* [CHead][4(Size)][NRGB] N: NOOP(255) */
+    ChunkType_MaterialDiffuseAmbient = 19,          /* [CHead][8(Size)][ARGB][NRGB]        */
+    ChunkType_MaterialSpecular = 20,                /* [CHead][4(Size)][ERGB] E: Exponent  */
+    ChunkType_MaterialDiffuseSpecular = 21,         /* [CHead][8(Size)][ARGB][ERGB]        */
+    ChunkType_MaterialAmbientSpecular = 22,         /* [CHead][8(Size)][NRGB][ERGB]        */
+    ChunkType_MaterialDiffuseAmbientSpecular = 23,  /* [CHead][12(Size)][ARGB][NRGB][ERGB] */
+    ChunkType_MaterialBump = 24,                    /* [CHead][12(Size)][dx(16)][dy(16)][dz(16)][ux(16)][uy(16)][uz(16)] */
+
+    ChunkType_MaterialDiffuse2 = 25,
+    ChunkType_MaterialAmbient2 = 26,
+    ChunkType_MaterialDiffuseAmbient2 = 27,
+    ChunkType_MaterialSpecular2 = 28,
+    ChunkType_MaterialDiffuseSpecular2 = 29,
+    ChunkType_MaterialAmbientSpecular2 = 30,
+    ChunkType_MaterialDiffuseAmbientSpecular2 = 31,
+
+    //
+    // Chunk vertex
+    /* <Format>=[headbits(8)|ChunkHead(8)]                                    */
+    /*          [Size(16)][IndexOffset(16)][nbIndices(16)]                    */
+    /*     <headbits>(NF only)                                                */
+    /*        9- 8 = WeightStatus(2) Start, Middle, End                       */
+    //
+
+    // NJD_CV_SH
+    // XYZ|1.0f
+    ChunkType_VertexSH = 32,
+
+    // NJD_CV_VN_SH
+    // XYZ|1.0f|NormalXYZ|0.0f
+    ChunkType_VertexNSH = 33,
+
+    // NJD_CV
+    // XYZ
+    ChunkType_Vertex = 34,
+
+    // NJD_CV_D8
+    // XYZ|Diffuse8888
+    ChunkType_VertexD8888 = 35,
+
+    // NJD_CV_UF
+    // XYZ|UserFlags32
+    ChunkType_VertexUF32 = 36,
+
+    // NJD_CV_NF
+    // XYZ|NinjaFlags32
+    ChunkType_VertexNF32 = 37,
+
+    // NJD_CV_S5
+    // XYZ|Diffuse565|Specular565
+    ChunkType_VertexD565S565 = 38,
+
+    // NJD_CV_S4
+    // XYZ|Diffuse4444|Specular565
+    ChunkType_VertexD4444S565 = 39,
+
+    // NJD_CV_IN
+    // XYZ|Diffuse16|Specular16
+    ChunkType_VertexD16S16 = 40,
+
+    // XYZ|NormalXYZ
+    ChunkType_VertexN = 41,
+
+    // XYZ|NormalXYZ|Diffuse8888
+    ChunkType_VertexND8888 = 42,
+
+    // XYZ|NormalXYZ|UserFlags32
+    ChunkType_VertexNUF32 = 43,
+
+    // XYZ|NormalXYZ|NinjaFlags32
+    ChunkType_VertexNNF32 = 44,
+
+    // XYZ|NormalXYZ|Difuse565|Specular565
+    ChunkType_VertexND565S565 = 45,
+
+    // XYZ|NormalXYZ|Difuse4444|Specular565
+    ChunkType_VertexND4444S565 = 46,
+
+    // XYZ|NormalXYZ|Diffuse16|Specular16
+    ChunkType_VertexND16S16 = 47,
+
+    // XYZ|NormalXYZ32 32bits vertex normal  reserved(2)|x(10)|y(10)|z(10)
+    ChunkType_VertexN32 = 48,
+
+    // XYZ|NormalXYZ32|Diffuse8888
+    ChunkType_VertexN32D8888 = 49,
+
+    // XYZ|NormalXYZ32|UserFlags32
+    ChunkType_VertexN32UF = 50,
+
+    /*--------------*/
+    /* Chunk vOlume */
+    /*--------------*/
+    /* UserFlags N=0,1(16bit*1),2(16bit*2),3(16bit*3)                         */
+    /* <Format P3>=[ChunkHead(16)][Size(16)][UserOffset(2)|nbPolygon(14)]     */
+    /*            i0, i1, i2, UserflagPoly0(*N),                              */
+    /*            i3, i4, i5, UserflagPoly1(*N), ...                          */
+    /* <Format P4>=[ChunkHead(16)][Size(16)][UserOffset(2)|nbPolygon(14)]     */
+    /*            i0, i1, i2, i3, UserflagPoly0(*N),                          */
+    /*            i4, i5, i6, i7, UserflagPoly1(*N), ...                      */
+    /* <Format ST>=[ChunkHead(16)][Size(16)][UserOffset(2)|nbStrip(14)]       */
+    /*          [flag|len, i0, i1, i2, Userflag2(*N), i3, Userflag3(*N), ...  */
+    /* P3  : Polygon3     (Modifier Volume)                                   */
+    /* P4  : Polygon4                                                         */
+    /* ST  : triangle STrip(Trimesh)                                          */
+
+    // Format: [ChunkHead(16)][Size(16)][UserOffset(2)|nbPolygon(14)] 
+    //          i0, i1, i2, UserflagPoly0(*N), 
+    //          i3, i4, i5, UserflagPoly1(*N), ... 
+    ChunkType_VolumePolygon3 = 54,
+
+    // Format: [ChunkHead(16)][Size(16)][UserOffset(2)|nbPolygon(14)]
+    //          i0, i1, i2, i3, UserflagPoly0(*N),                          
+    //          i4, i5, i6, i7, UserflagPoly1(*N), ...                      
+    ChunkType_VolumePolygon4 = 55,
+
+    // Format: [ChunkHead(16)][Size(16)][UserOffset(2)|nbStrip(14)]       
+    //         [flag|len, i0, i1, i2, Userflag2(*N), i3, Userflag3(*N), ...
+    ChunkType_VolumeTristrip = 56,
+
+    // 
+    // Chunk Strip
+    //
+    //
+
+    // [CFlags(8)|CHead(8)][Size(16)][UserOffset(2)|nbStrip(14)]    
+    // flag(1)|len(15), index0(16), index1(16),                    
+    // index2, UserFlag2(*N), ...]
+    ChunkType_Strip = 64,
+
+    // 
+    ChunkType_StripUVN = 65,
+    ChunkType_StripUVH = 67,
+    ChunkType_StripVN  = 68,
+    ChunkType_StripUVNVN = 69,
+    ChunkType_StripUVHVN = 70,
+    ChunkType_StripD8 = 71,
+    ChunkType_StripUVND8 = 72,
+    ChunkType_StripUVHD8 = 73,
+    ChunkType_Strip2,
+    ChunkType_StripUVN2,
+    ChunkType_StripUVH2,
+
+
+    //
+    // End chunk
+    // <Format>=[ChunkHead(16)](16 bits chunk) 
+    //
+
+    // NJD_CE (16 bits)
+    ChunkType_End = 255
+};
+
+struct Node;
+
+typedef struct
+{
+    SetRandomBackColor();
+    s32 UID;
+    
+    struct
+    {
+        Offset32 Offset;
+        if ( Offset.Valid )
+        {
+            PushFPosSeekOffset( Offset );
+            Node Value;
+            PopFPos();
+        }
+    } RootNode;
+} Model <read=ModelRead>;
+
+string ModelRead( Model& model )
+{
+    local char buffer[255];
+    SPrintf( buffer, "%d", model.UID );
+
+    return buffer;
+}
+
+
+struct ChunkGeometry;
+
+// NJS_CHNK_OBJECT
+typedef struct
+{
+    //Printf( "%X\n", FTell() );
+
+    SetRandomBackColor();
+    NodeFlags Flags;
+    
+    struct
+    {
+        Offset32 Offset;
+        if ( Offset.Valid )
+        {
+            PushFPosSeekOffset( Offset );
+            ChunkGeometry Value;
+            PopFPos();
+        }
+    } Geometry;
+
+    Vector3 Translation;
+    Rotation3 Rotation;
+    Vector3 Scale;
+    
+    struct
+    {
+        Offset32 Offset;
+        if ( Offset.Valid )
+        {
+            PushFPosSeekOffset( Offset );
+            Node Value;
+            PopFPos();
+        }
+    } Child;
+
+    struct
+    {
+        Offset32 Offset;
+        if ( Offset.Valid )
+        {
+            PushFPosSeekOffset( Offset );
+            Node Value;
+            PopFPos();
+        }
+    } Sibling;
+
+} Node;
+
+// Sometimes these 2 structs come after a chunk object
+// Unused maybe?
+typedef struct
+{
+    struct
+    {
+        Offset32 Offset;
+        if ( Offset.Valid )
+        {
+            PushFPosSeekOffset( Offset );
+            string Value;
+            PopFPos(); 
+        }
+    } TextureName;
+
+    u32 Field04;
+    u32 Field08;
+} Unknown1;
+
+typedef struct
+{
+    struct
+    {
+        Offset32 Offset;
+        if ( Offset.Valid )
+        {
+            PushFPosSeekOffset( Offset );
+            Unknown1 Value;
+            PopFPos(); 
+        }
+    } Unknown1Ref;
+
+    u32 Field04;
+} Unknown2;
+
+struct ChunkList;
+
+// NJS_CHNK_MODEL
+typedef struct
+{
+    SetRandomBackColor();
+    struct
+    {
+        Offset32 Offset;
+
+        if ( Offset.Valid )
+        {
+            PushFPosSeekOffset( Offset );
+            ChunkList Value( 4 );
+            PopFPos();
+        }
+    } VertexList;
+
+    struct 
+    {
+        Offset32 Offset;
+
+        if ( Offset.Valid )
+        {
+            PushFPosSeekOffset( Offset );
+            ChunkList Value( 2 );
+            PopFPos();   
+        }
+    } PolygonList;
+
+    Vector3 Center;
+    f32 Radius;
+} ChunkGeometry;
+
+//
+// Chunk parsing
+//
+
+typedef struct
+{
+	u8 Flags;
+    ChunkType Type;
+
+    Printf( "Unknown chunk (16 bit): %s\n", EnumToString( Type ) );
+    Assert( 0 );
+} UnknownChunk16;
+
+typedef struct
+{
+    u16 Size;
+	u8 Flags;
+    ChunkType Type;
+
+    Printf( "Unknown chunk (32 bit): %s\n", EnumToString( Type ) );
+    Assert( 0 );
+} UnknownChunk32;
+
+typedef struct
+{
+    u8 Flags;
+    ChunkType Type;   
+
+    Assert( Flags == 0 );
+} NullChunk16;
+
+typedef struct
+{
+    u16 Size;
+    u8 Flags;
+    ChunkType Type;
+
+    Assert( Flags == 0 );
+} NullChunk32;
+
+typedef struct
+{
+    struct
+    {
+        u8 SrcAlpha : 3;
+        u8 DstAlpha : 3;
+        u8 Padding : 2;
+        
+        Assert( Padding == 0 );
+    } Flags;
+    
+    ChunkType Type;
+} BlendAlphaChunk;
+
+typedef struct
+{
+    struct
+    {
+        u8 DAdjust : 4;
+        u8 Padding : 4;
+        
+        Assert( Padding == 0 );
+    } Flags;
+    
+    ChunkType Type;
+} MipmapDAdjustChunk;
+
+typedef struct
+{
+    struct
+    {
+        u8 Exponent : 5;
+        u8 Padding : 4;
+        
+        Assert( Padding == 0 );
+    } Flags;
+    
+    ChunkType Type;
+} SpecularExponentChunk;
+
+typedef struct
+{
+    struct
+    {
+        u8 CacheIndex;
+        //Printf( "%d\n", CacheIndex );
+    } Flags;
+    
+    ChunkType Type;
+} CachePolygonListChunk;
+
+typedef struct
+{
+    struct
+    {
+        u8 CacheIndex;
+    } Flags;
+    
+    ChunkType Type;
+} DrawPolygonListChunk;
+
+typedef struct
+{
+    struct
+    {
+        u8 MipmapDAdjust : 4;
+        u8 ClampUV : 2;
+        u8 FlipUV : 2;
+    } Flags;
+    
+    ChunkType Type;
+
+    union
+    {
+        u16 Value;
+        u16 Id : 13;
+        u8 SuperSample : 1;
+        u8 FilterMode : 2;
+
+        //Printf( "Texture id %d\n", Id );
+        //Printf( "Texture id 0%08X\n", value );
+    } Flags2;
+} TextureIdChunk;
+
+typedef struct
+{
+    if ( IsBigEndian() )
+    {
+        struct
+        {
+            u8 Padding : 2;
+            u8 SrcAlpha : 3;
+            u8 DstAlpha : 3;
+        } Flags;
+        ChunkType Type;
+    }
+    else
+    {
+        ChunkType Type;
+        struct
+        {
+            u8 Padding : 2;
+            u8 SrcAlpha : 3;
+            u8 DstAlpha : 3;
+        } Flags;
+    }
+
+    Assert( Flags.Padding == 0 );
+   
+    u16 Size;
+
+    local u32 actualSize = Size * 2;
+    local u32 endOffset = FTell() + actualSize;
+
+    if ( Type == ChunkType_MaterialDiffuse || Type == ChunkType_MaterialDiffuse2 )
+    {
+        if ( actualSize >= 4 )
+            ARGB Diffuse;
+    }
+    else if ( Type == ChunkType_MaterialAmbient  || Type == ChunkType_MaterialAmbient2 )
+    {
+        if ( actualSize >= 4 )
+            NRGB Ambient;
+    }
+    else if ( Type == ChunkType_MaterialDiffuseAmbient  || Type == ChunkType_MaterialDiffuseAmbient2 )
+    {
+        if ( actualSize >= 4 )
+            ARGB Diffuse;
+
+        if ( actualSize >= 8 )
+            NRGB Ambient;
+    }
+    else if ( Type == ChunkType_MaterialSpecular || Type == ChunkType_MaterialSpecular2  )
+    {
+        if ( actualSize >= 4 )
+            ERGB Specular;
+    }
+    else if ( Type == ChunkType_MaterialDiffuseSpecular  || Type == ChunkType_MaterialDiffuseSpecular2 )
+    {
+        if ( actualSize >= 4 )
+            ARGB Diffuse;
+
+        if ( actualSize >= 8 )
+            ERGB Specular;
+    }
+    else if ( Type == ChunkType_MaterialAmbientSpecular || Type == ChunkType_MaterialAmbientSpecular2  )
+    {
+        if ( actualSize >= 4 )
+            NRGB Ambient;
+
+        if ( actualSize >= 8 )
+            ERGB Specular;
+    }
+    else if ( Type == ChunkType_MaterialDiffuseAmbientSpecular || Type == ChunkType_MaterialDiffuseAmbientSpecular2 )
+    {
+        if ( actualSize >= 4 )
+            ARGB Diffuse;
+
+        if ( actualSize >= 8 )
+            NRGB Ambient;
+
+        if ( actualSize >= 12 )
+            ERGB Specular;
+    }
+    else if ( Type == ChunkType_MaterialBump )
+    {
+        u16 DX;
+        u16 DY;
+        u16 DZ;
+        u16 UX;
+        u16 UY;
+        u16 UZ;
+    }
+
+    FSeek( endOffset );
+
+} MaterialChunk;
+
+typedef struct
+{   
+    if ( IsBigEndian() )
+    {
+        u16 Size;
+
+        struct
+        {
+            // Vertex calculation continue (??)
+            // Changing this doesn't seem to affect anything ingame
+            u8 Continue : 1;
+    
+            // Zero padding
+            u8 Padding : 5;
+            Assert( Padding == 0 );
+    
+            // Applicable with Ninja flags only
+            WeightStatusFlag Status : 2;
+        } Flags;
+
+        ChunkType Type;
+    }
+    else
+    {
+        ChunkType Type;
+
+        struct
+        {
+            // Applicable with Ninja flags only
+            WeightStatusFlag Status : 2;
+
+            // Zero padding
+            u8 Padding : 5;
+            Assert( Padding == 0 );
+
+            // Vertex calculation continue (??)
+            // Changing this doesn't seem to affect anything ingame
+            u8 Continue : 1;
+        } Flags;
+
+        u16 Size;
+    }
+
+    if ( IsBigEndian() )
+    {
+        u16 VertexCount;
+        u16 IndexOffset;
+    }
+    else
+    {
+        u16 IndexOffset;
+        u16 VertexCount;
+    }
+
+    //Printf( "Vertex chunk type: %s\n", EnumToString( Type ) );
+
+    //if ( Type == ChunkType_VertexNF32 || Type == ChunkType_VertexNNF32 )
+    //    Printf( "Weight status: %s\n", EnumToString( Flags.Status ) );
+
+    //if ( Flags.Unknown )
+    //{
+    //    Printf( "Vertex chunk type: %s\n", EnumToString( Type ) );
+    //}
+    
+    for ( i = 0; i < VertexCount; ++i )
+    {
+        struct
+        {
+            Vector3 Position;
+    
+            if ( Type == ChunkType_VertexSH )
+            {
+                f32 Dummy;
+            }
+            else if ( Type == ChunkType_VertexNSH )
+            {
+                f32 Dummy;
+                Assert( Dummy == 1.0f );
+                Vector3 Normal;
+                f32 Dummy2;
+                Assert( Dummy2 == 0.0f );
+            }
+            else if ( Type == ChunkType_Vertex )
+            {
+                // Position only
+            }
+            else if ( Type == ChunkType_VertexD8888 )
+            {
+                Color8888 Diffuse;
+            }
+            else if ( Type == ChunkType_VertexUF32 )
+            {
+                u32 UserFlags;   
+            }
+            else if ( Type == ChunkType_VertexNF32 )
+            {
+                u32 NinjaFlags;
+            }    
+            else if ( Type == ChunkType_VertexD565S565 )
+            {
+                Color565 Diffuse;
+                Color565 Specular;   
+            }
+            else if ( Type == ChunkType_VertexD4444S565 )
+            {
+                Color4444 Diffuse;
+                Color565 Specular;   
+            }
+            else if ( Type == ChunkType_VertexD16S16 )
+            {
+                Color4444 Diffuse;
+                Color4444 Specular;   
+            }
+            else if ( Type == ChunkType_VertexN )
+            {
+                Vector3 Normal;
+            }
+            else if ( Type == ChunkType_VertexND8888 )
+            {
+                Vector3 Normal;
+                Color8888 Diffuse;   
+            }
+            else if ( Type == ChunkType_VertexNUF32 )
+            {
+                Vector3 Normal;
+                u32 UserFlags;   
+            }
+            else if ( Type == ChunkType_VertexNNF32 )
+            {
+                Vector3 Normal;
+                u32 NinjaFlags;   
+            }
+            else if ( Type == ChunkType_VertexND565S565 )
+            {
+                Vector3 Normal;
+                Color565 Diffuse;   
+                Color565 Specular;
+            }
+            else if ( Type == ChunkType_VertexND4444S565 )
+            {
+                Vector3 Normal;
+                Color4444 Diffuse;
+                Color565 Specular;
+            }
+            else if ( Type == ChunkType_VertexND16S16 )
+            {
+                Vector3 Normal;
+                Color4444 Diffuse;
+                Color4444 Specular;   
+            }
+            else if ( Type == ChunkType_VertexN32 )
+            {
+                Normal32 Normal;   
+            }
+            else if ( Type == ChunkType_VertexN32D8888 )
+            {
+                Normal32 Normal;
+                Color8888 Diffuse;   
+            }
+            else if ( Type == ChunkType_VertexN32UF )
+            {
+                Normal32 Normal;
+                u32 UserFlags;   
+            }
+        } Vertex;
+    }
+} VertexChunk;
+
+//typedef struct
+//{
+//    u8 Flags; 
+//    ChunkType Type;
+//    u16 Size;
+//    struct
+//    {
+//        u8 UserOffset : 2;
+//        u16 Count : 14;
+//    }
+//
+//    for ( i = 0; i < Count; ++i )
+//    {
+//        
+//    }
+//} VolumeChunk;
+
+typedef struct
+{
+    if ( IsBigEndian() )
+    {
+        u8 Flags;
+        ChunkType Type;
+    }
+    else
+    {
+        ChunkType Type;
+        u8 Flags;
+    }
+
+    u16 Size;
+
+    if ( IsBigEndian() )
+    {
+        struct
+        {
+            u8 UserOffset : 2;
+            u16 StripCount : 14;
+        } Flags2;
+    }
+    else
+    {
+        struct
+        {
+            u16 StripCount : 14;
+            u8 UserOffset : 2;
+        } Flags2;
+    }
+
+    local u32 stripIndex;
+    for ( stripIndex = 0; stripIndex < Flags2.StripCount; ++stripIndex )
+    {
+        struct
+        {
+            s16 IndexCount;
+            
+            local s16 indexCount = IndexCount;
+            if ( IndexCount < 0 )
+            {   
+                // Initial counter clockwise winding order flag
+                indexCount = -indexCount;
+            }
+
+            local u32 triCount = indexCount - 2;
+
+            if ( Type == ChunkType_Strip || Type == ChunkType_Strip2 )
+            {
+                // Format 1
+                u16 Index;
+                u16 Index;
+                
+                while ( triCount-- > 0 )
+                {
+                    u16 Index;
+                    if ( Flags2.UserOffset > 0 )
+                        u16 UserFlags[ Flags2.UserOffset ];
+                }
+            }
+            else if ( Type == ChunkType_StripUVN || Type == ChunkType_StripUVH )
+            {
+                // Format 2
+                u16 Index;
+                UV32 UV;
+                u16 Index;
+                UV32 UV;
+                
+                while ( triCount-- > 0 )
+                {
+                    u16 Index;
+                    UV32 UV;
+                    if ( Flags2.UserOffset > 0 )
+                        u16 UserFlags[ Flags2.UserOffset ];
+                }
+            }
+            else if ( Type == ChunkType_StripVN || Type == ChunkType_StripUVH )
+            {
+                // Format 3
+                u16 Index;
+                u16 Normals[3];
+                u16 Index;
+                u16 Normals[3];
+                
+                while ( triCount-- > 0 )
+                {
+                    u16 Index;
+                    u16 Normals[3];
+                    if ( Flags2.UserOffset > 0 )
+                        u16 UserFlags[ Flags2.UserOffset ];
+                }
+            }
+            else if ( Type == ChunkType_StripUVNVN || Type == ChunkType_StripUVHVN )
+            {
+                // Format 4
+                u16 Index;
+                UV32 UV;
+                u16 Normals[3];
+                u16 Index;
+                UV32 UV;
+                u16 Normals[3];
+                
+                while ( triCount-- > 0 )
+                {
+                    u16 Index;
+                    UV32 UV;
+                    u16 Normals[3];
+                    if ( Flags2.UserOffset > 0 )
+                        u16 UserFlags[ Flags2.UserOffset ];
+                }
+            }
+            else if ( Type == ChunkType_StripD8 )
+            {
+                // Format 5
+                u16 Index;
+                Color8888 Color;
+                u16 Index;
+                Color8888 Color;
+                
+                while ( triCount-- > 0 )
+                {
+                    u16 Index;
+                    Color8888 Color;
+                    if ( Flags2.UserOffset > 0 )
+                        u16 UserFlags[ Flags2.UserOffset ];
+                }
+            }
+            else if ( Type == ChunkType_StripUVNVN || Type == ChunkType_StripUVHVN )
+            {
+                // Format 6
+                u16 Index;
+                UV32 UV;
+                Color8888 Color;
+                u16 Index;
+                UV32 UV;
+                Color8888 Color;
+                
+                while ( triCount-- > 0 )
+                {
+                    u16 Index;
+                    UV32 UV;
+                    Color8888 Color;
+                    if ( Flags2.UserOffset > 0 )
+                        u16 UserFlags[ Flags2.UserOffset ];
+                }
+            }
+            else if ( Type == ChunkType_StripUVN2 || Type == ChunkType_StripUVH2 )
+            {
+                // Format 2
+                u16 Index;
+                UV32 UV1;
+                UV32 UV2;
+                u16 Index;
+                UV32 UV1;
+                UV32 UV2;
+                
+                while ( triCount-- > 0 )
+                {
+                    u16 Index;
+                    UV32 UV1;
+                    UV32 UV2;
+                    if ( Flags2.UserOffset > 0 )
+                        u16 UserFlags[ Flags2.UserOffset ];
+                }
+            }
+        } Strip;       
+    }
+} StripChunk <optimize=false>;
+
+typedef struct
+{
+    if ( IsBigEndian() )
+    {
+        u8 Flags;
+        ChunkType Type;
+    }
+    else
+    {
+        ChunkType Type;
+        u8 Flags;
+    }
+
+    //Assert( Flags == 0 );
+} EndChunk16;
+
+typedef struct
+{
+    u16 Size;
+    u8 Flags;
+    ChunkType Type;
+
+    Assert( Flags == 0 );
+} EndChunk32;
+
+typedef struct( u32 size )
+{
+    //Printf( "%X\n", FTell() );
+
+    local ChunkType type;
+    while ( true )
+    {
+        SetRandomBackColor();
+
+        if ( size == 2 )
+            type = ReadUShort() & 0xFF;
+        else
+            type = ReadUInt() & 0xFF;
+
+        //if ( size == 4 ) Printf( "%s\n", EnumToString( type ) );
+    
+        if ( type == ChunkType_Null )
+        {
+            if ( size == 2 )
+                NullChunk16 Chunk;
+            else
+                NullChunk32 Chunk;
+        }
+        else if ( type == ChunkType_BlendAlpha )
+        {
+            BlendAlphaChunk Chunk;
+        }
+        else if ( type == ChunkType_MipmapDAdjust )
+        {
+            MipmapDAdjustChunk Chunk;
+        }
+        else if ( type == ChunkType_CachePolygonList )
+        {
+            CachePolygonListChunk Chunk;
+        }
+        else if ( type == ChunkType_DrawPolygonList )
+        {
+            DrawPolygonListChunk Chunk;
+        }
+        else if ( type == ChunkType_TextureId || type == ChunkType_TextureId2 )
+        {
+            TextureIdChunk Chunk;
+        }
+        else if ( type >= ChunkType_MaterialDiffuse && type <= ChunkType_MaterialDiffuseAmbientSpecular2 )
+        {
+            MaterialChunk Chunk;
+        }
+        else if ( type >= ChunkType_VertexSH && type <= ChunkType_VertexN32UF )
+        {
+            VertexChunk Chunk;
+        }
+        else if ( type >= ChunkType_Strip && type <= ChunkType_StripUVH2 )
+        {
+            StripChunk Chunk;
+        }
+        else if ( type == ChunkType_End )
+        {
+            if ( size == 2 )
+                EndChunk16 Chunk;
+            else
+                EndChunk32 Chunk;
+            break;
+        }
+        else
+        {
+            if ( size == 2 )
+                UnknownChunk16 Chunk;
+            else
+                UnknownChunk32 Chunk;
+        }
+     }
+
+} ChunkList;
+
+BigEndian();
+if ( ( ReadUInt() & 0xFF000000 ) != 0 )
+    LittleEndian();
+
+// Count model entries (for better script support)
+local s32 ModelCount = 0;
+local s32 entryId;
+local s32 entryOffset;
+while ( true )
+{
+    entryId = ReadUInt( ModelCount * 8 );
+    entryOffset = ReadUInt( ( ModelCount * 8) + 4 );
+    ++ModelCount;
+
+    if ( entryId == -1 )
+        break;
+}
+
+// Parse file
+Model Models[ ModelCount ] <optimize=false>;

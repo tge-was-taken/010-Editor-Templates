@@ -1,0 +1,45 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: p4d_mns.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse Persona 4 Dancing mns files
+//  Category: 
+// File Mask: mns*.bin
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "types.h"
+#include "utils.h"
+
+typedef struct
+{
+    SetRandomBackColor();
+    char Magic[4]; Assert( Magic == "MNS\0" );
+    u32 Field04; // always 0
+    u32 Field08; // always 1
+    u32 MusicId;
+    f32 Bpm;
+    u16 MusicIdMajor; // doesn't always match MusicId
+    u16 MusicIdMinor;
+    u32 Field18; // always 0
+    u32 Field1C; // count of.. something
+
+    struct
+    {
+        while ( !FEof() )
+        {
+            SetRandomBackColor();
+            struct
+            {
+                u8 Type;
+                u8 Flags;
+                u16 Value;
+            } Note;
+        }
+    } Notes;
+} MnsFile;
+
+MnsFile File;

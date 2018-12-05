@@ -1,0 +1,215 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: p5_env.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse Persona 5 ENV files
+//  Category: 
+// File Mask: *.env
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../common/include.h"
+
+
+enum<u8> Boolean
+{
+    False = false,
+    True = true,
+};
+
+BigEndian();
+
+struct
+{
+    u32 Magic;
+    u32 Version;
+    u32 FileType;
+    u32 Field0C;
+} Header;
+
+struct
+{
+    // env0000_100_000.ENV (ver. 0x01105030)
+    Boolean Field00;
+    Boolean Field01; 
+    f32 Field02;
+    f32 Field06;
+    f32 Field0A;
+    f32 Field0E;
+    f32 Field12;
+    f32 Field16;
+    f32 Field1A;
+    f32 Field1E;
+    f32 Field22;
+    f32 Field26;
+    f32 Field2A;
+    f32 Field2E;
+    f32 Field32;
+    f32 Field36;
+    f32 Field3A;
+    f32 Field3E;
+    f32 Field42;
+    f32 Field46;
+    f32 Field4A;
+    f32 Field4E;
+    f32 Field52;
+    f32 Field56;
+    f32 Field5A;
+    f32 Field5E;
+    f32 Field62;
+    f32 Field66;
+    f32 Field6A;
+    f32 Field6E;
+    f32 Field72;
+    f32 Field76;
+    f32 Field7A;
+    f32 Field7E;
+    f32 Field82;
+    f32 Field86;
+    f32 Field8A;
+    f32 Field8E;
+    f32 Field92;
+    f32 Field96;
+    f32 Field9A;
+    f32 Field9E;
+    f32 FieldA2;
+    f32 FieldA6;
+    f32 FieldAA;
+    f32 FieldAE;
+    f32 FieldB2;
+    f32 FieldB6;
+    f32 FieldBA;
+    f32 FieldBE;
+    f32 FieldC2;
+    f32 FieldC6;
+    f32 FieldCA;
+    f32 FieldCE;
+    f32 FieldD2;
+    f32 FieldD6;
+    f32 FieldDA;
+    f32 FieldDE;
+    f32 FieldE2;
+    f32 FieldE6;
+    f32 FieldEA;
+    f32 FieldEE;
+    f32 FieldF2;
+    f32 FieldF6;
+    f32 FieldFA;
+    f32 FieldFE;
+    f32 Field102;
+    f32 Field106;
+    f32 Field10A;
+    f32 Field10E;
+    f32 Field112;
+    f32 Field116;
+    Boolean Field11A;
+    Boolean Field11B; 
+    f32 Field12C;
+    f32 Field130;
+    f32 Field134;
+    f32 Field138;
+    f32 Field13C;
+    f32 Field140;
+    f32 Field144;
+    f32 Field148;
+    f32 Field14C;
+    f32 Field150;
+    f32 Field154;
+    f32 Field158;
+    f32 Field15C;
+    f32 Field160;
+    f32 Field164;
+    f32 Field168;
+    f32 Field16C;
+    f32 Field170;
+    f32 Field174;
+    f32 Field178;
+    f32 Field17C;
+    f32 Field180;
+    f32 Field184;
+    f32 Field188;
+    f32 Field18C;
+    f32 Field190;
+    Boolean Field194;
+    Boolean Field195;
+    Boolean Field196;
+    Boolean Field197;
+    f32 Field198;
+    f32 Field19C;
+    f32 Field1A0;
+    f32 Field1A4;
+    f32 Field1A8;
+    f32 Field1AC;
+    Boolean Field1B0;
+    f32 Field1B1;
+    f32 Field1B5;
+    f32 Field1B9;
+    f32 Field1BD;
+    f32 Field1C1;
+    f32 Field1C5;
+    Boolean Field1C9;
+    Boolean Field1CA;
+    Boolean Field1CB;
+    Boolean Field1CC;
+    f32 Field1CD;
+    f32 Field1D1;
+    f32 Field1D5;
+    f32 Field1D9;
+    f32 Field1DD;
+    f32 Field1E1;
+    f32 Field1E5;
+    f32 Field1E9;
+    u32 Field1ED;
+    u8 Field1F1;
+    f32 Field1F2;
+    f32 Field1F6;
+    f32 Field1FA;
+    f32 Field1FE;
+    f32 Field202;
+    u8 Field206[5];
+    f32 Field20B;
+    f32 Field20F;
+    f32 Field213;
+    f32 Field217;
+    f32 Field21B;
+    u8 Field21F;
+    f32 Field220;
+    f32 Field224;
+    f32 Field228;
+    f32 Field22C;
+    u32 Field230;
+    f32 Field234;
+    f32 Field238;
+    u32 Field23C;
+    u8 Field240[4];
+    f32 Field244;
+    u8 Field248[5];
+    f32 Field24D;
+    f32 Field251;
+    f32 Field255;
+    f32 Field259;
+    f32 Field25D;
+    f32 Field261;
+    u8 Field265;
+    f32 Field266;
+    f32 Field26A;
+    f32 Field26E;
+    f32 Field272;
+    f32 Field276;
+    f32 Field27A;
+    u8 Field27E;
+    f32 Field27F;
+    u8 Field283;
+    f32 Field284;
+    f32 Field288;
+    f32 Field28C;
+    f32 Field290;
+    f32 Field294;
+    f32 Field298;
+    f32 Field29C;
+    u32 Field2A0; // Color
+    u32 Field2A4;
+} EnvParams;

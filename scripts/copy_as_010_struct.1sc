@@ -1,0 +1,49 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Script File
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+//   History: 
+//------------------------------------------------
+
+#include "analyzer.1sc"
+
+string Get010ValueTypeName( FieldValueType type )
+{
+    switch ( type )
+    {
+        case FieldValueType_Byte:  return "s8";
+        case FieldValueType_Short: return "s16";
+        case FieldValueType_Int:   return "s32";
+        case FieldValueType_Float: return "f32";
+        default: return "";
+    }
+}
+
+void WriteStruct()
+{
+    FieldValueType valueType = gValueTypes[0];
+    u32 valueSize;
+    u32 offset = gStartOffset;
+    string fieldName;
+    u32 i = 0;
+    
+    FPrintf( gOutFile, "typedef struct\n{\n" );
+    
+    while ( valueType != FieldValueType_Invalid )
+    {
+        SPrintf( fieldName, "Field%02X", offset - gStartOffset );
+        FPrintf( gOutFile, "    %s %s;\n", Get010ValueTypeName( valueType ), fieldName );
+        offset += GetValueTypeSize( valueType );
+        valueType = gValueTypes[++i];
+    }
+    
+    FPrintf( gOutFile, "} Struct%08X;\n", gStartOffset );
+}
+
+AnalyzeSelection();
+WriteStruct();
+FlushToClipboard();

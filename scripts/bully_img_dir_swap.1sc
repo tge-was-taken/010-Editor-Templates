@@ -1,0 +1,83 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Script File
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+//   History: 
+//------------------------------------------------
+
+DisableUndo();
+
+string fileName = GetFileName();
+string imgFileName = FileNameSetExtension( fileName, ".img" );
+string dirFileName = FileNameSetExtension( fileName, ".dir" );
+int imgFileHandle = FileOpen( imgFileName );
+int i;
+int j;
+int isBigEndian = false;
+
+LittleEndian();
+FileSelect( imgFileHandle );
+if ( ReadInt( 0 ) == 0x3412CDAB )
+{
+    isBigEndian = true;
+    BigEndian();
+}
+
+RunTemplate( "../templates/bully_img.bt" );
+
+if ( !isBigEndian )
+    BigEndian();
+else
+    LittleEndian();
+
+for ( i = 0; i < fileCount; ++i )
+{
+    // Swap
+    for ( j = 0; j < Img.File[i].EntryCount; ++j )
+    {
+        WriteUInt( startof( Img.File[i].Entries[j].Field00 ), Img.File[i].Entries[j].Field00 );
+        WriteUInt( startof( Img.File[i].Entries[j].Field04 ), Img.File[i].Entries[j].Field04 );
+    } 
+
+    WriteUInt( startof( Img.File[i].Field00 ), Img.File[i].Field00 );
+    WriteUInt( startof( Img.File[i].Field04 ), Img.File[i].Field04 );
+    WriteUInt( startof( Img.File[i].Field08 ), Img.File[i].Field08 );
+    WriteUInt( startof( Img.File[i].DataSize ), Img.File[i].DataSize );
+    WriteUInt( startof( Img.File[i].Field10 ), Img.File[i].Field10 );
+    WriteUInt( startof( Img.File[i].EntryCount ), Img.File[i].EntryCount );
+    WriteUInt( startof( Img.File[i].Field18 ), Img.File[i].Field18 );
+    WriteUInt( startof( Img.File[i].Field1C ), Img.File[i].Field1C );
+    //WriteUInt( startof( Img.File[i].Field20 ), Img.File[i].Field20 );
+    WriteUInt( startof( Img.File[i].Field24 ), Img.File[i].Field24 );
+}
+
+FileSave();
+FileClose();
+
+if ( isBigEndian )
+    BigEndian();
+else
+    LittleEndian();
+
+int dirFileHandle = FileOpen( dirFileName );
+FileSelect( dirFileHandle );
+RunTemplate( "../templates/bully_dir.bt" );
+
+if ( !isBigEndian )
+    BigEndian();
+else
+    LittleEndian();
+
+// Swap
+for ( i = 0; i < Dir.fileCount; ++i )
+{
+    WriteUInt( startof( Dir.File[i].Field00 ), Dir.File[i].Field00 );
+    WriteUInt( startof( Dir.File[i].SectorIndex ), Dir.File[i].SectorIndex );
+}
+
+FileSave();
+FileClose();
