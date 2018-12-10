@@ -54,6 +54,13 @@ bool IsFloat( u32 value )
 // Match shorts whose value is less than 0x1000
 bool IsShort( u32 value )
 {
+    // Match shorts that are set to -1
+    if ( ( ( value & 0x0000FFFFu ) == 0x0000FFFFu && ( value & 0xFFFF0000u ) == 0 ) ||
+         ( ( value & 0xFFFF0000u ) == 0xFFFF0000u && ( value & 0x0000FFFFu ) == 0 ) )
+    {
+        return true;
+    }
+
     return  ( ( value & 0xF0000000 ) == 0 && ( value & 0x0FFF0000 ) != 0 ) &&
             ( ( value & 0x0000F000 ) == 0 && ( value & 0x00000FFF ) != 0 );
 }

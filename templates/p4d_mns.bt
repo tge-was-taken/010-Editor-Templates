@@ -3,7 +3,7 @@
 //
 //      File: p4d_mns.bt
 //   Authors: TGE
-//   Version: 1.0
+//   Version: 1.1
 //   Purpose: Parse Persona 4 Dancing mns files
 //  Category: 
 // File Mask: mns*.bin
@@ -13,8 +13,83 @@
 
 #include "../common/include.h"
 
+typedef enum<u16>
+{
+	First = 0,
+	Second = 1,
+	Third = 2,
+	Fourth = 3,
+	Half = 0x8000
+} EBeat;
+
+typedef enum<u8>
+{
+	Down = 0,
+	Cross = 1,
+	Left = 2,
+	Circle = 3,
+	Up = 4,
+	Triangle = 5,
+	Scratch = 8
+} EButton;
+
 typedef struct
 {
+	EBeat Beat;
+	u16 Measure;
+	EButton Buttons[4]; 
+	// simultaneous presses: Buttons[0] & Buttons[1]
+	// holds: first button = Buttons[2], second button = Buttons[0]
+
+    local f32 beatDecimal = Beat;
+    if ( Beat & Half )
+        beatDecimal = ( Beat & ~Half ) + 0.5f;
+
+    local f32 totalSeconds = ( ( Measure * 4 ) + beatDecimal ) * ( 60.0f / File.Bpm );
+    local u32 minutes = totalSeconds / 60;
+    local f32 seconds = totalSeconds - ( minutes * 60 );
+} TNote <read=TNoteToString>;
+
+string EnumToStringOrDefault( EButton& value )
+{
+	string str = EnumToString( value );
+	if ( str == "" )
+	{
+		SPrintf( str, "Unknown button: %d", (u32)value ); 
+	}
+	
+	return str;
+}
+
+string TNoteToString( TNote& value )
+{ 
+    // Format note button info
+    string str = "";
+    string str2 = "";
+
+    if ( value.Buttons[1] != 0 )
+        SPrintf( str, "%s+%s", EnumToStringOrDefault( value.Buttons[0] ), EnumToStringOrDefault( value.Buttons[1] ) );
+    else
+        SPrintf( str, EnumToStringOrDefault( value.Buttons[0] ) );
+
+    if ( value.Buttons[2] != 0 )
+    {
+        // Hold, reverse order
+        if ( value.Buttons[3] != 0 )
+            SPrintf( str, "%s+%s -> %s", EnumToStringOrDefault( value.Buttons[2] ), EnumToStringOrDefault( value.Buttons[3] ), str );
+        else
+            SPrintf( str, "%s -> %s", EnumToStringOrDefault( value.Buttons[2] ), str );
+    }
+
+    // Format note info
+    SPrintf( str, "%d:%f (%d:%.1f) %s", value.minutes, value.seconds, value.Measure, value.beatDecimal, str );
+
+    return str; 
+}
+
+typedef struct
+{
+    LittleEndian();
     SetRandomBackColor();
     char Magic[4]; Assert( Magic == "MNS\0" );
     u32 Field04; // always 0
@@ -24,21 +99,17 @@ typedef struct
     u16 MusicIdMajor; // doesn't always match MusicId
     u16 MusicIdMinor;
     u32 Field18; // always 0
-    u32 Field1C; // count of.. something
+    u32 NoteCount; // doesnt include duplicates 
+    u32 Field20;
 
     struct
     {
         while ( !FEof() )
         {
             SetRandomBackColor();
-            struct
-            {
-                u8 Type;
-                u8 Flags;
-                u16 Value;
-            } Note;
+            TNote Note;
         }
     } Notes;
-} MnsFile;
+} TMnsFile;
 
-MnsFile File;
+TMnsFile File;

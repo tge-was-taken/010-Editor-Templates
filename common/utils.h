@@ -1,3 +1,9 @@
+
+#ifndef UTILS_H
+#define UTILS_H
+
+#include "../common/types.h"
+
 //---------------------------------------------
 // Random color
 //---------------------------------------------
@@ -22,9 +28,11 @@ u32 RandomColor()
     return MyRandom( 0xFFFFFFFF );
 }
 
-void SetRandomBackColor()
+u32 SetRandomBackColor()
 {
-    SetBackColor( RandomColor() );
+    local u32 color = RandomColor();
+    SetBackColor( color );
+    return color;
 }
 
 // Generate u32 from FourCC in string format
@@ -50,3 +58,152 @@ void FAlign( u32 alignment )
 {
 	FSeek( Align( FTell(), alignment ) );
 }
+
+local u64 gBasePositionStack[32];
+local u32 gBasePositionStackIndex = 0;
+local u64 gBasePosition = 0;
+
+local u64 gPositionStack[32];
+local u32 gPositionStackIndex = 0;
+
+void FPushBase()
+{
+    gBasePosition = gBasePositionStack[ ++gBasePositionStackIndex ] = FTell();
+}
+
+void FPopBase()
+{
+    gBasePosition = gBasePositionStack[ gBasePositionStackIndex-- ];
+}
+
+void FPush()
+{
+    gPositionStack[ ++gPositionStackIndex ] = FTell();
+}
+
+void FPushRel( u64 pos )
+{
+    gPositionStack[ ++gPositionStackIndex ] = FTell();
+    FSeekRel( pos );
+}
+
+void FPushAbs( u64 pos )
+{
+    gPositionStack[ ++gPositionStackIndex ] = FTell();
+    FSeek( pos );
+}
+
+void FPop()
+{
+    FSeek( gPositionStack[ gPositionStackIndex-- ] );
+}
+
+void FSeekRel( u64 pos )
+{
+    FSeek( gBasePosition + pos );
+}
+
+void PrintValueUInt( string name, u64 value )
+{
+    PrintValueUIntEx( name, value, true );
+}
+
+void PrintValueUIntEx( string name, u64 value, bool newline )
+{
+    Printf( "%s: %8d (%08X) ", name, value, value );
+    if ( newline )
+        PrintNl();
+}
+
+void PrintValueFloat( string name, u64 value )
+{
+    PrintValueFloatEx( name, value, true );
+}
+
+void PrintValueFloatEx( string name, f32 value, bool newline )
+{
+    Printf( "%s: %8f ", name, value );
+    if ( newline )
+        PrintNl();
+}
+
+void PrintValueString( string name, string value )
+{
+    PrintValueStringEx( name, value, true );
+}
+
+void PrintValueStringEx( string name, string value, bool newline )
+{
+    Printf( "%s: %s ", name, value );
+    if ( newline )
+        PrintNl();
+}
+
+void PrintNl()
+{
+    Printf( "\n" );
+}
+
+void PrintArrayUInt( string name, u32 array[], u32 count )
+{
+    local s32 i;
+    local string elementName = "";
+    for ( i = 0; i < count; ++i )
+    {     
+        SPrintf( elementName, "%s[%d]", name, i );
+        PrintValueUInt( elementName, array[i] ); 
+    }
+}
+
+s32 ArrayIndexOfUInt( u32 array[], u32 count, u32 value )
+{
+    local s32 i;
+    for ( i = 0; i < count; ++i )
+        if ( array[i] == value )
+            return i;
+
+    return -1;
+}
+
+bool ArrayContainsUInt( u32 array[], u32 count, u32 value )
+{
+    return ArrayIndexOfUInt( array, count, value ) != -1;
+}
+
+void ArrayFillUInt( u32 array[], u32 count, u32 value )
+{
+    local u32 i;
+    for ( i = 0; i < count; ++i )
+        array[i] = value;
+}
+
+void ArrayMinUInt( u32 array[], u32 count )
+{
+    local u32 i;
+    local u32 min = 0xFFFFFFFF;
+
+    for ( i = 0; i < count; ++i )
+    {
+        if ( array[i] < min ) 
+            min = array[i];
+    }
+
+    return max;
+}
+
+void ArrayMaxUInt( u32 array[], u32 count )
+{
+    local u32 i;
+    local u32 max = 0;
+
+    for ( i = 0; i < count; ++i )
+    {
+        if ( array[i] > max ) 
+            max = array[i];
+    }
+
+    return max;
+}
+
+
+#endif // #ifndef UTILS_H

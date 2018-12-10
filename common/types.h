@@ -1,3 +1,7 @@
+
+#ifndef TYPES_H
+#define TYPES_H
+
 typedef char bool;
 typedef char s8;
 typedef uchar u8;
@@ -26,6 +30,8 @@ string Vector2ToString( Vector2& value )
     return buffer;
 }
 
+typedef Vector2 TVector2;
+
 typedef struct
 {
     f16 X;
@@ -39,6 +45,8 @@ string Vector2HalfToString( Vector2Half& value )
 
     return buffer;
 }
+
+typedef Vector2Half TVector2Half;
 
 typedef struct
 {
@@ -54,6 +62,8 @@ string Vector3ToString( Vector3& value )
 
     return buffer;
 }
+
+typedef Vector3 TVector3;
 
 typedef struct
 {
@@ -71,6 +81,8 @@ string Vector4ToString( Vector4& value )
     return buffer;
 }
 
+typedef Vector4 TVector4;
+
 typedef struct
 {
 	Vector3 Min;
@@ -85,6 +97,8 @@ string BoundingBoxToString( BoundingBox& value )
     return buffer;
 }
 
+typedef BoundingBox TBoundingBox;
+
 typedef struct
 {
 	Vector3 Center;
@@ -94,17 +108,19 @@ typedef struct
 string BoundingSphereToString( BoundingSphere& value )
 {
     local char buffer[255];
-    SPrintf( buffer, "[%.6f, %.6f, %.6f] %.6f", value.Center.X, value.Center.Y, value.Center.Z, value.Radius );
+    SPrintf( buffer, "[%.6f, %.6f, %.6f] %.6f]", value.Center.X, value.Center.Y, value.Center.Z, value.Radius );
 
     return buffer;
 }
 
+typedef BoundingSphere TBoundingSphere;
+
 typedef struct
 {
 	u32 Value;
-} Normal11_11_10ToString <read=ReadNormal11_11_10>;
+} Normal11_11_11 <read=ReadNormal11_11_10>;
 
-string ReadNormal11_11_10( Normal11_11_10ToString& value )
+string ReadNormal11_11_10( Normal11_11_11& value )
 {
 	const int FULL_WIDTH = 32;
 	
@@ -142,6 +158,8 @@ string ReadNormal11_11_10( Normal11_11_10ToString& value )
 	return buffer;
 }
 
+typedef Normal11_11_11 TNormal11_11_11;
+
 typedef struct( u32 base )
 {
 	u32 Offset;
@@ -161,4 +179,22 @@ string StringOffsetToString( StringOffset& value )
     return value.Value;
 }
 
+typedef StringOffset TStringOffset;
 
+typedef struct
+{
+    struct
+    {
+        f32 Column[4];
+    } Row[3];
+} TMatrix4x3;
+
+typedef struct
+{
+    struct
+    {
+        f32 Column[4];
+    } Row[4];
+} TMatrix4x4;
+
+#endif // #ifndef TYPES_H

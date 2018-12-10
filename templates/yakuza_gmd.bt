@@ -1,0 +1,585 @@
+//------------------------------------------------ 
+//--- 010 Editor v8.0 Binary Template 
+// 
+//      File: yakuza_gmd.bt 
+//   Authors: TGE 
+//   Version: 1.0 
+//   Purpose: Parse Yakuza series GMD model files 
+//  Category:  
+// File Mask: *.gmd 
+//  ID Bytes:  
+//   History:  
+//------------------------------------------------ 
+
+#include "../common/include.h"
+
+typedef struct
+{
+    u16 Checksum;
+    char Data[ 30 ];
+
+    local u16 newChecksum = 0;
+    local u32 i;
+    for ( i = 0; i < 30; ++i )
+        newChecksum += Data[i];
+
+    Assert( newChecksum == Checksum );
+} TString <read=TStringToString, optimize=true>;
+
+string TStringToString( TString& value )
+{
+    return value.Data;
+}
+
+typedef enum <u32>
+{
+    EModelFlags_BoneMap16 = 1 << 7,
+} EModelFlags;
+
+typedef struct
+{
+    SetRandomBackColor();
+    LittleEndian();
+    char Magic[4];      // GSGM
+    u8 Version;         // 2
+    u8 Endianness;      // 1
+    if ( Endianness == 1 ) BigEndian();
+    u16 Field06;        // 0
+    u16 Field08;        // 0
+    u16 Field0A;
+    u32 FileSize; 
+
+    SetRandomBackColor();    
+    TString Name;
+
+    local u32 nodeColor = SetRandomBackColor();
+    u32 NodeOffsets;        // offset
+    u32 NodeCount;        // count (127, 295)
+
+    local u32 geometryColor = SetRandomBackColor();
+    u32 GeometryListOffset;        // offset
+    u32 GeometryCount;        // count (A9, 169)
+
+    local u32 meshColor = SetRandomBackColor();
+    u32 MeshListOffset;        // offset
+    u32 MeshCount;        // count (B6, 182)
+
+    local u32 materialColor = SetRandomBackColor();
+    u32 MaterialOffsets;    // offset
+    u32 MaterialCount;      // count (1A, 26)
+
+    local u32 materialSharedParamsColor = SetRandomBackColor();
+    u32 MaterialSharedParamsListOffset;        // offset
+    u32 MaterialSharedParamsCount;        // count (13, 19), model looks 'wet' when set to 0
+
+    local u32 inverseBindMatricesColor = SetRandomBackColor();
+    u32 InverseBindMatrixListOffset;
+    u32 InverseBindMatrixCount; 
+
+    local u32 vertexBufferColor = SetRandomBackColor();
+    u32 VertexBufferOffsets;
+    u32 VertexBufferCount; 
+
+    local u32 vertexBufferPoolColor = SetRandomBackColor();
+    u32 VertexBufferPoolOffset;       // offset
+    u32 VertexBufferPoolSize;        // count (CA7A0)
+
+    local u32 materialNameColor = SetRandomBackColor();
+    u32 MaterialNameOffset;  // offset
+    u32 MaterialNameCount;        // count (35, 53)
+
+    local u32 shaderNameColor = SetRandomBackColor();
+    u32 ShaderNameListOffset;
+    u32 ShaderNameCount;
+
+    local u32 nodeNameColor = SetRandomBackColor();
+    u32 NodeNameTableOffset;        // offset
+    u32 NodeNameCount;        // count (127, 295)
+
+    local u32 indexBufferColor = SetRandomBackColor();
+    u32 IndexBufferOffset; // offset
+    u32 IndexBufferIndexCount;   // count (2CDAD)
+    
+    local u32 geometryMeshMapColor = SetRandomBackColor();
+    u32 GeometryMeshMapOffset;        // offset
+    u32 GeometryMeshMapSize;        // count (580, 1408)
+    
+    local u32 boneMapPoolColor = SetRandomBackColor();
+    u32 BoneMapPoolOffset;     // offset
+    u32 BoneMapPoolIndexCount; // count (2AC, 684)
+
+    SetRandomBackColor();
+    f32 FieldA0[12]; // doesn't seem too important
+
+    local u32 fieldD0Color = SetRandomBackColor();
+    u32 FieldD0;        // offset
+    u32 FieldD4;        // count (1A, 26), can be set to 0 without problems
+
+    local u32 fieldD8Color = SetRandomBackColor();
+    u32 FieldD8;        // offset
+    u32 FieldDC;        // count (AC, 172), can be set to 0 without problems
+
+    local u32 fieldE0Color = SetRandomBackColor();
+    u32 FieldE0;        // offset
+    u32 FieldE4;        // count (1A, 26), can be set to 0 without problems
+
+    u32 Padding[5];
+    EModelFlags Flags;
+
+    // Read node names first so we can assign them
+    // to the nodes when we read them.
+    if ( NodeNameTableOffset && NodeNameCount )
+    {
+        FSeekRel( NodeNameTableOffset );
+        SetBackColor( nodeNameColor );
+        TString NodeNames[ NodeNameCount ];
+    }
+
+    if ( NodeOffsets && NodeCount )
+    {
+        FSeekRel( NodeOffsets );
+        SetBackColor( nodeColor );
+        struct { struct TNode Nodes[ NodeCount ]; } Nodes;
+    }
+
+    if ( GeometryListOffset && GeometryCount )
+    {
+        FSeekRel( GeometryListOffset );
+        SetBackColor( geometryColor );
+        struct TGeometry Geometries[ GeometryCount ];
+    }
+
+    // Read vertex buffers before meshes so we can
+    // read from them in the mesh.
+    if ( VertexBufferOffsets && VertexBufferCount )
+    {
+        FSeekRel( VertexBufferOffsets );
+        SetBackColor( vertexBufferColor );
+        struct TVertexBuffer VertexBuffers[ VertexBufferCount ];
+    }
+
+    if ( MeshListOffset && MeshCount )
+    {
+        FSeekRel( MeshListOffset );
+        SetBackColor( meshColor );
+        struct TMesh Meshes[ MeshCount ];
+    }
+
+    // Read material & shader names before materials
+    // so we can assign them as we read the materials.
+    if ( MaterialNameOffset && MaterialNameCount )
+    {
+        FSeekRel( MaterialNameOffset );
+        SetBackColor( materialNameColor );
+        TString MaterialNames[ MaterialNameCount ];
+    }
+
+    if ( ShaderNameListOffset && ShaderNameCount )
+    {
+        FSeekRel( ShaderNameListOffset );
+        SetBackColor( shaderNameColor );
+        TString ShaderNames[ ShaderNameCount ];
+    }
+
+    if ( MaterialOffsets && MaterialCount )
+    {
+        FSeekRel( MaterialOffsets );
+        SetBackColor( materialColor );
+        struct TMaterial Materials[ MaterialCount ];
+    }
+
+    if ( MaterialSharedParamsListOffset && MaterialSharedParamsCount )
+    {
+        FSeekRel( MaterialSharedParamsListOffset );
+        SetBackColor( materialSharedParamsColor );
+        struct TMaterialSharedParams MaterialSharedParams[ MaterialSharedParamsCount ];
+    }
+
+    if ( InverseBindMatrixListOffset && InverseBindMatrixCount )
+    {
+        FSeekRel( InverseBindMatrixListOffset );
+        SetBackColor( inverseBindMatricesColor );
+        struct TMatrix4x4 InverseBindMatrices[ InverseBindMatrixCount ];
+    }
+
+    if ( VertexBufferPoolOffset && VertexBufferPoolSize )
+    {
+        FSeekRel( VertexBufferPoolOffset );
+        SetBackColor( vertexBufferPoolColor );
+        u8 VertexBufferPool[ VertexBufferPoolSize ]<optimize=true>;
+    }
+
+    if ( IndexBufferOffset && IndexBufferIndexCount )
+    {
+        FSeekRel( IndexBufferOffset );
+        SetBackColor( indexBufferColor );
+        u16 IndexBuffer[ IndexBufferIndexCount ] <optimize=true>;
+    }
+
+    if ( GeometryMeshMapOffset && GeometryMeshMapSize )
+    {
+        SetBackColor( geometryMeshMapColor );
+
+        FSeekRel( GeometryMeshMapOffset );
+        u8 GeometryMeshMapData[ GeometryMeshMapSize ] <optimize=true>; // seems to be an encoded table
+
+        // Parse table
+        // Number of entries == Field3C
+        FSeekRel( GeometryMeshMapOffset );
+        local u32 geometryMeshMapEnd = gBasePosition + GeometryMeshMapOffset + GeometryMeshMapSize;
+        struct
+        {
+            while ( FTell() < geometryMeshMapEnd )
+            {
+                struct TGeometryMeshMapEntry Entry;
+            }
+        } GeometryMeshMap;
+        Assert( FTell() == geometryMeshMapEnd );
+        FPop();
+    }
+
+    if ( BoneMapPoolOffset && BoneMapPoolIndexCount )
+    {
+        SetBackColor( boneMapPoolColor );
+        FSeekRel( BoneMapPoolOffset );
+        if ( Flags & EModelFlags_BoneMap16 )
+            u16 BoneMapIndices[ BoneMapPoolIndexCount ];
+        else
+            u8 BoneMapIndices[ BoneMapPoolIndexCount ];
+    }
+
+    if ( FieldD0 && FieldD4 )
+    {
+        FSeekRel( FieldD0 );
+        SetBackColor( fieldD0Color );
+        struct TFieldD0Data FieldD0Data[ FieldD4 ]; // material related (same count)
+    }
+
+    if ( FieldD8 && FieldDC )
+    {
+        FSeekRel( FieldD8 );
+        SetBackColor( fieldD8Color );
+        u16 FieldD8Data[ FieldDC ]; // node indices
+    }
+
+    if ( FieldE0 && FieldE4 )
+    {
+        FSeekRel( FieldE0 );
+        SetBackColor( fieldE0Color );
+        u16 FieldE0Data[ FieldE4 ];  // material related (same count), always 0
+    }
+} TModel;
+
+typedef struct
+{
+    u32 Index;
+    s32 ChildIndex;
+    s32 SiblingIndex;
+    s32 GeometryIndex; // can safely be set to 0
+    u32 Index2; // equal to index, can safely be set to 0
+    Assert( Index == Index2 );
+    u32 Field14; // 0, 1, 2, 3.. enum value? maybe something that classified what type of node eg branch, leaf... etc
+                 // can safely be set to 0
+    s32 NameIndex;
+    u32 Field1C; // 0 for regular nodes, 2 for geometry nodes
+                 // can safely be set to 2 for both kinds of nodes
+                 // when set to 0 for a geometry node, transform is wrong
+    Vector4 LocalPosition;
+    Vector4 LocalRotation;
+    Vector4 LocalScale;
+    Vector4 WorldPosition; // can safely set to 0
+    Vector4 Field60; // can be safely set to 0
+    Vector4 Field70; // can be safely set to 0
+
+    if ( NameIndex != -1 )
+        local string name = Model.NodeNames[ NameIndex ].Data;
+
+} TNode <optimize=false, read=TNodeToString>;
+
+string TNodeToString( TNode& value )
+{
+    if ( exists( value.name ) ) return value.name;
+    return "";
+}
+
+typedef struct
+{
+    s32 Index;
+    s32 NodeIndex;
+    s32 NodeIndex2;
+    s32 MeshMapOffset;
+    TMatrix4x3 Transform; // model matrix
+    Assert( NodeIndex == NodeIndex2 );
+} TGeometry <optimize=false>;
+
+typedef struct
+{
+    s32 Index;
+    s32 MaterialIndex;
+    s32 VertexBufferIndex;
+    s32 VertexCount;
+    struct TMeshLod Lods[3];
+    s32 UsedBoneCount;
+    s32 BoneMapStartOffset;
+    s32 NodeIndex;
+    s32 GeometryIndex;
+    s32 Field38;                // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+    s32 VertexStartIndex;
+
+    FPush();
+    {
+        FSeekRel( Model.VertexBufferPoolOffset + 
+            Model.VertexBuffers[ VertexBufferIndex ].Offset +
+            ( Model.VertexBuffers[ VertexBufferIndex ].Stride * VertexStartIndex ) );
+        struct TVertex Vertices( Model.VertexBuffers[ VertexBufferIndex ].Format, Model.VertexBuffers[ VertexBufferIndex ].Stride )[ VertexCount ];
+
+        local u32 lodIndex = 0;
+        for ( lodIndex = 0; lodIndex < 3; ++lodIndex )
+        {
+            FSeekRel( Model.IndexBufferOffset + ( Lods[lodIndex].IndexStartIndex * 2 ) );
+            struct
+            {
+                u16 Indices[ Lods[lodIndex].IndexCount ];
+            } LodIndices;
+        }
+    }
+    FPop();
+} TMesh <optimize=false>;
+
+typedef struct
+{
+    s32 IndexCount;
+    s32 IndexStartIndex;
+} TMeshLod;
+
+typedef struct
+{
+    u8 X;
+    u8 Y;
+    u8 Z;
+    u8 W;
+} TNormal <read=TNormalToString>;
+
+string TNormalToString( TNormal& value )
+{
+    local string str = "";
+    SPrintf( str, "[%.6f, %.6f, %.6f, %.6f]",
+        (((f32)value.X) - 128.0f) / 128.0f,
+        (((f32)value.Y) - 128.0f) / 128.0f,
+        (((f32)value.Z) - 128.0f) / 128.0f,
+        (((f32)value.W) - 128.0f) / 128.0f );
+
+    return str;
+}
+
+typedef struct( u64 format, u32 stride )
+{
+    local u32 vertexStart = FTell();
+
+    Vector3 Position;
+
+    if ( ( format & 0x3C0 ) == 0x3C0 )
+    {
+        u8 BoneWeights[4];
+        u8 BoneIndices[4];
+    }
+
+    TNormal Normal;
+
+    if ( ( format & 0x7000 ) == 0x7000 )
+    {
+        TNormal Tangent; // not sure
+    }  
+
+    if ( ( format & 0xE00000 ) == 0xE00000 )
+    {
+        TNormal Binormal; // not sure
+    }
+
+    if ( ( format & 0x7000000 ) == 0x7000000 )
+    {
+        TNormal Bitangent; // not sure
+    }
+
+    if ( format & ( 1 << 28 ) )
+        Vector2Half TexCoord;
+
+    if ( format & ( 1 << 29 ) )
+        Vector2Half TexCoord;
+
+    //Assert( ( FTell() - vertexStart ) == stride, "Unknown vertex format" );
+} TVertex <optimize=true>;
+
+typedef struct
+{
+    s32 Index;
+    s32 SharedParamsIndex; // 0=18, 1=16, 2=13, ... (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+                           // shader parameters? seems to control wetness
+    s16 Field08;           // can be set to 0 without immediate changes
+    s16 ShaderNameIndex;
+    s32 MeshStartIndex; // Meshes are sorted by material index, 
+                        // this is the index of the first mesh that uses this material 
+    s16 Field10; // always 0
+    s16 Field12; // 0=1, 2=5, 3=1, 22=69
+                 // crash when set to -1, diffuse map index?
+    s16 Field14; // always 0
+    s16 Field16; // 0=6, 1=8, 3=8, 4=6, ... (c_cm_kiryu_d_no_daimon_ps4.gmd)
+                 // crash when set to -1, normal map index?
+    s16 Field18; // always 1 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+    s16 Field1A; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+    s16 Field1C; // bit flags, maybe related to transparency?
+    s16 Field1E; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+    s16 Field20; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+    s16 DiffuseMapNameIndex; // -1 if not used, (0=34, 1=0, 3=5) (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+    s16 Field24; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+    s16 ReflectionMapNameIndex; // -1 if not used, mostly unused (12=18, 25=18) (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+                 // no obvious effect if set to -1
+    s16 Field28; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+    s16 MtMapNameIndex; // -1 if not used, specular/wetness map index?
+    s16 Field2C; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+    s16 SpecularMapNameIndex; // -1 if not used, mostly unused (8=21) (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+                 // no obvious effect if set to -1
+    s16 Field30; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+    s16 RsMapNameIndex; // -1 if not used, mostly unused (6=23, 11=50, ...) (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+                 // no obvious effect if set to -1
+    s16 Field34; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+    s16 TnMapNameIndex; // -1 if not used, (0=36, 1=2, 2=7, ...) (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+                 // normal map index?
+    s16 Field38; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+    s16 RtMapNameIndex; // -1 if not used, mostly unused (1=3, 2=3, ...) (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+                 // texture map index.. when set to -1 the materials have less reflectiveness
+    s16 Field3C; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+    s16 TsMapNameIndex; // -1 if not used, mostly unused (1=4, 2=7, ...) (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+                 // darkness map index?
+    s32 Field40; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+    s32 Field44; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+    s32 Field48; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+    s32 Field4C; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd) 
+    s32 Field50; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+    s32 Field54; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+    s32 Field58; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+    s32 Field5C; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+    f32 Field60; // 0=0, 1=0, 6=70, 7=40 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+                 // no immediately obvious change when set to 0
+    f32 Field64; // 0=0, 1=0, 6=70, 7=40 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+                 // no immediately obvious change when set to 0
+    f32 Field68; // 0=0, 1=0, 22=6, 23=5.5 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+                 // no immediately obvious change when set to 0
+    f32 Field6C; // 0=0, 1=0, 22=3, 23=1 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+                 // no immediately obvious change when set to 0
+    s32 Field70; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+    s32 Field74; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+    s32 Field78; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+    s32 Field7C; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+
+    if ( DiffuseMapNameIndex != -1 ) local string diffuseMapName = Model.MaterialNames[ DiffuseMapNameIndex ].Data;
+    if ( ReflectionMapNameIndex != -1 ) local string reflectionMapName = Model.MaterialNames[ ReflectionMapNameIndex ].Data; // cube map
+    if ( MtMapNameIndex != -1 ) local string mtMapName = Model.MaterialNames[ MtMapNameIndex ].Data; 
+    if ( SpecularMapNameIndex != -1 ) local string specularMapName = Model.MaterialNames[ SpecularMapNameIndex ].Data; 
+    if ( RsMapNameIndex != -1 ) local string rsMapName = Model.MaterialNames[ RsMapNameIndex ].Data; // dummy_white
+    if ( TnMapNameIndex != -1 ) local string tnMapName = Model.MaterialNames[ TnMapNameIndex ].Data;
+    if ( RtMapNameIndex != -1 ) local string rtMapName = Model.MaterialNames[ RtMapNameIndex ].Data; // subsurface.. render target?
+    if ( TsMapNameIndex != -1 ) local string tsMapName = Model.MaterialNames[ TsMapNameIndex ].Data;
+} TMaterial <optimize=false, read=TMaterialToString>;
+
+string TMaterialToString( TMaterial& value )
+{
+    if ( exists( value.name ) ) return value.name;
+    return "";
+}
+
+typedef struct
+{
+    u8 Field00;
+    u8 Field01;
+    u8 Field02;
+    u8 Field03;
+    u8 Field04[4];
+    s32 Field08; // always -1, (c_cm_kiryu_d_no_daimon_ps4.gmd)
+    s16 Field0C; // always 0x8000, (c_cm_kiryu_d_no_daimon_ps4.gmd)
+    s16 Field0E;
+
+    //PrintValueIntEx( "Field0E", Field0E, true );
+    //PrintValueFloatEx( "Field6C", Field6C, true );
+} TMaterialSharedParams <optimize=true>;
+
+typedef struct
+{
+    u32 Index;
+    u32 Count;
+    u64 Format; // 41FE0FFC3, 41800FFC3, 418001FC3h
+    u32 Offset;
+    u32 Size;
+    u32 Stride;
+    u32 Field18; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+
+    FPush();
+    {
+        FSeekRel( Model.VertexBufferPoolOffset + Offset );
+        struct TVertex Vertices( Format, Stride )[ Count ];
+    }
+    FPop();
+
+    SetRandomBackColor();
+} TVertexBuffer <optimize=false>;
+
+typedef struct
+{
+    u16 MeshCount;
+    u16 Field02; // always 0 (c_cm_kiryu_d_no_daimon_ps4.gmd)
+    local u32 i;
+    for ( i = 0; i < MeshCount; ++i )
+    {
+        struct
+        {
+            u16 MaterialIndex; // Maybe material index.. bone map index?
+            u16 MeshIndex;
+            Assert( !exists( Model.Meshes ) || MaterialIndex == Model.Meshes[ MeshIndex ].MaterialIndex );
+        } Entry;
+    }
+} TGeometryMeshMapEntry;
+
+typedef struct
+{
+    f32 Field00;
+    f32 Field04;
+    f32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
+    f32 Field28;
+    f32 Field2C;
+    f32 Field30;
+    f32 Field34;
+    f32 Field38;
+    f32 Field3C;
+    f32 Field40;
+    f32 Field44;
+    f32 Field48;
+    f32 Field4C;
+    f32 Field50;
+    f32 Field54;
+    f32 Field58;
+    f32 Field5C;
+    f32 Field60;
+    f32 Field64;
+    f32 Field68;
+    f32 Field6C;
+    f32 Field70;
+    f32 Field74;
+    f32 Field78;
+    f32 Field7C;
+} TFieldD0Data;
+
+if ( FileNameGetBase( GetFileName() )  == "mesh.par" )
+{
+    // TODO proper PAR parsing
+    FSeek( 0x201800 );
+    FPushBase();
+}
+    
+TModel Model;
