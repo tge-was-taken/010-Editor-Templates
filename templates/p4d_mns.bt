@@ -3,7 +3,7 @@
 //
 //      File: p4d_mns.bt
 //   Authors: TGE
-//   Version: 1.1
+//   Version: 1.2
 //   Purpose: Parse Persona 4 Dancing mns files
 //  Category: 
 // File Mask: mns*.bin
@@ -37,9 +37,9 @@ typedef struct
 {
 	EBeat Beat;
 	u16 Measure;
-	EButton Buttons[4]; 
-	// simultaneous presses: Buttons[0] & Buttons[1]
-	// holds: first button = Buttons[2], second button = Buttons[0]
+    EButton Button;
+    u8 HoldDuration;
+    u16 Type;
 
     local f32 beatDecimal = Beat;
     if ( Beat & Half )
@@ -67,18 +67,17 @@ string TNoteToString( TNote& value )
     string str = "";
     string str2 = "";
 
-    if ( value.Buttons[1] != 0 )
-        SPrintf( str, "%s+%s", EnumToStringOrDefault( value.Buttons[0] ), EnumToStringOrDefault( value.Buttons[1] ) );
+    if ( value.HoldDuration != 0 )
+        SPrintf( str, "%s (Hold: %d)", EnumToStringOrDefault( value.Button ), value.HoldDuration );
     else
-        SPrintf( str, EnumToStringOrDefault( value.Buttons[0] ) );
+        SPrintf( str, EnumToStringOrDefault( value.Button ) );
 
-    if ( value.Buttons[2] != 0 )
+    if ( value.Type != 0 )
     {
-        // Hold, reverse order
-        if ( value.Buttons[3] != 0 )
-            SPrintf( str, "%s+%s -> %s", EnumToStringOrDefault( value.Buttons[2] ), EnumToStringOrDefault( value.Buttons[3] ), str );
+        if ( value.Button == Scratch && value.Type == 1 )
+            SPrintf( str, "%s (FEVER)", str );
         else
-            SPrintf( str, "%s -> %s", EnumToStringOrDefault( value.Buttons[2] ), str );
+            SPrintf( str, "%s Type %d", str, value.Type );
     }
 
     // Format note info
