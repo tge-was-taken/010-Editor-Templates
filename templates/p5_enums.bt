@@ -4061,6 +4061,11 @@ enum<short> BattleUnit
     // Generated from enemy name table entry: RESERVE
     RESERVE54 = 350,
 
+};
+
+// This enum represents the different party members available.
+enum<byte> PartyMember
+{
 	Protagonist = 1,
     Ryuji = 2,
     Morgana = 3,
@@ -4072,3 +4077,316 @@ enum<short> BattleUnit
     Goro = 9,
 };
 
+enum<ushort> MusicID
+{
+    LastSurprise = 0,
+    KeeperOfLust = 4,
+    BloomingVillain = 5,
+    RiversInTheDesert_Instrumental = 6,
+    WillPower = 7,
+    RiversInTheDesert = 8,
+    Yaldabaoth = 12,
+    OurBeginning = 14,
+};
+
+enum<byte> ArcanaID
+{
+    Fool = 1,
+    Magician = 2,
+    HighPriestess = 3,
+    Empress = 4,
+    Emperor = 5,
+    Hierophant = 6,
+    Lovers = 7,
+    Chariot = 8,
+    Justice = 9,
+    Hermit = 10,
+    Fortune = 11,
+    Strength = 12,
+    HangedMan = 13,
+    Death = 14,
+    Temperance = 15,
+    Devil = 16,
+    Tower = 17,
+    Star = 18,
+    Moon = 19,
+    Sun = 20,
+    Judgement = 21,
+    Aeon = 22,
+    BlankArcana = 23,
+    World = 24,
+};
+
+// This enum represents elemental affinity status (i.e. weak, resist, etc.)
+enum<short> AffinityStatus
+{
+    Neutral = 20,
+    Weak = 2048,
+    Resist = 8192,
+    Resist2 = 4096,
+    Resist3 = 12288,
+    Block = 256,
+    Repel = 512,
+    Drain = 1024,
+    WeakResist = 10240,
+};
+
+enum<ubyte> ElementalType
+{
+    Passive = 255,
+    Physical = 0,
+    Gun = 1,
+    Fire = 2,
+    Ice = 3,
+    Electric = 4,
+    Wind = 5,
+    Psy = 6,
+    Nuke = 7,
+    Bless = 8,
+    Curse = 9,
+    Almighty = 10,
+    Dizzy = 11,
+    Confuse = 12,
+    Fear = 13,
+    Forget = 14,
+    Hunger = 15,
+    Sleep = 16,
+    Rage = 17,
+    Despair = 18,
+    Brainwash = 19,
+    Healing = 20,
+    Support = 21,
+};
+
+
+enum<ubyte>Skill_ApplyOrCureEffect
+{
+    NoEffect = 0,
+    ApplyEffect = 1,
+    CureEffect = 2,
+};
+
+
+enum<ubyte>Skill_ApplyEffect0
+{
+    NoEffect0 = 0,
+    WrathAilment = 1, // Attack up, Defense down, non-negatable. Used by Yaldabaoth's Distorted Wrath skill.
+    JealousyAilment = 2, // Attacks an ally if it uses a support skill on any ally except the afflicted. Used by Yaldabaoth's Distorted Envy skill.
+    WeakToAllElements = 4, // used by The Artist's Grace (Shadow Madarame battle) and Yaldabaoth's Distorted Vanity skill.
+    Unconscious = 8, // used by instakill and revival skills
+    KnockDown = 16, // used by Down Shot
+    Mouse = 64, // only works on the Phantom Thieves
+};
+
+enum<ubyte>Skill_ApplyEffect1
+{
+    NoEffect1 = 0,
+    SleepAilment = 1,
+    RageAilment = 2,
+    DespairAilment = 4,
+    BrainwashAilment = 8,
+    RageBrainwashAilment = 14, // used by Energy Drop/Shower
+    AllEffect1Ailments = 15,
+    AtkUpDefDownNonNegatable = 16, // used by Desparation
+    BerserkVisual = 32, // used by Call of Chaos, has no actual battle effect 
+    LustAilment = 128, // used by Yaldabaoth's Distorted Lust skill
+};
+
+enum<ubyte>Skill_ApplyEffect2
+{
+    NoEffect2 = 0,
+    BurnAilment = 1,
+    FreezeAilment = 2,
+    ShockAilment = 4,
+    BurnFreezeShockAilment = 7,
+    DizzyAilment = 8,
+    ConfuseAilment = 16,
+    FearAilment = 32,
+    ConfuseFearAilment = 48, // used for Mangatsu Mandala and Energy Drop/Shower
+    ForgetAilment = 64,
+    HungerAilment = 128, // only affects the Phantom Thieves
+    DizzyForgetHungerAilment = 200, // used for Patra
+    AllEffect2Ailments = 255
+};
+
+enum<ubyte>Skill_ApplyEffect3
+{
+    NoEffect3 = 0,
+    NullifyMagicShield = 1,// breaks magic-reflecting shields
+    InstakillShield = 2, // protects against one insta-kill attack
+    CoverFireWeakness = 4, // Changes innate Fire weakness to neutral
+    CoverIceWeakness = 8,  // Changes innate Ice weakness to neutral
+    CoverElecWeakness = 16,  // Changes innate Electric weakness to neutral
+    CoverWindWeakness = 32,  // Changes innate Wind weakness to neutral
+    CoverNukeWeakness = 64,  // Changes innate Nuke weakness to neutral
+    CoverPsyWeakness = 128,  // Changes innate Psy weakness to neutral
+};
+
+
+enum<ubyte>Skill_ApplyEffect4
+{
+    NoEffect4 = 0,
+    NegateFireResistance = 1, // Changes innate Fire resistance to neutral; does not affect elemental Wall skills
+    NegateIceResistance = 2, // Changes innate Ice resistance to neutral; does not affect elemental Wall skills
+    NegateWindResistance = 4, // Changes innate Wind resistance to neutral; does not affect elemental Wall skills
+    NegateElecResistance = 8, // Changes innate Electric resistance to neutral; does not affect elemental Wall skills
+    NegateNukeResistance = 16, // Changes innate Nuke resistance to neutral; does not affect elemental Wall skills
+    NegatePsyResistance = 32, // Changes innate Psy resistance to neutral; does not affect elemental Wall skills
+    AilmentSusceptibility = 64, // increases the likelihood of recieving ApplyEffect1 or ApplyEffect2 ailments
+    NullifyPhysicalShield = 128 // breaks physical-reflecting shields
+    
+};
+
+enum<ubyte>Skill_ApplyEffect5
+{
+    NoEffect5 = 0,
+    ApplyCharge = 1, // next Strength-based attack deals 2.5x damage
+    ApplyConcentrate = 2, // next Magic-based attack deals 2.5x damage
+    ApplyChargeConcentrate = 3, // used by the Navigator for Ultra Charge
+    RemoveBuffs = 4, // used by Dekaja
+    RemoveDebuffs = 8, // used by Dekunda
+    CritChanceUp = 16, // used by Rebellion
+    CritChanceWayUp = 32, // used by Revolution
+    PhysicalShield = 64, // reflects the next physical attack received
+    MagicShield = 128, // reflects the next magic attack recevieved
+};
+
+enum<ubyte>Skill_ApplyBuffDebuff
+{
+    NoBuffDebuff = 0,
+    AttackUp = 1,
+    AttackDown = 2,
+    DefenseUp = 16,
+    DefenseDown = 32,
+    AtkUpDefenseDown = 33,
+    AgilityUp = 68,
+    AgiUpAtkDown = 70,
+    AgilityDown = 136,
+    AtkUpAgiDown = 137,
+    AtkDefAgiUp = 85,
+    AtkDefAgiDown = 170,
+};
+
+enum<ubyte>Skill_ApplyEffect6
+{
+    NoEffect6 = 0,
+    OnlyHitTargetsInflictedWithFear = 1, // used by Ghastly Wail
+    EscapeBattle = 2,
+    ThrowAwayMoney = 6,
+    TargetedChanceUp = 19, // increases chance of being targeted by enemies
+    TargetedChanceWayUp = 20, // greatly increases chance of being targeted by enemies
+    IfAilmentExistsHealAndCureInstead = 21, // used for Big Bang Challenge; needs testing with other ailments
+    CasterAttackWayDownNonNegatable = 22, // used for Beast Weaver
+    UnknownMegidolaonRelated = 23, // used for 9999 damage Megidolaon (603)
+};
+
+enum<ubyte>Skill_HPEffect
+{
+    NoDamageOrHealing = 0,
+    DealDamage = 1, // deal damage, affected by damage stat
+    RestoreHealth = 2, // restore health, varies based on stats
+    SetHP = 3, // set HP to a specified value
+    DealExactDamage = 4, // deals EXACTLY the amount of damage specified, regardless of stats
+    RestoreExactHealth = 5, // restores EXACTLY the amount of health specified, regardless of stats
+    UnknownDamage6 = 6, // seems to be the same as DealDamage? Needs more testing
+    UnknownHealing7 = 7, // seems to be the same as RestoreHealth? Needs more testing
+    DamagePercentCurrentHP = 8, // deal a percent of current HP as damage
+    RestorePercentCurrentHP = 9, // restore a percent of current HP as health
+    DamagePercentMaxHP = 10, // deal a percent of max HP as damage
+    RestorePercentMaxHP = 11, // restore a percent of max HP as health
+    DrainDamage = 12, // deals damage, affected by damage stat, and restores equal HP to the user
+    DrainExactDamage = 13, // deals EXACTLY the amount of damage specified and restores equal HP to the user
+    UnknownDamage14 = 14, // seems to be the same as DealDamage? Needs more testing
+    RestoreHealthWhiffChance = 15, // Has a chance to whiff, healing for minimal HP instead
+    DamageBasedOnHealthyPartyMembers = 16, // used for All-Out Attacks
+};
+
+enum<ubyte>Skill_SPEffect
+{
+    NoSPEffect = 0,
+    RestoreSP = 5,
+    DepletePercentMaxSP = 10,
+    RestorePercentMaxSP = 11,
+    DrainSP = 13,
+};
+
+enum<ubyte>Skill_ValidTargets
+{
+    Ally = 1,
+    Enemy = 2,
+    Any = 3,
+};
+
+enum<ubyte>Skill_NumberOfTargets
+{
+    SingleTarget = 0,
+    MultiTarget = 1,
+    MultiTargetExceptSelf = 2, // might be redundant with Multi + SelfNotAllowed
+    UnknownPlumeOfDuskRelated = 3, // used by the unused Plume of Dusk item ability - description reads "When MC is KO'd, fully recover to all allies"
+};
+
+enum<ubyte>Skill_TargetRestrictions
+{
+    NoAdditionalRestrictions = 0,
+    RandomTwoFromSelection = 1, // used by Diffraction Arrow, Distortion Wave
+    SelfOnly = 16,
+    SelfNotAllowed = 32,
+    UnconsciousOnly = 64, // used for revival skills
+};
+
+enum<ubyte>Skill_CasterEffect1
+{
+    NoCasterEffect1 = 0,
+    UnknownCasterEffect_SpecialMoveRelated = 1, // used by All-Out Attacks, Navigator skills, and other unique skills. Usually plays a mini-cutscene? Not always, though.
+    ReduceOwnHPTo1 = 4,
+    UnknownCasterEffect1_StealInfoRelated = 32, // used by Steal Info
+};
+
+enum<ubyte>Skill_CasterEffect2
+{
+    NoCasterEffect2 = 0,
+    KOSelf = 1,
+    MeleeContact = 2, // needs to be tested
+    SummonAlly_CRASHES_ON_USE = 4, // summons an ally in enemy encounters - DO NOT USE LIKE A NORMAL SKILL, THE GAME WILL CRASH
+    UnknownCasterEffect_SupportRelated = 8, // used by healing and support skills
+    UnknownCasterEffect_RecarmdraRelated = 24, // used by Recarmdra
+    UnknownCasterEffect_TrafuriRelated = 40, // used by Trafuri
+    UnknownCasterEffect_FollowUpRelated = 66, // used by Follow-Up Attacks
+    UnknownCasterEffect_RouletteRelated1 = 128, // used by Roulette: HP and Roulette: SP. Suspect it has to do with being able to be reversed.
+    UnknownCasterEffect_RouletteRelated2 = 136, // used by Roulette: Aid.
+    CRASHES_OFTEN_UnknownCasterEffect2_160 = 160, // used by Barrage and Dispose Item - DO NOT USE WITHOUT APPLYING THE "ThrowAwayMoney" EFFECT, THE GAME WILL CRASH
+};
+
+
+enum<ubyte>Skill_DamageStat
+{
+    NoApplicableStat = 0,
+    StrengthStat = 1,
+    MagicStat = 2,
+};
+
+enum<ubyte>Skill_CostType
+{
+    NoCost = 0,
+    HPCost = 1,
+    SPCost = 2,
+};
+
+enum<ubyte>Skill_PhysicalOrMagicSkill
+{
+    MagicSkill = 0,
+    PhysicalSkill = 1,
+};
+
+enum<ubyte>Skill_PassiveOrActive
+{
+    ActiveSkill = 0,
+    PassiveSkill = 1, // MUST be enabled for passive skills to function properly
+    NULL = 255
+};
+
+enum<byte>SkillEnabled
+{
+    Disabled = 0,
+    Enabled = 1,
+};
