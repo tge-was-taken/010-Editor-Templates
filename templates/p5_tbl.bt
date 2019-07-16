@@ -3,7 +3,7 @@
 //
 //      File: AtlusTable_P5.bt
 //   Authors: TGE, Lillian Goulston, Scarltz
-//   Version: 1.5
+//   Version: 1.6
 //   Purpose: Parse Persona 5 Table files.
 //  Category: Persona 5
 // File Mask: *.tbl, *.pac
@@ -21,6 +21,9 @@
 //  1.5 - Added names and comments to most structs for more accessibility and ease of use
 //      - Added enums for battle music in ENCOUNTER.TBL
 //      - Added enums for Arcana
+//  1.6 - Added struct for Enemy Elemental Affinities in UNIT.TBL
+//      - Added structs and enums for items in ITEM.TBL
+//      - Added and commented on a handful of new entries in certain enums (AffinityStatus, Skill_HPEffect, and Skill_Target Restrictions)
 //------------------------------------------------
 
 //---------------------------------------------
@@ -305,7 +308,7 @@ typedef struct
     u8 Unknown6[ 18 ];
     b16 Unknown7;
     u16 AttackDamage <name = "Attack Damage">;
-} TUnitStats <name = "Unit Stats">;
+} TEnemyUnitStats <name = "Enemy Unit Stats">;
 
 // Still testing whether the last 8 are what I think they are
 typedef struct
@@ -330,18 +333,35 @@ typedef struct
     AffinityStatus RageAffinity <name = "Rage">;
     AffinityStatus DespairAffinity <name = "Despair">;
     AffinityStatus BrainwashAffinity <name = "Brainwash">; 
-} TUnitElementalAffinities <name = "Elemental Affinities">;
+} TUnitPersonaElementalAffinities <name = "Persona Elemental Affinities">;
 
 typedef struct
 {
-    u32 Values[ 10 ];
-    //u16 Values[ 20 ]; // uncomment this if you want them to be shorts
-} TUnitSegment2Entry;
+    AffinityStatus PhysAffinity <name = "Physical">;
+    AffinityStatus GunAffinity <name = "Gun">;
+    AffinityStatus FireAffinity <name = "Fire">;
+    AffinityStatus IceAffinity <name = "Ice">;
+    AffinityStatus ElecAffinity <name = "Electric">;
+    AffinityStatus WindAffinity <name = "Wind">;
+    AffinityStatus PsyAffinity <name = "Psy">;
+    AffinityStatus NukeAffinity <name = "Nuke">;
+    AffinityStatus BlessAffinity <name = "Bless">;
+    AffinityStatus CurseAffinity <name = "Curse">;
+    AffinityStatus AlmightyAffinity <name = "Almighty">;
+    AffinityStatus DizzyAffinity <name = "Dizzy">;
+    AffinityStatus ConfuseAffinity <name = "Confuse">;
+    AffinityStatus FearAffinity <name = "Fear">;
+    AffinityStatus ForgetAffinity <name = "Forget">;
+    AffinityStatus HungerAffinity <name = "Physical">;
+    AffinityStatus SleepAffinity <name = "Hunger">;
+    AffinityStatus RageAffinity <name = "Rage">;
+    AffinityStatus DespairAffinity <name = "Despair">;
+    AffinityStatus BrainwashAffinity <name = "Brainwash">; 
+} TUnitEnemyElementalAffinities <name = "Enemy Unit Elemental Affinities">;
 
 typedef struct
 {
-    u32 Values[ 6 ];
-    //u16 Values[ 12 ]; // uncomment this if you want them to be shorts
+    u8 Values[ 24 ];
 } TUnitSegment3Entry;
 
 typedef struct
@@ -406,6 +426,243 @@ typedef struct
     u8 Unknown <name = "Unknown">;
 } TSkill_ActiveSkillData <name="Active Skill Data: ">;
 
+// Item
+
+typedef struct
+{
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    GearEquippable User <name = "Equippable User(s)">;
+    u16 Unknown;
+    u8 Strength <name = "Strength Boost">;
+    u8 Magic <name = "Magic Boost">;
+    u8 Endurance <name = "Endurance Boost">;
+    u8 Agility <name = "Agility Boost">;
+    u8 Luck <name = "Luck Boost">;
+    u8 Unknown;
+    GearEffect Effect <name = "Effect">;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 PurchasePrice <name = "Purchase Price">;
+    u16 Unknown;
+    u16 SellPrice <name = "Sell Price">;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+} TItem_Accessories <name ="Accessories">;
+
+
+typedef struct
+{
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    GearEquippable User <name = "Equippable User(s)">;
+    u16 Unknown;
+    u16 ArmorDefense <name = "Defense">;
+    u16 ArmorEvasion <name = "Evasion">;
+    u8 ArmorStrength <name = "Strength Boost">;
+    u8 ArmorMagic <name = "Magic Boost">;
+    u8 ArmorEndurance <name = "Endurance Boost">;
+    u8 ArmorAgility <name = "Agility Boost">;
+    u8 ArmorLuck <name = "Luck Boost">;
+    u8 Unknown;
+    GearEffect Effect <name = "Effect">;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 PurchasePrice <name = "Purchase Price">;
+    u16 Unknown;
+    u16 SellPrice <name = "Sell Price">;
+    u16 Unknown;
+    u16 Unknown;
+} TItem_Armor <name ="Armor">;
+
+typedef struct
+{
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    BattleSkill Skill;
+    u16 Unknown;
+    u16 Unknown;
+    u16 PurchasePrice <name = "Purchase Price">;
+    u16 Unknown;
+    u16 SellPrice <name = "Sell Price">;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+} TItem_Consumables <name ="Consumables">;
+
+typedef struct
+{
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown; 
+    u16 Unknown; 
+    u16 Unknown; 
+} TItem_KeyItems <name ="Key Items">;
+
+typedef struct
+{
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 PurchasePrice <name = "Purchase Price">;
+    u16 Unknown;
+    u16 SellPrice <name = "Sell Price">;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+} TItem_Materials <name ="Materials">;
+
+typedef struct
+{
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    GearEquippable User <name = "Equippable User(s)">;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Attack <name = "Attack">;
+    u16 Accuracy <name = "Accuracy">;
+    u8 Strength <name = "Strength Boost">;
+    u8 Magic <name = "Magic Boost">;
+    u8 Endurance <name = "Endurance Boost">;
+    u8 Agility <name = "Agility Boost">;
+    u8 Luck <name = "Luck Boost">;
+    u8 Unknown;
+    GearEffect Effect <name = "Effect">;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 PurchasePrice <name = "Purchase Price">;
+    u16 Unknown;
+    u16 SellPrice <name = "Sell Price">;
+    u16 Unknown;
+    u16 Unknown;
+} TItem_MeleeWeapons <name ="Melee Weapons">;
+
+typedef struct
+{
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    GearEquippable User <name = "Equippable User(s)">;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+} TItem_Outfits <name ="Outfits">;
+
+typedef struct
+{
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    BattleSkill Skill;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+} TItem_SkillCards <name ="Skill Cards">;
+
+typedef struct
+{
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    GearEquippable User <name = "Equippable User(s)">;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Attack <name = "Attack">;
+    u16 Accuracy <name = "Accuracy">;
+    u16 Rounds <name = "Rounds">;
+    u8 Strength <name = "Strength Boost">;
+    u8 Magic <name = "Magic Boost">;
+    u8 Endurance <name = "Endurance Boost">;
+    u8 Agility <name = "Agility Boost">;
+    u8 Luck <name = "Luck Boost">;
+    u8 Unknown;
+    GearEffect Effect <name = "Effect">;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 PurchasePrice <name = "Purchase Price">;
+    u16 Unknown;
+    u16 SellPrice <name = "Sell Price">;
+    u16 Unknown;
+    u16 Unknown;
+} TItem_RangedWeapons <name ="Ranged Weapons">;
+
+typedef struct
+{
+    u8 Unknown; 
+} TItem_Footer <name ="Footer">;
+
 
 //---------------------------------------------
 // Parse file structure
@@ -430,9 +687,19 @@ enum TableSegmentType
     TableSegmentType_Encounter,
     TableSegmentType_Skill_Elements,
     TableSegmentType_Skill_ActiveSkillData,
-    TableSegmentType_Unit_Stats,
-    TableSegmentType_Unit_Segment1,
-    TableSegmentType_Unit_ElementalAffinities,
+    TableSegmentType_Item_Accessories,
+    TableSegmentType_Item_Armor,
+    TableSegmentType_Item_Consumables,
+    TableSegmentType_Item_KeyItems,
+    TableSegmentType_Item_Materials,
+    TableSegmentType_Item_MeleeWeapons,
+    TableSegmentType_Item_Outfits,
+    TableSegmentType_Item_SkillCards,
+    TableSegmentType_Item_RangedWeapons,
+    TableSegmentType_Item_Footer,
+    TableSegmentType_Unit_EnemyUnitStats,
+    TableSegmentType_Unit_EnemyElementalAffinities,
+    TableSegmentType_Unit_PersonaElementalAffinities,
     TableSegmentType_Unit_Segment3,
     TableSegmentType_Unit_VisualIndex,
 };
@@ -512,16 +779,62 @@ typedef struct( TableSegmentType _type )
             TSkill_ActiveSkillData Skill[ Size / sizeof( TSkill_ActiveSkillData ) ];
             break;
 
-        case TableSegmentType_Unit_Stats:
-            TUnitStats Stats[ Size / sizeof( TUnitStats ) ];
+        case TableSegmentType_Item_Accessories:
+            TItem_Accessories Accessories[ Size / sizeof( TItem_Accessories ) ];
             break;
 
-        case TableSegmentType_Unit_Segment1:
-            TUnitSegment2Entry Entries[ Size / sizeof( TUnitSegment2Entry ) ];
+        case TableSegmentType_Item_Armor:
+            TItem_Armor Armor[ Size / sizeof( TItem_Armor ) ];
             break;
 
-        case TableSegmentType_Unit_ElementalAffinities:
-            TUnitElementalAffinities ElementalAffinities[ Size / sizeof( TUnitElementalAffinities ) ];
+        case TableSegmentType_Item_Consumables:
+            TItem_Consumables Consumables[ Size / sizeof( TItem_Consumables ) ];
+            break;
+
+        case TableSegmentType_Item_KeyItems:
+            TItem_KeyItems KeyItems[ Size / sizeof( TItem_KeyItems ) ];
+            break;
+
+        case TableSegmentType_Item_Materials:
+            TItem_Materials Materials[ Size / sizeof( TItem_Materials ) ];
+            break;
+
+
+        case TableSegmentType_Item_MeleeWeapons:
+            TItem_MeleeWeapons MeleeWeapons[ Size / sizeof( TItem_MeleeWeapons ) ];
+            break;
+
+
+        case TableSegmentType_Item_Outfits:
+            TItem_Outfits Outfits[ Size / sizeof( TItem_Outfits ) ];
+            break;
+
+
+        case TableSegmentType_Item_SkillCards:
+            TItem_SkillCards SkillCards[ Size / sizeof( TItem_SkillCards ) ];
+            break;
+
+
+        case TableSegmentType_Item_RangedWeapons:
+            TItem_RangedWeapons RangedWeapons[ Size / sizeof( TItem_RangedWeapons ) ];
+            break;
+
+
+        case TableSegmentType_Item_Footer:
+            TItem_Footer Footer[ Size / sizeof( TItem_Footer ) ];
+            break;
+
+
+        case TableSegmentType_Unit_EnemyUnitStats:
+            TEnemyUnitStats Stats[ Size / sizeof( TEnemyUnitStats ) ];
+            break;
+
+        case TableSegmentType_Unit_EnemyElementalAffinities:
+            TUnitEnemyElementalAffinities ElementalAffinities[ Size / sizeof( TUnitEnemyElementalAffinities ) ];
+            break;
+
+        case TableSegmentType_Unit_PersonaElementalAffinities:
+            TUnitPersonaElementalAffinities ElementalAffinities[ Size / sizeof( TUnitPersonaElementalAffinities ) ];
             break;
 
         case TableSegmentType_Unit_Segment3:
@@ -605,13 +918,29 @@ typedef struct( string tableName, u32 endOffset )
                 case 1: segmentType = TableSegmentType_Skill_ActiveSkillData; break;
             }
         }
+        else if ( !Stricmp( tableName, "item" ) )
+        {
+            switch ( segmentIndex )
+            {
+                case 0: segmentType = TableSegmentType_Item_Accessories; break;
+                case 1: segmentType = TableSegmentType_Item_Armor; break;
+                case 2: segmentType = TableSegmentType_Item_Consumables; break;
+                case 3: segmentType = TableSegmentType_Item_KeyItems; break;
+                case 4: segmentType = TableSegmentType_Item_Materials; break;
+                case 5: segmentType = TableSegmentType_Item_MeleeWeapons; break;
+                case 6: segmentType = TableSegmentType_Item_Outfits; break;
+                case 7: segmentType = TableSegmentType_Item_SkillCards; break;
+                case 8: segmentType = TableSegmentType_Item_RangedWeapons; break;
+                case 9: segmentType = TableSegmentType_Item_Footer; break;
+            }
+        }
         else if ( !Stricmp( tableName, "unit" ) )
         {
             switch ( segmentIndex )
             {
-                case 0: segmentType = TableSegmentType_Unit_Stats; break;
-                case 1: segmentType = TableSegmentType_Unit_Segment1; break;
-                case 2: segmentType = TableSegmentType_Unit_ElementalAffinities; break;
+                case 0: segmentType = TableSegmentType_Unit_EnemyUnitStats; break;
+                case 1: segmentType = TableSegmentType_Unit_EnemyElementalAffinities; break;
+                case 2: segmentType = TableSegmentType_Unit_PersonaElementalAffinities; break;
                 case 3: segmentType = TableSegmentType_Unit_Segment3; break;
                 case 4: segmentType = TableSegmentType_Unit_VisualIndex; break;
             }
