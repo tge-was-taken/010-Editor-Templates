@@ -1,0 +1,49 @@
+//------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: p5_cldWeather.bt
+//   Authors: Lillian Goulston, lipsum
+//   Version: 1.0
+//   Purpose: Editing daily weather in Persona 5
+//  Category: Persona 5
+// File Mask: cldWeather.bin
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//---------------------------------------------
+// Includes
+//---------------------------------------------
+
+#include "../common/include.h"
+
+//---------------------------------------------
+// Define structures
+//---------------------------------------------
+
+enum<byte> WeatherType
+{
+    Clear                 = 0x00,
+    Rainy                 = 0x01,
+    Cloudy                = 0x02,
+    Snow                  = 0x03,
+    RainySeason           = 0x04,
+    TyphoonWarning        = 0x05,
+    PollenWarning_Clear   = 0x06,
+    PollenWarning_Cloudy  = 0x07,
+    TorrentialRain        = 0x08,
+    Heatwave_HotNight     = 0x09,
+    FluSeason_Clear       = 0x0A,
+    FluSeason_Cloudy      = 0x0B
+};
+
+typedef struct
+{
+    SetRandomBackColor();
+    WeatherType WeatherPeriod1 <name = "Daily Period 1">;
+    WeatherType WeatherPeriod2 <name = "Daily Period 2">;
+    WeatherType WeatherPeriod3 <name = "Daily Period 3">;
+    WeatherType WeatherPeriod4 <name = "Daily Period 4">;
+} DailyWeather <name = "Daily Weather">;
+
+DailyWeather Apr[30] <name = "April Weather">;DailyWeather May[31] <name = "May Weather">;DailyWeather Jun[30] <name = "June Weather">;DailyWeather Jul[31] <name = "July Weather">;DailyWeather Aug[31] <name = "August Weather">;DailyWeather Sep[30] <name = "September Weather">;DailyWeather Oct[31] <name = "October Weather">;DailyWeather Nov[30] <name = "November Weather">;DailyWeather Dec[31] <name = "December Weather">;DailyWeather Jan[31] <name = "January Weather">;DailyWeather Feb[28] <name = "February Weather">;DailyWeather Mar[31] <name = "March Weather">;
