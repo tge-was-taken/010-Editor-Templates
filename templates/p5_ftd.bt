@@ -2,16 +2,47 @@
 //--- 010 Editor v8.0 Binary Template
 //
 //      File: p5_ftd.bt
-//   Authors: TGE
-//   Version: 1.0
+//   Authors: TGE, Lillian Goulston
+//   Version: 1.1
 //   Purpose: Parse Persona 5 FTD files
-//  Category: 
-// File Mask: *.ftd
+//  Category: Persona 5
+// File Mask: *.ftd, *.ctd
 //  ID Bytes: 
 //   History: 
 //------------------------------------------------
 
+//---------------------------------------------
+// Includes
+//---------------------------------------------
 #include "../common/include.h"
+#include "p5_enums_ftd.bt"
+
+// Define structures
+
+typedef struct
+{
+    ConfidantFunction_Type FunctionType <name = "Function Type">;
+    short Rank <name = "Unlocks at Rank:">;
+    ConfidantFunction Function <name = "Confidant Function">;
+    short Unknown <name = "Unknown">;
+} Table_cmmFunction[ 10 ] <name = "Confidant Functions">;
+
+typedef struct
+{
+    ConfidantFunction_Type FunctionType <name = "Function Type">;
+    ConfidantFunction_OrganizedByArcana FunctionByArcana <name = "Confidant Function">;
+} Table_cmmFunctionInfo <name = "Confidant Function Info">;
+
+typedef struct
+{
+    PartyMember Member <name = "Party Member">;
+    short Rank <name = "Rank">;
+    BattleSkill Skill <name = "Battle Skill">;
+    short Unknown <name = "Unknown">;
+} Table_cmpPsCoopSkillTable <name = "Party Confidant Skill Table">;
+
+
+// Generic structures
 
 typedef struct( string fileName )
 {
@@ -33,12 +64,12 @@ typedef struct( string fileName )
         }
     }
 
-    u32 Field00;
-    u32 Magic;
-    u32 FileSize;
-    u16 DataType;
-    u16 DataCount;
-    u32 DataOffsets[ DataCount ];
+    u32 Field00 <name = "Field 00">;
+    u32 Magic <name = "Magic">;
+    u32 FileSize <name = "File Size">;
+    u16 DataType <name = "Data Type">;
+    u16 DataCount <name = "Data Count">;
+    u32 DataOffsets[ DataCount ] <name = "Data Offsets">;
     
     local u32 x;
     local u32 y;
@@ -49,23 +80,17 @@ typedef struct( string fileName )
         if ( DataType == 0 ) struct FtdList List( fileName );
         else if ( DataType == 1 ) struct FtdString Data;
     }
-} FtdTable;
-
-enum<u16> FtdListType
-{
-    FtdListType_DataEntries,
-    FtdListType_EmbeddedFtd
-};
+} FtdTable <name = "FTD Table">;
 
 typedef struct( string fileName )
 {
     SetRandomBackColor();
 
-    u32 Field00;        Assert( Field00 == 0 );
-    u32 DataSize;
-    u32 EntryCount;
-    FtdListType EntryType;
-    u16 Field0E;
+    u32 Field00 <name = "Field 00">;        Assert( Field00 == 0 );
+    u32 DataSize <name = "Data Size">;
+    u32 EntryCount <name = "Entry Count">;
+    FtdListType EntryType <name = "Entry Type">;
+    u16 Field0E <name = "Field 0E">;
     
     if ( EntryCount > 0 )
     {
@@ -73,14 +98,14 @@ typedef struct( string fileName )
         {
             local u32 entrySize = DataSize / EntryCount;
             Assert( ( entrySize * EntryCount ) == DataSize );
-            struct FtdListEntry Entry( entrySize, fileName )[ EntryCount ];
+            struct FtdListEntry Entry( entrySize, fileName )[ EntryCount ] <name = "Entry">;
         }
         else if ( EntryType == FtdListType_EmbeddedFtd )
         {
             FtdTable Table( fileName );
         }
     }
-} FtdList;
+} FtdList <name = "List">;
 
 typedef struct( u32 entrySize, string fileName )
 {
@@ -88,6 +113,18 @@ typedef struct( u32 entrySize, string fileName )
 
     switch ( fileName )
     {
+        case "cmmFunctionInfoTable":
+            Table_cmmFunctionInfo Data;
+            break;
+
+        case "cmmFunctionTable":
+            Table_cmmFunction Data;
+            break;
+
+        case "cmpPsCoopSkillTable":
+            Table_cmpPsCoopSkillTable Data;
+            break;
+
         default: 
             u8 Data[ entrySize ]; 
             break;
@@ -109,11 +146,11 @@ void FtdListEntryFromString( struct FtdListEntry& entry, string value )
 typedef struct
 {
     SetRandomBackColor();
-    u8 Length;
-    u8 Field01;
-    u8 Field02; Assert( Field02 == 0 );
-    u8 Field03; Assert( Field03 == 0 );
-    u8 Data[ Align( Length, 16 ) ];
+    u8 Length <name = "Length">;
+    u8 Field01 <name = "Field 01">;
+    u8 Field02 <name = "Field 02">; Assert( Field02 == 0 );
+    u8 Field03 <name = "Field 03">; Assert( Field03 == 0 );
+    u8 Data[ Align( Length, 16 ) ] <name = "Data">;
 } FtdString <read=FtdStringToString, write=FtdStringFromString>;
 
 string FtdStringToString( struct FtdString& str )
@@ -177,15 +214,15 @@ typedef struct( EArchiveFormat format )
          Stricmp( fileExt, ".ctd" ) == 0 ||
          Stricmp( fileExt, ".ttd" ) == 0 )
     {
-        FtdTable Table( FileNameGetBase( FileName, false ) ); 
+        FtdTable Table( FileNameGetBase( FileName, false ) ) <name = "Table">; 
     }
     else if ( Stricmp( fileExt, ".bin" ) == 0 || Stricmp( fileExt, ".pak" ) == 0  )
     {
-        TArchive Archive;
+        TArchive Archive <name = "Archive">;
     }
     else
     {
-        u8 Data[ FileSize ];
+        u8 Data[ FileSize ] <name = "Data">;
     }
 
     FSeek( fileStart + FileSize );
@@ -207,13 +244,13 @@ local string fileName = FileNameGetBase( filePath, false );
 local string fileExt = FileNameGetExtension( filePath );
 
 if ( Stricmp( fileExt, ".bin" ) == 0 ||
-     Stricmp( fileExt, ".pak" ) == 0 ||
-     Stricmp( fileExt, ".pac" ) == 0 )
+        Stricmp( fileExt, ".pak" ) == 0 ||
+        Stricmp( fileExt, ".pac" ) == 0 )
 {
-    TArchive Archive;
+    TArchive Archive <name = "Archive">;
 }
 else
 {
     // ftd file
-    FtdTable Table( fileName );
+    FtdTable Table( fileName ) <name = "Table">;
 }

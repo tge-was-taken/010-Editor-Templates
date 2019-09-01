@@ -177,7 +177,7 @@ typedef struct
     struct
     {        
         u8 PendingLevels <name = "Pending Levels">;
-        SkillEnabled Enabled <name = "Enabled">; 
+        IsSkillLearnable Learnable <name = "Is Skill Learnable?">; 
         BattleSkill Skill  <name = "Skill">;  
     } PersonaSkill[ 16 ] <name = "Persona Skills">;
 
@@ -198,7 +198,7 @@ typedef struct
     struct
     {
         u8 Level <name = "Level">;
-        SkillEnabled Enabled <name = "Enabled", comment = "If set to 0, the skill will not be learned, even if it is defined">;
+        IsSkillLearnable Learnable <name = "Is Skill Learnable?", comment = "If set to 0, the skill will not be learned, even if it is defined">;
         BattleSkill Skill <name = "Skill">;
     } PersonaSkill[ 32 ] <name = "Persona Skills">;
 
@@ -217,8 +217,37 @@ typedef struct
 
 typedef struct
 {
-    u32 XPThreshold;
-} TPlayer_LevelUpThresholds;
+    u32 XPThreshold[ 99 ] <name = "XP Thresholds">;
+} TPlayer_LevelUpThresholds <name = "Player Level-Up Thresholds">;
+
+typedef struct
+{
+    u16 Unknown[ 22 ];
+} TPlayer_Unknown;
+
+// Exist
+
+typedef struct
+{
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+} TExist_Segment1;
+
+typedef struct
+{
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+} TExist_Segment2;
 
 // Elsai
 typedef struct
@@ -271,6 +300,7 @@ typedef struct
 {
     u32 Unknown;
 } TAICalc_Segment7;
+
 
 // Encounter
 typedef struct
@@ -402,8 +432,8 @@ typedef struct
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
     u8 Accuracy <name = "Accuracy">;
-    u8 MinHits <name = "Minimum Number of Hits", comment = "For multi-hit moves">;
-    u8 MaxHits <name = "Maximum Number of Hits", comment = "For multi-hit moves">;
+    u8 MinHits <name = "Minimum Number of Hits", comment = "For multi-hit moves; otherwise set this to 1">;
+    u8 MaxHits <name = "Maximum Number of Hits", comment = "For multi-hit moves; otherwise set this to 1">;
     Skill_HPEffect HPEffect <name = "Damage/Healing Type">;
     u16 BaseDamage <name = "Base Damage">;
     Skill_SPEffect SPEffect <name = "Deplete or Restore SP?">;
@@ -435,6 +465,28 @@ typedef struct
     u16 Unknown;
     u16 Unknown;
     GearEquippable User <name = "Equippable User(s)">;
+
+//        struct
+//        {
+//            u16 Unused <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Goro : 1 <name = "Goro">;
+//            u8 Futaba : 1 <name = "Futaba">;
+//            u8 Haru : 1 <name = "Haru">;
+//            u8 Makoto : 1 <name = "Makoto">;
+//            u8 Yusuke : 1 <name = "Yusuke">;
+//            u8 Ann : 1 <name = "Ann">;
+//            u8 Morgana : 1 <name = "Morgana">;
+//            u8 Ryuji : 1 <name = "Ryuji">;
+//            u8 Joker : 1 <name = "Joker">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//        } EquippableUsers <name = "Equippable User(s)">;
+
     u16 Unknown;
     u8 Strength <name = "Strength Boost">;
     u8 Magic <name = "Magic Boost">;
@@ -474,6 +526,28 @@ typedef struct
     u16 Unknown;
     u16 Unknown;
     GearEquippable User <name = "Equippable User(s)">;
+
+//        struct
+//        {
+//            u16 Unused <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Goro : 1 <name = "Goro">;
+//            u8 Futaba : 1 <name = "Futaba">;
+//            u8 Haru : 1 <name = "Haru">;
+//            u8 Makoto : 1 <name = "Makoto">;
+//            u8 Yusuke : 1 <name = "Yusuke">;
+//            u8 Ann : 1 <name = "Ann">;
+//            u8 Morgana : 1 <name = "Morgana">;
+//            u8 Ryuji : 1 <name = "Ryuji">;
+//            u8 Joker : 1 <name = "Joker">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//        } EquippableUsers <name = "Equippable User(s)">;
+
     u16 Unknown;
     u16 ArmorDefense <name = "Defense">;
     u16 ArmorEvasion <name = "Evasion">;
@@ -568,6 +642,28 @@ typedef struct
     u16 Unknown;
     u16 Unknown;
     GearEquippable User <name = "Equippable User(s)">;
+
+//        struct
+//        {
+//            u16 Unused <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Goro : 1 <name = "Goro">;
+//            u8 Futaba : 1 <name = "Futaba">;
+//            u8 Haru : 1 <name = "Haru">;
+//            u8 Makoto : 1 <name = "Makoto">;
+//            u8 Yusuke : 1 <name = "Yusuke">;
+//            u8 Ann : 1 <name = "Ann">;
+//            u8 Morgana : 1 <name = "Morgana">;
+//            u8 Ryuji : 1 <name = "Ryuji">;
+//            u8 Joker : 1 <name = "Joker">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//        } EquippableUsers <name = "Equippable User(s)">;
+
     u16 Unknown;
     u16 Unknown;
     u16 Attack <name = "Attack">;
@@ -598,6 +694,28 @@ typedef struct
     u16 Unknown;
     u16 Unknown;
     GearEquippable User <name = "Equippable User(s)">;
+
+//        struct
+//        {
+//            u16 Unused <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Goro : 1 <name = "Goro">;
+//            u8 Futaba : 1 <name = "Futaba">;
+//            u8 Haru : 1 <name = "Haru">;
+//            u8 Makoto : 1 <name = "Makoto">;
+//            u8 Yusuke : 1 <name = "Yusuke">;
+//            u8 Ann : 1 <name = "Ann">;
+//            u8 Morgana : 1 <name = "Morgana">;
+//            u8 Ryuji : 1 <name = "Ryuji">;
+//            u8 Joker : 1 <name = "Joker">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//        } EquippableUsers <name = "Equippable User(s)">;
+
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
@@ -633,6 +751,28 @@ typedef struct
     u16 Unknown;
     u16 Unknown;
     GearEquippable User <name = "Equippable User(s)">;
+
+//        struct
+//        {
+//            u16 Unused <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//            u8 Goro : 1 <name = "Goro">;
+//            u8 Futaba : 1 <name = "Futaba">;
+//            u8 Haru : 1 <name = "Haru">;
+//            u8 Makoto : 1 <name = "Makoto">;
+//            u8 Yusuke : 1 <name = "Yusuke">;
+//            u8 Ann : 1 <name = "Ann">;
+//            u8 Morgana : 1 <name = "Morgana">;
+//            u8 Ryuji : 1 <name = "Ryuji">;
+//            u8 Joker : 1 <name = "Joker">;
+//            u8 Unused : 1 <name = "Unused Bit">;
+//        } EquippableUsers <name = "Equippable User(s)">;
+
     u16 Unknown;
     u16 Unknown;
     u16 Attack <name = "Attack">;
@@ -672,9 +812,12 @@ enum TableSegmentType
     TableSegmentType_Unknown,
     TableSegmentType_Persona_Stats,
     TableSegmentType_Persona_SkillSets,
-    TableSegmentType_Persona_LevelUpThresholds,
+    TableSegmentType_Persona_PartyLevelUpThresholds,
     TableSegmentType_Persona_PartyMembers,
     TableSegmentType_Player_LevelUpThresholds,
+    TableSegmentType_Player_Unknown,
+    TableSegmentType_Exist_Segment1,
+    TableSegmentType_Exist_Segment2,
     TableSegmentType_Elsai_Segment0,
     TableSegmentType_Elsai_Segment1,
     TableSegmentType_AICalc_Segment1,
@@ -719,8 +862,8 @@ typedef struct( TableSegmentType _type )
             TPersonaSkillSet SkillSets[ Size / sizeof( TPersonaSkillSet ) ];
             break;
 
-        case TableSegmentType_Persona_LevelUpThresholds:
-            TPersonaLevelUpThresholds LevelUpThresholds[ Size / sizeof( TPersonaLevelUpThresholds ) ];
+        case TableSegmentType_Persona_PartyLevelUpThresholds:
+            TPersonaLevelUpThresholds PartyLevelUpThresholds[ Size / sizeof( TPersonaLevelUpThresholds ) ];
             break;
 
         case TableSegmentType_Persona_PartyMembers:
@@ -729,6 +872,18 @@ typedef struct( TableSegmentType _type )
 
         case TableSegmentType_Player_LevelUpThresholds:
             TPlayer_LevelUpThresholds LevelUpThresholds[ Size / sizeof( TPlayer_LevelUpThresholds ) ];
+            break;
+
+        case TableSegmentType_Player_Unknown:
+            TPlayer_Unknown Unknown[ Size / sizeof( TPlayer_Unknown ) ];
+            break;
+
+        case TableSegmentType_Exist_Segment1:
+            TExist_Segment1 Entries[ Size / sizeof( TExist_Segment1 ) ];
+            break;
+
+        case TableSegmentType_Exist_Segment2:
+            TExist_Segment2 Entries[ Size / sizeof( TExist_Segment2 ) ];
             break;
 
         case TableSegmentType_Elsai_Segment0:
@@ -871,7 +1026,7 @@ typedef struct( string tableName, u32 endOffset )
             {
                 case 0: segmentType = TableSegmentType_Persona_Stats; break;
                 case 1: segmentType = TableSegmentType_Persona_SkillSets; break;
-                case 2: segmentType = TableSegmentType_Persona_LevelUpThresholds; break;
+                case 2: segmentType = TableSegmentType_Persona_PartyLevelUpThresholds; break;
                 case 3: segmentType = TableSegmentType_Persona_PartyMembers; break;
             }
         }
@@ -880,6 +1035,15 @@ typedef struct( string tableName, u32 endOffset )
             switch ( segmentIndex )
             {
                 case 0: segmentType = TableSegmentType_Player_LevelUpThresholds;
+                // case 1: segmentType = TableSegmentType_Player_Unknown; // why tf isn't this working, arggghh
+            }
+        } 
+        else if ( !Stricmp( tableName, "exist" ) )
+        {
+            switch ( segmentIndex )
+            {
+                case 0: segmentType = TableSegmentType_Exist_Segment1; break;  // why tf isn't this working, arggghh
+                case 1: segmentType = TableSegmentType_Exist_Segment2; break;  // why tf isn't this working, arggghh
             }
         } 
         else if ( !Stricmp( tableName, "elsai" ) )
