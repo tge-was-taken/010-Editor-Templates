@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-#include "../common/include.h"
+#include "common/include.h"
 
 typedef struct
 {
@@ -21,7 +21,7 @@ typedef struct
         {
             SetRandomBackColor();
             u32 KnotCount;
-            Vector3 InitialPosition;
+            TVector3 InitialPosition;
             struct Knot Knots[ KnotCount ];
         } Line;
     }
@@ -29,8 +29,8 @@ typedef struct
 
 typedef struct
 {
-    Vector3 Direction;
-    Vector3 Offset;
+    TVector3 Direction;
+    TVector3 Offset;
 } Knot;
 
 CollisionFile File;

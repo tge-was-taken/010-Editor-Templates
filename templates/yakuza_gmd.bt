@@ -11,7 +11,7 @@
 //   History:  
 //------------------------------------------------ 
 
-#include "../common/include.h"
+#include "common/include.h"
 
 typedef struct
 {
@@ -376,7 +376,7 @@ typedef struct( u64 format, u32 stride )
 {
     local u32 vertexStart = FTell();
 
-    Vector3 Position;
+    TVector3 Position;
 
     if ( ( format & 0x3C0 ) == 0x3C0 )
     {
@@ -402,10 +402,10 @@ typedef struct( u64 format, u32 stride )
     }
 
     if ( format & ( 1 << 28 ) )
-        Vector2Half TexCoord;
+        TVector2Half TexCoord;
 
     if ( format & ( 1 << 29 ) )
-        Vector2Half TexCoord;
+        TVector2Half TexCoord;
 
     //Assert( ( FTell() - vertexStart ) == stride, "Unknown vertex format" );
 } TVertex <optimize=true>;

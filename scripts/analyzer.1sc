@@ -9,7 +9,19 @@
 //   History: 
 //------------------------------------------------
 
-#include "../common/include.h"
+typedef char bool;
+typedef char s8;
+typedef uchar u8;
+typedef int16 s16;
+typedef uint16 u16;
+typedef int16 s16;
+typedef int32 s32;
+typedef uint32 u32;
+typedef int64 s64;
+typedef uint64 u64;
+typedef hfloat f16;
+typedef float f32;
+typedef double f64;
 
 enum FieldValueType
 {

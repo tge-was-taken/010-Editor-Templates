@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-#include "../common/include.h"
+#include "common/include.h"
 
 const u32 DAT_MAGIC = MakeFourCC( "DAT\0" );
 

@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-#include "../common/include.h"
+#include "common/include.h"
 
 typedef struct( string fileName )
 {

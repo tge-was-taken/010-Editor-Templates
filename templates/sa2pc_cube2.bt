@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-#include "../common/include.h"
+#include "common/include.h"
 
 typedef struct
 {
@@ -37,10 +37,10 @@ typedef struct
 typedef struct
 {
     String MaterialName;
-    Vector4 Ambient;
-    Vector4 Diffuse;
-    Vector4 Specular;
-    Vector4 Emission;
+    TVector4 Ambient;
+    TVector4 Diffuse;
+    TVector4 Specular;
+    TVector4 Emission;
     String TextureName;
     u32 VertexCount;
     struct Vertex Vertices[ VertexCount ];
@@ -50,10 +50,10 @@ typedef struct
 
 typedef struct
 {
-    Vector3 Position;
-    Vector3 Normal;
+    TVector3 Position;
+    TVector3 Normal;
     u32 Color;
-    Vector2 UV;
+    TVector2 UV;
 } Vertex;
 
 Model File;

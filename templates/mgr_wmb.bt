@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-#include "../common/include.h"
+#include "common/include.h"
 
 const u32 WMB4_MAGIC                = MakeFourCC( "WMB4" );
 const u32 WMB4_VERTEX_BUFFER_COUNT  = 4;
@@ -251,10 +251,10 @@ typedef struct( EModelFlags flags )
         struct( EModelFlags flags )
         {
             // ModelFlags_1 | ModelFlags_2 | ModelFlags_4 | ModelFlags_100 | 
-            Vector3 Position;
-            Vector2Half UV;
-            Normal11_11_10 Normal;
-            Normal11_11_10 Tangent;
+            TVector3 Position;
+            TVector2Half UV;
+            TNormal11_11_10 Normal;
+            TNormal11_11_10 Tangent;
             
             if ( flags & ModelFlags_10 )
             {
@@ -273,7 +273,7 @@ typedef struct( EModelFlags flags )
                 u32 Color;
 
             if ( !( flags & ModelFlags_10 ) && flags & ModelFlags_200 )
-                Vector2Half UV;
+                TVector2Half UV;
 
         } Vertex( flags );
     }
@@ -294,7 +294,7 @@ typedef struct( EModelFlags flags )
                 u32 Color;
 
             if ( ( flags & ModelFlags_10 ) && flags & ModelFlags_200 )
-                Vector2Half UV;
+                TVector2Half UV;
         } Vertex( flags );
     }
 } VertexBuffer1;
@@ -325,8 +325,8 @@ typedef struct
     u16 LocalId;
     s16 ParentIndex;
     u16 Field08;
-    Vector3 Local;
-    Vector3 World;
+    TVector3 Local;
+    TVector3 World;
 } Bone;
 
 typedef struct

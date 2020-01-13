@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-#include "../common/include.h"
+#include "common/include.h"
 
 // These files are always big endian
 BigEndian();
@@ -780,13 +780,13 @@ typedef struct
     if ( Flags & EModelFlags_HasBoundingBox )
     {
         SetBackColorToShadeOfLastColor(0x20);
-        TBoundingBox BoundingBox;
+        TExtents3D BoundingBox;
     }   
 
     if ( Flags & EModelFlags_HasBoundingSphere )
     {
         SetBackColorToShadeOfLastColor(0x20);
-        TBoundingSphere BoundingSphere;
+        TSphere3D BoundingSphere;
     }
     
     struct TNode RootNode( Header.Version );
@@ -991,12 +991,12 @@ typedef struct(u32 version)
 
     if ( Flags & EMeshFlags_HasBoundingBox )
     {
-        TBoundingBox BoundingBox;
+        TExtents3D BoundingBox;
     }
 
     if ( Flags & EMeshFlags_HasBoundingSphere )
     {
-        TBoundingSphere BoundingSphere;
+        TSphere3D BoundingSphere;
     }
 
     if ( Flags & EMeshFlags_Flag1000 )
@@ -1263,7 +1263,7 @@ typedef struct( u32 version )
         struct TAnimationFlag80000000Data Field1C( version );
 
     if ( Flags & EAnimationFlags_HasBoundingBox )
-        struct TBoundingBox BoundingBox;
+        struct TExtents3D BoundingBox;
 
     if ( Flags & EAnimationFlags_HasSpeed )
         f32 Speed;
@@ -1829,11 +1829,11 @@ typedef struct( u32 version )
     u32 Field15C;
     f32 Field160;
     u32 Field164;
-    Vector2 Field44;
+    TVector2 Field44;
     f32 Field48;
     f32 FieldB4;
     f32 FieldC4;
-    Vector2 FieldB8;
+    TVector2 FieldB8;
 
     if ( version >= 0x1104041 )
         struct TEplLeafCommonData6 CommonData6;

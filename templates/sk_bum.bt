@@ -73,7 +73,7 @@ typedef struct
         switch ( magic )
         {
             case "BBOX":
-                struct TBoundingBox BoundingBoxChunk;
+                struct TExtents3D BoundingBoxChunk;
                 break;
 
             case "NODE":
@@ -104,9 +104,9 @@ typedef struct
     SetRandomBackColor();
     char Magic[4];
     u32 Length;
-    Vector3 Min;
-    Vector3 Max;
-} TBoundingBox;
+    TVector3 Min;
+    TVector3 Max;
+} TExtents3D;
 
 typedef struct
 {
@@ -128,7 +128,7 @@ typedef struct
                 break;
 
             case "BBOX":
-                struct TBoundingBox BoundingBoxChunk;
+                struct TExtents3D BoundingBoxChunk;
                 break;
 
             case "NSTA":
@@ -239,7 +239,7 @@ typedef struct
                 break;
 
             case "BBOX":
-                struct TBoundingBox BoundingBoxChunk;
+                struct TExtents3D BoundingBoxChunk;
                 break;
 
             case "MESH":
@@ -299,7 +299,7 @@ typedef struct
         switch ( magic )
         {
             case "BBOX":
-                struct TBoundingBox BoundingBoxChunk;
+                struct TExtents3D BoundingBoxChunk;
                 break;
 
             case "SMAT":
@@ -374,9 +374,9 @@ typedef struct
     {
         struct
         {
-            if ( Format & VertexFormat_Position ) Vector3 Position;
-            if ( Format & VertexFormat_Normal ) Vector3 Normal;
-            if ( Format & VertexFormat_TexCoord0 ) Vector2 TexCoord;
+            if ( Format & VertexFormat_Position ) TVector3 Position;
+            if ( Format & VertexFormat_Normal ) TVector3 Normal;
+            if ( Format & VertexFormat_TexCoord0 ) TVector2 TexCoord;
             if ( Format & VertexFormat_Color0 ) u32 Color;
             if ( Format & VertexFormat_BoneWeights ) u8 BoneWeights[8];
         } Vertex;

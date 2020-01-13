@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-#include "../common/include.h"
+#include "common/include.h"
 
 BitfieldDisablePadding();
 
@@ -601,10 +601,10 @@ typedef struct
     } Triangles;
     FAlign( 16 );
 
-    Vector3 Positions[ VertexCount ];
+    TVector3 Positions[ VertexCount ];
     FAlign( 16 );
 
-    Vector3 Normals[ VertexCount ];
+    TVector3 Normals[ VertexCount ];
     FAlign( 16 );
     
 } TMeshType4;
@@ -651,9 +651,9 @@ typedef struct
             SetRandomBackColor();
             struct
             {
-                Vector3 Positions[ VertexCount ];
+                TVector3 Positions[ VertexCount ];
                 FAlign( 16 );
-                Vector3 Normals[ VertexCount ];
+                TVector3 Normals[ VertexCount ];
                 FAlign( 16 );
             } Shape;
         }
@@ -661,13 +661,13 @@ typedef struct
 
     if ( Flags & ( 1 << 4 ) )
     {
-        Vector2 TexCoords[ VertexCount ];
+        TVector2 TexCoords[ VertexCount ];
         FAlign( 16 );
     }
 
     if ( Flags & ( 1 << 12 ) )
     {
-        Vector2 TexCoords2[ VertexCount ];
+        TVector2 TexCoords2[ VertexCount ];
         FAlign( 16 );
     }
 
@@ -779,7 +779,7 @@ typedef struct
 
     if ( ( Flags & 0x00001000 ) == 0x00001000 )
     {
-        Vector2 TexCoords2[ VertexCount ];
+        TVector2 TexCoords2[ VertexCount ];
     }
 
     //if ( FTell() == 0x423B0 )
@@ -872,7 +872,7 @@ typedef struct
 
     if ( ( Flags & 0x00001000 ) == 0x00001000 )
     {
-        Vector2 TexCoords2[ VertexCount ];
+        TVector2 TexCoords2[ VertexCount ];
     }
     
 } TMeshType8;
@@ -1135,7 +1135,7 @@ typedef struct( u32 controllerIndex )
                             break;
 
                         case 12:
-                            Vector3 Translation;
+                            TVector3 Translation;
                             break;
 
                         default:
@@ -1161,7 +1161,7 @@ typedef struct( u32 controllerIndex )
                     switch ( KeyFrameSize )
                     {
                         case 12:
-                            Vector3 Scale;
+                            TVector3 Scale;
                             break;
 
                          case 20:

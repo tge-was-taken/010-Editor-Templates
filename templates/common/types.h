@@ -20,42 +20,38 @@ typedef struct
 {
     f32 X;
     f32 Y;
-} Vector2 <read=Vector2ToString>;
+} TVector2 <read=TVector2ToString>;
 
-string Vector2ToString( Vector2& value )
+string TVector2ToString( TVector2& value )
 {
     local char buffer[255];
     SPrintf( buffer, "[%.6f, %.6f]", value.X, value.Y );
 
     return buffer;
 }
-
-typedef Vector2 TVector2;
 
 typedef struct
 {
     f16 X;
     f16 Y;
-} Vector2Half <read=Vector2HalfToString>;
+} TVector2Half <read=TVector2HalfToString>;
 
-string Vector2HalfToString( Vector2Half& value )
+string TVector2HalfToString( TVector2Half& value )
 {
     local char buffer[255];
     SPrintf( buffer, "[%.6f, %.6f]", value.X, value.Y );
 
     return buffer;
 }
-
-typedef Vector2Half TVector2Half;
 
 typedef struct
 {
     f32 X;
     f32 Y;
     f32 Z;
-} Vector3 <read=Vector3ToString>;
+} TVector3 <read=TVector3ToString>;
 
-string Vector3ToString( Vector3& value )
+string TVector3ToString( TVector3& value )
 {
     local char buffer[255];
     SPrintf( buffer, "[%.6f, %.6f, %.6f]", value.X, value.Y, value.Z );
@@ -63,7 +59,20 @@ string Vector3ToString( Vector3& value )
     return buffer;
 }
 
-typedef Vector3 TVector3;
+typedef struct
+{
+    f16 X;
+    f16 Y;
+	f16 Z;
+} TVector3Half <read=TVector3HalfToString>;
+
+string TVector3HalfToString( TVector3Half& value )
+{
+    local char buffer[255];
+    SPrintf( buffer, "[%.6f, %.6f, %.6f]", value.X, value.Y, value.Z );
+
+    return buffer;
+}
 
 typedef struct
 {
@@ -71,9 +80,9 @@ typedef struct
     f32 Y;
     f32 Z;
 	f32 W;
-} Vector4 <read=Vector4ToString>;
+} TVector4 <read=TVector4ToString>;
 
-string Vector4ToString( Vector4& value )
+string TVector4ToString( TVector4& value )
 {
     local char buffer[255];
     SPrintf( buffer, "[%.6f, %.6f, %.6f, %.6f]", value.X, value.Y, value.Z, value.W );
@@ -81,16 +90,33 @@ string Vector4ToString( Vector4& value )
     return buffer;
 }
 
-typedef Vector4 TVector4;
 typedef TVector4 TQuaternion;
 
 typedef struct
 {
-	Vector3 Min;
-	Vector3 Max;
-} TBoundingBox <read=BoundingBoxToString>;
+    f16 X;
+    f16 Y;
+    f16 Z;
+	f16 W;
+} TVector4Half <read=TVector4HalfToString>;
 
-string BoundingBoxToString( TBoundingBox& value )
+string TVector4HalfToString( TVector4Half& value )
+{
+    local char buffer[255];
+    SPrintf( buffer, "[%.6f, %.6f, %.6f, %.6f]", value.X, value.Y, value.Z, value.W );
+
+    return buffer;
+}
+
+typedef TVector4Half TQuaternionHalf;
+
+typedef struct
+{
+	TVector3 Min;
+	TVector3 Max;
+} TExtents3D <read=TExtents3DToString>;
+
+string TExtents3DToString( TExtents3D& value )
 {
     local char buffer[255];
     SPrintf( buffer, "[%.6f, %.6f, %.6f] [%.6f, %.6f, %.6f]", value.Min.X, value.Min.Y, value.Min.Z, value.Max.X, value.Max.Y, value.Max.Z );
@@ -100,11 +126,11 @@ string BoundingBoxToString( TBoundingBox& value )
 
 typedef struct
 {
-	Vector3 Center;
+	TVector3 Center;
 	f32 Radius;
-} TBoundingSphere <read=BoundingSphereToString>;
+} TSphere3D <read=TSphere3DToString>;
 
-string BoundingSphereToString( TBoundingSphere& value )
+string TSphere3DToString( TSphere3D& value )
 {
     local char buffer[255];
     SPrintf( buffer, "[%.6f, %.6f, %.6f] %.6f]", value.Center.X, value.Center.Y, value.Center.Z, value.Radius );
@@ -115,9 +141,9 @@ string BoundingSphereToString( TBoundingSphere& value )
 typedef struct
 {
 	u32 Value;
-} Normal11_11_11 <read=ReadNormal11_11_10>;
+} TNormal11_11_11 <read=TNormal11_11_10ToString>;
 
-string ReadNormal11_11_10( Normal11_11_11& value )
+string TNormal11_11_10ToString( TNormal11_11_11& value )
 {
 	const int FULL_WIDTH = 32;
 	
@@ -155,8 +181,6 @@ string ReadNormal11_11_10( Normal11_11_11& value )
 	return buffer;
 }
 
-typedef Normal11_11_11 TNormal11_11_11;
-
 typedef struct( u32 base )
 {
 	u32 Offset;
@@ -168,9 +192,9 @@ typedef struct( u32 base )
 		string Value;
 		FSeek( returnPos );
 	}
-} TStringOffset <read=StringOffsetToString>;
+} TStringOffset <read=TStringOffsetToString>;
 
-string StringOffsetToString( TStringOffset& value )
+string TStringOffsetToString( TStringOffset& value )
 {
 	if ( value.Offset == 0 ) return "";
     return value.Value;
