@@ -24,7 +24,7 @@ typedef struct
         newChecksum += Data[i];
 
     Assert( newChecksum == Checksum );
-} TString <read=TStringToString, optimize=true>;
+} TString;
 
 string TStringToString( TString& value )
 {
@@ -507,7 +507,8 @@ typedef struct
 {
     u32 Index;
     u32 Count;
-    u64 Format; // 41FE0FFC3, 41800FFC3, 418001FC3h
+    u32 Field08;
+    u32 Format; // 41FE0FFC3, 41800FFC3, 418001FC3h
     u32 Offset;
     u32 Size;
     u32 Stride;

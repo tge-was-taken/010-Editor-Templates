@@ -1,0 +1,309 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "../common/include.h"
+
+// Animations first, models last?
+
+typedef struct
+{
+    local u32 lowestOffset = 0xFFFFFFFF;
+
+    while ( true )
+    {
+        if ( FTell() >= lowestOffset )
+            break;
+
+        struct TArchiveFile File;
+
+        if ( File.Offset < lowestOffset )
+            lowestOffset = File.Offset;
+    }
+} TArchive;
+
+typedef struct
+{
+    u32 Offset;
+    u32 Size;
+   
+    if ( Offset && Size )
+    {
+        local u32 nextEntryOffset = FTell();
+
+        FSeek( Offset );
+        string Magic;
+        Printf( Magic + '\n' );
+        FSeek( Offset );
+        FPushBase();
+
+        switch ( Magic )
+        {
+            case "MDL":
+                struct TModelContainer Model;
+                break;
+
+            default:
+                Printf( "Unknown file type: %s\n", Magic );
+                u8 Data[ Size ];
+                break;
+        }
+     
+        FPopBase();
+        FSeek( nextEntryOffset );
+    }
+} TArchiveFile;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    u32 Magic;
+    u32 Version;
+    u32 Field08;
+    u32 Field0C;
+    u32 ContentOffset;
+
+    if ( ContentOffset )
+    {
+        FSeekRel( ContentOffset );
+        struct TModel Model;
+    }
+} TModelContainer;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    u32 Field00;
+    u32 VertexBufferSize;
+    u32 TextureReferenceCount;
+    u32 SkinBoneCount;
+    u32 RootNodeOffset;
+    u32 VertexBufferOffset;
+    u32 TextureReferencesOffset;
+    u32 SkinBoneMapOffset;
+    u32 Field20;
+    u32 Field24;
+    u32 Field28;
+    u32 Field2C;
+    u32 Field30;
+
+    if ( RootNodeOffset )
+    {
+        FPushRel( RootNodeOffset );
+        struct TNode RootNode( VertexBufferOffset );
+        FPop();
+    }
+
+    if ( TextureReferencesOffset )
+    {
+        FPushRel( TextureReferencesOffset );
+        struct TTextureReference TextureReferences[ TextureReferenceCount ];
+        FPop();
+    }
+
+    if ( SkinBoneMapOffset )
+    {
+        SetRandomBackColor();
+        FPushRel( SkinBoneMapOffset );
+        u32 SkinBoneMap[ SkinBoneCount ];
+        FPop();
+    }
+} TModel;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    u32 TextureNameOffset;
+    u32 Field04;
+
+    if ( TextureNameOffset )
+    {
+        FPushRel( TextureNameOffset );
+        string TextureName;
+        FPop();
+    }
+} TTextureReference <optimize=false, read=TextureReferenceToString>;
+
+string TextureReferenceToString( TTextureReference& value )
+{
+    return value.TextureName;
+}
+
+typedef struct( u32 vertexBufferOffset )
+{
+    SetRandomBackColor();
+
+    u32 ChildCount;
+    u32 MeshCount;
+    u32 ChildOffsetListOffset;
+    u32 MeshListOffset;
+    TVector3 Position;
+    TQuaternion Rotation;
+    TVector3 Scale;
+    u32 Field38;
+    u32 Field3C;
+    u32 Field40;
+    u32 Field44;
+    u32 Field48;
+
+    if ( MeshListOffset && MeshCount )
+    {
+        FPushRel( MeshListOffset );
+        struct TMesh Meshes( vertexBufferOffset )[ MeshCount ];
+        FPop();
+    }
+
+    if ( ChildOffsetListOffset )
+    {
+        FPushRel( ChildOffsetListOffset );
+        {
+            struct( u32 vertexBufferOffset )
+            {
+                u32 ChildOffset;
+                FPushRel( ChildOffset );
+                {
+                   struct TNode Child( vertexBufferOffset ); 
+                }
+                FPop();  
+            } Children( vertexBufferOffset )[ ChildCount ] <optimize=false>;   
+        }
+        FPop();
+    }
+} TNode;
+
+typedef struct( u32 vertexBufferOffset )
+{
+    SetRandomBackColor();
+    u32 Field00; // 1
+    u32 IndexCount;
+    u32 VertexCount;
+    u32 VertexStartOffset; // Relative offset
+    u16 VertexStride;
+    u16 VertexFlags; // 0x23, 0x623 
+    f32 BoundingBoxMaybe[12];
+    u32 MaterialOffset; 
+    u32 IndexStartOffset;
+    u16 Field4C; // 1
+    u16 Field4E; // 1
+    u32 IndexStartOffset2; // same as IndexStartOffset
+    u32 Field54; // 0
+    u32 Field58; // 1
+    u32 Field5C; // 0
+    u32 Field60; // 0
+    u32 Field64; // 0
+
+    Assert( IndexStartOffset == IndexStartOffset2 );
+
+    if ( vertexBufferOffset && VertexCount )
+    {
+        FPushRel( vertexBufferOffset + VertexStartOffset );
+        {
+            //PrintValueUInt( "VertexStartOffset", FTell() );
+            switch ( VertexStride )
+            {
+                case 24:
+                struct TVertex24 Vertices[ VertexCount ];
+                break;
+
+                case 32:
+                struct TVertex32 Vertices[ VertexCount ];
+                break;
+
+                case 44:
+                struct TVertex44 Vertices[ VertexCount ];
+                break;
+        
+                case 52:
+                struct TVertex52 Vertices[ VertexCount ];
+                break;
+        
+                default:
+                Assert( false, "Unknown vertex stride" );
+                break;
+            }
+        }
+        FPop();
+    }
+
+    if ( IndexStartOffset && IndexCount )
+    {
+        FPushRel( IndexStartOffset );
+        SetRandomBackColor();
+        u16 Indices[ IndexCount ];
+        FPop();
+    }
+
+    if ( MaterialOffset )
+    {
+        FPushRel( MaterialOffset );
+        struct TMaterial Material;
+        FPop();
+    }
+} TMesh <optimize=false>;
+
+typedef struct
+{
+    TVector3 Position;
+    TVector3 Normal;
+} TVertex24;
+
+typedef struct
+{
+    TVector3 Position;
+    TVector3 Normal;
+    TVector2 UV;
+} TVertex32;
+
+typedef struct
+{
+    TVector3 Position;
+    TVector3 Normal;
+    float BlendWeights[4];
+    u8 BlendIndices[4];
+} TVertex44;
+
+typedef struct
+{
+    TVector3 Position;
+    TVector3 Normal;
+    float BlendWeights[4];
+    u8 BlendIndices[4];
+    TVector2 UV;
+} TVertex52;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    u32 TextureIndex;
+    u32 Field04;
+    u32 Field08;
+    u32 Field0C;
+    u32 Field10;
+    u32 Field14;
+    u16 Field18;
+    u16 Field1A;
+    u32 Field1C;
+} TMaterial;
+
+local string extension = FileNameGetExtension( GetFileName() );
+if ( extension == ".BIN" )
+{
+    TArchive File;
+}
+else if ( extension == ".mdl" || extension == ".MMX" )
+{
+    TModelContainer File;
+}

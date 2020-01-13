@@ -2,7 +2,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include "../common/types.h"
+#include "common/types.h"
 
 void PrintValueUInt( string name, u64 value )
 {

@@ -2,7 +2,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include "../common/types.h"
+#include "./common/types.h"
 
 void PrintValueUInt( string name, u64 value )
 {
@@ -75,49 +75,14 @@ u32 MyRandom( u32 to )
     return __RandomSeed;
 }
 
-local u32 __LastRandomColor = 0;
 u32 RandomColor()
 {
-    return __LastRandomColor = MyRandom( 0xFFFFFFFF );
+    return MyRandom( 0xFFFFFFFF );
 }
 
 u32 SetRandomBackColor()
 {
     local u32 color = RandomColor();
-    SetBackColor( color );
-    return color;
-}
-
-u32 GetShadeOfLastColor(s32 amount)
-{    
-    local u32 r = (__LastRandomColor & 0x000000FFu) + amount; 
-    if (r > 0xFF) r = 0xFF;
-
-    local u32 g = ((__LastRandomColor & 0x0000FF00u) >> 8u) + amount; 
-    if (g > 0xFF) g = 0xFF;
-
-    local u32 b = ((__LastRandomColor & 0x00FF0000u) >> 16u) + amount; 
-    if (b > 0xFF) b = 0xFF;
-
-    __LastRandomColor = r | g << 8u | b << 16u;  
-    return __LastRandomColor;
-}
-
-u32 GetLighterShadeOfLastColor()
-{
-    return GetShadeOfLastColor( 0x10 );
-}
-
-u32 SetBackColorToShadeOfLastColor(s32 amount)
-{
-    local u32 color = GetShadeOfLastColor(amount);
-    SetBackColor( color );
-    return color;
-}
-
-u32 SetBackColorToLighterShadeOfLastColor()
-{
-    local u32 color = GetShadeOfLastColor(0x10);
     SetBackColor( color );
     return color;
 }

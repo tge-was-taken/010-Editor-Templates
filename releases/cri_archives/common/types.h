@@ -88,9 +88,9 @@ typedef struct
 {
 	Vector3 Min;
 	Vector3 Max;
-} TBoundingBox <read=BoundingBoxToString>;
+} BoundingBox <read=BoundingBoxToString>;
 
-string BoundingBoxToString( TBoundingBox& value )
+string BoundingBoxToString( BoundingBox& value )
 {
     local char buffer[255];
     SPrintf( buffer, "[%.6f, %.6f, %.6f] [%.6f, %.6f, %.6f]", value.Min.X, value.Min.Y, value.Min.Z, value.Max.X, value.Max.Y, value.Max.Z );
@@ -98,19 +98,23 @@ string BoundingBoxToString( TBoundingBox& value )
     return buffer;
 }
 
+typedef BoundingBox TBoundingBox;
+
 typedef struct
 {
 	Vector3 Center;
 	f32 Radius;
-} TBoundingSphere <read=BoundingSphereToString>;
+} BoundingSphere <read=BoundingSphereToString>;
 
-string BoundingSphereToString( TBoundingSphere& value )
+string BoundingSphereToString( BoundingSphere& value )
 {
     local char buffer[255];
     SPrintf( buffer, "[%.6f, %.6f, %.6f] %.6f]", value.Center.X, value.Center.Y, value.Center.Z, value.Radius );
 
     return buffer;
 }
+
+typedef BoundingSphere TBoundingSphere;
 
 typedef struct
 {
