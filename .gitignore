@@ -1,2 +1,5 @@
 
 scripts/yakuza_gmd_testing\.1sc
+templates/ACAU/p5_acau_tbl.bt
+scripts/P5_Stat_Extractor.1sc
+templates/ACAU/p5_acau_enums.bt

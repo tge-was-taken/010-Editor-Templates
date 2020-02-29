@@ -7,8 +7,8 @@
 //   Purpose: Parse Persona 5 FTD files
 //  Category: Persona 5
 // File Mask: *.ftd, *.ctd
-//  ID Bytes: 
-//   History: 
+//  ID Bytes:
+//   History:
 //------------------------------------------------
 
 //---------------------------------------------
@@ -69,7 +69,7 @@ typedef struct( string fileName )
 {
     SetRandomBackColor();
     local u32 tableStart = FTell();
-    
+
     // Detect endianness
     BigEndian();
     local u32 magic = ReadUInt( tableStart + 4 );
@@ -91,13 +91,13 @@ typedef struct( string fileName )
     u16 DataType <name = "Data Type">;
     u16 DataCount <name = "Data Count">;
     u32 DataOffsets[ DataCount ] <name = "Data Offsets">;
-    
+
     local u32 x;
     local u32 y;
     for ( x = 0; x < DataCount; ++x )
     {
         FSeek( tableStart + DataOffsets[x] );
-        
+
         if ( DataType == 0 ) struct FtdList List( fileName );
         else if ( DataType == 1 ) struct FtdString Data;
     }
@@ -112,7 +112,7 @@ typedef struct( string fileName )
     u32 EntryCount <name = "Entry Count">;
     FtdListType EntryType <name = "Entry Type">;
     u16 Field0E <name = "Field 0E">;
-    
+
     if ( EntryCount > 0 )
     {
         if ( EntryType == FtdListType_DataEntries )
@@ -158,11 +158,11 @@ typedef struct( u32 entrySize, string fileName )
             Table_fclCombElectItem Itemization;
             break;
 
-        default: 
-            u8 Data[ entrySize ]; 
+        default:
+            u8 Data[ entrySize ];
             break;
     }
-    
+
 } FtdListEntry <read=FtdListEntryToString, write=FtdListEntryFromString, optimize=false>;
 
 string FtdListEntryToString( struct FtdListEntry& entry )
@@ -243,11 +243,11 @@ typedef struct( EArchiveFormat format )
     local u32 fileStart = FTell();
     local string fileExt = FileNameGetExtension( FileName );
 
-    if ( Stricmp( fileExt, ".ftd" ) == 0 || 
+    if ( Stricmp( fileExt, ".ftd" ) == 0 ||
          Stricmp( fileExt, ".ctd" ) == 0 ||
          Stricmp( fileExt, ".ttd" ) == 0 )
     {
-        FtdTable Table( FileNameGetBase( FileName, false ) ) <name = "Table">; 
+        FtdTable Table( FileNameGetBase( FileName, false ) ) <name = "Table">;
     }
     else if ( Stricmp( fileExt, ".bin" ) == 0 || Stricmp( fileExt, ".pak" ) == 0  )
     {
@@ -264,7 +264,7 @@ typedef struct( EArchiveFormat format )
     {
         FAlign( 64 );
     }
-} TFile <read=FileToString, optimize=false>; 
+} TFile <read=FileToString, optimize=false>;
 
 string FileToString( struct TFile& file )
 {

@@ -7,8 +7,8 @@
 //   Purpose: Parse Persona 5 Table files.
 //  Category: Persona 5
 // File Mask: *.tbl, *.pac
-//  ID Bytes: 
-//   History: 
+//  ID Bytes:
+//   History:
 //   1.0 - Initial release
 //   1.1 - Parse tables from within table.pac, add enums for battle skills and units, misc changes
 //   1.2 - Added struct for party member Persona skill list and stat gains, fixed enum for party member IDs
@@ -124,7 +124,7 @@ typedef struct
 local uint __RandomSeed = 0xDEADBABE;
 local uint __RandomBit = 0;
 local uint __RandomCount = 0;
- 
+
 uint MyRandom( uint to )
 {
     ++__RandomCount;
@@ -148,12 +148,12 @@ void DetectEndianness()
 
 u32 Align( u32 value, u32 alignment )
 {
-	return (value + (alignment - 1)) & ~(alignment - 1);
+  return (value + (alignment - 1)) & ~(alignment - 1);
 }
 
 void FAlign( u32 alignment )
 {
-	FSeek( Align( FTell(), alignment ) );
+  FSeek( Align( FTell(), alignment ) );
 }
 
 //---------------------------------------------
@@ -179,10 +179,10 @@ typedef struct
     u8 : 1;
 
     struct
-    {        
+    {
         u8 PendingLevels <name = "Pending Levels">;
-        bool Learnable <name = "Learnable?">; 
-        BattleSkill Skill  <name = "Skill">;  
+        bool Learnable <name = "Learnable?">;
+        BattleSkill Skill  <name = "Skill">;
     } PersonaSkill[ 16 ] <name = "Skills">;
 
 } TPersonaSkillsAndStatGrowths <name = "Skills & Stat Growths">;
@@ -271,7 +271,7 @@ typedef struct
             u16 HP <name = "HP Gain">;
             u16 SP <name = "SP Gain">;
             } HPSP_pad <name = "(extra space)">;
-        
+
 } TPlayer_HPSPPerLevel <name = "HP/SP Per Level">;
 
 // Exist
@@ -302,7 +302,7 @@ typedef struct
 typedef struct
 {
     u16 Unused;
-    u16 AiId <name = "AI ID", comment = "All I know about this value is that if it's not 0, it causes the game to load an AI script for this enemy">; 
+    u16 AiId <name = "AI ID", comment = "All I know about this value is that if it's not 0, it causes the game to load an AI script for this enemy">;
     u32 Unknown[ 10 ];
 } TElsaiSegment1Entry;
 
@@ -414,7 +414,7 @@ typedef struct
     Skill_CostType CostType <name = "Cost Type">;
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
-    u8 SkillCost <name = "Skill Cost", comment = "% of max HP or fixed amount of SP">; 
+    u8 SkillCost <name = "Skill Cost", comment = "% of max HP or fixed amount of SP">;
     u8 Unknown <name = "Unknown">;
     Skill_PhysicalOrMagicSkill PhysicalOrMagic <name = "Physical or Magic?", comment = "determines what's affected by either Charge or Concentrate, but doesn't seem to change what's reflected by Tetrakarn or Makarakarn. Needs more testing">;
     Skill_NumberOfTargets NumberOfTargets <name = "Number of Targets">;
@@ -787,9 +787,9 @@ struct
     } Icon <name = "Icon">;
 
     u16 Unknown;
-    u16 Unknown; 
-    u16 Unknown; 
-    u16 Unknown; 
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
 } TItem_KeyItems <name ="Key Items">;
 
 typedef struct
@@ -1098,7 +1098,7 @@ typedef struct
 
 typedef struct
 {
-    u8 Unknown; 
+    u8 Unknown;
 } TItem_Footer <name ="Footer">;
 
 // VISUAL.TBL
@@ -1413,7 +1413,7 @@ typedef struct( TableSegmentType _type )
         default:
             byte Data[ Size ];
     }
-    
+
     FAlign( 16 );
 } TTableSegment <read=TableSegmentToString>;
 
@@ -1447,7 +1447,7 @@ typedef struct( string tableName, u32 endOffset )
                 case 0: segmentType = TableSegmentType_Player_LevelUpThresholds; break;
                 case 1: segmentType = TableSegmentType_Player_HPSPPerLevel; break;
             }
-        } 
+        }
         else if ( !Stricmp( tableName, "exist" ) )
         {
             switch ( segmentIndex )
@@ -1455,7 +1455,7 @@ typedef struct( string tableName, u32 endOffset )
                 case 0: segmentType = TableSegmentType_Exist_Segment1; break;  // why tf isn't this working, arggghh
                 case 1: segmentType = TableSegmentType_Exist_Segment2; break;  // why tf isn't this working, arggghh
             }
-        } 
+        }
         else if ( !Stricmp( tableName, "elsai" ) )
         {
             switch ( segmentIndex )
@@ -1463,7 +1463,7 @@ typedef struct( string tableName, u32 endOffset )
                 case 0: segmentType = TableSegmentType_Elsai_Segment0; break;
                 case 1: segmentType = TableSegmentType_Elsai_Segment1; break;
             }
-        } 
+        }
         else if ( !Stricmp( tableName, "aicalc" ) )
         {
             switch ( segmentIndex )
@@ -1476,7 +1476,7 @@ typedef struct( string tableName, u32 endOffset )
                 case 5: segmentType = TableSegmentType_AICalc_Segment6; break;
                 case 6: segmentType = TableSegmentType_AICalc_Segment7; break;
             }
-        } 
+        }
         else if ( !Stricmp( tableName, "encount" ) )
         {
             switch ( segmentIndex )
@@ -1550,15 +1550,15 @@ typedef struct
     if ( Stricmp( FileNameGetExtension( FileName ), ".tbl" ) == 0 )
     {
         BigEndian();
-        TTable Table( FileNameGetBase( FileName, false ), FTell() + FileSize ); 
+        TTable Table( FileNameGetBase( FileName, false ), FTell() + FileSize );
     }
     else
     {
         u8 Data[ FileSize ];
     }
 
-    FAlign( 64 );  
-} TFile <read=FileToString>; 
+    FAlign( 64 );
+} TFile <read=FileToString>;
 
 string FileToString( struct TFile& file )
 {
