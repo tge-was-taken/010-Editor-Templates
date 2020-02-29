@@ -3,7 +3,7 @@
 //
 //      File: AtlusTable_P5.bt
 //   Authors: TGE, Lillian Goulston, Scarltz
-//   Version: 1.6
+//   Version: 1.7
 //   Purpose: Parse Persona 5 Table files.
 //  Category: Persona 5
 // File Mask: *.tbl, *.pac
@@ -18,18 +18,18 @@
 //       - Added incomplete struct for second segment of SKILL.TBL, most of the fundamental stuff is there, but it's still very much a WIP
 //       - Added struct for XP per level in PLAYER.TBL
 //       - Started work on AICALC structs
-//  1.5 - Added names and comments to most structs for more accessibility and ease of use
-//      - Added enums for battle music in ENCOUNTER.TBL
-//      - Added enums for Arcana
-//  1.6 - Added struct for Enemy Elemental Affinities in UNIT.TBL
-//      - Added structs and enums for items in ITEM.TBL
-//      - Added and commented on a handful of new entries in certain enums (AffinityStatus, Skill_HPEffect, and Skill_Target Restrictions)
+//   1.5 - Added names and comments to most structs for more accessibility and ease of use
+//       - Added enums for battle music in ENCOUNTER.TBL
+//       - Added enums for Arcana
+//   1.6 - Added struct for Enemy Elemental Affinities in UNIT.TBL
+//       - Added structs and enums for items in ITEM.TBL
+//       - Added and commented on a handful of new entries in certain enums (AffinityStatus, Skill_HPEffect, and Skill_Target Restrictions)
+//   1.7 - Added separate template for common P5 structs (p5_structs.bt)
+//       - Added bool struct to make bitfields easier to read when editing
+//       - Changed certain skill enums to bitfields (Skill_ValidTargets, AffinityStatus, Buffs/Debuffs, and applied effects)
+//       - Added max HP/SP gain per level of party members in PLAYER.TBL
 //------------------------------------------------
 
-//---------------------------------------------
-// Includes
-//---------------------------------------------
-#include "p5_enums.bt"
 
 //---------------------------------------------
 // Type definition
@@ -37,6 +37,12 @@
 typedef ubyte u8;
 typedef ushort u16;
 typedef uint u32;
+
+enum<byte>bool
+{
+    False = 0,
+    True = 1,
+};
 
 typedef struct
 {
@@ -106,6 +112,12 @@ typedef struct
     u8 bit31 : 1;
 } b32;
 
+
+//---------------------------------------------
+// Includes
+//---------------------------------------------
+#include "p5_enums.bt"
+#include "p5_structs.bt"
 //---------------------------------------------
 // Helper functions
 //---------------------------------------------
@@ -151,79 +163,116 @@ void FAlign( u32 alignment )
 // Persona
 typedef struct
 {
-    b16 Flags1;
+    PersonaFlags Flags <name = "Bitflags">;
     ArcanaID Arcana <name = "Arcana">;
-    u8 Level <name = "Level">;
-    u8 Strength <name = "Strength">;
-    u8 Magic <name = "Magic">;
-    u8 Endurance <name = "Endurance">;
-    u8 Agility <name = "Agility">;
-    u8 Luck <name = "Luck">;
-    u8 Unused;
-    b16 Flags2;
-    u16 Unknown;
-} TPersonaStats <name = "Persona Stats">;
+    u8 Level <name = "Base Level">;
+    PersonaStats Stats <name = "Base Stats">;
+    u8 : 1;
+    PersonaInherit Inherit <name = "Skill Inheritance">;
+    u16 Unknown <name = "Unknown">;
+} TPersonaStats <name = "Stats">;
 
-local u32 personaSkillSetIndex = 0;
+local u32 personaSkillsAndStatGrowth = 0;
 typedef struct
 {
-    u8 Strength <name = "Strength">;
-    u8 Magic <name = "Magic">;
-    u8 Endurance <name = "Endurance">;
-    u8 Agility <name = "Agility">;
-    u8 Luck <name = "Luck">;
-    u8 Unused <name = "Unused">;
+    PersonaStats WeightedStatDistribution <name = "Weighted Stat Growth Distribution", comment = "Chance to gain +1 on level-up = (Stat Weight / Sum of Stat Weights). 3 chances per level.">;
+    u8 : 1;
 
     struct
     {        
         u8 PendingLevels <name = "Pending Levels">;
-        IsSkillLearnable Learnable <name = "Is Skill Learnable?">; 
+        bool Learnable <name = "Learnable?">; 
         BattleSkill Skill  <name = "Skill">;  
-    } PersonaSkill[ 16 ] <name = "Persona Skills">;
+    } PersonaSkill[ 16 ] <name = "Skills">;
 
-} TPersonaSkillSet <name = "Persona Skillset">;
-
-typedef struct
-{
-    u32 Thresholds[ 98 ] <name = "EXP Threshold">;
-} TPersonaLevelUpThresholds <name = "Party Member Level Up Thresholds", comment = "Total XP required to hit each level for each party member">;
+} TPersonaSkillsAndStatGrowths <name = "Skills & Stat Growths">;
 
 typedef struct
 {
-    u8 Unknown;
-    PartyMember Member <name = "Member">;
-    u8 LevelsAvailable <name = "Levels Available", comment = "Seems to be the number of level-ups available for stat gains, always set to 99">;
+    u32 Thresholds[98] <name = "EXP Threshold">;
+} TPersonaLevelUpThresholds <name = "Party Member Level Up Thresholds">;
+
+typedef struct
+{
+    PartyMember Member <name = "Character">;
+    u8 LevelsAvailable <name = "Levels Available">;
     u8 Unknown;
 
     struct
     {
-        u8 Level <name = "Level">;
-        IsSkillLearnable Learnable <name = "Is Skill Learnable?", comment = "If set to 0, the skill will not be learned, even if it is defined">;
+        u8 Level <name = "Level Learned">;
+        bool Learnable <name = "Learnable?">;
         BattleSkill Skill <name = "Skill">;
     } PersonaSkill[ 32 ] <name = "Persona Skills">;
 
-    struct
-    {
-        u8 Strength <name = "Strength">;
-        u8 Magic <name = "Magic">;
-        u8 Endurance <name = "Endurance">;
-        u8 Agility <name = "Agility">;
-        u8 Luck <name = "Luck">;
-    } PersonaStatGain[ 98 ] <name = "Persona Stat Gain by Level">;
+    PersonaStats StatGain[ 98 ] <name = "Persona Stat Gain by Level">;
 
-} TPersonaPartyMembers <name = "Party Members">;
+} TPersonaPartyPersonas <name = "Party Member Personas">;
 
 // Player
 
-typedef struct
-{
-    u32 XPThreshold[ 99 ] <name = "XP Thresholds">;
-} TPlayer_LevelUpThresholds <name = "Player Level-Up Thresholds">;
+typedef u32 TPlayer_LevelUpThresholds <name = "Player Level-Up Thresholds">;
 
 typedef struct
 {
-    u16 Unknown[ 22 ];
-} TPlayer_Unknown;
+        struct
+
+            {
+            u16 HP <name = "HP Gain">;
+            u16 SP <name = "SP Gain">;
+            } HPSPNone <name = "N/A">;
+        struct
+            {
+            u16 HP <name = "HP Gain">;
+            u16 SP <name = "SP Gain">;
+            } HPSPJoker <name = "Joker">;
+        struct
+            {
+            u16 HP <name = "HP Gain">;
+            u16 SP <name = "SP Gain">;
+            } HPSPRyuji <name = "Ryuji">;
+        struct
+            {
+            u16 HP <name = "HP Gain">;
+            u16 SP <name = "SP Gain">;
+            } HPSPMorgana <name = "Morgana">;
+        struct
+            {
+            u16 HP <name = "HP Gain">;
+            u16 SP <name = "SP Gain">;
+            } HPSPAnn <name = "Ann">;
+        struct
+            {
+            u16 HP <name = "HP Gain">;
+            u16 SP <name = "SP Gain">;
+            } HPSPYusuke <name = "Yusuke">;
+        struct
+            {
+            u16 HP <name = "HP Gain">;
+            u16 SP <name = "SP Gain">;
+            } HPSPMakoto <name = "Makoto">;
+        struct
+            {
+            u16 HP <name = "HP Gain">;
+            u16 SP <name = "SP Gain">;
+            } HPSPHaru <name = "Haru">;
+        struct
+            {
+            u16 HP <name = "HP Gain">;
+            u16 SP <name = "SP Gain">;
+            } HPSPFutaba <name = "Futaba">;
+        struct
+            {
+            u16 HP <name = "HP Gain">;
+            u16 SP <name = "SP Gain">;
+            } HPSPAkechi <name = "Akechi">;
+        struct
+            {
+            u16 HP <name = "HP Gain">;
+            u16 SP <name = "SP Gain">;
+            } HPSP_pad <name = "(extra space)">;
+        
+} TPlayer_HPSPPerLevel <name = "HP/SP Per Level">;
 
 // Exist
 
@@ -259,14 +308,14 @@ typedef struct
 
 typedef struct
 {
-    u8 Data[ 320 ];
+    u16 Data[ 160 ];
 } TElsaiSegment2Entry;
 
 // AICalc tables
 // Segment1 probably has bigger chunks than u32
 typedef struct
 {
-    u32 Unknown;
+    u32 Unknown[41];
 } TAICalc_Segment1;
 
 typedef struct
@@ -324,12 +373,8 @@ typedef struct
     u8 Unknown2[ 2 ];
     u32 Hp <name = "HP">;
     u32 Sp <name = "SP">;
-    u8 Strength <name = "Strength">;
-    u8 Magic <name = "Magic">;
-    u8 Endurance <name = "Endurance">;
-    u8 Agility <name = "Agility">;
-    u8 Luck <name = "Luck">;
-    u8 Unknown3;
+    PersonaStats Stats;
+    byte : 1;
     BattleSkill SkillIds[ 8 ] <name = "Battle Skills">;
     u16 ExpReward <name = "EXP Reward">;
     u16 MoneyReward <name = "Money Reward">;
@@ -340,55 +385,6 @@ typedef struct
     u16 AttackDamage <name = "Attack Damage">;
 } TEnemyUnitStats <name = "Enemy Unit Stats">;
 
-// Still testing whether the last 8 are what I think they are
-typedef struct
-{
-    AffinityStatus PhysAffinity <name = "Physical">;
-    AffinityStatus GunAffinity <name = "Gun">;
-    AffinityStatus FireAffinity <name = "Fire">;
-    AffinityStatus IceAffinity <name = "Ice">;
-    AffinityStatus ElecAffinity <name = "Electric">;
-    AffinityStatus WindAffinity <name = "Wind">;
-    AffinityStatus PsyAffinity <name = "Psy">;
-    AffinityStatus NukeAffinity <name = "Nuke">;
-    AffinityStatus BlessAffinity <name = "Bless">;
-    AffinityStatus CurseAffinity <name = "Curse">;
-    AffinityStatus AlmightyAffinity <name = "Almighty">;
-    AffinityStatus DizzyAffinity <name = "Dizzy">;
-    AffinityStatus ConfuseAffinity <name = "Confuse">;
-    AffinityStatus FearAffinity <name = "Fear">;
-    AffinityStatus ForgetAffinity <name = "Forget">;
-    AffinityStatus HungerAffinity <name = "Physical">;
-    AffinityStatus SleepAffinity <name = "Hunger">;
-    AffinityStatus RageAffinity <name = "Rage">;
-    AffinityStatus DespairAffinity <name = "Despair">;
-    AffinityStatus BrainwashAffinity <name = "Brainwash">; 
-} TUnitPersonaElementalAffinities <name = "Persona Elemental Affinities">;
-
-typedef struct
-{
-    AffinityStatus PhysAffinity <name = "Physical">;
-    AffinityStatus GunAffinity <name = "Gun">;
-    AffinityStatus FireAffinity <name = "Fire">;
-    AffinityStatus IceAffinity <name = "Ice">;
-    AffinityStatus ElecAffinity <name = "Electric">;
-    AffinityStatus WindAffinity <name = "Wind">;
-    AffinityStatus PsyAffinity <name = "Psy">;
-    AffinityStatus NukeAffinity <name = "Nuke">;
-    AffinityStatus BlessAffinity <name = "Bless">;
-    AffinityStatus CurseAffinity <name = "Curse">;
-    AffinityStatus AlmightyAffinity <name = "Almighty">;
-    AffinityStatus DizzyAffinity <name = "Dizzy">;
-    AffinityStatus ConfuseAffinity <name = "Confuse">;
-    AffinityStatus FearAffinity <name = "Fear">;
-    AffinityStatus ForgetAffinity <name = "Forget">;
-    AffinityStatus HungerAffinity <name = "Physical">;
-    AffinityStatus SleepAffinity <name = "Hunger">;
-    AffinityStatus RageAffinity <name = "Rage">;
-    AffinityStatus DespairAffinity <name = "Despair">;
-    AffinityStatus BrainwashAffinity <name = "Brainwash">; 
-} TUnitEnemyElementalAffinities <name = "Enemy Unit Elemental Affinities">;
-
 typedef struct
 {
     u8 Values[ 24 ];
@@ -396,8 +392,8 @@ typedef struct
 
 typedef struct
 {
-    u16 ShadowIndex <name = "Shadow Index">;
-    u16 ModelIndex <name = "Model Index">;
+    u16 PersonaIndex <name = "Persona Index", comment = "Persona ID when captured">;
+    u16 ModelIndex <name = "Model Index", comment = "Model ID">;
 } TUnitVisualIndex <name = "Visual Index">;
 
 
@@ -406,7 +402,7 @@ typedef struct
 {
     ElementalType Element <name = "Elemental Type">;
     Skill_PassiveOrActive PassiveOrActive <name = "Passive or Active?", comment = "Must be set correctly for the element icon to appear properly, even though it's otherwise redundant">;
-    b8 RedundantBitfield_ThanksATLUS <name = "Redundant Bitfield (Thanks, ATLUS)", comment = "Rightmost 4 bits of the bitfield don't do anything. Probably leftovers from early P5 coding.">;
+    b8 RedundantBitfield_ThanksATLUS <name = "Redundant Bitfield", comment = "Rightmost 4 bits of the bitfield don't do anything. Probably leftovers from early P5 coding.">;
 } TSkill_Elements <name = "Skill Elements">;
 
 typedef struct
@@ -414,15 +410,22 @@ typedef struct
     Skill_CasterEffect1 CasterEffect1 <name = "Caster Effect", comment = "Needs more testing">;
     Skill_CasterEffect2 CasterEffect2 <name = "Caster Effect", comment = "Needs more testing">;
     u8 Unknown <name = "Unknown">;
-    Skill_DamageStat DamageStat <name = "Damage Stat", comment = "Determines which stat is used to determine damage">; // does not change whether a skill is physical or magic, that's baked into the element
+    Skill_DamageStat DamageStat <name = "Damage Stat", comment = "Determines which stat is used to determine damage">;
     Skill_CostType CostType <name = "Cost Type">;
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
     u8 SkillCost <name = "Skill Cost", comment = "% of max HP or fixed amount of SP">; 
     u8 Unknown <name = "Unknown">;
-    Skill_PhysicalOrMagicSkill PhysicalOrMagic <name = "Physical or Magic?", comment = "determines what's affected by either Charge or Concentrate, but doesn't seem to change what's reflected by Tetrakarn or Makarakarn... needs more testing">;
+    Skill_PhysicalOrMagicSkill PhysicalOrMagic <name = "Physical or Magic?", comment = "determines what's affected by either Charge or Concentrate, but doesn't seem to change what's reflected by Tetrakarn or Makarakarn. Needs more testing">;
     Skill_NumberOfTargets NumberOfTargets <name = "Number of Targets">;
-    Skill_ValidTargets ValidTargets <name = "Valid Targets">;
+
+    struct
+        {
+            byte : 6;
+            bool Enemies : 1 <name = "Enemies">;
+            bool Allies : 1 <name = "Allies">;
+        } ValidTargets <name = "Valid Targets">;
+
     Skill_TargetRestrictions TargetRestrictions <name = "Additional Target Restrictions">;
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
@@ -432,8 +435,8 @@ typedef struct
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
     u8 Accuracy <name = "Accuracy">;
-    u8 MinHits <name = "Minimum Number of Hits", comment = "For multi-hit moves; otherwise set this to 1">;
-    u8 MaxHits <name = "Maximum Number of Hits", comment = "For multi-hit moves; otherwise set this to 1">;
+    u8 MinHits <name = "Minimum Number of Hits">;
+    u8 MaxHits <name = "Maximum Number of Hits">;
     Skill_HPEffect HPEffect <name = "Damage/Healing Type">;
     u16 BaseDamage <name = "Base Damage">;
     Skill_SPEffect SPEffect <name = "Deplete or Restore SP?">;
@@ -443,14 +446,92 @@ typedef struct
     Skill_ApplyOrCureEffect ApplyOrCureEffect <name = "Apply or Cure Effect?">;
     u8 SecondaryEffectChance <name = "Effect Chance">;
     u8 Unknown <name = "Unknown">;
-    Skill_ApplyEffect0 Effect <name = "Effect">;
-    Skill_ApplyEffect1 Effect <name = "Effect">;
-    Skill_ApplyEffect2 Effect <name = "Effect">;
-    Skill_ApplyEffect3 Effect <name = "Effect">;
-    Skill_ApplyEffect4 Effect <name = "Effect">;
-    Skill_ApplyEffect5 Effect <name = "Effect">;
-    Skill_ApplyBuffDebuff BuffDebuff <name = "Buff/Debuff">;
-    Skill_ApplyEffect6 Effect <name = "Effect">;
+
+   struct
+        {
+            bool Unknown : 1 <name = "Unknown">;
+            bool Mouse : 1 <name = "Mouse", comment = "Only affects the Phantom Thieves">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool KnockDown : 1 <name = "Knock Down">;
+            bool Unconscious : 1 <name = "Unconscious">;
+            bool WeakToAllElements : 1 <name = "Weak to all Elements">;
+            bool Jealousy : 1 <name = "Jealousy">;
+            bool Wrath : 1 <name = "Wrath">;
+        } Effect1 <name = "Effect List 1">;
+
+    struct
+        {
+            bool Lust : 1 <name = "Lust">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Berserk : 1 <name = "Berserk", comment = "Visual effect only">;
+            bool Desparation : 1 <name = "Desparation", comment = "Attack up, Defense down; not affected by other buffs/debuffs">;
+            bool Brainwash : 1 <name = "Brainwash">;
+            bool Despair : 1 <name = "Despair">;
+            bool Rage : 1 <name = "Rage">;
+            bool Sleep : 1 <name = "Sleep">;
+        } Effect2 <name = "Effect List 2">;
+
+   struct
+        {
+            bool Hunger : 1 <name = "Hunger", comment = "Only affects the Phantom Thieves">;
+            bool Forget : 1 <name = "Forget">;
+            bool Fear : 1 <name = "Fear">;
+            bool Confuse : 1 <name = "Confuse">;
+            bool Dizzy : 1 <name = "Dizzy">;
+            bool Shock : 1 <name = "Shock">;
+            bool Freeze : 1 <name = "Freeze">;
+            bool Burn : 1 <name = "Burn">;
+        } Effect3 <name = "Effect List 3">;
+
+   struct
+        {
+            bool CoverPsy : 1 <name = "Cover Psy Weakness", comment = "Changes innate Psy weakness to neutral">;
+            bool CoverNuke : 1 <name = "Cover Nuke Weakness", comment = "Changes innate Nuke weakness to neutral">;
+            bool CoverWind : 1 <name = "Cover Wind Weakness", comment = "Changes innate Wind weakness to neutral">;
+            bool CoverElec : 1 <name = "Cover Electric Weakness", comment = "Changes innate Electric weakness to neutral">;
+            bool CoverIce : 1 <name = "Cover Ice Weakness", comment = "Changes innate Ice weakness to neutral">;
+            bool CoverFire : 1 <name = "Cover Fire Weakness", comment = "Changes innate Fire weakness to neutral">;
+            bool InstakillShield : 1 <name = "Instakill Shield", comment = "Blocks one instakill attack">;
+            bool BreakMagicShield : 1 <name = "Break Magic Shield", comment = "Breaks magic-reflecting shields like Makarakarn">;
+        } Effect4 <name = "Effect List 4">;
+
+   struct
+        {
+            bool BreakPhysicalShield : 1 <name = "Break Physical Shield", comment = "Breaks physical-reflecting shields like Tetrakarn">;
+            bool AilmentSusceptibility : 1 <name = "Ailment Susceptibility", comment = "increases the likelihood of recieving effects from Effect Lists 2 and 3">;
+            bool NegatePsyResist : 1 <name = "Negate Psy Resistance", comment = "Changes innate Psy resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
+            bool NegateNukeResist : 1 <name = "Negate Nuke Resistance", comment = "Changes innate Nuke resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
+            bool NegateWindResist : 1 <name = "Negate Wind Resistance", comment = "Changes innate Wind resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
+            bool NegateElecResist : 1 <name = "Negate Electric Resistance", comment = "Changes innate Electric resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
+            bool NegateIceResist : 1 <name = "Negate Ice Resistance", comment = "Changes innate Ice resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
+            bool NegateFireResist : 1 <name = "Negate Fire Resistance", comment = "Changes innate Fire resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
+        } Effect5 <name = "Effect List 5">;
+
+   struct
+        {
+            bool MagicShield : 1 <name = "Magic Shield", comment = "Reflects the next magic attack received">;
+            bool PhysicalShield : 1 <name = "Physical Shield", comment = "Reflects the next physical attack received">;
+            bool CritWayUp : 1 <name = "Critical Chance Way Up">;
+            bool CritUp : 1 <name = "Critical Chance Up">;
+            bool RemoveDebuffs : 1 <name = "Remove Debuffs", comment = "Removes stat-lowering debuffs from the Buff/Debuff List">;
+            bool RemoveBuffs : 1 <name = "Remove Buffs", comment = "Removes stat-raising buffs from the Buff/Debuff List">;
+            bool Concentrate : 1 <name = "Concentrate", comment = "Next Magic-based attack deals 2.5x damage">;
+            bool Charge : 1 <name = "Charge", comment = "Next Strength-based attack deals 2.5x damage">;
+        } Effect6 <name = "Effect List 6">;
+
+    struct
+        {
+            bool AccuracyDown : 1 <name = "Evasion Down">;
+            bool AccuracyUp : 1 <name = "Evasion Up">;
+            bool DefenseDown : 1 <name = "Defense Down">;
+            bool DefenseUp : 1 <name = "Defense Up">;
+            bool EvasionDown : 1 <name = "Evasion Down">;
+            bool EvasionUp : 1 <name = "Evasion Up">;
+            bool AttackDown : 1 <name = "Attack Down">;
+            bool AttackUp : 1 <name = "Attack Up">;
+        } BuffDebuff <name = "Buffs and Debuffs">;
+
+    Skill_ExtraEffect ExtraEffect <name = "Extra Effects">;
     u8 CritChance <name = "Crit Chance", comment = "Only works for Physical or Gun skills">;
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
@@ -460,33 +541,48 @@ typedef struct
 
 typedef struct
 {
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    GearEquippable User <name = "Equippable User(s)">;
 
-//        struct
-//        {
-//            u16 Unused <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Goro : 1 <name = "Goro">;
-//            u8 Futaba : 1 <name = "Futaba">;
-//            u8 Haru : 1 <name = "Haru">;
-//            u8 Makoto : 1 <name = "Makoto">;
-//            u8 Yusuke : 1 <name = "Yusuke">;
-//            u8 Ann : 1 <name = "Ann">;
-//            u8 Morgana : 1 <name = "Morgana">;
-//            u8 Ryuji : 1 <name = "Ryuji">;
-//            u8 Joker : 1 <name = "Joker">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//        } EquippableUsers <name = "Equippable User(s)">;
+    struct
+        {
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Gift : 1 <name = "Gift">;
+            bool CraftingMaterial : 1 <name = "Crafting Material">;
+            bool DungeonItem : 1 <name = "Dungeon Item">;
+            bool Outfit : 1 <name = "Outfit">;
+            bool SkillCard : 1 <name = "Skill Card">;
+            bool Treasure : 1 <name = "Treasure">;
+            bool KeyItem : 1 <name = "Key Item">;
+            bool Consumable : 1 <name = "Consumable">;
+            bool Accessory : 1 <name = "Accessory">;
+            bool Armor : 1 <name = "Armor">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
+            bool GL : 1 <name = "Grenade Launcher (Haru)">;
+            bool Revolver : 1 <name = "Revolver (Makoto)">;
+            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
+            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
+            bool SMG : 1 <name = "SMG (Ann)">;
+            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
+            bool Handgun : 1 <name = "Handgun (Joker)">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
+            bool Axe : 1 <name = "Axe (Haru)">;
+            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
+            bool Katana : 1 <name = "Katana (Yusuke)">;
+            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
+            bool Whip : 1 <name = "Whip (Ann)">;
+            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
+            bool Dagger : 1 <name = "Dagger (Joker)">;
+        } Icon <name = "Icon">;
 
+
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    EquippableUsers Users;
     u16 Unknown;
     u8 Strength <name = "Strength Boost">;
     u8 Magic <name = "Magic Boost">;
@@ -504,7 +600,8 @@ typedef struct
     u16 PurchasePrice <name = "Purchase Price">;
     u16 Unknown;
     u16 SellPrice <name = "Sell Price">;
-    u16 Unknown;
+    Month MonthAvailable <name = "Month Available for Purchase">;
+    u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
@@ -521,33 +618,47 @@ typedef struct
 
 typedef struct
 {
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    GearEquippable User <name = "Equippable User(s)">;
 
-//        struct
-//        {
-//            u16 Unused <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Goro : 1 <name = "Goro">;
-//            u8 Futaba : 1 <name = "Futaba">;
-//            u8 Haru : 1 <name = "Haru">;
-//            u8 Makoto : 1 <name = "Makoto">;
-//            u8 Yusuke : 1 <name = "Yusuke">;
-//            u8 Ann : 1 <name = "Ann">;
-//            u8 Morgana : 1 <name = "Morgana">;
-//            u8 Ryuji : 1 <name = "Ryuji">;
-//            u8 Joker : 1 <name = "Joker">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//        } EquippableUsers <name = "Equippable User(s)">;
+    struct
+        {
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Gift : 1 <name = "Gift">;
+            bool CraftingMaterial : 1 <name = "Crafting Material">;
+            bool DungeonItem : 1 <name = "Dungeon Item">;
+            bool Outfit : 1 <name = "Outfit">;
+            bool SkillCard : 1 <name = "Skill Card">;
+            bool Treasure : 1 <name = "Treasure">;
+            bool KeyItem : 1 <name = "Key Item">;
+            bool Consumable : 1 <name = "Consumable">;
+            bool Accessory : 1 <name = "Accessory">;
+            bool Armor : 1 <name = "Armor">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
+            bool GL : 1 <name = "Grenade Launcher (Haru)">;
+            bool Revolver : 1 <name = "Revolver (Makoto)">;
+            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
+            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
+            bool SMG : 1 <name = "SMG (Ann)">;
+            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
+            bool Handgun : 1 <name = "Handgun (Joker)">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
+            bool Axe : 1 <name = "Axe (Haru)">;
+            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
+            bool Katana : 1 <name = "Katana (Yusuke)">;
+            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
+            bool Whip : 1 <name = "Whip (Ann)">;
+            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
+            bool Dagger : 1 <name = "Dagger (Joker)">;
+        } Icon <name = "Icon">;
 
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    EquippableUsers Users;
     u16 Unknown;
     u16 ArmorDefense <name = "Defense">;
     u16 ArmorEvasion <name = "Evasion">;
@@ -567,14 +678,50 @@ typedef struct
     u16 PurchasePrice <name = "Purchase Price">;
     u16 Unknown;
     u16 SellPrice <name = "Sell Price">;
-    u16 Unknown;
+    Month MonthAvailable <name = "Month Available for Purchase">;
+    u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
 } TItem_Armor <name ="Armor">;
 
 typedef struct
 {
-    u16 Unknown;
-    u16 Unknown;
+
+    struct
+        {
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Gift : 1 <name = "Gift">;
+            bool CraftingMaterial : 1 <name = "Crafting Material">;
+            bool DungeonItem : 1 <name = "Dungeon Item">;
+            bool Outfit : 1 <name = "Outfit">;
+            bool SkillCard : 1 <name = "Skill Card">;
+            bool Treasure : 1 <name = "Treasure">;
+            bool KeyItem : 1 <name = "Key Item">;
+            bool Consumable : 1 <name = "Consumable">;
+            bool Accessory : 1 <name = "Accessory">;
+            bool Armor : 1 <name = "Armor">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
+            bool GL : 1 <name = "Grenade Launcher (Haru)">;
+            bool Revolver : 1 <name = "Revolver (Makoto)">;
+            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
+            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
+            bool SMG : 1 <name = "SMG (Ann)">;
+            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
+            bool Handgun : 1 <name = "Handgun (Joker)">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
+            bool Axe : 1 <name = "Axe (Haru)">;
+            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
+            bool Katana : 1 <name = "Katana (Yusuke)">;
+            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
+            bool Whip : 1 <name = "Whip (Ann)">;
+            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
+            bool Dagger : 1 <name = "Dagger (Joker)">;
+        } Icon <name = "Icon">;
+
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
@@ -585,7 +732,8 @@ typedef struct
     u16 PurchasePrice <name = "Purchase Price">;
     u16 Unknown;
     u16 SellPrice <name = "Sell Price">;
-    u16 Unknown;
+    Month MonthAvailable <name = "Month Available for Purchase">;
+    u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
@@ -601,8 +749,43 @@ typedef struct
 
 typedef struct
 {
-    u16 Unknown;
-    u16 Unknown;
+
+struct
+    {
+        bool Unknown : 1 <name = "Unknown">;
+        bool Unknown : 1 <name = "Unknown">;
+        bool Gift : 1 <name = "Gift">;
+        bool CraftingMaterial : 1 <name = "Crafting Material">;
+        bool DungeonItem : 1 <name = "Dungeon Item">;
+        bool Outfit : 1 <name = "Outfit">;
+        bool SkillCard : 1 <name = "Skill Card">;
+        bool Treasure : 1 <name = "Treasure">;
+        bool KeyItem : 1 <name = "Key Item">;
+        bool Consumable : 1 <name = "Consumable">;
+        bool Accessory : 1 <name = "Accessory">;
+        bool Armor : 1 <name = "Armor">;
+        bool Unknown : 1 <name = "Unknown">;
+        bool Unknown : 1 <name = "Unknown">;
+        bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
+        bool GL : 1 <name = "Grenade Launcher (Haru)">;
+        bool Revolver : 1 <name = "Revolver (Makoto)">;
+        bool AR : 1 <name = "Assault Rifle (Yusuke)">;
+        bool Slingshot : 1 <name = "Slingshot (Morgana)">;
+        bool SMG : 1 <name = "SMG (Ann)">;
+        bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
+        bool Handgun : 1 <name = "Handgun (Joker)">;
+        bool Unknown : 1 <name = "Unknown">;
+        bool Unknown : 1 <name = "Unknown">;
+        bool BeamSword : 1 <name = "Beam Sword (Goro)">;
+        bool Axe : 1 <name = "Axe (Haru)">;
+        bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
+        bool Katana : 1 <name = "Katana (Yusuke)">;
+        bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
+        bool Whip : 1 <name = "Whip (Ann)">;
+        bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
+        bool Dagger : 1 <name = "Dagger (Joker)">;
+    } Icon <name = "Icon">;
+
     u16 Unknown;
     u16 Unknown; 
     u16 Unknown; 
@@ -611,8 +794,43 @@ typedef struct
 
 typedef struct
 {
-    u16 Unknown;
-    u16 Unknown;
+
+struct
+    {
+        bool Unknown : 1 <name = "Unknown">;
+        bool Unknown : 1 <name = "Unknown">;
+        bool Gift : 1 <name = "Gift">;
+        bool CraftingMaterial : 1 <name = "Crafting Material">;
+        bool DungeonItem : 1 <name = "Dungeon Item">;
+        bool Outfit : 1 <name = "Outfit">;
+        bool SkillCard : 1 <name = "Skill Card">;
+        bool Treasure : 1 <name = "Treasure">;
+        bool KeyItem : 1 <name = "Key Item">;
+        bool Consumable : 1 <name = "Consumable">;
+        bool Accessory : 1 <name = "Accessory">;
+        bool Armor : 1 <name = "Armor">;
+        bool Unknown : 1 <name = "Unknown">;
+        bool Unknown : 1 <name = "Unknown">;
+        bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
+        bool GL : 1 <name = "Grenade Launcher (Haru)">;
+        bool Revolver : 1 <name = "Revolver (Makoto)">;
+        bool AR : 1 <name = "Assault Rifle (Yusuke)">;
+        bool Slingshot : 1 <name = "Slingshot (Morgana)">;
+        bool SMG : 1 <name = "SMG (Ann)">;
+        bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
+        bool Handgun : 1 <name = "Handgun (Joker)">;
+        bool Unknown : 1 <name = "Unknown">;
+        bool Unknown : 1 <name = "Unknown">;
+        bool BeamSword : 1 <name = "Beam Sword (Goro)">;
+        bool Axe : 1 <name = "Axe (Haru)">;
+        bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
+        bool Katana : 1 <name = "Katana (Yusuke)">;
+        bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
+        bool Whip : 1 <name = "Whip (Ann)">;
+        bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
+        bool Dagger : 1 <name = "Dagger (Joker)">;
+    } Icon <name = "Icon">;
+
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
@@ -621,7 +839,8 @@ typedef struct
     u16 PurchasePrice <name = "Purchase Price">;
     u16 Unknown;
     u16 SellPrice <name = "Sell Price">;
-    u16 Unknown;
+    Month MonthAvailable <name = "Month Available for Purchase">;
+    u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
@@ -637,33 +856,47 @@ typedef struct
 
 typedef struct
 {
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    GearEquippable User <name = "Equippable User(s)">;
 
-//        struct
-//        {
-//            u16 Unused <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Goro : 1 <name = "Goro">;
-//            u8 Futaba : 1 <name = "Futaba">;
-//            u8 Haru : 1 <name = "Haru">;
-//            u8 Makoto : 1 <name = "Makoto">;
-//            u8 Yusuke : 1 <name = "Yusuke">;
-//            u8 Ann : 1 <name = "Ann">;
-//            u8 Morgana : 1 <name = "Morgana">;
-//            u8 Ryuji : 1 <name = "Ryuji">;
-//            u8 Joker : 1 <name = "Joker">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//        } EquippableUsers <name = "Equippable User(s)">;
+    struct
+        {
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Gift : 1 <name = "Gift">;
+            bool CraftingMaterial : 1 <name = "Crafting Material">;
+            bool DungeonItem : 1 <name = "Dungeon Item">;
+            bool Outfit : 1 <name = "Outfit">;
+            bool SkillCard : 1 <name = "Skill Card">;
+            bool Treasure : 1 <name = "Treasure">;
+            bool KeyItem : 1 <name = "Key Item">;
+            bool Consumable : 1 <name = "Consumable">;
+            bool Accessory : 1 <name = "Accessory">;
+            bool Armor : 1 <name = "Armor">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
+            bool GL : 1 <name = "Grenade Launcher (Haru)">;
+            bool Revolver : 1 <name = "Revolver (Makoto)">;
+            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
+            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
+            bool SMG : 1 <name = "SMG (Ann)">;
+            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
+            bool Handgun : 1 <name = "Handgun (Joker)">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
+            bool Axe : 1 <name = "Axe (Haru)">;
+            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
+            bool Katana : 1 <name = "Katana (Yusuke)">;
+            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
+            bool Whip : 1 <name = "Whip (Ann)">;
+            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
+            bool Dagger : 1 <name = "Dagger (Joker)">;
+        } Icon <name = "Icon">;
 
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    EquippableUsers Users;
     u16 Unknown;
     u16 Unknown;
     u16 Attack <name = "Attack">;
@@ -683,39 +916,54 @@ typedef struct
     u16 PurchasePrice <name = "Purchase Price">;
     u16 Unknown;
     u16 SellPrice <name = "Sell Price">;
-    u16 Unknown;
+    Month MonthAvailable <name = "Month Available for Purchase">;
+    u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
 } TItem_MeleeWeapons <name ="Melee Weapons">;
 
 typedef struct
 {
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    GearEquippable User <name = "Equippable User(s)">;
 
-//        struct
-//        {
-//            u16 Unused <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Goro : 1 <name = "Goro">;
-//            u8 Futaba : 1 <name = "Futaba">;
-//            u8 Haru : 1 <name = "Haru">;
-//            u8 Makoto : 1 <name = "Makoto">;
-//            u8 Yusuke : 1 <name = "Yusuke">;
-//            u8 Ann : 1 <name = "Ann">;
-//            u8 Morgana : 1 <name = "Morgana">;
-//            u8 Ryuji : 1 <name = "Ryuji">;
-//            u8 Joker : 1 <name = "Joker">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//        } EquippableUsers <name = "Equippable User(s)">;
+    struct
+        {
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Gift : 1 <name = "Gift">;
+            bool CraftingMaterial : 1 <name = "Crafting Material">;
+            bool DungeonItem : 1 <name = "Dungeon Item">;
+            bool Outfit : 1 <name = "Outfit">;
+            bool SkillCard : 1 <name = "Skill Card">;
+            bool Treasure : 1 <name = "Treasure">;
+            bool KeyItem : 1 <name = "Key Item">;
+            bool Consumable : 1 <name = "Consumable">;
+            bool Accessory : 1 <name = "Accessory">;
+            bool Armor : 1 <name = "Armor">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
+            bool GL : 1 <name = "Grenade Launcher (Haru)">;
+            bool Revolver : 1 <name = "Revolver (Makoto)">;
+            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
+            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
+            bool SMG : 1 <name = "SMG (Ann)">;
+            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
+            bool Handgun : 1 <name = "Handgun (Joker)">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
+            bool Axe : 1 <name = "Axe (Haru)">;
+            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
+            bool Katana : 1 <name = "Katana (Yusuke)">;
+            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
+            bool Whip : 1 <name = "Whip (Ann)">;
+            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
+            bool Dagger : 1 <name = "Dagger (Joker)">;
+        } Icon <name = "Icon">;
 
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    EquippableUsers Users;
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
@@ -730,8 +978,43 @@ typedef struct
 
 typedef struct
 {
-    u16 Unknown;
-    u16 Unknown;
+
+    struct
+        {
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Gift : 1 <name = "Gift">;
+            bool CraftingMaterial : 1 <name = "Crafting Material">;
+            bool DungeonItem : 1 <name = "Dungeon Item">;
+            bool Outfit : 1 <name = "Outfit">;
+            bool SkillCard : 1 <name = "Skill Card">;
+            bool Treasure : 1 <name = "Treasure">;
+            bool KeyItem : 1 <name = "Key Item">;
+            bool Consumable : 1 <name = "Consumable">;
+            bool Accessory : 1 <name = "Accessory">;
+            bool Armor : 1 <name = "Armor">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
+            bool GL : 1 <name = "Grenade Launcher (Haru)">;
+            bool Revolver : 1 <name = "Revolver (Makoto)">;
+            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
+            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
+            bool SMG : 1 <name = "SMG (Ann)">;
+            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
+            bool Handgun : 1 <name = "Handgun (Joker)">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
+            bool Axe : 1 <name = "Axe (Haru)">;
+            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
+            bool Katana : 1 <name = "Katana (Yusuke)">;
+            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
+            bool Whip : 1 <name = "Whip (Ann)">;
+            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
+            bool Dagger : 1 <name = "Dagger (Joker)">;
+        } Icon <name = "Icon">;
+
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
@@ -746,33 +1029,47 @@ typedef struct
 
 typedef struct
 {
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    GearEquippable User <name = "Equippable User(s)">;
 
-//        struct
-//        {
-//            u16 Unused <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//            u8 Goro : 1 <name = "Goro">;
-//            u8 Futaba : 1 <name = "Futaba">;
-//            u8 Haru : 1 <name = "Haru">;
-//            u8 Makoto : 1 <name = "Makoto">;
-//            u8 Yusuke : 1 <name = "Yusuke">;
-//            u8 Ann : 1 <name = "Ann">;
-//            u8 Morgana : 1 <name = "Morgana">;
-//            u8 Ryuji : 1 <name = "Ryuji">;
-//            u8 Joker : 1 <name = "Joker">;
-//            u8 Unused : 1 <name = "Unused Bit">;
-//        } EquippableUsers <name = "Equippable User(s)">;
+    struct
+        {
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Gift : 1 <name = "Gift">;
+            bool CraftingMaterial : 1 <name = "Crafting Material">;
+            bool DungeonItem : 1 <name = "Dungeon Item">;
+            bool Outfit : 1 <name = "Outfit">;
+            bool SkillCard : 1 <name = "Skill Card">;
+            bool Treasure : 1 <name = "Treasure">;
+            bool KeyItem : 1 <name = "Key Item">;
+            bool Consumable : 1 <name = "Consumable">;
+            bool Accessory : 1 <name = "Accessory">;
+            bool Armor : 1 <name = "Armor">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
+            bool GL : 1 <name = "Grenade Launcher (Haru)">;
+            bool Revolver : 1 <name = "Revolver (Makoto)">;
+            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
+            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
+            bool SMG : 1 <name = "SMG (Ann)">;
+            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
+            bool Handgun : 1 <name = "Handgun (Joker)">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool Unknown : 1 <name = "Unknown">;
+            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
+            bool Axe : 1 <name = "Axe (Haru)">;
+            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
+            bool Katana : 1 <name = "Katana (Yusuke)">;
+            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
+            bool Whip : 1 <name = "Whip (Ann)">;
+            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
+            bool Dagger : 1 <name = "Dagger (Joker)">;
+        } Icon <name = "Icon">;
 
+    u16 Unknown;
+    u16 Unknown;
+    u16 Unknown;
+    EquippableUsers Users;
     u16 Unknown;
     u16 Unknown;
     u16 Attack <name = "Attack">;
@@ -794,7 +1091,8 @@ typedef struct
     u16 PurchasePrice <name = "Purchase Price">;
     u16 Unknown;
     u16 SellPrice <name = "Sell Price">;
-    u16 Unknown;
+    Month MonthAvailable <name = "Month Available for Purchase">;
+    u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
 } TItem_RangedWeapons <name ="Ranged Weapons">;
 
@@ -803,6 +1101,88 @@ typedef struct
     u8 Unknown; 
 } TItem_Footer <name ="Footer">;
 
+// VISUAL.TBL
+
+typedef struct
+{
+    u8 Unknown[200];
+} TVisual_EnemyVisualVariablesA <name = "Enemy Visual Variables A">;
+
+typedef struct
+{
+    byte Unknown[ 404 ];
+} TVisual_PlayerVisualVariablesA <name = "Player Visual Variables A">;
+
+typedef struct
+{
+    u8 Padding1 [ 4 ];
+    u8 Unknown;
+    u8 Unknown;
+    u8 Padding;
+    u8 Padding;    u8 Unknown;
+    u8 Unknown;    u8 Padding2 [ 2 ];
+    u8 Unknown;
+    u8 Unknown;
+    u8 Padding;
+    u8 Padding;    u8 Unknown;
+    u8 Unknown;    u8 Unknown;
+    u8 Unknown;    u8 Unknown;
+    u8 Unknown;    u8 Padding3 [ 2 ];
+    u8 Unknown;
+    u8 Unknown;
+    u8 Padding;
+    u8 Padding;    u8 Unknown;
+    u8 Unknown;    u8 Padding4 [ 2 ];
+    u8 Unknown;
+    u8 Unknown;
+    u8 Padding;
+    u8 Padding;    u8 Unknown;
+    u8 Unknown;    u16 Unknown;    u8 Unknown;
+    u8 Unknown;    u8 Padding5 [ 2 ];
+    u8 Unknown;
+    u8 Unknown;
+    u8 Padding;
+    u8 Padding;    u8 Unknown;
+    u8 Unknown;    u16 Unknown;    u8 Unknown;
+    u8 Unknown;    u16 Unknown;    u8 Unknown;
+    u8 Unknown;    u16 Unknown;    u8 Unknown;
+    u8 Unknown;    u8 Padding6 [ 2 ];
+    u8 Unknown;
+    u8 Unknown;
+    u8 Padding;
+    u8 Padding;    u8 Unknown;
+    u8 Unknown;    u8 Padding7 [ 2 ];
+    u8 Unknown;
+    u8 Unknown;
+    u8 Padding;
+    u8 Padding;    u8 Unknown;
+    u8 Unknown;    u16 Unknown;    u8 Unknown;
+    u8 Unknown;    byte Unknown;
+    byte Unknown;    byte Unknown;
+    byte Unknown;    byte Unknown;
+    byte Unknown;    byte Unknown;
+    byte Unknown;
+    byte Unknown;
+    byte Unknown;    byte Unknown;
+    byte Unknown;    byte Unknown;
+    byte Unknown;    short BattleModelScale <name="Persona Model Scale % (Battle)">;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    short Unknown;    byte Unknown;
+    byte Unknown;
+} TVisual_PersonaVisualVariablesA <name = "Persona Visual Variables A">;
+
+typedef struct
+{
+    u8 Unknown[ 648 ];
+} TVisual_PlayerVisualVariablesB <name = "Player Visual Variables B">;
+
+typedef struct
+{
+    u8 Unknown[ 360 ];
+} TVisual_EnemyVisualVariablesB <name = "Enemy Visual Variables B">;
+
+typedef struct
+{
+    u8 Unknown[ 576 ];
+} TVisual_PersonaVisualVariablesB <name = "Persona Visual Variables B">;
 
 //---------------------------------------------
 // Parse file structure
@@ -811,11 +1191,11 @@ enum TableSegmentType
 {
     TableSegmentType_Unknown,
     TableSegmentType_Persona_Stats,
-    TableSegmentType_Persona_SkillSets,
+    TableSegmentType_Persona_SkillsAndStatGrowths,
     TableSegmentType_Persona_PartyLevelUpThresholds,
-    TableSegmentType_Persona_PartyMembers,
+    TableSegmentType_Persona_PartyPersonas,
     TableSegmentType_Player_LevelUpThresholds,
-    TableSegmentType_Player_Unknown,
+    TableSegmentType_Player_HPSPPerLevel,
     TableSegmentType_Exist_Segment1,
     TableSegmentType_Exist_Segment2,
     TableSegmentType_Elsai_Segment0,
@@ -845,6 +1225,12 @@ enum TableSegmentType
     TableSegmentType_Unit_PersonaElementalAffinities,
     TableSegmentType_Unit_Segment3,
     TableSegmentType_Unit_VisualIndex,
+    TableSegmentType_Visual_EnemyVisualVariablesA,
+    TableSegmentType_Visual_PlayerVisualVariablesA,
+    TableSegmentType_Visual_PersonaVisualVariablesA,
+    TableSegmentType_Visual_PlayerVisualVariablesB,
+    TableSegmentType_Visual_EnemyVisualVariablesB,
+    TableSegmentType_Visual_PersonaVisualVariablesB,
 };
 
 typedef struct( TableSegmentType _type )
@@ -858,24 +1244,24 @@ typedef struct( TableSegmentType _type )
             TPersonaStats Stats[ Size / sizeof( TPersonaStats ) ];
             break;
 
-        case TableSegmentType_Persona_SkillSets:
-            TPersonaSkillSet SkillSets[ Size / sizeof( TPersonaSkillSet ) ];
+        case TableSegmentType_Persona_SkillsAndStatGrowths:
+            TPersonaSkillsAndStatGrowths SkillsAndStatGrowths[ Size / sizeof( TPersonaSkillsAndStatGrowths ) ];
             break;
 
         case TableSegmentType_Persona_PartyLevelUpThresholds:
             TPersonaLevelUpThresholds PartyLevelUpThresholds[ Size / sizeof( TPersonaLevelUpThresholds ) ];
             break;
 
-        case TableSegmentType_Persona_PartyMembers:
-            TPersonaPartyMembers PartyMembers[ Size / sizeof( TPersonaPartyMembers ) ];
+        case TableSegmentType_Persona_PartyPersonas:
+            TPersonaPartyPersonas PartyPersonas[ Size / sizeof( TPersonaPartyPersonas ) ];
             break;
 
         case TableSegmentType_Player_LevelUpThresholds:
             TPlayer_LevelUpThresholds LevelUpThresholds[ Size / sizeof( TPlayer_LevelUpThresholds ) ];
             break;
 
-        case TableSegmentType_Player_Unknown:
-            TPlayer_Unknown Unknown[ Size / sizeof( TPlayer_Unknown ) ];
+        case TableSegmentType_Player_HPSPPerLevel:
+            TPlayer_HPSPPerLevel HPSPPerLevel[ Size / sizeof( TPlayer_HPSPPerLevel ) ];
             break;
 
         case TableSegmentType_Exist_Segment1:
@@ -985,11 +1371,11 @@ typedef struct( TableSegmentType _type )
             break;
 
         case TableSegmentType_Unit_EnemyElementalAffinities:
-            TUnitEnemyElementalAffinities ElementalAffinities[ Size / sizeof( TUnitEnemyElementalAffinities ) ];
+            ElementalAffinities Affinities[ Size / sizeof( ElementalAffinities ) ];
             break;
 
         case TableSegmentType_Unit_PersonaElementalAffinities:
-            TUnitPersonaElementalAffinities ElementalAffinities[ Size / sizeof( TUnitPersonaElementalAffinities ) ];
+            ElementalAffinities Affinities[ Size / sizeof( ElementalAffinities ) ];
             break;
 
         case TableSegmentType_Unit_Segment3:
@@ -998,6 +1384,30 @@ typedef struct( TableSegmentType _type )
 
         case TableSegmentType_Unit_VisualIndex:
             TUnitVisualIndex VisualIndices[ Size / sizeof( TUnitVisualIndex ) ];
+            break;
+
+        case TableSegmentType_Visual_EnemyVisualVariablesA:
+            TVisual_EnemyVisualVariablesA Data[ Size / sizeof( TVisual_EnemyVisualVariablesA ) ];
+            break;
+
+        case TableSegmentType_Visual_PlayerVisualVariablesA:
+            TVisual_PlayerVisualVariablesA Data[ Size / sizeof( TVisual_PlayerVisualVariablesA ) ];
+            break;
+
+        case TableSegmentType_Visual_PersonaVisualVariablesA:
+            TVisual_PersonaVisualVariablesA Data[ Size / sizeof( TVisual_PersonaVisualVariablesA ) ];
+            break;
+
+        case TableSegmentType_Visual_PlayerVisualVariablesB:
+            TVisual_PlayerVisualVariablesB Data[ Size / sizeof( TVisual_PlayerVisualVariablesB ) ];
+            break;
+
+        case TableSegmentType_Visual_EnemyVisualVariablesB:
+            TVisual_EnemyVisualVariablesB Data[ Size / sizeof( TVisual_EnemyVisualVariablesB ) ];
+            break;
+
+        case TableSegmentType_Visual_PersonaVisualVariablesB:
+            TVisual_PersonaVisualVariablesB Data[ Size / sizeof( TVisual_PersonaVisualVariablesB ) ];
             break;
 
         default:
@@ -1025,17 +1435,17 @@ typedef struct( string tableName, u32 endOffset )
             switch ( segmentIndex )
             {
                 case 0: segmentType = TableSegmentType_Persona_Stats; break;
-                case 1: segmentType = TableSegmentType_Persona_SkillSets; break;
+                case 1: segmentType = TableSegmentType_Persona_SkillsAndStatGrowths; break;
                 case 2: segmentType = TableSegmentType_Persona_PartyLevelUpThresholds; break;
-                case 3: segmentType = TableSegmentType_Persona_PartyMembers; break;
+                case 3: segmentType = TableSegmentType_Persona_PartyPersonas; break;
             }
         }
         else if ( !Stricmp( tableName, "player" ) )
         {
             switch ( segmentIndex )
             {
-                case 0: segmentType = TableSegmentType_Player_LevelUpThresholds;
-                // case 1: segmentType = TableSegmentType_Player_Unknown; // why tf isn't this working, arggghh
+                case 0: segmentType = TableSegmentType_Player_LevelUpThresholds; break;
+                case 1: segmentType = TableSegmentType_Player_HPSPPerLevel; break;
             }
         } 
         else if ( !Stricmp( tableName, "exist" ) )
@@ -1107,6 +1517,18 @@ typedef struct( string tableName, u32 endOffset )
                 case 2: segmentType = TableSegmentType_Unit_PersonaElementalAffinities; break;
                 case 3: segmentType = TableSegmentType_Unit_Segment3; break;
                 case 4: segmentType = TableSegmentType_Unit_VisualIndex; break;
+            }
+        }
+        else if ( !Stricmp( tableName, "visual" ) )
+        {
+            switch ( segmentIndex )
+            {
+                case 0: segmentType = TableSegmentType_Visual_EnemyVisualVariablesA; break;
+                case 1: segmentType = TableSegmentType_Visual_PlayerVisualVariablesA; break;
+                case 2: segmentType = TableSegmentType_Visual_PersonaVisualVariablesA; break;
+                case 3: segmentType = TableSegmentType_Visual_PlayerVisualVariablesB; break;
+                case 4: segmentType = TableSegmentType_Visual_EnemyVisualVariablesB; break;
+                case 5: segmentType = TableSegmentType_Visual_PersonaVisualVariablesB; break;
             }
         }
 

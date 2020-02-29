@@ -4064,7 +4064,7 @@ enum<short> BattleUnit
 };
 
 // This enum represents the different party members available.
-enum<byte> PartyMember
+enum<ushort> PartyMember
 {
 	Protagonist = 1,
     Ryuji = 2,
@@ -4133,6 +4133,24 @@ enum<short> AffinityStatus
     WeakResist = 10240,
 };
 
+enum<ushort>PersonaInherit
+{
+    InheritNone = 0,
+    InheritPhysical = 1,
+    InheritFire = 2,
+    InheritIce = 3,
+    InheritElec = 4,
+    InheritWind = 5,
+    InheritBless = 6,
+    InheritCurse = 7,
+    InheritHealing = 8,
+    InheritAilment = 10,
+    InheritAlmighty = 12,
+    InheritRESERVE = 13,
+    InheritNuke = 14,
+    InheritPsy = 15,
+};
+
 enum<ubyte> ElementalType
 {
     Passive = 255,
@@ -4168,108 +4186,7 @@ enum<ubyte>Skill_ApplyOrCureEffect
     CureEffect = 2,
 };
 
-
-enum<ubyte>Skill_ApplyEffect0
-{
-    NoEffect0 = 0,
-    WrathAilment = 1, // Attack up, Defense down, non-negatable. Used by Yaldabaoth's Distorted Wrath skill.
-    JealousyAilment = 2, // Attacks an ally if it uses a support skill on any ally except the afflicted. Used by Yaldabaoth's Distorted Envy skill.
-    WeakToAllElements = 4, // used by The Artist's Grace (Shadow Madarame battle) and Yaldabaoth's Distorted Vanity skill.
-    Unconscious = 8, // used by instakill and revival skills
-    KnockDown = 16, // used by Down Shot
-    Mouse = 64, // only works on the Phantom Thieves
-};
-
-enum<ubyte>Skill_ApplyEffect1
-{
-    NoEffect1 = 0,
-    SleepAilment = 1,
-    RageAilment = 2,
-    DespairAilment = 4,
-    BrainwashAilment = 8,
-    RageBrainwashAilment = 14, // used by Energy Drop/Shower
-    AllEffect1Ailments = 15,
-    AtkUpDefDownNonNegatable = 16, // used by Desparation
-    BerserkVisual = 32, // used by Call of Chaos, has no actual battle effect 
-    LustAilment = 128, // used by Yaldabaoth's Distorted Lust skill
-};
-
-enum<ubyte>Skill_ApplyEffect2
-{
-    NoEffect2 = 0,
-    BurnAilment = 1,
-    FreezeAilment = 2,
-    ShockAilment = 4,
-    BurnFreezeShockAilment = 7,
-    DizzyAilment = 8,
-    ConfuseAilment = 16,
-    FearAilment = 32,
-    ConfuseFearAilment = 48, // used for Mangatsu Mandala and Energy Drop/Shower
-    ForgetAilment = 64,
-    HungerAilment = 128, // only affects the Phantom Thieves
-    DizzyForgetHungerAilment = 200, // used for Patra
-    AllEffect2Ailments = 255
-};
-
-enum<ubyte>Skill_ApplyEffect3
-{
-    NoEffect3 = 0,
-    NullifyMagicShield = 1,// breaks magic-reflecting shields
-    InstakillShield = 2, // protects against one insta-kill attack
-    CoverFireWeakness = 4, // Changes innate Fire weakness to neutral
-    CoverIceWeakness = 8,  // Changes innate Ice weakness to neutral
-    CoverElecWeakness = 16,  // Changes innate Electric weakness to neutral
-    CoverWindWeakness = 32,  // Changes innate Wind weakness to neutral
-    CoverNukeWeakness = 64,  // Changes innate Nuke weakness to neutral
-    CoverPsyWeakness = 128,  // Changes innate Psy weakness to neutral
-};
-
-
-enum<ubyte>Skill_ApplyEffect4
-{
-    NoEffect4 = 0,
-    NegateFireResistance = 1, // Changes innate Fire resistance to neutral; does not affect elemental Wall skills
-    NegateIceResistance = 2, // Changes innate Ice resistance to neutral; does not affect elemental Wall skills
-    NegateWindResistance = 4, // Changes innate Wind resistance to neutral; does not affect elemental Wall skills
-    NegateElecResistance = 8, // Changes innate Electric resistance to neutral; does not affect elemental Wall skills
-    NegateNukeResistance = 16, // Changes innate Nuke resistance to neutral; does not affect elemental Wall skills
-    NegatePsyResistance = 32, // Changes innate Psy resistance to neutral; does not affect elemental Wall skills
-    AilmentSusceptibility = 64, // increases the likelihood of recieving ApplyEffect1 or ApplyEffect2 ailments
-    NullifyPhysicalShield = 128 // breaks physical-reflecting shields
-    
-};
-
-enum<ubyte>Skill_ApplyEffect5
-{
-    NoEffect5 = 0,
-    ApplyCharge = 1, // next Strength-based attack deals 2.5x damage
-    ApplyConcentrate = 2, // next Magic-based attack deals 2.5x damage
-    ApplyChargeConcentrate = 3, // used by the Navigator for Ultra Charge
-    RemoveBuffs = 4, // used by Dekaja
-    RemoveDebuffs = 8, // used by Dekunda
-    CritChanceUp = 16, // used by Rebellion
-    CritChanceWayUp = 32, // used by Revolution
-    PhysicalShield = 64, // reflects the next physical attack received
-    MagicShield = 128, // reflects the next magic attack recevieved
-};
-
-enum<ubyte>Skill_ApplyBuffDebuff
-{
-    NoBuffDebuff = 0,
-    AttackUp = 1,
-    AttackDown = 2,
-    DefenseUp = 16,
-    DefenseDown = 32,
-    AtkUpDefenseDown = 33,
-    AgilityUp = 68,
-    AgiUpAtkDown = 70,
-    AgilityDown = 136,
-    AtkUpAgiDown = 137,
-    AtkDefAgiUp = 85,
-    AtkDefAgiDown = 170,
-};
-
-enum<ubyte>Skill_ApplyEffect6
+enum<ubyte>Skill_ExtraEffect
 {
     NoEffect6 = 0,
     OnlyHitTargetsInflictedWithFear = 1, // used by Ghastly Wail
@@ -4342,8 +4259,8 @@ enum<ubyte>Skill_TargetRestrictions
 enum<ubyte>Skill_CasterEffect1
 {
     NoCasterEffect1 = 0,
+    UnknownCasterEffect_SpecialMoveRelated = 1, // used by All-Out Attacks, Navigator skills, and other unique skills. Sometimes plays a mini-cutscene?
     ModifiedByEquippedGun = 2,
-    UnknownCasterEffect_SpecialMoveRelated = 1, // used by All-Out Attacks, Navigator skills, and other unique skills. Usually plays a mini-cutscene? Not always, though.
     ReduceOwnHPTo1 = 4,
     UnknownCasterEffect1_StealInfoRelated = 32, // used by Steal Info
 };
@@ -4360,7 +4277,7 @@ enum<ubyte>Skill_CasterEffect2
     UnknownCasterEffect_FollowUpRelated = 66, // used by Follow-Up Attacks
     UnknownCasterEffect_RouletteRelated1 = 128, // used by Roulette: HP and Roulette: SP. Suspect it has to do with being able to be reversed.
     UnknownCasterEffect_RouletteRelated2 = 136, // used by Roulette: Aid.
-    CRASHES_OFTEN_UnknownCasterEffect2_160 = 160, // used by Barrage and Dispose Item - DO NOT USE WITHOUT APPLYING THE "ThrowAwayMoney" EFFECT, THE GAME WILL CRASH
+    CRASHES_OFTEN_UnknownCasterEffect2_160 = 160, // used by Barrage and Dispose Item - DO NOT USE WITHOUT APPLYING THE "ThrowAwayMoney" EXTRA EFFECT, THE GAME WILL CRASH
 };
 
 
@@ -4389,12 +4306,6 @@ enum<ubyte>Skill_PassiveOrActive
     ActiveSkill = 0,
     PassiveSkill = 1, // MUST be enabled for passive skills to function properly
     NULL_Skill = 255
-};
-
-enum<byte>IsSkillLearnable
-{
-    Unlearnable_Skill = 0,
-    Learnable_Skill = 1,
 };
 
 enum<int>GearEquippable
@@ -4613,4 +4524,20 @@ enum<ushort>GearEffect
     CritRateUpEvadeMagic = 199,
     LowerSkillCost25Percent = 200,
     ReduceStatusAilment50Percent = 201,
+};
+
+enum<ubyte>Month
+{
+    January = 1,
+    February = 2,
+    March = 3,
+    April = 4,
+    May = 5,
+    June = 6,
+    July = 7,
+    August = 8,
+    September = 9,
+    October = 10,
+    November = 11,
+    December = 12,
 };

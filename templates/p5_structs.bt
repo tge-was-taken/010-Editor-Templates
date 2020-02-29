@@ -1,0 +1,63 @@
+typedef struct
+{
+        byte : 6;
+        bool Goro : 1 <name = "Equippable by Goro">;
+        bool Futaba : 1 <name = "Equippable by Futaba">;
+        bool Haru : 1 <name = "Equippable by Haru">;
+        bool Makoto : 1 <name = "Equippable by Makoto">;
+        bool Yusuke : 1 <name = "Equippable by Yusuke">;
+        bool Ann : 1 <name = "Equippable by Ann">;
+        bool Morgana : 1 <name = "Equippable by Morgana">;
+        bool Ryuji : 1 <name = "Equippable by Ryuji">;
+        bool Joker : 1 <name = "Equippable by Joker">;
+        byte : 1;
+} EquippableUsers <name = "Equippable User(s)">;
+
+typedef struct
+{
+    AffinityStatus PhysAffinity <name = "Physical">;
+    AffinityStatus GunAffinity <name = "Gun">;
+    AffinityStatus FireAffinity <name = "Fire">;
+    AffinityStatus IceAffinity <name = "Ice">;
+    AffinityStatus ElecAffinity <name = "Electric">;
+    AffinityStatus WindAffinity <name = "Wind">;
+    AffinityStatus PsyAffinity <name = "Psy">;
+    AffinityStatus NukeAffinity <name = "Nuke">;
+    AffinityStatus BlessAffinity <name = "Bless">;
+    AffinityStatus CurseAffinity <name = "Curse">;
+    AffinityStatus AlmightyAffinity <name = "Almighty">;
+    AffinityStatus DizzyAffinity <name = "Dizzy">;
+    AffinityStatus ConfuseAffinity <name = "Confuse">;
+    AffinityStatus FearAffinity <name = "Fear">;
+    AffinityStatus ForgetAffinity <name = "Forget">;
+    AffinityStatus HungerAffinity <name = "Hunger">;
+    AffinityStatus SleepAffinity <name = "Sleep">;
+    AffinityStatus RageAffinity <name = "Rage">;
+    AffinityStatus DespairAffinity <name = "Despair">;
+    AffinityStatus BrainwashAffinity <name = "Brainwash">; 
+} ElementalAffinities <name = "Elemental Affinities">;
+
+typedef struct
+{
+    u8 Strength <name = "Strength">;
+    u8 Magic <name = "Magic">;
+    u8 Endurance <name = "Endurance">;
+    u8 Agility <name = "Agility">;
+    u8 Luck <name = "Luck">;
+} PersonaStats;
+
+typedef struct
+{
+    byte : 6;
+    bool DLC : 1 <name = "DLC">;
+    bool Treasure : 1 <name = "Treasure Demon">;
+    bool Unknown : 1;
+    bool Unknown : 1;
+    bool Unknown : 1;
+    bool Unknown : 1;
+    bool Unknown : 1;
+    bool Unknown : 1;
+    bool NoNormalFusion : 1 <name = "Cannot Be Fused Normally", comment = "Set this to True to prevent this Persona from being fused through standard two-Persona fusion">;
+    bool Evolved : 1 <name = "Evolved">;
+    
+} PersonaFlags;
