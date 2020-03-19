@@ -82,6 +82,7 @@ string Vector4ToString( Vector4& value )
 }
 
 typedef Vector4 TVector4;
+typedef TVector4 TQuaternion;
 
 typedef struct
 {
@@ -171,15 +172,13 @@ typedef struct( u32 base )
 		string Value;
 		FSeek( returnPos );
 	}
-} StringOffset <read=StringOffsetToString>;
+} TStringOffset <read=StringOffsetToString>;
 
-string StringOffsetToString( StringOffset& value )
+string StringOffsetToString( TStringOffset& value )
 {
 	if ( value.Offset == 0 ) return "";
     return value.Value;
 }
-
-typedef StringOffset TStringOffset;
 
 typedef struct
 {

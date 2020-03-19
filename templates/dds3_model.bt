@@ -1,17 +1,17 @@
 //------------------------------------------------
 //--- 010 Editor v8.0 Binary Template
 //
-//      File: dds3_model.bt
-//   Authors: TGE
-//   Version: 1.0
-//   Purpose: Parse PS2 DDS3 engine games (SMT3, DDS1 & 2, Raidou 1 & 2) model resources
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
 //  Category: 
-// File Mask: *.pb, *.md, *.ab, *.tmx, *.txp
+// File Mask: 
 //  ID Bytes: 
 //   History: 
 //------------------------------------------------
 
-#include "../common/include.h"
+#include "common/include.h"
 
 BitfieldDisablePadding();
 
@@ -89,18 +89,50 @@ typedef struct
     u32 TextureCount;
     struct
     {
-        local u32 i;
-        local u32 next;
-        for ( i = 0; i < TextureCount; ++i )
-        {   
+        //local u32 i;
+        //local u32 next;
+        //for ( i = 0; i < TextureCount; ++i )
+        //{   
+        //    struct
+        //    {
+        //        SetRandomBackColor();
+        //        u32 Offset;
+        //        next = FTell();
+        //        FSeek( gBaseOffset + Offset );
+        //        struct TTexture Value;
+        //        FSeek( next );
+        //    } Texture;
+        //}
+
+        local u32 textureIndex = 0;
+        local u32 nextTextureOffsetOffset;
+        local u32 nextTextureOffset;
+        for ( textureIndex = 0; textureIndex < TextureCount; ++textureIndex )
+        {
             struct
             {
                 SetRandomBackColor();
                 u32 Offset;
-                next = FTell();
-                FSeek( gBaseOffset + Offset );
+                nextTextureOffsetOffset = FTell();
+
+                // Some files have broken offsets (f021_aljira.PB), so we must calculate them ourselves
+                if ( textureIndex == 0 )
+                {
+                    FSeek( gBaseOffset + Offset );
+                }
+                else
+                {
+                    FSeek( nextTextureOffset );
+                }
+
                 struct TTexture Value;
-                FSeek( next );
+                FAlign( 64 );
+
+                if ( ( textureIndex + 1 ) != TextureCount )
+                {
+                    nextTextureOffset = FTell();
+                    FSeek( nextTextureOffsetOffset );
+                }
             } Texture;
         }
     } Textures;
@@ -267,7 +299,7 @@ typedef struct( u32 hasHeader )
 typedef struct 
 {
     SetRandomBackColor();
-    u32 Field00; Assert( Field00 == 1, "Node Field00 isnt 1" );
+    u32 Field00; // not 0 in hansya01.MB
     u32 Field04; Assert( Field04 == 0, "Node Field04 isnt 0" );
     s32 Index;
     s32 ParentIndex;
@@ -277,7 +309,7 @@ typedef struct
     u32 BoundingBoxOffset;
     u32 GeometryOffset;
     u32 Field48; Assert( Field48 == 0, "Node Field48 isnt 0" );
-    u32 Field4C; Assert( Field4C == 0, "Node Field4C isnt 0" );
+    u32 Field4C; // not 0 in hansya01.MB
 
     local u32 end = FTell();
 
@@ -293,7 +325,18 @@ typedef struct
     {
         SetRandomBackColor();
         FSeek( gBaseOffset + GeometryOffset );
-        struct TGeometry Geometry;
+
+        if ( BoundingBoxOffset != 0 )
+            struct TGeometry Geometry;
+        else
+            struct TMeshList DeprecatedMeshList; 
+    }
+
+    if ( Field4C != 0 )
+    {
+        SetRandomBackColor();
+        FSeek( gBaseOffset + Field4C );
+        struct TMeshList DeprecatedMeshList2; // only used in 1 really old model
     }
 
     FSeek( end );
@@ -302,73 +345,85 @@ typedef struct
 typedef struct
 {
     u32 MeshesOffset;
+    u32 Meshes2Offset;
 
     if ( MeshesOffset != 0 )
     {
-        struct
-        {
-            SetRandomBackColor();
-            FSeek( gBaseOffset + MeshesOffset );
-            u16 MeshCount;
-            u16 Field02;
+        FSeek( gBaseOffset + MeshesOffset );
+        struct TMeshList Meshes;
+    }
 
-            //if ( Field02 != 0 )
-            //    Printf( "TGeometry: Field02 isn't 0 (%d)\n", Field02 ); 
-
-            local u32 next = FTell();
-            local u32 meshIndex;
-            for ( meshIndex = 0; meshIndex < MeshCount; ++meshIndex )
-            {
-                struct
-                {
-                    u32 MeshOffset;
-                    next = FTell();
-
-                    if ( MeshOffset != 0 )
-                    {
-                        SetRandomBackColor();
-                        FSeek( gBaseOffset + MeshOffset );
-                        u32 MeshType;
-
-                        switch ( MeshType )
-                        {
-                            case 1: struct TMeshType1 Mesh; break;
-                            case 2: struct TMeshType2 Mesh; break;
-                            case 5: struct TMeshType5 Mesh; break;
-                            case 7: struct TMeshType7 Mesh; break;
-                            case 8: struct TMeshType8 Mesh; break;
-                            default: Printf( "Unhandled mesh type: %d\n", MeshType ); break;
-                        }
-                    }
-    
-                    FSeek( next );
-                } Mesh;
-            } 
-        } Meshes;
+    if ( MeshesOffset != 0 && Meshes2Offset != 0 )
+    {
+        FSeek( gBaseOffset + Meshes2Offset );
+        struct TMeshList Meshes;
     }
 } TGeometry;
 
 typedef struct
 {
-    u16 PacketStreamSize;
+    SetRandomBackColor();
+    u16 MeshCount;
+    u16 Field02;
+
+    //if ( Field02 != 0 )
+    //    Printf( "TGeometry: Field02 isn't 0 (%d)\n", Field02 ); 
+
+    local u32 next = FTell();
+    local u32 meshIndex;
+    for ( meshIndex = 0; meshIndex < MeshCount; ++meshIndex )
+    {
+        struct
+        {
+            u32 MeshOffset;
+            next = FTell();
+
+            if ( MeshOffset != 0 )
+            {
+                SetRandomBackColor();
+                FSeek( gBaseOffset + MeshOffset );
+                u32 MeshType;
+
+                Printf( "Mesh Type: %d\n", MeshType );
+
+                switch ( MeshType )
+                {
+                    case 1: struct TMeshType1 Mesh; break;
+                    case 2: struct TMeshType2 Mesh; break;
+                    case 4: struct TMeshType4 Mesh; break;
+                    case 5: struct TMeshType5 Mesh; break;
+                    case 7: struct TMeshType7 Mesh; break;
+                    case 8: struct TMeshType8 Mesh; break;
+                    default: Printf( "Unhandled mesh type: %d\n", MeshType ); break;
+                }
+            }
+
+            FSeek( next );
+        } Mesh;
+    } 
+} TMeshList;
+
+typedef struct
+{
+    u16 VifCodeStreamSize;
     u16 MaterialId;
-    u32 PacketStreamOffset;
+    u32 VifCodeStreamOffset;
     FAlign( 16 );
     
-    if ( PacketStreamOffset != 0 )
+    if ( VifCodeStreamOffset != 0 )
     {
-        FSeek( gBaseOffset + PacketStreamOffset );
+        FSeek( gBaseOffset + VifCodeStreamOffset );
 
-        local u32 packetStreamEnd = FTell() + ( PacketStreamSize * 16 );
+        local u32 vifCodeStreamEnd = FTell() + ( VifCodeStreamSize * 16 );
 
         struct
         {
             local u8 vifCmd;
 
-            while ( FTell() < packetStreamEnd )
+            while ( FTell() < vifCodeStreamEnd )
             {
                 vifCmd = ReadByte( FTell() + 3 );
-                if ( vifCmd == 0 && Align( FTell(), 16 ) == packetStreamEnd )
+                if ( vifCmd == 0 && Align( FTell(), 16 ) == vifCodeStreamEnd )
                 {
                     // Packet stream padding, stop reading
                     break;
@@ -387,6 +442,7 @@ typedef struct
 
                     SetRandomBackColor();
                     local u8 batchDone = false;
+                    //Printf( "\n" );
 
                     while ( !batchDone )
                     {
@@ -405,13 +461,15 @@ typedef struct
                             case 0x70:
                                 struct TVifPacket VifPacket; 
 
+                                //Printf( "   Address: %08X Size: %08X Count: %d\n", VifPacket.Address * 8, VifPacket.size, VifPacket.Count );
+
                                 if ( VifPacket.Address == 0 )
                                 {
                                     //Printf( "Mesh Type 1 Batch Flags: %08X\n", 
                                     //    (uint)VifPacket.Values[0].Value.Elements[2] | (uint)VifPacket.Values[0].Value.Elements[3] << 16 );
 
                                     local u32 flg = VifPacket.Values[0].Value.Elements[2];
-                                    //if ( flg != 0x78 && flg != 0x68 && flg != 0x79 && flg != 0x878 && flg != 0x868 && flg != 0x4078 && flg != 0x479 && flg != 0x58 && flg != 0x4878 && flg != 0x858 && flg != 0x69 ) Assert( false );
+                                    //if ( flg != 0x78 && flg != 0x68 && flg != 0x79 && flg != 0x878 && flg != 0x868 && flg != 0x4078 && flg != 0x479 && flg != 0x58 && flg != 0x4878 && flg != 0x858 && flg != 0x69 && flg != 0x7A ) Assert( false );
                                 }
                                 break;
             
@@ -433,27 +491,27 @@ typedef struct
 
 typedef struct
 {
-    u16 PacketStreamSize;
+    u16 VifCodeStreamSize;
     u16 MaterialId;
-    u32 PacketStreamOffset;
+    u32 VifCodeStreamOffset;
     u32 UsedNodeCount;
     u16 UsedNodes[ UsedNodeCount ];
 
-    if ( PacketStreamOffset != 0 )
+    if ( VifCodeStreamOffset != 0 )
     {
-        FSeek( gBaseOffset + PacketStreamOffset );
+        FSeek( gBaseOffset + VifCodeStreamOffset );
 
-        local u32 packetStreamEnd = FTell() + ( PacketStreamSize * 16 );
+        local u32 vifCodeStreamEnd = FTell() + ( VifCodeStreamSize * 16 );
 
         struct
         {
             local u8 vifCmd;
             local u32 usedNodeIndex;
 
-            while ( FTell() < packetStreamEnd )
+            while ( FTell() < vifCodeStreamEnd )
             {
                 vifCmd = ReadByte( FTell() + 3 );
-                if ( vifCmd == 0 && Align( FTell(), 16 ) == packetStreamEnd )
+                if ( vifCmd == 0 && Align( FTell(), 16 ) == vifCodeStreamEnd )
                 {
                     // Packet stream padding, stop reading
                     break;
@@ -519,14 +577,51 @@ typedef struct
 {
     u16 Field00;
     u16 MaterialId;
-    u16 ShapeCount;
+    u16 Field04;
     u16 Field06;
     u32 Field08;
     u16 TriangleCount;
     u16 VertexCount;
     u32 Flags;
     FAlign( 16 );
+    
+    struct
+    {
+        SetRandomBackColor();
+        local u32 triangleIndex;
+        for ( triangleIndex = 0; triangleIndex < TriangleCount; ++triangleIndex )
+        {
+            struct
+            {
+                u16 A;
+                u16 B;
+                u16 C;
+            } Triangle;
+        }
+    } Triangles;
+    FAlign( 16 );
 
+    TVector3 Positions[ VertexCount ];
+    FAlign( 16 );
+
+    TVector3 Normals[ VertexCount ];
+    FAlign( 16 );
+    
+} TMeshType4;
+
+typedef struct
+{
+    u16 Field00;
+    u16 MaterialId;
+    u16 ShapeCount;
+    u16 MaterialId2;
+    u32 Field08;
+    u16 TriangleCount;
+    u16 VertexCount;
+    u32 Flags;
+    u16 UsedNodeCount;
+    u16 UsedNodes[ UsedNodeCount ];
+    FAlign( 16 );
 
     //Printf( "Type 5 Flags: %08X\n", Flags );
 
@@ -556,23 +651,25 @@ typedef struct
             SetRandomBackColor();
             struct
             {
-                Vector3 Positions[ VertexCount ];
+                TVector3 Positions[ VertexCount ];
                 FAlign( 16 );
-                Vector3 Normals[ VertexCount ];
+                TVector3 Normals[ VertexCount ];
                 FAlign( 16 );
             } Shape;
         }
-
-        for ( shapeIndex = 0; shapeIndex < ShapeCount; ++shapeIndex )
-        {
-            SetRandomBackColor();
-            struct
-            {
-                Vector2 TexCoords[ VertexCount ];
-                FAlign( 16 );
-            } ShapeTexCoords;
-        }
     } Shapes;
+
+    if ( Flags & ( 1 << 4 ) )
+    {
+        TVector2 TexCoords[ VertexCount ];
+        FAlign( 16 );
+    }
+
+    if ( Flags & ( 1 << 12 ) )
+    {
+        TVector2 TexCoords2[ VertexCount ];
+        FAlign( 16 );
+    }
 
 } TMeshType5;
 
@@ -627,7 +724,7 @@ typedef struct
         
                 for ( batchIndex = 0; batchIndex < UsedNodeCount; ++batchIndex )
                 {
-                    Printf( "%d\n", batchIndex );
+                    //Printf( "%d\n", batchIndex );
                     struct
                     {
                         SetRandomBackColor();
@@ -651,7 +748,7 @@ typedef struct
                                 case 0x70:
                                     struct TVifPacket VifPacket; 
 
-                                    Printf( "   Address: %08X Size: %08X Count: %d\n", VifPacket.Address * 8, VifPacket.size, VifPacket.Count );
+                                    //Printf( "   Address: %08X Size: %08X Count: %d\n", VifPacket.Address * 8, VifPacket.size, VifPacket.Count );
                                     break;
                 
                                 default:
@@ -673,8 +770,8 @@ typedef struct
                 struct TVifTag TexCoordsKickTag;    Assert( TexCoordsKickTag.Command == 0x17 );
                 struct TVifTag FlushTag;            Assert( FlushTag.Command == 0x10 );
 
-                Printf( "   Address: %08X Size: %08X Count: %d (TexCoord)\n", TexCoordsPacket.Address * 8,
-                                        TexCoordsPacket.size, TexCoordsPacket.Count);
+                //Printf( "   Address: %08X Size: %08X Count: %d (TexCoord)\n", TexCoordsPacket.Address * 8,
+                //                        TexCoordsPacket.size, TexCoordsPacket.Count);
                 FAlign( 16 );
             } Batch <optimize=false>;
         }
@@ -682,8 +779,11 @@ typedef struct
 
     if ( ( Flags & 0x00001000 ) == 0x00001000 )
     {
-        Vector2 TexCoords2[ VertexCount ];
+        TVector2 TexCoords2[ VertexCount ];
     }
+
+    //if ( FTell() == 0x423B0 )
+    //    Assert( false );
     
 } TMeshType7;
 
@@ -772,7 +872,7 @@ typedef struct
 
     if ( ( Flags & 0x00001000 ) == 0x00001000 )
     {
-        Vector2 TexCoords2[ VertexCount ];
+        TVector2 TexCoords2[ VertexCount ];
     }
     
 } TMeshType8;
@@ -871,6 +971,9 @@ typedef struct
                 case 23:
                     u32 Color4;
                     break;
+                case 24:
+                    u32 Color5;
+                    break;
                 case 25:
                     f32 Float1;
                     break;
@@ -894,6 +997,270 @@ typedef struct
     u32 Id;
 } TNodeName;
 
+// Motion pack
+typedef struct
+{
+    SetRandomBackColor();
+
+    // -- header --
+    u8 FileType;
+    u8 IsCompressed;
+    u16 UserId;
+    u32 FileSize;
+    u32 Magic;
+    u32 MemorySize;
+
+    // -- motion pack header --
+    u32 DataSize;
+    u32 RelocationTableSize;
+    s16 Group;
+    s16 PlayGroup;
+    s16 FirstMotion;
+    s16 Flags;
+
+    if ( DataSize > 0 )
+    {
+        gBaseOffset = FTell();
+
+        // -- motion data header --
+        u16 MotionCount;
+        u16 ControllerCount;
+        u32 MotionTableOffset;
+
+        // -- controllers --
+        struct
+        {
+            struct TController Controller[ ControllerCount ];
+        } Controllers;
+   
+        // -- motions -- 
+        if ( MotionTableOffset != 0 )
+        {
+            FSeek( gBaseOffset + MotionTableOffset );
+            u32 MotionOffsets[ MotionCount ];
+
+            local u32 motionIndex;
+            local u32 motionOffset;
+
+            struct
+            {
+                for ( motionIndex = 0; motionIndex < MotionCount; ++motionIndex )
+                {
+                    motionOffset = MotionOffsets[ motionIndex ];
+                    if ( motionOffset != 0 )
+                    {
+                        FSeek( gBaseOffset + motionOffset );
+                        struct TMotion Motion;
+                    }
+                }
+            } Motions;
+        }
+    }
+
+    if ( DataSize != 0 )
+    {
+        // Read relocation table
+        SetRandomBackColor();
+        FSeek( gBaseOffset + DataSize );
+        u8 RelocationTable[ RelocationTableSize ];
+    }
+} TMotionPack;
+
+enum<u16> TControllerType
+{
+    TControllerType_Translation = 0,
+    TControllerType_Scale = 2,
+    TControllerType_Rotation = 3,
+    TControllerType_Morph = 4
+};
+
+// Controls the animation of a single property of a node.
+// The property that is modified depends on the type.
+typedef struct
+{
+    SetRandomBackColor();
+    TControllerType Type;
+    u16 Field02;
+    u16 NodeIndex;
+    u16 Field06;
+
+    if ( EnumToString( Type ) == "" ) Printf( "TController: unknown type: %d\n", Type ); 
+    if ( Field02 != 0 ) Printf( "TController: %s %d Field02 is not 0: %d\n", EnumToString( Type ), NodeIndex, Field02 ); 
+    if ( Field06 != 0 ) Printf( "TController: %s %d Field06 is not 0: %d\n", EnumToString( Type ), NodeIndex, Field06 ); 
+} TController <optimize=false>;
+
+// A motion represents the entire array of per-node tracks containing modifications of properties over time
+// used in a single motion.
+typedef struct
+{
+    SetRandomBackColor();
+
+    u32 FrameCount;
+
+    local u32 controllerIndex;
+    for ( controllerIndex = 0; controllerIndex < File.MotionPack.ControllerCount; ++controllerIndex )
+        struct TMotionTrack Track( controllerIndex );
+
+} TMotion;
+
+typedef struct( u32 controllerIndex )
+{
+    SetRandomBackColor();
+
+    u32 DataSize;
+    u16 KeyFrameCount;
+    u16 KeyFrameSize;
+    u16 KeyFrameTimings[ KeyFrameCount ];
+    FAlign( 4 );
+    
+    local u32 keyFrameIndex = 0;
+    for ( keyFrameIndex = 0; keyFrameIndex < KeyFrameCount; ++keyFrameIndex )
+    {
+        struct
+        {
+            SetRandomBackColor();
+            local TControllerType type = File.MotionPack.Controllers.Controller[ controllerIndex ].Type;
+            switch ( type )
+            {
+                case TControllerType_Translation:
+                    switch ( KeyFrameSize )
+                    {
+                        case 4: 
+                            u32 Value; 
+                            break;
+    
+                        case 8:
+                            u32 ShapeIndex;
+                            f32 BlendAmount; 
+                            break;
+
+                        case 12:
+                            TVector3 Translation;
+                            break;
+
+                        default:
+                            Assert( false );
+                            break;
+                    }
+                    break;
+
+                case 1:
+                    switch ( KeyFrameSize )
+                    {
+                        case 4: 
+                            u32 Value; 
+                            break;
+
+                        default:
+                            Assert( false );
+                            break;
+                    }
+                    break;
+    
+                case TControllerType_Scale:
+                    switch ( KeyFrameSize )
+                    {
+                        case 12:
+                            TVector3 Scale;
+                            break;
+
+                         case 20:
+                            struct f32 Values[5];
+                            break;
+
+                        default:
+                            Assert( false );
+                            break;
+                    }
+                    break;
+    
+                case TControllerType_Rotation:
+                    switch ( KeyFrameSize )
+                    {
+                        case 8:
+                            struct PackedQuaternion Rotation;
+                            break;
+
+                        case 20:
+                            struct f32 Values[5];
+                            break;
+
+                        default:
+                            Assert( false );
+                            break;
+                    }
+                    break;
+    
+                case TControllerType_Morph:
+                    switch ( KeyFrameSize )
+                    {
+                        case 1:
+                            u8 Value;
+                            break;
+
+                        case 4:
+                            u8 Values[ 4 ]; // divide by 0x80?
+                            break;
+
+                        default:
+                            Assert( false );
+                            break;
+                    }
+                    break;
+
+                case 5:
+                    switch ( KeyFrameSize )
+                    {
+                        case 4:
+                            u8 Values[ 4 ]; // divide by 0x80?
+                            break;
+
+                        default:
+                            Assert( false );
+                            break;
+                    }
+                    break;
+
+                case 8:
+                    switch ( KeyFrameSize )
+                    {
+                        case 4:
+                            u8 Values[ 4 ]; // divide by 0x80?
+                            break;
+
+                        default:
+                            Assert( false );
+                            break;
+                    }
+                    break;
+            }
+        } KeyFrameValues;
+    }
+
+    FAlign( 4 );
+} TMotionTrack;
+
+const float MOTION_FIXED_POINT_12 = 4096.0f;
+
+typedef struct
+{
+    s16 X;
+    s16 Y;
+    s16 Z;
+    s16 W;
+} PackedQuaternion <read=PackedQuaternionToString>;
+
+string PackedQuaternionToString( PackedQuaternion& value )
+{
+    string str = "";
+    SPrintf( str, "[%f, %f, %f, %f]", 
+        value.X / MOTION_FIXED_POINT_12,
+        value.Y / MOTION_FIXED_POINT_12,
+        value.Z / MOTION_FIXED_POINT_12,
+        value.W / MOTION_FIXED_POINT_12 );
+    return str;
+}
+
 // Field model
 typedef struct
 {
@@ -902,17 +1269,61 @@ typedef struct
     u32 Magic;
     u32 DataSize;
     u32 RelocationTableOffset;
-    u32 Field10;
+    u32 RelocationTableSize;
     u32 ResourceListCount;
     u32 ResourceListOffset;
     u32 Field1C;
+
+    if ( Magic == MakeFourCC( "FLD2" ) )
+    {
+        u32 Field20;
+        u32 Field24;
+        u32 Field28;
+        u32 Field2C;
+
+        if ( Field24 != 0 )
+        {
+            FSeek( gBaseOffset + Field24 );
+            struct TFieldUnknownStruct2 Field20Data;
+        }
+    }
+
+    if ( RelocationTableOffset != 0 )
+    {
+        FSeek( gBaseOffset + RelocationTableOffset );
+        SetRandomBackColor();
+        u8 RelocationTable[ RelocationTableSize ];
+    }
 
     if ( ResourceListOffset != 0 )
     {
         FSeek( gBaseOffset + ResourceListOffset );
         struct TFieldResourceList ResourceLists[ ResourceListCount ];
     }
+
+    if ( Field1C != 0 )
+    {
+        FSeek( gBaseOffset + Field1C );
+
+        if ( Magic == MakeFourCC( "FLD1" ) )
+            struct TFieldSceneField1CStruct Field1CData;
+        else
+            struct TField2Field1CStruct Field1CData;
+    }
 } TFieldScene;
+
+typedef struct
+{
+    SetRandomBackColor();
+    u32 Field00;
+    u32 Field04; // 63, 100, ... count?
+    u32 Field08;
+    u32 Field0C;
+    u32 Field10;
+    u32 Field14;
+    u32 Field18;
+    u32 Field1C;
+} TFieldSceneField1CStruct;
 
 typedef struct
 {
@@ -943,22 +1354,195 @@ typedef struct
     u32 Field18;
     u32 Field1C;
     u32 DataOffset;
-
     local u32 resourceEnd = FTell();
+
+    if ( TransformOffset != 0 )
+    {
+        FSeek( gBaseOffset + TransformOffset );
+        struct
+        {
+            SetRandomBackColor();
+            Vector4 Position;
+            Vector4 Rotation;
+            Vector4 Scale;
+        } Transform;
+    }
+
+    if ( Field14 != 0 )
+    {
+        FSeek( gBaseOffset + Field14 );
+        struct TFieldUnknownStruct2 Field14Data;
+    }
 
     if ( DataOffset != 0 )
     {
         FSeek( gBaseOffset + DataOffset );
         switch ( Type )
         {
-            case 2:
+            case 2: // mobj
                 TModel Model( false );
+                break;
+
+            case 3: // 01xxx_01
+                struct TFieldResourceType3 Type3;
+                break;           
+
+            case 5: // TEX_LIST
+                SetRandomBackColor();
+                string TextureListFileName;
+                break;
+
+            case 0xB:
+                struct
+                {
+                    SetRandomBackColor();
+                    s32 Field00;
+                    s32 Field04;
+                    s32 Field08;
+                    f32 Field0C;
+                    f32 Field10;
+                    f32 Field14;
+                    s32 Field18;
+                    s32 Field1C;
+                    s32 Field20;
+                    s32 Field24;
+                    s32 Field28;
+                    s32 Field2C;
+                } Effect;
+                break;
+
+            case 0xC: // light, FieldObj
+                typedef struct
+                {
+                    SetRandomBackColor();
+                    s32 Field00;
+                    s32 Field04;
+                    s32 Field08;
+                    f32 Field0C;
+                    f32 Field10;
+                    f32 Field14;
+                    s32 Field18;
+                    f32 Field1C;
+                    f32 Field20;
+                    f32 Field24;
+                    f32 Field28;
+                    f32 Field2C;
+                    f32 Field30;
+                } Light;
                 break;
         }
     }
 
     FSeek( resourceEnd );
 } TFieldResource <optimize=false>;
+
+typedef struct
+{
+    SetRandomBackColor();
+    s32 Field00;
+    s32 Field04;
+    s32 Field08;
+    s32 Field0C;
+
+    if ( Field08 != 0 )
+    {
+        FSeek( gBaseOffset + Field08 );
+        struct
+        {
+            SetRandomBackColor();
+            s32 Field00;
+            s32 Field04;
+            s32 Field08;
+            s32 Field0C; // offset
+            s32 Field10; // offset
+            s32 Field14; // offset
+            s32 Field18;
+            s32 Field1C;
+
+            if ( Field0C != 0 )
+            {
+                FSeek( gBaseOffset + Field0C );
+                SetRandomBackColor();
+                Vector4 Field0CData[ Field00 ];
+            }
+
+            if ( Field10 != 0 )
+            {
+                FSeek( gBaseOffset + Field10 );
+                struct
+                {
+                    SetRandomBackColor();
+                    s32 Field00;
+                    s32 Field04;
+                    s32 Field08;
+                    s32 Field0C;
+                    s32 Field10;
+                    s32 Field14;
+                    s32 Field18;
+                    s32 Field1C;
+                    s16 Field20;
+                    s16 Field22;
+                } Field10Data[ Field04 ];
+            }
+
+            if ( Field14 != 0 )
+            {
+                FSeek ( gBaseOffset + Field14 );
+                struct
+                {
+                    SetRandomBackColor();
+                    s32 Field00;
+                    s32 Field04;
+                    s32 Field08;
+                    s32 Field0C;
+                    s32 Field10;
+                    s32 Field14;
+                    s32 Field18;
+                    s32 Field1C;
+                } Field14Data;
+
+            }
+        } Field04Data;
+    }
+} TFieldResourceType3;
+
+typedef struct
+{
+    SetRandomBackColor();
+    u32 Field00; // 1, count?
+    u32 Field04; // offset
+    u32 Field08; // 0, maybe padding
+    u32 Field0C; // .
+
+    if ( Field04 != 0 )
+    {
+        struct TFieldUnknownStruct1 Field04Data;
+    }
+} TFieldUnknownStruct2;
+
+typedef struct
+{
+    SetRandomBackColor();
+    u32 Field00; // 0x3130
+    u32 Field04; // 0, maybe padding
+    u32 Field08; // .
+    u32 Field0C; // .
+} TFieldUnknownStruct1;
+
+typedef struct
+{
+    SetRandomBackColor();
+    u32 Field00;
+    u32 Field04; // 63, 100, ... count?
+    u32 Field08;
+    u32 Field0C;
+
+    if ( Field04 != 0 )
+    {
+        FSeek( gBaseOffset + Field04 );
+        struct TFieldUnknownStruct1 Field14Data;                
+    }
+} TField2Field1CStruct;
 
 
 // Read file
@@ -1002,12 +1586,20 @@ struct
                 struct TModel Model( true );
                 break;
 
+            case MakeFourCC( "MT00" ):
+                struct TMotionPack MotionPack;
+                break;
+
             default:
                 struct TUnknownChunk UnknownChunk;
                 break;
         }
 
-        FSeek( chunkStart + chunkSize );
-        FAlign( 64 );
+        // Some files have broken offsets (f021_aljira.PB), 
+        if ( chunkType != MakeFourCC( "TXP0" ) || TexturePack.TextureCount == 0 )
+        {
+            FSeek( chunkStart + chunkSize );
+            FAlign( 64 );
+        }
     }
 } File;

@@ -1,0 +1,1202 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h"
+
+// These files are always big endian
+BigEndian();
+
+//
+// -- Basic types
+//
+
+typedef enum<u32>
+{
+    Invalid,
+    ModelPack,
+    ShaderCachePS3,
+    ShaderCachePSP2 = 4,
+    ShaderCachePS4 = 6,
+
+    // These are all used as intermediary output formats
+    TextureMap = 0x52494700,
+    TextureDictionary,
+    Texture,
+    ShaderPS3,
+    ShaderPSP2,
+    ShaderPS4,
+    Model,
+    Node,
+    UserPropertyDictionary,
+    Morph,
+    MorphTarget,
+    MorphTargetList,
+    MaterialDictionary,
+    ChunkType000100F9,
+    ChunkType000100F8,
+    AnimationPack,
+    MaterialAttribute,
+    Material,
+    Light,
+    Mesh,
+    Camera,
+    Epl,
+    EplLeaf,
+    Animation,
+    AnimationExtraData,
+    AnimationLayer,
+    AnimationController
+} EFileType;
+
+typedef enum<u32>
+{
+    EChunkType_EOF = 0,
+    EChunkType_Model              = 0x00010003,
+    EChunkType_ChunkType000100F8  = 0x000100F8,
+    EChunkType_ChunkType000100F9  = 0x000100F9,
+    EChunkType_MaterialDictionary = 0x000100FB,
+    EChunkType_TextureDictionary  = 0x000100FC,
+    EChunkType_AnimationPack      = 0x000100FD
+} EChunkType;
+
+typedef struct
+{
+    char Signature[4];
+    u32 Version;
+    EFileType Type;
+    u32 Reserved;
+    Assert( Reserved == 0 );
+} TFileHeader;
+
+typedef struct
+{
+    u32 Version;
+    EChunkType Type;
+    u32 Length;
+    u32 Reserved;
+    Assert( Reserved == 0 );
+} TChunkHeader;
+
+typedef struct
+{
+    u16 Length;
+    char Str[Length];  
+} TString <optimize=false>;
+
+typedef struct(u32 version)
+{
+    u16 Length;
+    char Str[Length];  
+
+    if ( version >= 0x01105100 )
+        SeekCurrent( 1 ); // padding byte
+    
+    if ( version > 0x1080000 )
+    {
+        // hash
+        u32 Hash;
+    }     
+} THashString <optimize=false>;
+
+typedef struct(u32 version)
+{
+    u16 Length;
+    char Str[Length];  
+
+    if ( version > 0x1080000 )
+    {
+        // hash
+        u32 Hash;
+    }     
+} THashStringNoPad <optimize=false>;
+
+typedef struct(u32 version)
+{
+    u32 PropertyCount;
+    struct TUserProperty Properties( version )[PropertyCount];
+} TUserPropertyDictionary <optimize=false>;
+
+typedef enum<u32>
+{
+    EUserPropertyValueType_Invalid      = 0,
+    EUserPropertyValueType_Int          = 1,
+    EUserPropertyValueType_Float        = 2,
+    EUserPropertyValueType_Bool         = 3,
+    EUserPropertyValueType_String       = 4,
+    EUserPropertyValueType_ByteVector3  = 5,
+    EUserPropertyValueType_ByteVector4  = 6,
+    EUserPropertyValueType_Vector3      = 7,
+    EUserPropertyValueType_Vector4      = 8,
+    EUserPropertyValueType_ByteArray    = 9,
+} EUserPropertyValueType;
+
+typedef struct
+{
+    byte X, Y, Z;
+} TByteVector3;
+
+typedef struct
+{
+    byte X, Y, Z;
+} TByteVector4;
+
+typedef struct( u32 version )
+{
+    EUserPropertyValueType Type;
+    THashString Name( version );
+    u32 Size;
+
+    switch ( Type )
+    {
+        case EUserPropertyValueType_Int: s32 Value; break;
+        case EUserPropertyValueType_Float: f32 Value; break;
+        case EUserPropertyValueType_Bool: bool Value; break;
+        case EUserPropertyValueType_String: char Value[ Size ]; break;
+        case EUserPropertyValueType_ByteVector3: struct TByteVector3 Value; break;
+        case EUserPropertyValueType_ByteVector4: struct TByteVector4 Value; break;
+        case EUserPropertyValueType_Vector3: TVector3 Value; break;
+        case EUserPropertyValueType_Vector4: TVector4 Value; break;
+        case EUserPropertyValueType_ByteArray: u8 Value[ Size ]; break;
+        default: Assert( false, "Unknown user property type" );
+    }
+} TUserProperty <optimize=false>;
+
+//
+// -- End Basic types --
+//
+
+//
+// -- Texture types --
+//
+typedef enum<u16> 
+{
+    ETextureFormat_Invalid = 0,
+    ETextureFormat_DDS = 1,
+    ETextureFormat_GXT = 6
+} ETextureFormat;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    TString Name;
+    ETextureFormat Format;
+    u32 Size;
+    u8 Data[Size];
+    u8 Field1C;
+    u8 Field1D;
+    u8 Field1E;
+    u8 Field1F; 
+} TTexture <optimize=false>;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    TChunkHeader Header;
+    Assert( Header.Type == EChunkType_TextureDictionary ); 
+
+    u32 TextureCount;
+    TTexture Textures[TextureCount];
+} TTextureDictionary <optimize=false>;
+
+//
+// -- End Texture types --
+//
+
+//
+// -- Material types --
+//
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    TChunkHeader Header;
+    Assert( Header.Type == EChunkType_MaterialDictionary ); 
+
+    u32 MaterialCount;
+    struct TMaterial Materials( Header.Version )[MaterialCount];
+} TMaterialDictionary <optimize=false>;
+
+typedef enum<u32>
+{
+    EMaterialFlags_Flag1            = 1 << 0,
+    EMaterialFlags_Flag2            = 1 << 1,
+    EMaterialFlags_Flag4            = 1 << 2,
+    EMaterialFlags_Flag8            = 1 << 3,
+    EMaterialFlags_Flag10Crash      = 1 << 4,
+    EMaterialFlags_Flag20           = 1 << 5,
+    EMaterialFlags_Flag40           = 1 << 6,
+    EMaterialFlags_EnableLight      = 1 << 7,
+    EMaterialFlags_Flag100          = 1 << 8,
+    EMaterialFlags_Flag200          = 1 << 9,
+    EMaterialFlags_Flag400          = 1 << 10,
+    EMaterialFlags_EnableLight2     = 1 << 11,
+    EMaterialFlags_PurpleWireframe  = 1 << 12,
+    EMaterialFlags_Flag2000         = 1 << 13,
+    EMaterialFlags_ReceiveShadow    = 1 << 14,
+    EMaterialFlags_CastShadow       = 1 << 15,
+    EMaterialFlags_HasAttributes    = 1 << 16,
+    EMaterialFlags_Flag20000Crash   = 1 << 17,
+    EMaterialFlags_Flag40000Crash   = 1 << 18,
+    EMaterialFlags_DisableBloom     = 1 << 19,
+    EMaterialFlags_HasDiffuseMap    = 1 << 20,
+    EMaterialFlags_HasNormalMap     = 1 << 21,
+    EMaterialFlags_HasSpecularMap   = 1 << 22,
+    EMaterialFlags_HasReflectionMap = 1 << 23,
+    EMaterialFlags_HasHighlightMap  = 1 << 24,
+    EMaterialFlags_HasGlowMap       = 1 << 25,
+    EMaterialFlags_HasNightMap      = 1 << 26,
+    EMaterialFlags_HasDetailMap     = 1 << 27,
+    EMaterialFlags_HasShadowMap     = 1 << 28,
+    EMaterialFlags_Flag20000000Crash= 1 << 29,
+    EMaterialFlags_Flag40000000     = 1 << 30,
+    EMaterialFlags_Flag80000000     = 1u << 31
+} EMaterialFlags;
+
+typedef enum<u8>
+{
+    EMaterialDrawMethod_Opaque = 0,
+    EMaterialDrawMethod_Translucent = 1,
+} EMaterialDrawMethod;
+
+typedef struct(u32 version)
+{
+    SetRandomBackColor();
+
+    THashString Name( version );
+    EMaterialFlags Flags;
+    
+    if ( version < 0x1104000 )
+    {
+        local EMaterialFlags RuntimeFlags = ( EMaterialFlags )( ( u32 )Flags & 0x7FFFFFFF );
+    }
+
+    TVector4 AmbientColor;
+    TVector4 DiffuseColor;
+    TVector4 SpecularColor;
+    TVector4 EmissiveColor;
+    f32 Field40;
+    f32 Field44;
+
+    if ( version <= 0x1103040 )
+    {
+        s16 _DrawMethod;
+        local EMaterialDrawMethod DrawMethod = (EMaterialDrawMethod)_DrawMethod;
+        s16 Field49;
+        s16 Field4A;
+        s16 Field4B;
+        s16 Field4C;
+        
+        if ( version > 0x108011B )
+        {
+           s16 Field4D; 
+        }
+    }
+    else
+    {
+        EMaterialDrawMethod DrawMethod;
+        u8 Field49;
+        u8 Field4A;
+        u8 Field4B;
+        u8 Field4C;
+        u8 Field4D; 
+    }
+
+    s16 Field90;
+    s16 Field92;
+    
+    if ( version <= 0x1104800 )
+    {
+        local s16 Field94 = 1;
+        s16 Field96;
+    }
+    else
+    {
+        s16 Field94;
+        s16 Field96;
+    }
+
+    s16 Field5C;
+    u32 Field6C;
+    u32 Field70;
+    s16 Field50;
+    
+    if ( version <= 0x1105070 || version >= 0x1105090 )
+    {
+        u32 Field98;
+    }
+
+    if ( Flags & EMaterialFlags_HasDiffuseMap ) struct TTextureMap DiffuseMap( version );
+    if ( Flags & EMaterialFlags_HasNormalMap ) struct TTextureMap NormalMap( version );
+    if ( Flags & EMaterialFlags_HasSpecularMap  ) struct TTextureMap SpecularMap( version );
+    if ( Flags & EMaterialFlags_HasReflectionMap ) struct TTextureMap ReflectionMap( version );
+    if ( Flags & EMaterialFlags_HasHighlightMap ) struct TTextureMap HighlightMap( version );
+    if ( Flags & EMaterialFlags_HasGlowMap ) struct TTextureMap GlowMap( version );
+    if ( Flags & EMaterialFlags_HasNightMap ) struct TTextureMap NightMap( version );
+    if ( Flags & EMaterialFlags_HasDetailMap ) struct TTextureMap DetailMap( version );
+    if ( Flags & EMaterialFlags_HasShadowMap ) struct TTextureMap ShadowMap( version );
+
+    if ( Flags & EMaterialFlags_HasAttributes )
+    {
+        u32 AttributeCount;
+
+        local u32 i;
+        local u32 attributeStart;
+        local u32 attributeHeader;
+
+        for (i = 0; i < AttributeCount; ++i)
+        {
+            attributeStart = FTell();
+            attributeHeader = ReadInt( attributeStart );
+            
+            switch ( ( enum EMaterialAttributeType )( attributeHeader & 0xFFFF ) )
+            {
+                case EMaterialAttributeType_Type0: struct TMaterialAttributeType0 Attribute( version ); break;
+                case EMaterialAttributeType_Type1: struct TMaterialAttributeType1 Attribute( version ); break;
+                case EMaterialAttributeType_Type2: struct TMaterialAttributeType2 Attribute( version ); break;
+                case EMaterialAttributeType_Type3: struct TMaterialAttributeType3 Attribute( version ); break;
+                case EMaterialAttributeType_Type4: struct TMaterialAttributeType4 Attribute( version ); break;
+                case EMaterialAttributeType_Type5: struct TMaterialAttributeType5 Attribute( version ); break;
+                case EMaterialAttributeType_Type6: struct TMaterialAttributeType6 Attribute( version ); break;
+                case EMaterialAttributeType_Type7: struct TMaterialAttributeType7 Attribute( version ); break;
+                case EMaterialAttributeType_Type8: struct TMaterialAttributeType8 Attribute( version ); break;
+                default:
+                    Assert( false, "Unknown material attribute type" );
+                    break;
+            }
+        }
+    }
+} TMaterial <optimize=false>;
+
+typedef struct( u32 version )
+{
+    SetBackColorToShadeOfLastColor( 0x10 );
+
+    THashString Name( version );
+    s32 Field44;
+    u8 Field48;
+    u8 Field49;
+    u8 Field4A;
+    u8 Field4B;
+    f32 Field4C;
+    f32 Field50;
+    f32 Field54;
+    f32 Field58;
+    f32 Field5C;
+    f32 Field60;
+    f32 Field64;
+    f32 Field68;
+    f32 Field6C;
+    f32 Field70;
+    f32 Field74;
+    f32 Field78;
+    f32 Field7C;
+    f32 Field80;
+    f32 Field84;
+    f32 Field88;
+} TTextureMap <optimize=false>;
+
+typedef enum<u32>
+{
+    EMaterialAttributeType_Type0 = 0,
+    EMaterialAttributeType_Type1 = 1,
+    EMaterialAttributeType_Type2 = 2,
+    EMaterialAttributeType_Type3 = 3,
+    EMaterialAttributeType_Type4 = 4,
+    EMaterialAttributeType_Type5 = 5,
+    EMaterialAttributeType_Type6 = 6,
+    EMaterialAttributeType_Type7 = 7,
+    EMaterialAttributeType_Type8 = 8,
+} EMaterialAttributeType;
+
+typedef enum<u32>
+{
+    EMaterialAttributeFlags_Bit0 = 1 << 0,
+} EMaterialAttributeFlags;
+
+typedef struct
+{
+    EMaterialAttributeFlags Flags : 16;
+    EMaterialAttributeType Type : 16;
+} TMaterialAttributeHeader;
+
+typedef enum<u32>
+{
+    EMaterialAttributeType0Flags_Bit0 = 1 << 0,
+    EMaterialAttributeType0Flags_Bit1 = 1 << 1,
+    EMaterialAttributeType0Flags_Bit2 = 1 << 2,
+    EMaterialAttributeType0Flags_Bit3 = 1 << 3,
+} EMaterialAttributeType0Flags;
+
+typedef struct(u32 version)
+{
+    TMaterialAttributeHeader Header;
+    Assert( Header.Type == EMaterialAttributeType_Type0 );
+
+    if ( version > 0x1104500 )
+    {
+        Vector4 Color;
+        f32 Field1C;
+        f32 Field20;
+        f32 Field24;
+        f32 Field28;
+        f32 Field2C;
+        EMaterialAttributeType0Flags Flags;
+    }
+    else if ( version > 0x1104220 )
+    {
+        Vector4 Color;
+        f32 Field1C;
+        f32 Field20;
+        f32 Field24;
+        f32 Field28;
+        f32 Field2C;
+
+        local EMaterialAttributeType0Flags Flags;
+        bool Flag1;
+        bool Flag2;
+        bool Flag4;
+        
+        if ( Version > 0x1102460 )
+        {
+            bool Flag8;
+        }
+
+        if ( Flag1 )
+            Flags |= EMaterialAttributeType0Flags_Bit0;
+
+        if ( Flag2 )
+            Flags |= EMaterialAttributeType0Flags_Bit1;
+
+        if ( Flag4 )
+            Flags |= EMaterialAttributeType0Flags_Bit2;
+
+        if ( Version > 0x1104260 )
+        {
+            if ( Flag8 )
+                Flags |= EMaterialAttributeType0Flags_Bit3;
+        }
+    }
+    else
+    {
+        Vector4 Color;
+        f32 Field1C;
+        f32 Field20;
+        local f32 Field24 = 1.0f;
+        f32 Field28;
+        f32 Field2C;
+    }
+} TMaterialAttributeType0 <optimize=false>;
+
+typedef enum<u32>
+{
+    EMaterialAttributeType1Flags_Bit0 = 1 << 0,
+    EMaterialAttributeType1Flags_Bit1 = 1 << 1,
+    EMaterialAttributeType1Flags_Bit2 = 1 << 2,
+    EMaterialAttributeType1Flags_Bit3 = 1 << 3,
+} EMaterialAttributeType1Flags;
+
+typedef struct(u32 version)
+{
+    SetBackColorToShadeOfLastColor( 0x10 );
+
+    TMaterialAttributeHeader Header;
+    Assert( Header.Type == EMaterialAttributeType_Type1 );
+
+    TVector4 Field0C;
+    f32 Field1C;
+    f32 Field20;
+    TVector4 Field24;
+    f32 Field34;
+    f32 Field38;
+
+    if ( version <= 0x1104500 )
+    {
+        local EMaterialAttributeType1Flags Flags;
+
+        bool Flag1;
+        if ( Flag1 )
+            Flags |= EMaterialAttributeType1Flags_Bit0;
+
+        if ( version > 0x1104180 )
+        {
+            bool Flag2;
+            if ( Flag2 )
+                Flags |= EMaterialAttributeType1Flags_Bit1;
+        }
+
+        if ( version > 0x1104210 )
+        {
+            bool Flag4;
+            if ( Flag4 )
+                Flags |= EMaterialAttributeType1Flags_Bit2;
+        }
+
+        if ( Version > 0x1104400 )
+        {
+            bool Flag8;
+            if ( Flag8 )
+                Flags |= EMaterialAttributeType1Flags_Bit3;
+        }
+    }
+    else
+    {
+        EMaterialAttributeType1Flags Flags;
+    }
+} TMaterialAttributeType1 <optimize=false>;
+
+typedef struct(u32 version)
+{
+    SetBackColorToShadeOfLastColor( 0x10 );
+
+    TMaterialAttributeHeader Header;
+    Assert( Header.Type == EMaterialAttributeType_Type2 );
+
+    s32 Field0C;
+    s32 Field10;
+} TMaterialAttributeType2;
+
+typedef struct(u32 version)
+{
+    SetBackColorToShadeOfLastColor( 0x10 );
+
+    TMaterialAttributeHeader Header;
+    Assert( Header.Type == EMaterialAttributeType_Type3 );
+
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
+    f32 Field28;
+    f32 Field2C;
+    f32 Field30;
+    f32 Field34;
+    f32 Field38;
+    s32 Field3C;
+} TMaterialAttributeType3;
+
+typedef struct(u32 version)
+{
+    SetBackColorToShadeOfLastColor( 0x10 );
+
+    TMaterialAttributeHeader Header;
+    Assert( Header.Type == EMaterialAttributeType_Type4 );
+
+    TVector4 Field0C;
+    f32 Field1C;
+    f32 Field20;
+    TVector4 Field24;
+    f32 Field34;
+    f32 Field38;
+    f32 Field3C;
+    f32 Field40;
+    f32 Field44;
+    f32 Field48;
+    f32 Field4C;
+    u8 Field50;
+    f32 Field54;
+    f32 Field58;
+    s32 Field5C;
+} TMaterialAttributeType4;
+
+typedef struct(u32 version)
+{
+    SetBackColorToShadeOfLastColor( 0x10 );
+
+    TMaterialAttributeHeader Header;
+    Assert( Header.Type == EMaterialAttributeType_Type5 );
+
+    s32 Field0C;
+    s32 Field10;
+    f32 Field14;
+    f32 Field18;
+    TVector4 Field1C;
+    f32 Field2C;
+    f32 Field30;
+    f32 Field34;
+    f32 Field38;
+    f32 Field3C;
+    TVector4 Field48;
+} TMaterialAttributeType5;
+
+typedef struct(u32 version)
+{
+    SetBackColorToShadeOfLastColor( 0x10 );
+
+    TMaterialAttributeHeader Header;
+    Assert( Header.Type == EMaterialAttributeType_Type6 );
+
+    u32 Field0C;
+    u32 Field10;
+    u32 Field14;
+} TMaterialAttributeType6;
+
+typedef struct(u32 version)
+{
+    SetBackColorToShadeOfLastColor( 0x10 );
+
+    TMaterialAttributeHeader Header;
+    Assert( Header.Type == EMaterialAttributeType_Type7 );
+} TMaterialAttributeType7;
+
+typedef enum<u32>
+{
+    EMaterialAttributeType8Flags_Bit0 = 1 << 0,
+    EMaterialAttributeType8Flags_Bit1 = 1 << 1,
+    EMaterialAttributeType8Flags_Bit2 = 1 << 2,
+    EMaterialAttributeType8Flags_Bit3 = 1 << 3,
+    EMaterialAttributeType8Flags_Bit4 = 1 << 4,
+    EMaterialAttributeType8Flags_Bit5 = 1 << 5,
+    EMaterialAttributeType8Flags_Bit6 = 1 << 6,
+    EMaterialAttributeType8Flags_Bit7 = 1 << 7,
+    EMaterialAttributeType8Flags_Bit8 = 1 << 8,
+    EMaterialAttributeType8Flags_Bit9 = 1 << 9,
+    EMaterialAttributeType8Flags_Bit10 = 1 << 10,
+    EMaterialAttributeType8Flags_Bit11 = 1 << 11,
+    EMaterialAttributeType8Flags_Bit12 = 1 << 12,
+    EMaterialAttributeType8Flags_Bit13 = 1 << 13,
+    EMaterialAttributeType8Flags_Bit14 = 1 << 14,
+    EMaterialAttributeType8Flags_Bit15 = 1 << 15,
+    EMaterialAttributeType8Flags_Bit16 = 1 << 16,
+    EMaterialAttributeType8Flags_Bit17 = 1 << 17,
+    EMaterialAttributeType8Flags_Bit18 = 1 << 18,
+    EMaterialAttributeType8Flags_Bit19 = 1 << 19,
+    EMaterialAttributeType8Flags_Bit20 = 1 << 20,
+    EMaterialAttributeType8Flags_Bit21 = 1 << 21,
+    EMaterialAttributeType8Flags_Bit22 = 1 << 22,
+    EMaterialAttributeType8Flags_Bit23 = 1 << 23,
+    EMaterialAttributeType8Flags_Bit24 = 1 << 24,
+    EMaterialAttributeType8Flags_Bit25 = 1 << 25,
+    EMaterialAttributeType8Flags_Bit26 = 1 << 26,
+    EMaterialAttributeType8Flags_Bit27 = 1 << 27,
+    EMaterialAttributeType8Flags_Bit28 = 1 << 28,
+    EMaterialAttributeType8Flags_Bit29 = 1 << 29,
+    EMaterialAttributeType8Flags_Bit30 = 1 << 30,
+    EMaterialAttributeType8Flags_Bit31 = 1 << 31,
+} EMaterialAttributeType8Flags;
+
+typedef struct(u32 version)
+{
+    SetBackColorToShadeOfLastColor( 0x10 );
+
+    TMaterialAttributeHeader Header;
+    Assert( Header.Type == EMaterialAttributeType_Type8 );
+
+    TVector3 Field00;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    TVector3 Field1C;
+    f32 Field28;
+    f32 Field2C;
+    s32 Field30;
+    s32 Field34;
+    s32 Field38;
+    EMaterialAttributeType8Flags Flags;
+} TMaterialAttributeType8;
+
+//
+// -- End Material types --
+//
+
+//
+// -- Model types --
+//
+typedef enum<u32>
+{
+    EModelFlags_HasBoundingBox    = 1 << 0,
+    EModelFlags_HasBoundingSphere = 1 << 1,
+    EModelFlags_HasSkinning       = 1 << 2,
+    EModelFlags_HasMorphs         = 1 << 3,
+    EModelFlags_Bit4 = 1 << 4,
+    EModelFlags_Bit5 = 1 << 5,
+    EModelFlags_Bit6 = 1 << 6,
+    EModelFlags_Bit7 = 1 << 7,
+    EModelFlags_Bit8 = 1 << 8,
+    EModelFlags_Bit9 = 1 << 9,
+    EModelFlags_Bit10 = 1 << 10,
+    EModelFlags_Bit11 = 1 << 11,
+    EModelFlags_Bit12 = 1 << 12,
+    EModelFlags_Bit13 = 1 << 13,
+    EModelFlags_Bit14 = 1 << 14,
+    EModelFlags_Bit15 = 1 << 15,
+    EModelFlags_Bit16 = 1 << 16,
+    EModelFlags_Bit17 = 1 << 17,
+    EModelFlags_Bit18 = 1 << 18,
+    EModelFlags_Bit19 = 1 << 19,
+    EModelFlags_Bit20 = 1 << 20,
+    EModelFlags_Bit21 = 1 << 21,
+    EModelFlags_Bit22 = 1 << 22,
+    EModelFlags_Bit23 = 1 << 23,
+    EModelFlags_Bit24 = 1 << 24,
+    EModelFlags_Bit25 = 1 << 25,
+    EModelFlags_Bit26 = 1 << 26,
+    EModelFlags_Bit27 = 1 << 27,
+    EModelFlags_Bit28 = 1 << 28,
+    EModelFlags_Bit29 = 1 << 29,
+    EModelFlags_Bit30 = 1 << 30,
+    EModelFlags_Bit31 = 1 << 31,
+} EModelFlags;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    TChunkHeader Header;
+    EModelFlags Flags;
+    
+    if ( Flags & EModelFlags_HasSkinning )
+    {
+        SetBackColorToShadeOfLastColor(0x20);
+        u32 BoneCount;
+        TMatrix4x4 InverseBindMatrices[BoneCount];
+
+        SetBackColorToShadeOfLastColor(0x20);
+        u16 BoneToNodeIndices[BoneCount];
+    }
+
+    if ( Flags & EModelFlags_HasBoundingBox )
+    {
+        SetBackColorToShadeOfLastColor(0x20);
+        TBoundingBox BoundingBox;
+    }   
+
+    if ( Flags & EModelFlags_HasBoundingSphere )
+    {
+        SetBackColorToShadeOfLastColor(0x20);
+        TBoundingSphere BoundingSphere;
+    }
+    
+    struct TNode RootNode( Header.Version );
+} TModel <optimize=false>;
+
+typedef struct( u32 version )
+{
+    SetRandomBackColor();
+
+    THashString Name( version );
+    TVector3 Translation;
+    TQuaternion Rotation;
+    TVector3 Scale;
+    
+    if ( version <= 0x1090000 )
+    {
+        u8 Unknown1;
+    }
+
+    u32 AttachmentCount;
+    if ( AttachmentCount > 0 )
+        struct TNodeAttachment Attachments( version )[AttachmentCount];
+
+    if ( version > 0x1060000 )
+    {
+        bool HasProperties;
+        if ( HasProperties )
+        {
+            TUserPropertyDictionary Properties( version );
+        }
+    }
+
+    if ( version > 0x1104230 )
+    {
+        f32 FieldE0;
+    }
+    
+    u32 ChildCount;
+    if ( ChildCount > 0 )
+        struct TNode Children( version )[ChildCount];
+} TNode <optimize=false>;
+
+typedef enum<u32>
+{
+    ENodeAttachmentType_Invalid = 0,
+    ENodeAttachmentType_Model = 1,
+    ENodeAttachmentType_Unknown = 2,
+    ENodeAttachmentType_Node = 3,
+    ENodeAttachmentType_Mesh = 4,
+    ENodeAttachmentType_Camera = 5,
+    ENodeAttachmentType_Light = 6,
+    ENodeAttachmentType_Epl = 7,
+    ENodeAttachmentType_EplLeaf = 8,
+    ENodeAttachmentType_Morph = 9,
+} ENodeAttachmentType;
+
+typedef struct( u32 version )
+{
+    SetRandomBackColor();
+    ENodeAttachmentType Type;
+
+    switch ( Type )
+    {
+        case ENodeAttachmentType_Model: struct TModelPack Value; break;
+        case ENodeAttachmentType_Node: struct TNode Value; break;
+        case ENodeAttachmentType_Mesh: struct TMesh Value( version ); break;
+        case ENodeAttachmentType_Camera: struct TCamera Value( version ); break;
+        case ENodeAttachmentType_Light: struct TLight Value( version ); break;
+        case ENodeAttachmentType_Epl: struct TEpl Value; break;
+        case ENodeAttachmentType_EplLeaf: struct TEplLeaf Value; break;
+        case ENodeAttachmentType_Morph: struct TMorph Value( version ); break;
+        default: Assert( false, "Unknown node attachment type" );
+    }
+} TNodeAttachment <optimize=false>;
+
+typedef enum<u32>
+{
+    EMeshFlags_HasVertexWeights  = 1 << 0,
+    EMeshFlags_HasMaterial       = 1 << 1,
+    EMeshFlags_HasTriangles      = 1 << 2,
+    EMeshFlags_HasBoundingBox    = 1 << 3,
+    EMeshFlags_HasBoundingSphere = 1 << 4,
+    EMeshFlags_Flag20            = 1 << 5, // render flag
+    EMeshFlags_HasMorphTargets   = 1 << 6,
+    EMeshFlags_Flag80            = 1 << 7, // render flag
+    EMeshFlags_Flag100           = 1 << 8,
+    EMeshFlags_Flag200           = 1 << 9,
+    EMeshFlags_Flag400           = 1 << 10,
+    EMeshFlags_Flag800           = 1 << 11,
+    EMeshFlags_Flag1000          = 1 << 12, // 2 floats
+    EMeshFlags_Flag2000          = 1 << 13,
+    EMeshFlags_Flag4000          = 1 << 14, // render flag
+    EMeshFlags_Flag8000          = 1 << 15,
+    EMeshFlags_Flag10000         = 1 << 16,
+    EMeshFlags_Flag20000         = 1 << 17,
+    EMeshFlags_Flag40000         = 1 << 18,
+    EMeshFlags_Flag80000         = 1 << 19,
+    EMeshFlags_Flag100000        = 1 << 20,
+    EMeshFlags_Flag200000        = 1 << 21,
+    EMeshFlags_Flag400000        = 1 << 22,
+    EMeshFlags_Flag800000        = 1 << 23,
+    EMeshFlags_Flag1000000       = 1 << 24,
+    EMeshFlags_Flag2000000       = 1 << 25,
+    EMeshFlags_Flag4000000       = 1 << 26,
+    EMeshFlags_Flag8000000       = 1 << 27,
+    EMeshFlags_Flag10000000      = 1 << 28,
+    EMeshFlags_Flag20000000      = 1 << 29,
+    EMeshFlags_Flag40000000      = 1 << 30, // r7 |= 8
+    EMeshFlags_Flag80000000      = 1u << 31,
+} EMeshFlags;
+
+typedef enum<u32>
+{
+    EVertexAttributeFlags_Position     = 1 << 1,
+    EVertexAttributeFlags_Flag4        = 1 << 2,
+    EVertexAttributeFlags_Flag8        = 1 << 3,
+    EVertexAttributeFlags_Normal       = 1 << 4, // might be normals. maybe normal should be position
+    EVertexAttributeFlags_Color0       = 1 << 6,
+    EVertexAttributeFlags_Flag40       = 1 << 7,
+    EVertexAttributeFlags_TexCoord0    = 1 << 8,
+    EVertexAttributeFlags_TexCoord1    = 1 << 9,
+    EVertexAttributeFlags_TexCoord2    = 1 << 10,
+    EVertexAttributeFlags_TexCoord3    = 1 << 11,
+    EVertexAttributeFlags_TexCoord4    = 1 << 12,
+    EVertexAttributeFlags_TexCoord5    = 1 << 13,
+    EVertexAttributeFlags_TexCoord6    = 1 << 14,
+    EVertexAttributeFlags_TexCoord7    = 1 << 15,
+    EVertexAttributeFlags_Flag10000    = 1 << 16,
+    EVertexAttributeFlags_lag20000    = 1 << 17,
+    EVertexAttributeFlags_Flag40000    = 1 << 18,
+    EVertexAttributeFlags_Flag80000    = 1 << 19,
+    EVertexAttributeFlags_Flag100000   = 1 << 20,
+    EVertexAttributeFlags_Flag200000   = 1 << 21,
+    EVertexAttributeFlags_Flag400000   = 1 << 22,
+    EVertexAttributeFlags_Flag800000   = 1 << 23,
+    EVertexAttributeFlags_Flag1000000  = 1 << 24,
+    EVertexAttributeFlags_Flag2000000  = 1 << 25,
+    EVertexAttributeFlags_Flag4000000  = 1 << 26,
+    EVertexAttributeFlags_Flag8000000  = 1 << 27,
+    EVertexAttributeFlags_Tangent      = 1 << 28,
+    EVertexAttributeFlags_Binormal     = 1 << 29, // 12 bytes, after tangent -- binormal?
+    EVertexAttributeFlags_Color1       = 1 << 30, // 4 bytes, after tex coord 2
+    EVertexAttributeFlags_Flag80000000 = 1u << 31, // 20 bytes, after HasBoundingBox
+} EVertexAttributeFlags;
+
+typedef enum<u16>
+{
+    ETriangleIndexFormat_None = 0,
+    ETriangleIndexFormat_UInt16 = 1,
+    ETriangleIndexFormat_UInt32 = 2
+} ETriangleIndexFormat;
+
+typedef struct
+{
+    u16 A, B, C;
+} TTriangle16;
+
+typedef struct
+{
+    u32 A, B, C;
+} TTriangle32;
+
+typedef struct(u32 version)
+{
+    EMeshFlags Flags;
+    EVertexAttributeFlags VertexAttributeFlags;
+    
+    if ( Flags & EMeshFlags_HasTriangles )
+    {
+        u32 TriangleCount;
+        ETriangleIndexFormat TriangleIndexFormat;
+    }
+
+    u32 VertexCount;
+    
+    if ( version > 0x1103020 )
+    {
+        u32 Field14;
+    }
+    
+    struct TVertex Vertices( Flags, VertexAttributeFlags )[VertexCount];
+
+    if ( Flags & EMeshFlags_HasMorphTargets )
+    {
+        struct TMorphTargetList MorphTargets;
+    }
+
+    if ( Flags & EMeshFlags_HasTriangles )
+    {
+        switch ( TriangleIndexFormat )
+        {
+            case ETriangleIndexFormat_UInt16: TTriangle16 Triangles[TriangleCount]; break;
+            case ETriangleIndexFormat_UInt32: TTriangle32 Triangles[TriangleCount]; break;
+            default: Assert( false, "Unknown triangle index format" );
+        }
+    }
+
+    if ( Flags & EMeshFlags_HasMaterial )
+    {
+        THashString MaterialName( version );
+    }
+
+    if ( Flags & EMeshFlags_HasBoundingBox )
+    {
+        TBoundingBox BoundingBox;
+    }
+
+    if ( Flags & EMeshFlags_HasBoundingSphere )
+    {
+        TBoundingSphere BoundingSphere;
+    }
+
+    if ( Flags & EMeshFlags_Flag1000 )
+    {
+        f32 FieldD4;
+        f32 FieldD8;
+    }
+} TMesh <optimize=false>;
+
+typedef struct( EMeshFlags meshFlags, EVertexAttributeFlags vertexAttributeFlags )
+{
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Position )  TVector3 Position;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Normal )    TVector3 Normal;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Tangent )   TVector3 Tangent;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Binormal )  TVector3 Binormal;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Color0 )    u32 Color0;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_TexCoord0 ) TVector2 TexCoord0;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_TexCoord1 ) TVector2 TexCoord1;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_TexCoord2 ) TVector2 TexCoord2;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Color1 )    u32 Color1;
+
+    if ( meshFlags & EMeshFlags_HasVertexWeights )
+    {
+        struct
+        {
+            f32 Weights[4];
+            u8 Indices[4];
+        } VertexWeights;
+    }
+} TVertex <optimize=true>;
+
+typedef struct
+{
+    u32 Flags;
+    u32 Count;
+    struct TMorphTarget MorphTargets[Count];
+} TMorphTargetList <optimize=false>;
+
+typedef struct
+{
+    u32 Flags;
+    u32 VertexCount;
+    TVector3 Vertices[VertexCount];
+} TMorphTarget <optimize=false>;
+
+typedef struct(u32 version)
+{
+    TMatrix4x4 ViewMatrix;
+    f32 ClipPlaneNear;
+    f32 ClipPlaneFar;
+    f32 FieldOfView;
+    f32 AspectRatio;
+
+    if ( version > 0x1104060 )
+    {
+        f32 Field190;
+    }
+} TCamera;
+
+typedef enum<u32>
+{
+    ELightFlags_Bit1 = 1 << 0,
+    ELightFlags_Bit2 = 1 << 1,
+    ELightFlags_Bit3 = 1 << 2,
+} ELightFlags;
+
+typedef enum<u32>
+{
+    ELightType_Type1 = 1,
+    ELightType_Point = 2,
+    ELightType_Spot = 3,
+} ELightType;
+
+typedef struct( u32 version )
+{
+    if ( version > 0x1104190 )
+    {
+        ELightFlags Flags;
+    }
+    
+    ELightType Type;
+    TVector4 AmbientColor;
+    TVector4 DiffuseColor;
+    TVector4 SpecularColor;
+    
+    switch ( Type )
+    {
+        case ELightType_Type1:
+            f32 Field20; // 0
+            f32 Field04; // 0
+            f32 Field08; // 1
+            break;
+
+        case ELightType_Spot:
+            f32 Field20; // 0
+            f32 Field04; // 0
+            f32 Field08; // 1
+            f32 AngleInnerCone; // 0.08377809
+            f32 AngleOuterCone; // 0.245575309
+            // fallthrough
+    
+        case ELightType_Point:
+            f32 Field10; // 0
+            f32 Field04; // 0
+            f32 Field08; // 0
+    
+            if ( Flags & ELightFlags_Bit2 )
+            {
+                f32 AttenuationStart; // attenuation start?
+                f32 AttenuationEnd; // attenuation end?
+            }
+            else
+            {
+                f32 Field60; // 0
+                f32 Field64; // 0
+                f32 Field68; // 0
+            }
+            break;
+    }
+} TLight;
+
+typedef struct( u32 version )
+{
+    u32 MorphTargetCount;
+    u32 TargetInts[MorphTargetCount];
+    THashString NodeName( version );
+} TMorph;
+
+//
+// -- End Model types
+//
+
+//
+// -- Model pack types --
+//
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    TChunkHeader Header;
+
+    local s32 dataLength = Header.Length - 16;
+    if ( dataLength > 0 )
+        u8 Data[ dataLength ];
+} TUnknownChunk <optimize=false>;
+
+typedef struct
+{
+    SetRandomBackColor();
+    TChunkHeader Header;
+    Assert( Header.Type == EChunkType_EOF && Header.Length == 0 );
+} TEOFChunk;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    TFileHeader Header;
+    
+    // Read chunks
+    local u32 chunkStart;
+    local u32 chunkType;
+    local u32 chunkLength;
+    local u32 chunkEnd;
+
+    while ( !FEof() )
+    {
+        chunkStart = FTell();
+        chunkType = ( EChunkType )ReadInt( chunkStart + 4 );
+        chunkLength = ReadInt( chunkStart + 8 );
+        chunkEnd = chunkStart + chunkLength;
+
+        switch ( chunkType )
+        {
+            case EChunkType_TextureDictionary:
+                struct TTextureDictionary TextureDictionary;
+                break;
+
+            case EChunkType_MaterialDictionary:
+                struct TMaterialDictionary MaterialDictionary;
+                break;
+
+            case EChunkType_Model:
+                struct TModel Model;
+                break;
+
+            case EChunkType_EOF:
+                struct TEOFChunk EOF;
+                break;
+
+            default:
+                struct TUnknownChunk UnknownChunk;
+                break;
+        }
+
+        if ( chunkType == EChunkType_EOF )
+            break;
+    }
+} TModelPackFile <optimize=false>;
+
+//
+// -- End Model pack types
+//
+
+//
+// -- Parse file
+//
+TModelPackFile File;

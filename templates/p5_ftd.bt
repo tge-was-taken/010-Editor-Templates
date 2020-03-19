@@ -14,7 +14,7 @@
 //---------------------------------------------
 // Includes
 //---------------------------------------------
-#include "../common/include.h"
+#include "common/include.h"
 #include "p5_enums_ftd.bt"
 
 // Define structures
@@ -62,8 +62,6 @@ typedef struct
     ItemizationType Type : 4 <name = "Required Item Type">;
     ushort Item : 12 <name = "Required Item">;
 } Table_fclCombElectItem <name = "Persona Itemization">;
-
-// Generic structures
 
 typedef struct( string fileName )
 {

@@ -11,7 +11,7 @@
 //   History:  
 //------------------------------------------------ 
 
-#include "../common/include.h"
+#include "common/include.h"
 
 typedef struct
 {
@@ -24,7 +24,7 @@ typedef struct
         newChecksum += Data[i];
 
     Assert( newChecksum == Checksum );
-} TString <read=TStringToString, optimize=true>;
+} TString;
 
 string TStringToString( TString& value )
 {
@@ -376,7 +376,7 @@ typedef struct( u64 format, u32 stride )
 {
     local u32 vertexStart = FTell();
 
-    Vector3 Position;
+    TVector3 Position;
 
     if ( ( format & 0x3C0 ) == 0x3C0 )
     {
@@ -402,10 +402,10 @@ typedef struct( u64 format, u32 stride )
     }
 
     if ( format & ( 1 << 28 ) )
-        Vector2Half TexCoord;
+        TVector2Half TexCoord;
 
     if ( format & ( 1 << 29 ) )
-        Vector2Half TexCoord;
+        TVector2Half TexCoord;
 
     //Assert( ( FTell() - vertexStart ) == stride, "Unknown vertex format" );
 } TVertex <optimize=true>;
@@ -507,7 +507,8 @@ typedef struct
 {
     u32 Index;
     u32 Count;
-    u64 Format; // 41FE0FFC3, 41800FFC3, 418001FC3h
+    u32 Field08;
+    u32 Format; // 41FE0FFC3, 41800FFC3, 418001FC3h
     u32 Offset;
     u32 Size;
     u32 Stride;

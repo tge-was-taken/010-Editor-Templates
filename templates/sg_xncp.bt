@@ -1,0 +1,181 @@
+//------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h"
+
+typedef struct
+{
+    u32 Signature;
+    struct TFAPCEmbeddedRes Resources[2];
+} TFAPC;
+
+typedef struct
+{
+    u32 Length;
+    struct TNNChunkFile Content;
+} TFAPCEmbeddedRes <optimize=false>;
+
+typedef struct
+{
+    local u64 startPosition = FTell();
+    u32 Signature;
+    u32 Length; 
+    local u64 endPosition = startPosition + 8 + Length;
+} TNNChunkHeader;
+
+typedef struct
+{
+    TNNChunkHeader Header;
+    u8 Data[Header.Length];
+    FSeek(Header.endPosition);
+} TNNUnknownChunk;
+
+typedef struct(u32 baseOffset)
+{
+    u32 Offset;
+    
+    local u32 position;
+    if ( Offset == 0 )
+        position = 0;
+    else
+        position = gBasePosition + baseOffset + Offset;
+} TNNOffset;
+
+typedef struct(u32 baseOffset)
+{
+    u32 Offset;
+    
+    local u32 position;
+    if ( Offset == 0 )
+        position = 0;
+    else
+        position = gBasePosition + baseOffset + Offset;
+
+    if ( position != 0 )
+    {
+        FPushAbs( position );
+        string Value;
+        FPop();
+    }
+} TNNStringOffset;
+
+typedef struct
+{
+    TNNChunkHeader Header;
+    Assert( Header.Signature == MakeFourCC( "NXIF" ) );
+    u32 Field08;
+    u32 BaseOffset;
+    TNNOffset RelocationTableOffset(BaseOffset);
+    TNNOffset RelocationTableAbsoluteOffset(0);
+    u32 RelocationTableSize;
+    u32 Field1C;
+} TNNXInfoChunk;
+
+typedef struct
+{
+    TNNChunkHeader Header;
+    Assert( Header.Signature == MakeFourCC( "NXTL" ) );
+    TNNOffset ListOffset(32);
+    u32 Field0C;
+
+    if ( ListOffset.position != 0 )
+    {
+        FSeek( ListOffset.position );
+        u32 TextureCount;
+        TNNOffset DataOffset(32);
+        
+        if ( DataOffset.position != 0 )
+        {
+            FSeek( DataOffset.position );
+            struct
+            {
+                TNNStringOffset NameOffset(32);
+                u32 Field04;
+            } Textures[ TextureCount ];
+        }
+    }
+
+    FSeek( Header.endPosition );
+} TNNXTextureListChunk;
+
+typedef struct
+{
+    
+} TNNNCPJ;
+
+typedef struct
+{
+    TNNChunkHeader Header;
+    Assert( Header.Signature == MakeFourCC( "NOF0" ) );
+    u32 OffsetCount;
+    u32 Field0C;
+    u32 Offsets[ OffsetCount ];
+    FSeek( Header.endPosition );
+} TNNOffsetChunk;
+
+typedef struct
+{
+    TNNChunkHeader Header;
+    Assert( Header.Signature == MakeFourCC( "NEND" ) );
+    u32 Padding[2];
+} TNNEndChunk;
+
+typedef struct
+{
+    FPushBase();
+
+    local bool done;
+    local u64 start;
+    local u32 signature;
+    local u32 length;
+
+    while ( !FEof() && !done )
+    {
+        start = FTell();
+        signature = ReadUInt( start + 0 );
+        length = ReadUInt( start + 4 );
+
+        switch ( signature )
+        {
+            case MakeFourCC("NXIF"):
+                TNNXInfoChunk Info;
+                break;
+
+            case MakeFourCC("NXTL"):
+                TNNXTextureListChunk TextureList;
+                break;
+
+            case MakeFourCC("NOF0"):
+                TNNOffsetChunk Offset;
+                break;
+
+            case MakeFourCC("NEND"):
+                TNNEndChunk End;
+                done = true;
+                break;
+
+            default:
+                TNNUnknownChunk Unknown;
+                break;
+        }
+    }
+
+    FPopBase();
+} TNNChunkFile;
+
+typedef struct
+{
+    
+} TNXIF;
+
+TFAPC File;

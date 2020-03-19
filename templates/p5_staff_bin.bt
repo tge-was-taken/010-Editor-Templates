@@ -11,7 +11,7 @@
 //   History: 
 //------------------------------------------------
 
-#include "../common/include.h"
+#include "common/include.h"
 
 const byte ADDRESS_SIZE = sizeof( int );
 const byte SEQ_BASE = 0x07;

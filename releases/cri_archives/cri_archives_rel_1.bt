@@ -1,0 +1,614 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: cri_archives_rel_1.bt
+//   Authors: TGE, credit to Skyth for SonicAudioLib
+//   Version: 1.0
+//   Purpose: 
+//  Category: 
+// File Mask: CPK, ACB, AWB, ACF, ...
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "./common/include.h"
+
+typedef enum<byte>
+{
+    ECriEncodingType_ShiftJIS = 0,
+    ECriEncodingType_UTF8 = 1
+} ECriEncodingType;
+
+typedef struct(u32 stringPoolOffset, ECriEncodingType encodingType)
+{
+    u32 Offset;
+    
+    FPushRel(stringPoolOffset + Offset);
+    local u64 fileOffset = FTell();
+    string Value;
+    
+    if ( encodingType == ECriEncodingType_ShiftJIS )
+        local string EncodedValue = ConvertString( Value, CHARSET_ANSI, CHARSET_JAPANESE );
+    else if ( encodingType == ECriEncodingType_UTF8 )
+        local string EncodedValue = ConvertString( Value, CHARSET_ANSI, CHARSET_UTF8 );
+
+    FPop();
+} TCriString <read=TCriStringToString>;
+
+string TCriStringToString( TCriString& value )
+{
+    return value.EncodedValue;
+}
+
+typedef struct
+{
+    LittleEndian();
+    SetRandomBackColor();
+
+    u32 Signature;
+    u32 Flag;
+    u32 TableLength;
+    u32 Field0C;
+} TCriTableContainer;
+
+typedef struct
+{
+    local bool isLE = IsLittleEndian();
+    if (isLE)
+        BigEndian();
+
+    SetRandomBackColor();
+
+    u32 Signature;
+    u32 Length;
+    FPushBase();
+
+    u8 Field08;
+    ECriEncodingType EncodingType;
+    u16 RowsOffset;
+    u32 StringPoolOffset;
+    u32 DataPoolOffset;
+    TCriString Name(StringPoolOffset, EncodingType);
+    u16 FieldCount;
+    u16 RowSize;
+    u32 RowCount;
+
+    // Field definitions
+    if ( FieldCount )
+    {
+        struct
+        {
+            struct TCriField Fields(StringPoolOffset, DataPoolOffset, EncodingType)[FieldCount];
+        } Fields;
+    }
+
+    // Row-first (record) display
+    if ( RowCount && FieldCount )
+    {
+        FPush();
+        FSeekRel( RowsOffset );
+        struct
+        {
+            local u32 rowIndex;
+            for ( rowIndex = 0; rowIndex < RowCount; ++rowIndex )
+            {
+                FSeekRel( RowsOffset + ( rowIndex * RowSize ) );
+    
+                struct
+                {
+                    local u32 columnIndex = 0;
+                    for ( columnIndex = 0; columnIndex < FieldCount; ++columnIndex )
+                    {
+                        struct TCriRowField Field(
+                            Fields.Fields[columnIndex].Name.Value,
+                            Fields.Fields[columnIndex].Flags,
+                            StringPoolOffset,
+                            DataPoolOffset,
+                            EncodingType);
+    
+                        // Workaround for 010 dropping empty structures
+                        if ( Field[columnIndex].isNull )
+                            FSeek( FTell() - 1 );
+                    }
+                } Row;
+            }
+
+            FSeekRel( RowsOffset + (RowCount * RowSize) );
+        } Rows;
+        FPop();
+    }
+
+    // Column-first (list) display
+    if ( RowCount && FieldCount )
+    {
+        FPush();
+        FSeekRel( RowsOffset );
+        struct
+        {
+            local u32 columnIndex = 0;
+            local u32 rowOffset = 0;
+            local u32 columnStart;
+    
+            for (columnIndex = 0; columnIndex < FieldCount; ++columnIndex )
+            {        
+                FSeekRel( RowsOffset + rowOffset );
+                columnStart = FTell();
+    
+                struct TCriColumn Columns(
+                    Fields.Fields[columnIndex].Name.Value,
+                    Fields.Fields[columnIndex].Flags,
+                    RowCount,
+                    RowSize,
+                    StringPoolOffset,
+                    DataPoolOffset,
+                    EncodingType);  
+    
+                // Workaround for 010 dropping empty structures
+                if ( Columns[columnIndex].isNull )
+                    FSeek( columnStart );
+    
+                // Calculate current row value offset using the value size of the
+                // previously read column
+                rowOffset += Columns[columnIndex].valueSize;       
+            }
+
+            FSeekRel( RowsOffset + (RowCount * RowSize) );
+        } Columns;
+        FPop(); 
+    }
+
+    FPopBase(); 
+
+    if (isLE)
+        LittleEndian();
+} TCriTable <optimize=false>;
+
+typedef struct(string in_name, byte in_flags, u32 stringPoolOffset, u32 dataPoolOffset, ECriEncodingType encodingType) 
+{
+    SetRandomBackColor();
+    local string name = in_name;
+    local u8 flags = in_flags;
+    local bool isNull = false;
+
+    if ( (flags & ECriFieldFlag_RowStorage) )
+    {    
+        struct TCriValue Value(flags, stringPoolOffset, dataPoolOffset, encodingType);
+    }
+    else
+    {
+        // Workaround for 010 dropping empty structures
+        u8 __dummy;
+        isNull = true;
+    }
+} TCriRowField <optimize=false, read=TCriRowFieldToString>;
+
+string TCriRowFieldToString( struct TCriRowField& value )
+{
+    local string buffer;
+    if (!value.isNull)
+        SPrintf(buffer, "%s = %s", value.name, TCriValueToString(value.Value));
+    else
+        SPrintf(buffer, "%s = <NULL>", value.name);
+    return buffer;
+}
+
+typedef struct(string in_name, byte in_flags, u32 in_rowCount, u32 in_rowSize, u32 stringPoolOffset, u32 dataPoolOffset,
+    ECriEncodingType encodingType)
+{
+    SetRandomBackColor();
+    local string name = in_name;
+    local u8 flags = in_flags;
+    local u32 rowCount = in_rowCount;
+    local u32 rowSize = in_rowSize;
+    local u32 valueSize = 0;
+    local bool isNull = false;
+    
+    if ( (flags & ECriFieldFlag_RowStorage) && rowCount > 0 )
+    {    
+        // Read first value to determine row offset & value size
+        local u64 rowOffset = FTell();
+        struct TCriValue Row(flags, stringPoolOffset, dataPoolOffset, encodingType);
+        valueSize = FTell() - rowOffset;
+
+        // Read rest of the values
+        local u32 rowIndex;
+        for ( rowIndex = 1; rowIndex < rowCount; ++rowIndex )
+        {
+            FSeek( rowOffset + ( rowIndex * rowSize ) );
+            struct TCriValue Row(flags, stringPoolOffset, dataPoolOffset, encodingType);
+        }
+    }
+    else
+    {
+        // Workaround for 010 dropping empty structures
+        u8 __dummy;
+        isNull = true;
+    }
+} TCriColumn <optimize=false, read=TCriColumnToString>;
+
+string TCriColumnToString( struct TCriColumn& value )
+{
+    return value.name;
+}
+
+typedef enum<byte>
+{
+    ECriFieldFlag_Name = 16,
+    ECriFieldFlag_DefaultValue = 32,
+    ECriFieldFlag_RowStorage = 64,
+    
+    ECriFieldFlag_Byte = 0,
+    ECriFieldFlag_SByte = 1,
+    ECriFieldFlag_UInt16 = 2,
+    ECriFieldFlag_Int16 = 3,
+    ECriFieldFlag_UInt32 = 4,
+    ECriFieldFlag_Int32 = 5,
+    ECriFieldFlag_UInt64 = 6,
+    ECriFieldFlag_Int64 = 7,
+    ECriFieldFlag_Single = 8,
+    ECriFieldFlag_Double = 9,
+    ECriFieldFlag_String = 10,
+    ECriFieldFlag_Data = 11,
+    ECriFieldFlag_Guid = 12,
+    
+    ECriFieldFlag_TypeMask = 15,
+} ECriFieldFlags;
+
+typedef struct(u32 dataPoolOffset)
+{
+    u32 Offset;
+    u32 Length;  
+
+    if ( Length )
+    {
+        FPushRel( dataPoolOffset + Offset );
+
+        local u64 baseOffset = gBasePosition;
+        local u64 fileOffset = FTell();
+
+        local u32 sig = ReadUInt();
+        if ( sig == MakeFourCC("@UTF") )
+        {
+            TCriTable Value;
+        }     
+        else if ( sig == MakeFourCC("AFS2") )
+        {
+            struct TAfs2Header Value;
+        }
+        else
+        {
+            u8 Value[ Length ];
+        }
+ 
+        FPop();
+    }  
+} TCriDataValue <optimize=false>;
+
+typedef struct
+{
+    u8 Value[16];
+} TGUID;
+
+typedef struct(ECriFieldFlags in_flags, u32 in_stringPoolOffset, u32 in_dataPoolOffset, ECriEncodingType encodingType)
+{
+    local byte flags = in_flags;
+    local u32 stringPoolOffset = in_stringPoolOffset;
+    local u32 dataPoolOffset = in_dataPoolOffset;
+
+    switch (flags & ECriFieldFlag_TypeMask)
+    {
+        case ECriFieldFlag_Byte: u8 Value; break;
+        case ECriFieldFlag_SByte: s8 Value; break;
+        case ECriFieldFlag_UInt16: u16 Value; break;
+        case ECriFieldFlag_Int16: s16 Value; break;
+        case ECriFieldFlag_UInt32: u32 Value; break;
+        case ECriFieldFlag_Int32: s32 Value; break;
+        case ECriFieldFlag_UInt64: u64 Value; break;
+        case ECriFieldFlag_Int64: s64 Value; break;
+        case ECriFieldFlag_Single: f32 Value; break;
+        case ECriFieldFlag_Double: f64 Value; break;
+        case ECriFieldFlag_String: TCriString Value(stringPoolOffset, encodingType); break;
+        case ECriFieldFlag_Data: TCriDataValue Value(dataPoolOffset); break;
+        case ECriFieldFlag_Guid: TGUID Value; break;
+        default: Assert(false);
+    }
+} TCriValue <optimize=false, read=TCriValueToString>;
+
+string TCriValueToString( struct TCriValue& value )
+{
+    local string buffer = "<UNKNOWN>";
+    switch (value.flags & ECriFieldFlag_TypeMask)
+    {
+        case ECriFieldFlag_Byte:
+        case ECriFieldFlag_SByte:
+        case ECriFieldFlag_UInt16:
+        case ECriFieldFlag_Int16:
+        case ECriFieldFlag_UInt32:
+        case ECriFieldFlag_Int32: 
+        case ECriFieldFlag_UInt64:
+        case ECriFieldFlag_Int64: SPrintf(buffer, "%d", value.Value); break;
+        case ECriFieldFlag_Single:
+        case ECriFieldFlag_Double: SPrintf(buffer, "%f", value.Value); break;
+        case ECriFieldFlag_String: buffer = value.Value.Value; break;
+        case ECriFieldFlag_Data:
+        {
+            if (value.Value.Length > 0)
+                buffer = "<DATA>"; 
+            else
+                buffer = "<DATA> (null)";         
+            break;
+        }
+        case ECriFieldFlag_Guid: buffer = "<GUID>"; break;
+    }
+
+    return buffer;
+}
+
+typedef struct(u32 stringPoolOffset, u32 dataPoolOffset, ECriEncodingType encodingType)
+{
+    SetRandomBackColor();
+
+    ECriFieldFlags Flags;
+
+    if ( Flags & ECriFieldFlag_Name )
+        TCriString Name(stringPoolOffset, encodingType);
+
+    if ( Flags & ECriFieldFlag_DefaultValue )
+        TCriValue DefaultValue(Flags, stringPoolOffset, dataPoolOffset, encodingType);
+
+    if ( !(Flags & ECriFieldFlag_DefaultValue) && !(Flags & ECriFieldFlag_RowStorage) )
+    {
+        // Null value
+    }
+    
+} TCriField <optimize=false>;
+
+typedef struct 
+{
+    SetRandomBackColor();
+
+    local bool isBE = IsBigEndian();
+    if (isBE)
+        LittleEndian();
+
+    u32 Signature;
+
+    struct
+    {
+        u32 Type : 8;
+        u32 PositionFieldLength : 8;
+        u32 IdFieldLength : 8;
+        u32 Padding : 8;
+    } HeaderBits;
+
+    u32 EntryCount;
+    u32 Align;
+
+    struct
+    {
+        local u32 i;
+        local u32 entryStart = FTell();
+        for (i = 0; i < EntryCount; ++i )
+        {
+            struct
+            {
+                FSeek( entryStart + (i * HeaderBits.IdFieldLength) );    
+                switch ( HeaderBits.IdFieldLength )
+                {
+                    case 1: u8 Id; break;
+                    case 2: u16 Id; break;
+                    case 4: u32 Id; break;
+                    case 8: u64 Id; break;
+                    default: Assert(false);
+                }
+    
+                FSeek( entryStart + (EntryCount * HeaderBits.IdFieldLength) + (i * HeaderBits.PositionFieldLength) );
+                switch ( HeaderBits.PositionFieldLength )
+                {
+                    case 1: u8 Position; break;
+                    case 2: u16 Position; break;
+                    case 4: u32 Position; break;
+                    case 8: u64 Position; break;
+                    default: Assert(false);
+                }
+
+                if (i > 0)
+                    Entry[i - 1].length = Position - Entry[i - 1].Position;
+
+                local u64 length;
+            } Entry <optimize=false>;
+        }
+    
+        switch ( HeaderBits.PositionFieldLength )
+        {
+            case 1: u8 EndPosition; break;
+            case 2: u16 EndPosition; break;
+            case 4: u32 EndPosition; break;
+            case 8: u64 EndPosition; break;
+            default: Assert(false);
+        }
+        
+        if ( EntryCount > 0 )
+            Entry[EntryCount - 1].length = EndPosition - Entry[EntryCount - 1].Position;
+
+    } Entries;
+
+    if (isBE)
+        BigEndian();
+    
+} TAfs2Header;
+
+u32 QueryFieldIndex( struct TCriTable& table, string name )
+{
+    local u32 i = 0;
+    for (i = 0; i < table.FieldCount; ++i)
+    {
+        if (Strcmp(table.Fields.Fields[i].Name.Value, name) == 0)
+            return i;
+    }
+
+    return -1;
+}
+
+u64 QueryU64Value( struct TCriTable& table, string name )
+{
+    local u32 fieldIndex = QueryFieldIndex( table, name );
+    if ( fieldIndex != -1 )
+    {
+        if ( table.Rows.Row[0].Field[fieldIndex].isNull )
+            return 0;
+        else
+            return table.Rows.Row[0].Field[fieldIndex].Value.Value;
+    }
+
+    return 0;
+}
+
+//local u8 UTF_SIGNATURE[4] = { 0x40, 0x55, 0x54, 0x46 };
+//
+//bool Decrypt(u64 offset, u64 length)
+//{
+//    local int x;
+//    local int m;
+//    local byte _x;
+//    local int i;
+//    local bool allMatches;
+//    local uint xor;
+//    local uint xorMultiplier;
+//    local bool done = false;
+//    local u8 signature[4] = { ReadByte( offset ) , ReadByte( offset + 1 ), 
+//      ReadByte( offset + 2 ), ReadByte( offset + 3 ) };
+//
+//    for (x = 0; x < 0x100 && !done; x++)
+//    {
+//        // Find XOR using first byte
+//        if ((signature[0] ^ (byte)x) == UTF_SIGNATURE[0])
+//        {
+//            // Matched the first byte, try finding the multiplier with the second byte
+//            for (m = 0; m < 0x100 && !done; m++)
+//            {
+//                // Matched the second byte, now make sure the other bytes match as well
+//                if ((signature[1] ^ (byte)(x * m)) == UTF_SIGNATURE[1])
+//                {
+//                    _x = (byte)(x * m);
+//
+//                    allMatches = true;
+//                    for (i = 2; i < 4; i++)
+//                    {
+//                        _x = (byte)(_x * m);
+//
+//                        if ((signature[i] ^ _x) != UTF_SIGNATURE[i])
+//                        {
+//                            allMatches = false;
+//                            break;
+//                        }
+//                    }
+//
+//                    // All matches, return the xor and multiplier
+//                    if (allMatches)
+//                    {
+//                        xor = (uint)x;
+//                        xorMultiplier = (uint)m;
+//                        done = true;
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    if (!allMatches)
+//        return false;
+//
+//    Printf("xor = %d, xorMultiplier = %d\n", xor, xorMultiplier);
+//
+//    return true;
+//}
+
+//local u8 signature[4] = { ReadByte( 0 ) , ReadByte( 1 ), 
+//      ReadByte( 2 ), ReadByte( 3 ) };
+//
+//local bool signatureMatches = true;
+//local u32 i;
+//for ( i = 0; i < 4; ++i )
+//{
+//   if (tableSignature[i] != UTF_SIGNATURE[i])
+//   {
+//        signatureMatches = false;
+//        break;
+//   } 
+//}
+//
+//if (!signatureMatches)
+//{
+//    Decrypt( 0x10, -1 );
+//    return;
+//}
+
+local string filePath = GetFileName();
+local string fileName = FileNameGetBase( filePath, false );
+local string fileExt = FileNameGetExtension( filePath );
+
+if ( Stricmp( fileExt, ".cpk" ) == 0 )
+{
+    struct
+    {
+        struct
+        {
+            TCriTableContainer Container;
+            TCriTable Table;
+        } CpkHeader;
+        
+        local u64 tocOffset = QueryU64Value( CpkHeader.Table, "TocOffset" );
+        if (tocOffset > 0)
+        {
+            FSeek(tocOffset);
+            struct
+            {
+                TCriTableContainer Container;
+                TCriTable Table;
+            } CpkTocInfo;
+        }
+        
+        local u64 etocOffset = QueryU64Value( CpkHeader.Table, "EtocOffset" );
+        if (etocOffset > 0)
+        {
+            FSeek(etocOffset);
+    
+            struct
+            {
+                TCriTableContainer Container;
+                TCriTable Table;
+            } CpkEtocInfo;
+        }
+        
+        local u64 itocOffset = QueryU64Value( CpkHeader.Table, "ItocOffset" );
+        if (itocOffset > 0)
+        {
+            FSeek(itocOffset);
+    
+            struct
+            {
+                TCriTableContainer Container;
+                TCriTable Table;
+            } CpkItocInfo;
+        }
+    } CriPackedFile;
+}
+else if ( Stricmp( fileExt, ".acb" ) == 0 )
+{
+    TCriTable AcbHeader;
+}
+else if ( Stricmp( fileExt, ".awb" ) == 0 )
+{
+    TAfs2Header Afs2Header;
+}
+else if ( Stricmp( fileExt, ".acf" ) == 0 )
+{
+    TCriTable AcfHeader;
+}
+else
+{
+    // Try to read as table
+    TCriTable Table;
+}
+
