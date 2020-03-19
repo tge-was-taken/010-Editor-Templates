@@ -1,0 +1,41 @@
+//------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: p5_resrc365Table_bin.bt
+//   Authors: Lillian Goulston
+//   Version: 1.0
+//   Purpose: Parse data.cpk/resource/resrcdata/resrc365Table.bin
+//  Category: Persona 5
+// File Mask: resrc365Table.bin
+//  ID Bytes:
+//   History:
+//------------------------------------------------
+
+//---------------------------------------------
+// Includes
+//---------------------------------------------
+
+#include "../common/include.h"
+
+//---------------------------------------------
+// Define structures
+//---------------------------------------------
+
+typedef struct
+{
+    SetRandomBackColor();
+    u8 Unknown[15];
+} UnknownDailyData;
+
+UnknownDailyData Apr[30] <name = "April Daily Data">;
+UnknownDailyData May[31] <name = "May Daily Data">;
+UnknownDailyData Jun[30] <name = "June Daily Data">;
+UnknownDailyData Jul[31] <name = "July Daily Data">;
+UnknownDailyData Aug[31] <name = "August Daily Data">;
+UnknownDailyData Sep[30] <name = "September Daily Data">;
+UnknownDailyData Oct[31] <name = "October Daily Data">;
+UnknownDailyData Nov[30] <name = "November Daily Data">;
+UnknownDailyData Dec[31] <name = "December Daily Data">;
+UnknownDailyData Jan[31] <name = "January Daily Data">;
+UnknownDailyData Feb[28] <name = "February Daily Data">;
+UnknownDailyData Mar[31] <name = "March Daily Data">;

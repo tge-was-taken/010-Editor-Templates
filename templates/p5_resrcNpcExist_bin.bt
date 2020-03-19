@@ -1,0 +1,41 @@
+//------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: p5_resrcNpcExist_bin.bt
+//   Authors: Lillian Goulston
+//   Version: 1.0
+//   Purpose: Parse data.cpk/resource/resrcdata/resrcNpcExist.bin
+//  Category: Persona 5
+// File Mask: resrcNpcExist.bin
+//  ID Bytes:
+//   History:
+//------------------------------------------------
+
+//---------------------------------------------
+// Includes
+//---------------------------------------------
+
+#include "../common/include.h"
+
+//---------------------------------------------
+// Define structures
+//---------------------------------------------
+
+typedef struct
+{
+    SetRandomBackColor();
+    u8 Unknown[701];
+} UnknownDailyNPCData;
+
+UnknownDailyNPCData Apr[30] <name = "April Daily NPC Data">;
+UnknownDailyNPCData May[31] <name = "May Daily NPC Data">;
+UnknownDailyNPCData Jun[30] <name = "June Daily NPC Data">;
+UnknownDailyNPCData Jul[31] <name = "July Daily NPC Data">;
+UnknownDailyNPCData Aug[31] <name = "August Daily NPC Data">;
+UnknownDailyNPCData Sep[30] <name = "September Daily NPC Data">;
+UnknownDailyNPCData Oct[31] <name = "October Daily NPC Data">;
+UnknownDailyNPCData Nov[30] <name = "November Daily NPC Data">;
+UnknownDailyNPCData Dec[31] <name = "December Daily NPC Data">;
+UnknownDailyNPCData Jan[31] <name = "January Daily NPC Data">;
+UnknownDailyNPCData Feb[28] <name = "February Daily NPC Data">;
+UnknownDailyNPCData Mar[31] <name = "March Daily NPC Data">;
