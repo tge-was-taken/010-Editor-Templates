@@ -28,14 +28,14 @@ typedef struct
 } UnknownDailyData;
 
 UnknownDailyData Apr[30] <name = "April Daily Data">;
-UnknownDailyData May[31] <name = "May Daily Data">;
+UnknownDailyData May[31] <name = "May Daily Data">;
 UnknownDailyData Jun[30] <name = "June Daily Data">;
-UnknownDailyData Jul[31] <name = "July Daily Data">;
+UnknownDailyData Jul[31] <name = "July Daily Data">;
 UnknownDailyData Aug[31] <name = "August Daily Data">;
-UnknownDailyData Sep[30] <name = "September Daily Data">;
-UnknownDailyData Oct[31] <name = "October Daily Data">;
-UnknownDailyData Nov[30] <name = "November Daily Data">;
-UnknownDailyData Dec[31] <name = "December Daily Data">;
-UnknownDailyData Jan[31] <name = "January Daily Data">;
-UnknownDailyData Feb[28] <name = "February Daily Data">;
+UnknownDailyData Sep[30] <name = "September Daily Data">;
+UnknownDailyData Oct[31] <name = "October Daily Data">;
+UnknownDailyData Nov[30] <name = "November Daily Data">;
+UnknownDailyData Dec[31] <name = "December Daily Data">;
+UnknownDailyData Jan[31] <name = "January Daily Data">;
+UnknownDailyData Feb[28] <name = "February Daily Data">;
 UnknownDailyData Mar[31] <name = "March Daily Data">;
