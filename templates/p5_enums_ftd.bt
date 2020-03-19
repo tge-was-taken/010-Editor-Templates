@@ -14,110 +14,248 @@ enum<short> ConfidantFunction_Type
 };
 
 enum<short> ConfidantFunction
-{    BLANKFUNC0 = 0,
-    WildTalk_Function = 1,
-
+{
+    BLANKFUNC0 = 0,
+    WildTalk_Function = 1,
     ThirdEye = 2,
-
     ArcanaBurst = 3,
-
     PowerStock = 4,
-
     SuperStock = 5,
-
     HighArcanaBurst = 6,
-    BLANKFUNC7 = 7,
-    UltraStock = 8,
-    BLANKFUNC9 = 9,
-    MaxArcanaBurst = 10,
-    InfiltrationTools = 11,
-    FollowUp_Morgana = 12,
-    BatonPass_Morgana = 13,
-    AceTools = 14,
-    KittyTalk_Function = 15,
-    ExpertTools = 16,
-    Endure_Morgana = 17,
-    HarisenRecovery_Morgana = 18,
-    Protect_Morgana = 19,
-    ForbiddenTools = 20,
-    ShadowCalculus = 21,
-    FollowUp_Makoto = 22,
-    BrainiacTalk_Function = 23,
-    ShadowIntegral = 24,
-    BatonPass_Makoto = 25,
-    HarisenRecovery_Makoto = 26,
-    Endure_Makoto = 27,
-    BLANKFUNC28 = 28,
-    Protect_Makoto = 29,
-    ShadowFactorization = 30,
-    HarisenRecovery_Haru = 31,
-    FollowUp_Haru = 32,
-    CelebTalk_Function = 33,
-    BumperCrop = 34,
-    BatonPass_Haru = 35,
-    MishimasDesperation = 36,
-    SoilImprovement = 37,
-    Endure_Haru = 38,
-
+    BLANKFUNC7 = 7,
+    UltraStock = 8,
+    BLANKFUNC9 = 9,
+    MaxArcanaBurst = 10,
+    InfiltrationTools = 11,
+    FollowUp_Morgana = 12,
+    BatonPass_Morgana = 13,
+    AceTools = 14,
+    KittyTalk_Function = 15,
+    ExpertTools = 16,
+    Endure_Morgana = 17,
+    HarisenRecovery_Morgana = 18,
+    Protect_Morgana = 19,
+    ForbiddenTools = 20,
+    ShadowCalculus = 21,
+    FollowUp_Makoto = 22,
+    BrainiacTalk_Function = 23,
+    ShadowIntegral = 24,
+    BatonPass_Makoto = 25,
+    HarisenRecovery_Makoto = 26,
+    Endure_Makoto = 27,
+    BLANKFUNC28 = 28,
+    Protect_Makoto = 29,
+    ShadowFactorization = 30,
+    HarisenRecovery_Haru = 31,
+    FollowUp_Haru = 32,
+    CelebTalk_Function = 33,
+    BumperCrop = 34,
+    BatonPass_Haru = 35,
+    MishimasDesperation = 36,
+    SoilImprovement = 37,
+    Endure_Haru = 38,
     Protect_Haru = 39,
-
     SalvationWish = 40,
-
     NoviceDuplication = 41,
-
     FollowUp_Yusuke = 42,
-
     ArtistTalk_Function = 43,
-
     AdeptDuplication = 44,
-
     BatonPass_Yusuke = 45,
-
     HarisenRecovery_Yusuke = 46,
-
     Endure_Yusuke = 47,
-
     MasterDuplication = 48,
-
     Protect_Yusuke = 49,
-
     BLANKFUNC50 = 50,
-
     BLANKFUNC51 = 51,
-
     CoffeeBasics = 52,
-
     BLANKFUNC53 = 53,
-
     CoffeeMastery = 54,
-
     LeblancCurry = 55,
-
     BLANKFUNC56 = 56,
-
     CurryTips = 57,
-
     BLANKFUNC58 = 58,
-
     CurryMastery = 59,
-
     BLANKFUNC60 = 60,
-
     HarisenRecovery_Ann = 61,
-
     GirlTalk_Function = 62,
-
     FollowUp_Ann = 63,
-
     CrocodileTears_Function = 64,
-
     BatonPass_Ann = 65,
-
     SexyTechnique_Function = 66,
-
-    Endure_Ann = 67,    BigAct = 68,    Protect_Ann = 69,    BLANKFUNC70 = 70,    BLANKFUNC71 = 71,    BatonPass_Ryuji = 72,    FollowUp_Ryuji = 73,    HarisenRecovery_Ryuji = 74,    PunkTalk_Function = 75,    BLANKFUNC76 = 76,    Endure_Ryuji = 77,    Pickpocket_Function = 78,    Protect_Ryuji = 79,    InstaKill = 80,    BLANKFUNC81 = 81,    BLANKFUNC82 = 82,    BLANKFUNC83 = 83,    BLANKFUNC84 = 84,    HarisenRecovery_Akechi = 85,    FollowUp_Akechi = 86,    DetectiveTalk_Function = 87,    BatonPass_Akechi = 88,    BLANKFUNC89 = 89,    BLANKFUNC90 = 90,    MoralSupport_Function = 91,    MementosScan_Function = 92,    BLANKFUNC93 = 93,    PositionHack_Function = 94,    BLANKFUNC95 = 95,    ActiveSupport_Function = 96,    TreasureReboot = 97,    BLANKFUNC98 = 98,    EmergencyShift_Function = 99,    FinalGuard_Function = 100,    FortuneTelling = 101,    BLANKFUNC102 = 102,    BLANKFUNC103 = 103,    BLANKFUNC104 = 104,    LuckReading = 105,    MoneyReading = 106,    LifeAdvice = 107,    AffinityReading = 108,    FateReading = 109,    SpecialFateReading = 110,    Lockdown = 111,    BLANKFUNC112 = 112,    GroupGuillotine = 113,    BLANKFUNC114 = 114,    Isolation = 115,    BLANKFUNC116 = 116,    BLANKFUNC117 = 117,    GuillotineBooster = 118,    BLANKFUNC119 = 119,    SpecialTreatment = 120,    StarterCustomization = 121,    BLANKFUNC122 = 122,    MediumCustomization = 123,    BLANKFUNC124 = 124,    Discount_GunCustomization = 125,    BLANKFUNC126 = 126,    ExpertCustomization = 127,    BLANKFUNC128 = 128,    BLANKFUNC129 = 129,    AceCustomization = 130,    Rejuvenation = 131,    BLANKFUNC132 = 132,    Sterilization = 133,    BLANKFUNC134 = 134,    Discount_Clinic = 135,    BLANKFUNC136 = 136,    Immunization = 137,    BLANKFUNC138 = 138,    Resuscitation = 139,    BLANKFUNC140 = 140,    SlackOff = 141,    BLANKFUNC142 = 142,    Housekeeping = 143,    BLANKFUNC144 = 144,    FreeTime = 145,    BLANKFUNC146 = 146,    SuperHousekeeping = 147,    BLANKFUNC148 = 148,    BLANKFUNC149 = 149,    SpecialMassage = 150,    RumorFilledScoop = 151,    BLANKFUNC152 = 152,    ShockingScoop = 153,    BLANKFUNC154 = 154,    OutrageousScoop = 155,    BLANKFUNC156 = 156,    LegendaryScoop = 157,    BLANKFUNC158 = 158,    BLANKFUNC159 = 159,    BLANKFUNC160 = 160,    DownShot_Function = 161,    BulletHail_Function = 162,    WarningShot_Function = 163,
-
-    BLANKFUNC164 = 164,    AmmoPouch_Function = 165,    CheapShot_Function = 166,    BLANKFUNC167 = 167,    ElectricSlug_Function  = 168,    BLANKFUNC169 = 169,    OdaSpecial_Function = 170,    KomaSabaki_Function = 171,    BLANKFUNC172 = 172,    Uchikomi_Function = 173,    BLANKFUNC174 = 174,    KakoiKuzushi_Function = 175,    BLANKFUNC176 = 176,    Narikin_Function = 177,    BLANKFUNC178 = 178,    Touryou_Function = 179,    TogoSystem_Function = 180,    MishimasEnthusiasm = 181,    BLANKFUNC182 = 182,    Phanboy = 183,    BLANKFUNC184 = 184,    BLANKFUNC185 = 185,    BLANKFUNC186 = 186,    BLANKFUNC187 = 187,    BLANKFUNC188 = 188,    BLANKFUNC189 = 189,    MishimasSupport = 190,    BLANKFUNC191 = 191,    Diplomacy_Function = 192,    Fundraising_Function = 193,    BLANKFUNC194 = 194,    Manipulation_Function = 195,    BLANKFUNC196 = 196,    BLANKFUNC197 = 197,    MindControl_Function = 198,    BLANKFUNC199 = 199,    CharismaticSpeech_Function = 200,    BLANKFUNC201 = 201,    BLANKFUNC202 = 202,    BLANKFUNC203 = 203,    BLANKFUNC204 = 204,    BLANKFUNC205 = 205,    BLANKFUNC206 = 206,    BLANKFUNC207 = 207,    BLANKFUNC208 = 208,    BLANKFUNC209 = 209,    TrueJustice = 210,    BLANKFUNC211 = 211,    BLANKFUNC212 = 212,    BLANKFUNC213 = 213,    BLANKFUNC214 = 214,    BLANKFUNC215 = 215,    BLANKFUNC216 = 216,    BLANKFUNC217 = 217,    BLANKFUNC218 = 218,    BLANKFUNC219 = 219,    BLANKFUNC220 = 220,    Cultivation = 221,    BLANKFUNC222 = 222,    BLANKFUNC223 = 223,    BLANKFUNC224 = 224,    BLANKFUNC225 = 225,    BLANKFUNC226 = 226,    BLANKFUNC227 = 227,    BLANKFUNC228 = 228,    BLANKFUNC229 = 229,    BLANKFUNC230 = 230,    SecondAwakening_Morgana = 231,    SecondAwakening_Makoto = 232,    SecondAwakening_Haru = 233,    SecondAwakening_Yusuke = 234,    BLANKFUNC235 = 235,    SecondAwakening_Ann = 236,    SecondAwakening_Ryuji = 237,    BLANKFUNC238 = 238,    SecondAwakening_Futaba = 239};
+    Endure_Ann = 67,
+    BigAct = 68,
+    Protect_Ann = 69,
+    BLANKFUNC70 = 70,
+    BLANKFUNC71 = 71,
+    BatonPass_Ryuji = 72,
+    FollowUp_Ryuji = 73,
+    HarisenRecovery_Ryuji = 74,
+    PunkTalk_Function = 75,
+    BLANKFUNC76 = 76,
+    Endure_Ryuji = 77,
+    Pickpocket_Function = 78,
+    Protect_Ryuji = 79,
+    InstaKill = 80,
+    BLANKFUNC81 = 81,
+    BLANKFUNC82 = 82,
+    BLANKFUNC83 = 83,
+    BLANKFUNC84 = 84,
+    HarisenRecovery_Akechi = 85,
+    FollowUp_Akechi = 86,
+    DetectiveTalk_Function = 87,
+    BatonPass_Akechi = 88,
+    BLANKFUNC89 = 89,
+    BLANKFUNC90 = 90,
+    MoralSupport_Function = 91,
+    MementosScan_Function 92,
+    BLANKFUNC93 = 93,
+    PositionHack_Function = 94,
+    BLANKFUNC95 = 95,
+    ActiveSupport_Function = 96,
+    TreasureReboot = 97,
+    BLANKFUNC98 = 98,
+    EmergencyShift_Function = 99,
+    FinalGuard_Function = 100,
+    FortuneTelling = 101,
+    BLANKFUNC102 = 102,
+    BLANKFUNC103 = 103,
+    BLANKFUNC104 = 104,
+    LuckReading = 105,
+    MoneyReading = 106,
+    LifeAdvice = 107,
+    AffinityReading = 108,
+    FateReading = 109,
+    SpecialFateReading = 110,
+    Lockdown = 111,
+    BLANKFUNC112 = 112,
+    GroupGuillotine = 113,
+    BLANKFUNC114 = 114,
+    Isolation = 115,
+    BLANKFUNC116 = 116,
+    BLANKFUNC117 = 117,
+    GuillotineBooster = 118,
+    BLANKFUNC119 = 119,
+    SpecialTreatment = 120,
+    StarterCustomization = 121,
+    BLANKFUNC122 = 122,
+    MediumCustomization = 123,
+    BLANKFUNC124 = 124,
+    Discount_GunCustomization = 125,
+    BLANKFUNC126 = 126,
+    ExpertCustomization = 127,
+    BLANKFUNC128 = 128,
+    BLANKFUNC129 = 129,
+    AceCustomization = 130,
+    Rejuvenation = 131,
+    BLANKFUNC132 = 132,
+    Sterilization = 133,
+    BLANKFUNC134 = 134,
+    Discount_Clinic = 135,
+    BLANKFUNC136 = 136,
+    Immunization = 137,
+    BLANKFUNC138 = 138,
+    Resuscitation = 139,
+    BLANKFUNC140 = 140,
+    SlackOff = 141,
+    BLANKFUNC142 = 142,
+    Housekeeping = 143,
+    BLANKFUNC144 = 144,
+    FreeTime = 145,
+    BLANKFUNC146 = 146,
+    SuperHousekeeping = 147,
+    BLANKFUNC148 = 148,
+    BLANKFUNC149 = 149,
+    SpecialMassage = 150,
+    RumorFilledScoop = 151,
+    BLANKFUNC152 = 152,
+    ShockingScoop = 153,
+    BLANKFUNC154 = 154,
+    OutrageousScoop = 155,
+    BLANKFUNC156 = 156,
+    LegendaryScoop = 157,
+    BLANKFUNC158 = 158,
+    BLANKFUNC159 = 159,
+    BLANKFUNC160 = 160,
+    DownShot_Function = 161,
+    BulletHail_Function = 162,
+    WarningShot_Function = 163,
+    BLANKFUNC164 = 164,
+    AmmoPouch_Function = 165,
+    CheapShot_Function = 166,
+    BLANKFUNC167 = 167,
+    ElectricSlug_Function = 168,
+    BLANKFUNC169 = 169,
+    OdaSpecial_Function = 170,
+    KomaSabaki_Function = 171,
+    BLANKFUNC172 = 172,
+    Uchikomi_Function = 173,
+    BLANKFUNC174 = 174,
+    KakoiKuzushi_Function = 175,
+    BLANKFUNC176 = 176,
+    Narikin_Function = 177,
+    BLANKFUNC178 = 178,
+    Touryou_Function = 179,
+    TogoSystem_Function = 180,
+    MishimasEnthusiasm = 181,
+    BLANKFUNC182 = 182,
+    Phanboy = 183,
+    BLANKFUNC184 = 184,
+    BLANKFUNC185 = 185,
+    BLANKFUNC186 = 186,
+    BLANKFUNC187 = 187,
+    BLANKFUNC188 = 188,
+    BLANKFUNC189 = 189,
+    MishimasSupport = 190,
+    BLANKFUNC191 = 191,
+    Diplomacy_Function = 192,
+    Fundraising_Function = 193,
+    BLANKFUNC194 = 194,
+    Manipulation_Function = 195,
+    BLANKFUNC196 = 196,
+    BLANKFUNC197 = 197,
+    MindControl_Function = 198,
+    BLANKFUNC199 = 199,
+    CharismaticSpeech_Function = 200,
+    BLANKFUNC201 = 201,
+    BLANKFUNC202 = 202,
+    BLANKFUNC203 = 203,
+    BLANKFUNC204 = 204,
+    BLANKFUNC205 = 205,
+    BLANKFUNC206 = 206,
+    BLANKFUNC207 = 207,
+    BLANKFUNC208 = 208,
+    BLANKFUNC209 = 209,
+    TrueJustice = 210,
+    BLANKFUNC211 = 211,
+    BLANKFUNC212 = 212,
+    BLANKFUNC213 = 213,
+    BLANKFUNC214 = 214,
+    BLANKFUNC215 = 215,
+    BLANKFUNC216 = 216,
+    BLANKFUNC217 = 217,
+    BLANKFUNC218 = 218,
+    BLANKFUNC219 = 219,
+    BLANKFUNC220 = 220,
+    Cultivation = 221,
+    BLANKFUNC222 = 222
+    BLANKFUNC223 = 223,
+    BLANKFUNC224 = 224,
+    BLANKFUNC225 = 225,
+    BLANKFUNC226 = 226,
+    BLANKFUNC227 = 227,
+    BLANKFUNC228 = 228,
+    BLANKFUNC229 = 229,
+    BLANKFUNC230 = 230,
+    SecondAwakening_Morgana = 231,
+    SecondAwakening_Makoto = 232,
+    SecondAwakening_Haru = 233,
+    SecondAwakening_Yusuke = 234,
+    BLANKFUNC235 = 235,
+    SecondAwakening_Ann = 236,
+    SecondAwakening_Ryuji = 237,
+    BLANKFUNC238 = 238,
+    SecondAwakening_Futaba = 239,
+    };
 
 enum<short> ConfidantFunction_OrganizedByArcana
 {
