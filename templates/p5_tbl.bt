@@ -1107,7 +1107,41 @@ typedef struct
 
 typedef struct
 {
-    u8 Unknown[200];
+    u32 Field00;
+    f32 Field04;
+    f32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
+    f32 Field28;
+    f32 Field2C;
+    f32 Field30;
+    f32 Field34;
+    f32 Field38;
+    f32 Field3C;
+    f32 Field40;
+    f32 Field44;
+    f32 Field48;
+    f32 Field4C;
+    f32 Field50;
+    f32 Field54;
+    f32 Field58;
+    f32 Field5C;
+    f32 Field60;
+    f32 Field64;
+    u16 Field68;
+    u16 Field6A;
+    u16 Field6C;
+    u16 Field6E;
+    f32 Field70;
+    f32 Field74;
+    f32 Field78;
+    f32 Field7C;
+    s16 Field80[36];
 } TVisual_EnemyVisualVariablesA <name = "Enemy Visual Variables A">;
 
 typedef struct
@@ -1167,7 +1201,7 @@ typedef struct
     u8 Unknown;
     u16 Unknown;
     u8 Unknown;
-    u8 Unknown
+    u8 Unknown;
     u8 Padding6 [ 2 ];
     u8 Unknown;
     u8 Unknown;
@@ -1235,7 +1269,12 @@ typedef struct
 
 typedef struct
 {
-    u8 Unknown[ 360 ];
+    struct
+    {
+        u32 Field00;
+        u32 Field04;
+        f32 Field08[16];
+    } Entries[5];
 } TVisual_EnemyVisualVariablesB <name = "Enemy Visual Variables B">;
 
 typedef struct
