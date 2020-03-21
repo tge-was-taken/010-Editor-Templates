@@ -1,0 +1,90 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h"
+
+typedef struct
+{
+    u8 type;
+    u8 format;
+    u16 ID;
+    u32 fsize;
+    u32 code;
+    u32 dsize;
+} p2sdfileheader;
+
+typedef struct
+{
+    u32 hdofs;
+    u32 hdsize;
+    u32 bdofs;
+    u32 bdsize;
+    u32 sqofs;
+    u32 sqsize;
+    u32 reqno;
+    u8 totaltimes;
+    u8 bgmtimes;
+    u8 songtimes;
+    u8 area;
+} p2sdsoundheader;
+
+typedef struct
+{
+    u32 strsize;
+    u32 interleave;
+    u32 looppoint;
+    u8 mode;
+    u8 frequensy;
+    u8 dsp;
+    u8 reserve;
+} p2sdadpcmheader;
+
+typedef struct
+{
+    p2sdfileheader FileHeader;
+    p2sdsoundheader SoundHeader;
+} TFile;
+
+TFile File;
+
+/*
+p2sdfileheader:t171=172=s16
+type:10,0,8;
+format:10,8,8;
+ID:9,16,16;
+fsize:4,32,32;
+code:173=ar0;0;3;10,64,32;
+dsize:4,96,32;;
+
+p2sdsoundheader:t174=175=s32
+hdofs:4,0,32;
+hdsize:4,32,32;
+bdofs:4,64,32;
+bdsize:4,96,32;
+sqofs:4,128,32;
+sqsize:4,160,32;
+reqno:4,192,32;
+totaltimes:11,224,8;
+bgmtimes:11,232,8;
+songtimes:11,240,8;
+area:11,248,8;;
+
+p2sdadpcmheader:t176=177=s16
+strsize:4,0,32;
+interleave:4,32,32;
+looppoint:1,64,32;
+mode:11,96,8;
+frequensy:11,104,8;
+dsp:2,112,8;
+reserve:2,12
+*/

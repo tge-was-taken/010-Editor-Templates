@@ -23,7 +23,7 @@ BigEndian();
 typedef enum<u32>
 {
     EFileType_Invalid,
-    EFileType_ModelPack,
+    EFileType_Chunk,
     EFileType_ShaderCachePS3,
     EFileType_ShaderCachePSP2 = 4,
     EFileType_ShaderCachePS4 = 6,
@@ -268,7 +268,8 @@ typedef struct
     Assert( Header.Type == EChunkType_TextureDictionary ); 
 
     u32 TextureCount;
-    TTexture Textures[TextureCount];
+    if ( TextureCount > 0 )
+        TTexture Textures[TextureCount];
 } TTextureDictionary <optimize=false>;
 
 //
@@ -1354,11 +1355,11 @@ typedef struct( u32 version )
     SetRandomBackColor();
 
     u32 Count;
-    struct
+    struct( u32 version )
     {
         struct TEpl Epl( version );
         THashString Field04( version );
-    } Entries[ Count ];
+    } Entries( version )[ Count ];
 } TAnimationFlagsFlag10000000Data <optimize=false>;
 
 typedef struct( u32 version )
@@ -1406,40 +1407,40 @@ typedef struct( u32 version )
 
 typedef enum<u32>
 {
-    EKeyType_Invalid,
-    EKeyType_NodePR,
-    EKeyType_NodePRS,
-    EKeyType_Vector3,
-    EKeyType_Quaternion,
-    EKeyType_Single,
-    EKeyType_Vector3_2,
-    EKeyType_Vector3_3,
-    EKeyType_Vector3_4,
-    EKeyType_Single_2,
-    EKeyType_Quaternion_2,
-    EKeyType_Single_3,
-    EKeyType_MaterialSingle_4,
-    EKeyType_Single5,
-    EKeyType_MaterialVector3_5,
-    EKeyType_Single_5,
-    EKeyType_Single_6,
-    EKeyType_PRSByte,
-    EKeyType_Single4Byte,
-    EKeyType_SingleByte,
-    EKeyType_Single5_2,
-    EKeyType_Single5Alt,
-    EKeyType_Type22,
-    EKeyType_CameraFieldOfView,
-    EKeyType_Single_8,
-    EKeyType_SingleAlt_2,
-    EKeyType_NodePRHalf,
-    EKeyType_NodePRSHalf,
-    EKeyType_NodePRHalf_2,
-    EKeyType_MaterialSingle_9,
-    EKeyType_SingleAlt_3,
-    EKeyType_Type31,
-    EKeyType_NodeRHalf,
-    EKeyType_NodeSHalf
+    EKeyType_Invalid = 0,
+    EKeyType_NodePR = 1,
+    EKeyType_NodePRS = 2,
+    EKeyType_Vector3 = 3,
+    EKeyType_Quaternion = 4,
+    EKeyType_Single = 5,
+    EKeyType_Vector3_2 = 6,
+    EKeyType_Vector3_3 = 7,
+    EKeyType_Vector3_4 = 8,
+    EKeyType_Single_2 = 9,
+    EKeyType_Quaternion_2 = 10,
+    EKeyType_Single_3 = 11,
+    EKeyType_MaterialSingle_4 = 12,
+    EKeyType_Single5 = 13,
+    EKeyType_MaterialVector3_5 = 14,
+    EKeyType_Single_5 = 15,
+    EKeyType_Single_6 = 16,
+    EKeyType_PRSByte = 17,
+    EKeyType_Single3Byte = 18,
+    EKeyType_SingleByte = 19,
+    EKeyType_Single5_2 = 20,
+    EKeyType_Single5Alt = 21,
+    EKeyType_Type22 = 22,
+    EKeyType_CameraFieldOfView = 23,
+    EKeyType_Single_8 = 24,
+    EKeyType_SingleAlt_2 = 25,
+    EKeyType_NodePRHalf = 26,
+    EKeyType_NodePRSHalf = 27,
+    EKeyType_NodePRHalf_2 = 28,
+    EKeyType_MaterialSingle_9 = 29,
+    EKeyType_SingleAlt_3 = 30,
+    EKeyType_Type31 = 31,
+    EKeyType_NodeRHalf = 32,
+    EKeyType_NodeSHalf = 33,
 } EKeyType;
 
 typedef struct( u32 version )
@@ -1501,7 +1502,7 @@ typedef struct( u32 version )
                 break;
         
             case EKeyType_PRSByte: struct TPRSByteKey Keys[ KeyCount ]; break;
-            case EKeyType_Single4Byte: struct TSingle4ByteKey Keys[ KeyCount ]; break;
+            case EKeyType_Single3Byte: struct TSingle3ByteKey Keys[ KeyCount ]; break;
             case EKeyType_SingleByte: struct TSingleByteKey Keys[ KeyCount ]; break;
             case EKeyType_Type22: struct TKeyType22 Keys[ KeyCount ]; break;
         
@@ -1583,7 +1584,15 @@ typedef struct { TQuaternion Value; } TQuaternionKey;
 typedef struct { f32 Value; } TSingleKey;
 typedef struct { f32 Field00; u8 Field04; } TSingleByteKey;
 typedef struct { f32 Values[5]; } TSingle5Key;
-typedef struct { f32 Values[4]; u8 Field10; } TSingle4ByteKey;
+
+typedef struct
+{
+    f32 Field04;
+    f32 Field08;
+    f32 Field0C;
+    u8 Field00;
+} TSingle3ByteKey;
+
 typedef struct
 {
     s32 Field04;
@@ -1747,6 +1756,28 @@ typedef enum<u32>
     EEplLeafFlags_Bit31 = 1 << 31,
 } EEplLeafFlags;
 
+typedef enum<u32>
+{   
+    TEplLeafType_Dummy = 0,
+    TEplLeafType_Particle = 1,
+    TEplLeafType_FlashPolygon = 2,
+    TEplLeafType_CirclePolygon = 3,
+    TEplLeafType_LightningPolygon = 4,
+    TEplLeafType_TrajectoryPolygon = 5,
+    TEplLeafType_WindPolygon = 6,
+    TEplLeafType_Model = 7,
+    TEplLeafType_SoulPolygon = 8,
+    TEplLeafType_BoardPolygon = 9,
+    TEplLeafType_ObjectParticles = 10,
+    TEplLeafType_GlitterPolygon = 11,
+    TEplLeafType_BrightLightPolygon = 12,
+    TEplLeafType_DirectionalParticles = 13,
+    TEplLeafType_Camera = 14,
+    TEplLeafType_Light = 15,
+    TEplLeafType_PostEffect = 16,
+    TEplLeafType_Helper = 17
+} TEplLeafType;
+
 typedef struct( u32 version )
 {
     SetRandomBackColor();
@@ -1755,7 +1786,6 @@ typedef struct( u32 version )
     THashString Name( version ); // 0x30
 
     local u32 type = ReadInt( FTell() + 0 );
-    local u32 subType = ReadInt( FTell() + 4 );
     
     // 0x40
     switch ( type )
@@ -1768,11 +1798,11 @@ typedef struct( u32 version )
         case 5: struct TEplTrajectoryPolygon Data( version ); break;
         case 6: struct TEplWindPolygon Data( version ); break;
         case 7: struct TEplModel Data( version ); break;
-        case 8: struct TEplSoulPolygon Data( version ); break;
+        case 8: struct TEplTrajectoryPolygon Data( version ); break; // TEplSoulPolygon
         case 9: struct TEplBoardPolygon Data( version ); break;
         case 10: struct TEplObjectParticles Data( version ); break;
         case 11: struct TEplGlitterPolygon Data( version ); break;
-        case 12: struct TEplFlashPolygon Data( version ); break;
+        case 12: struct TEplGlitterPolygon Data( version ); break; // TEplBrightLightPolygon
         case 13: struct TEplDirectionalParticles Data( version ); break;
         case 14: struct TEplCamera Data( version ); break;
         case 15: struct TEplLight Data( version ); break;
@@ -1790,11 +1820,325 @@ typedef struct
 
 typedef struct( u32 version )
 {
+    SetRandomBackColor();
+
+    THashString FileName( version );
+    u32 Field18;
+    
+    if ( Field18 == 2 )
+    {
+        u32 Field00;
+        u32 DataLength;
+        //u8 Data[ DataLength ];
+
+        switch ( Field00 )
+        {
+            case 0: break;
+            case 1: u8 TextureData[ DataLength ]; break; // texture
+            case 2: struct TModelPackFile GfsMesh; break; // GFS mesh, untested
+            case 3: struct TEplFile EplEffect; break; // EPL effect
+            case 4: struct TEptFile EplTexture; break; // EPL texture (EPT)
+            case 5: struct TModelPackFile GmdModel; break; // GMD model, untested
+            case 6: struct TEpdFile EplDisplacement; break; // EPL displacement
+            default: Assert( false );
+        }  
+    }
+    //else if ( Field18 != 1 )
+    //{
+    //    Assert( false );
+    //}
+} TEplEmbeddedFile <optimize=false>;
+
+typedef struct( u32 version, u32 in_type )
+{
+    SetRandomBackColor();
+
+    local u32 type = in_type;
+
+    u32 Field15C;
+    f32 Field160;
+    u32 Field164;
+    f32 Field040;
+    TVector2 Field44;
+    f32 FieldB4;
+    u32 FieldC4;
+    TVector2 FieldB8;
+    
+    if ( version >= 0x1104041 )
+        struct TEplLeafCommonData6 Field50;
+
+    if ( version >= 0x1104701 )
+        f32 FieldC0;     
+
+    if ( version < 0x1104041 )
+        struct TEplLeadCommonData5 FieldC8;
+    else 
+        struct TEplLeafCommonData6 FieldC8;
+
+    f32 Field12C;
+    f32 Field130;
+    TVector2 Field134;
+    TVector2 Field13C;
+    f32 Field144;
+    u32 Field148;
+    u32 Field14C;
+    f32 Field150;
+    f32 Field154;
+    f32 Field158;
+
+    switch ( type )
+    {
+        case 0: break;
+        case 1: struct TEplSmokeEffectParams Params( version ); break;
+        case 2: struct TEplExplosionEffectParams Params( version ); break;
+        case 3: struct TEplSpiralEffectParams Params( version ); break;
+        case 4: struct TEplBallEffectParams Params( version ); break;
+        case 5: struct TEplCircleEffectParams Params( version ); break;
+        case 6: struct TEplStraightLineEffectParams Params( version ); break;
+        default: Assert(false, "Not implemented"); break;
+    }
+} TEplParticleEmitter <optimize=false>;
+
+typedef struct 
+{
+    SetRandomBackColor();
+
+    u16 Type;
+    
+    switch ( Type )
+    {
+        case 0:
+        {
+            s32 Field04;
+            s32 Field0C;
+            break;
+        }
+
+        case 1:
+        {
+            f32 Field04;
+            f32 Field0C;
+            break;
+        }
+
+        case 2:
+        {
+            u32 Field04;
+            u32 Field0C;
+            break;
+        }
+
+        case 3:
+        {
+            f32 Field04;
+            f32 Field08;
+            f32 Field0C;
+            f32 Field10;
+            break;
+        }
+    }
+
+    TVector4 Field14;
+    u8 Field24[46];
+} TEplLeafCommonData5 <optimize=false>;
+
+typedef struct 
+{
+    SetRandomBackColor();
+
+    u16 Type;
+    
+    switch ( Type )
+    {
+        case 0:
+        {
+            s32 Field04;
+            s32 Field0C;
+            s32 Field14;
+            s32 Field1C;
+            break;
+        }
+
+        case 1:
+        {
+            f32 Field04;
+            f32 Field0C;
+            f32 Field14;
+            f32 Field1C;
+            break;
+        }
+
+        case 2:
+        {
+            u32 Field04;
+            u32 Field0C;
+            u32 Field14;
+            u32 Field1C;
+            break;
+        }
+
+        case 3:
+        {
+            f32 Field04;
+            f32 Field08;
+            f32 Field0C;
+            f32 Field10;
+            f32 Field14;
+            f32 Field18;
+            f32 Field1C;
+            f32 Field20;
+            break;
+        }
+    }
+
+    TVector4 Field14;
+    u8 Field24[46];
+} TEplLeafCommonData6 <optimize=false>;
+
+// verified
+typedef struct( u32 version )
+{
+    SetRandomBackColor();
     TEplLeafDataHeader Header;
 } TEplDummy;
 
+// verified
 typedef struct( u32 version )
 {
+    SetRandomBackColor();
+    TEplLeafDataHeader Header;
+    
+    // 0(r4)
+    u32 Type;
+    
+    if ( version < 0x1104170 )
+        FSeek(4);
+
+    if ( version > 0x1104180 )
+    {
+        u32 Field10;
+    }
+    
+    // 0(r27)
+    struct TEplParticleEmitter Emitter( version, Type );
+
+    // 0x10(r27)
+    struct TEplEmbeddedFile EmbeddedFile( version );
+
+} TEplParticle <optimize=false>;
+
+// verified
+typedef struct( u32 version )
+{
+    SetRandomBackColor();
+    TEplLeafDataHeader Header;
+
+    u32 Type;
+    u32 Field00;
+    f32 Field04;
+    u32 Field08;
+    f32 Field14;
+    u32 Field24;
+    u32 Field84;
+    TVector2 Field08;
+    TVector2 Field18;
+    struct TEplLeafCommonData5 Field28;
+
+    if ( version > 0x1104700 )
+        f32 Field20;
+
+    if ( version > 0x1104050 )
+    {
+        f32 Field7C;
+        f32 Field80;
+    }
+
+    switch ( Type )
+    {
+        case 0: break;
+        case 1: struct TEplFlashPolygonRadiation Polygon( version ); break;
+        case 2: struct TEplFlashPolygonExplosion Polygon( version ); break;
+        case 3: struct TEplFlashPolygonRing Polygon( version ); break;
+        case 4: struct TEplFlashPolygonSplash Polygon( version ); break;
+        case 5: struct TEplFlashPolygonCylinder Polygon( version ); break;
+        default: Assert(false, "Not implemented"); break;
+    }
+
+    struct TEplEmbeddedFile EmbeddedFile( version );
+} TEplFlashPolygon;
+
+typedef struct( u32 version )
+{
+    u32 Field88;
+    u32 Field8C;
+    TVector2 Field90;
+    TVector2 Field98;
+    TVector2 FieldA0;
+    TVector2 FieldA8;
+    f32 FieldB0;
+    u32 FieldB4;
+} TEplFlashPolygonRadiation;
+
+typedef struct( u32 version )
+{
+    TVector2 Field88;
+    u32 Field90;
+    u32 Feild94;
+    TVector2 Field94;
+    TVector2 FieldA0;
+    TVector2 FieldA8;
+    f32 FieldB0;
+} TEplFlashPolygonExplosion;
+
+typedef struct( u32 version )
+{
+    struct TEplLeafCommonData5 Field88;
+    struct TEplLeafCommonData5 FieldDC;
+    u32 Field130;
+    u32 Field134;
+    TVector2 Field138;
+    TVector2 Field140;
+    TVector2 Field148;
+    TVector2 Field150;
+    f32 Field158;
+    u32 Field15C;
+} TEplFlashPolygonRing;
+
+typedef struct( u32 version )
+{
+    struct TEplLeafCommonData5 Field88;
+    struct TEplLeafCommonData5 FieldDC;
+    u32 Field130;
+    u32 Field134;
+    TVector2 Field138;
+    TVector2 Field140;
+    TVector2 Field148;
+    TVector2 Field150;
+    f32 Field158;
+} TEplFlashPolygonSplash;
+
+typedef struct( u32 version )
+{
+    struct TEplLeafCommonData5 Field88;
+    
+    if ( version <= 0x1104040 )
+        struct TEplLeafCommonData5 FieldDC;
+    else
+        struct TEplLeafCommonData6 FieldDC;
+
+    TVector2 Field140;
+    TVector2 Field148;
+    TVector2 Field150;
+    f32 Field158;
+    TVector2 Field15C;
+    f32 Field164;
+    u32 Field168;
+} TEplFlashPolygonCylinder;
+
+// verified
+typedef struct( u32 version )
+{
+    SetRandomBackColor();
     TEplLeafDataHeader Header;
 
     u32 Type;
@@ -1813,6 +2157,7 @@ typedef struct( u32 version )
 
     switch ( Type )
     {
+        case 0: break;
         case 1: struct TEplCirclePolygonRing Polygon( version ); break;
         case 2: struct TEplCirclePolygonTrajectory Polygon( version ); break;
         case 3: struct TEplCirclePolygonFill Polygon( version ); break;
@@ -1870,35 +2215,225 @@ typedef struct( u32 version )
     f32 Field1C0;
 } TEplCirclePolygonHoop;
 
+// verified
 typedef struct( u32 version )
 {
     SetRandomBackColor();
-
     TEplLeafDataHeader Header;
-    
-    // 0(r4)
+
     u32 Type;
-    
-    if ( version < 0x1104171 )
-        FSeek(4);
+    u32 Field00;
+    f32 Field04;
+    u32 Field08;
+    u32 Field1C;
+    u32 Feild20;
+    f32 Field44;
+    f32 Field48;
+    u32 Field4C;
+    u32 Field50;
+    u32 Field54;
+    u32 Field60;
+    TVector2 Field0C;
+    TVector2 Field24;
+    TVector2 Field2C;
+    TVector2 Field34;
+    TVector2 Field14;
+    TVector2 Field3C;
 
-    if ( version >= 0x1104181 )
+    if ( version > 0x1104050 )
     {
-        // 0x24(r27)
-        u32 Field24;
+        f32 Field58;
+        f32 Field5C;
     }
+
+    switch ( Type )
+    {
+        case 0: break;
+        case 1: struct TEplLightningPolygonRod Polygon( version ); break;
+        case 2: struct TEplLightningPolygonBall Polygon( version ); break;
+        default: Assert(false, "Not implemented"); break;
+    }
+} TEplLightningPolygon;
+
+// verified
+typedef struct( u32 version )
+{
+    TVector2 Field64;
+} TEplLightningPolygonRod;
+
+// verified
+typedef struct( u32 version )
+{
+    struct TEplLeafSharedData5 Field64;
+    TVector2 FieldB8;
+    TVector2 FieldC0;
+    f32 FieldC8;
+    u32 FieldCC;
+    TVector2 FieldD0;
+    f32 FieldD8;
+    u32 FieldDC;
+} TEplLightningPolygonBall;
+
+// verified
+typedef struct( u32 version )
+{
+    SetRandomBackColor();
+    TEplLeafDataHeader Header;
+
+    u32 Type;
+
+    if ( version <= 0x1104170 )
+        FSeek( 4 );
+
+    u32 Field00;
+    u32 Field04;
+    f32 Field08;
+    f32 Field0C;
+    u32 Field12C;
+    f32 Field130;
+    f32 Field134;
+
+    if ( version > 0x1104170 )
+        f32 Field138;
+
+    struct TEplLeafSharedData6 Field10;
+    struct TEplLeafSharedData6 Field74;
+    struct TEplLeafSharedData6 FieldD8;
+    struct TEplParticleEmitter Field140;
+    bool HasEmbeddedFile;
+
+    if ( HasEmbeddedFile )
+        struct TEplEmbeddedFile EmbeddedFile;
+
+} TEplTrajectoryPolygon;
+
+// verified
+typedef struct( u32 version )
+{
+    SetRandomBackColor();
+    TEplLeafDataHeader Header;
+
+    u32 Type;
+    f32 Field00;
+    f32 Field04;
+    f32 Field08;
+    f32 Field78;
+    u32 Field88;
+    u32 Field8C;
+    u32 FieldA8;
+
+    if ( version <= 0x1104040 )
+        struct TEplLeafCommonData5 Field14;
+    else
+        struct TEplLeafCommonData6 Field14;
+
+    TVector2 Field0C;
+    TVector2 Field90;
+    TVector2 Field98;
+    TVector2 Field7C;
     
-    // 0(r27)
-    struct TEplParticleEmitter EffectGenerator( version, Type );
-    //struct TEplLeafCommonData1 CommonData1( version );
+    if ( version > 0x1104700 )
+        f32 Field84;
+       
+    if ( version > 0x1104050 )
+    {
+        f32 FieldA0;
+        f32 FieldA4;
+    } 
 
-    // 0x10(r27)
-    struct TEplEmbeddedFile EmbeddedFile( version );
+    switch ( Type )
+    {
+        case 0: break;
+        case 1: struct TEplWindPolygonSpiral Polygon( version ); break;
+        case 2: struct TEplWindPolygonExplosion Polygon( version ); break;
+        case 3: struct TEplWindPolygonBall Polygon( version ); break;
+        default: Assert(false, "Not implemented"); break;
+    }     
 
-} TEplParticle <optimize=false>;
+    struct TEplEmbeddedFile Field70( version );    
+} TEplWindPolygon;
+
+// verified
+typedef struct( u32 version )
+{
+    struct TEplLeafCommonData5 FieldAC;
+    struct TEplLeafCommonData5 Field100;
+    struct TEplLeafCommonData5 Field154;
+    TVector2 Field1A8;
+    TVector2 Field1B0;
+    TVector2 Field1B8;
+    f32 Field1C0;
+    u32 Field1C4;
+    TVector2 Field1C8;
+} TEplWindPolygonSpiral;
+
+// verified
+typedef struct( u32 version )
+{
+    struct TEplLeafCommonData5 FieldAC;
+    TVector2 Field100;
+    TVector2 Field108;
+    f32 Field110;
+    f32 Field114;
+    
+    if ( version > 0x1104080 )
+        TVector2 Field118;
+} TEplWindPolygonExplosion;
+
+// verified
+typedef struct( u32 version )
+{
+    struct TEplLeafCommonData5 FieldAC;
+    struct TEplLeafCommonData5 Field100;
+    TVector2 Field154;
+    TVector2 Field15C;
+    f32 Field164;
+    u32 Field168;
+    TVector2 Field16C;
+} TEplWindPolygonBall;
+
+// verified
+typedef struct( u32 version )
+{
+    SetRandomBackColor();
+    TEplLeafDataHeader Header;
+
+    u32 Type;
+    u32 Field00;
+
+    if ( version > 0x1104050 )
+    {
+        f32 Field04;
+        f32 Field08;
+    }
+
+    switch ( Type )
+    {
+        case 0: break;
+        case 1: struct TEplModel3DData Data( version ); break;
+        case 2: struct TEplModel2DData Data( version ); break; 
+        default: Assert(false, "Not implemented"); break;
+    }
+
+    u8 HasEmbeddedFile;
+    if ( HasEmbeddedFile )
+        struct TEplEmbeddedFile EmbeddedFile( version );
+} TEplModel;
+
+// verified
+typedef struct( u32 version )
+{
+} TEplModel3DData;
+
+// verified
+typedef struct( u32 version )
+{
+    f32 Field0C;
+} TEplModel2DData;
 
 typedef struct( u32 version )
 {
+    SetRandomBackColor();
     TEplLeafDataHeader Header;
 
     u32 Type;
@@ -1912,8 +2447,10 @@ typedef struct( u32 version )
 
     switch ( Type )
     {
+        case 0: break;
         case 1: struct TEplSquareBoardPolygon Polygon( version ); break;
         case 2: struct TEplRectangleBoardPolygon Polygon( version ); break;
+        default: Assert(false, "Not implemented"); break;
     }
 
     struct TEplEmbeddedFile EmbeddedFile( version );
@@ -1957,7 +2494,6 @@ typedef struct( u32 version )
 typedef struct( u32 version )
 {
     SetRandomBackColor();
-
     TEplLeafDataHeader Header;
 
     u32 Type;
@@ -1975,6 +2511,7 @@ typedef struct( u32 version )
 
 typedef struct( u32 version )
 {
+    SetRandomBackColor();
     TEplLeafDataHeader Header;
 
     u32 Type;
@@ -1997,10 +2534,12 @@ typedef struct( u32 version )
 
     switch ( Type )
     {
+        case 0: break;
         case 1: struct TEplGlitterPolygonExplosion Polygon( version ); break;
         case 2: struct TEplGlitterPolygonSplash Polygon( version ); break;
         case 3: struct TEplGlitterPolygonCylinder Polygon( version ); break;
         case 4: struct TEplGlitterPolygonWall Polygon( version ); break;
+        default: Assert(false, "Not implemented"); break;
     }    
 
     if ( Field70 )
@@ -2009,7 +2548,7 @@ typedef struct( u32 version )
     }
 } TEplGlitterPolygon;
 
-typedef struct
+typedef struct( u32 version )
 {
     TVector2 Field154;
     TVector2 Field15C;
@@ -2018,7 +2557,7 @@ typedef struct
     f32 Field174;
 } TEplGlitterPolygonExplosion;
 
-typedef struct
+typedef struct( u32 version )
 {
     struct TEplLeafCommonData5 Field154;
     struct TEplLeafCommonData5 Field1A8;
@@ -2028,7 +2567,7 @@ typedef struct
     f32 Field214;
 } TEplGlitterPolygonSplash;
 
-typedef struct
+typedef struct( u32 version )
 {
     struct TEplLeafCommonData5 Field154;
     TVector2 Field1A8;
@@ -2040,7 +2579,7 @@ typedef struct
     u32 Field1D0;
 } TEplGlitterPolygonCylinder;
 
-typedef struct
+typedef struct( u32 version )
 {
     struct TEplLeafCommonData5 Field154;
     TVector2 Field1A8;
@@ -2049,214 +2588,24 @@ typedef struct
     f32 Field1C0;
 } TEplGlitterPolygonWall;
 
+// verified
 typedef struct( u32 version )
 {
     SetRandomBackColor();
+    TEplLeafDataHeader Header;
 
-    u32 Field15C;
-    f32 Field160;
-    u32 Field164;
-    TVector2 Field44;
-    f32 Field48;
-    f32 FieldB4;
-    f32 FieldC4;
-    TVector2 FieldB8;
-
-    if ( version >= 0x1104041 )
-        struct TEplLeafCommonData6 CommonData6;
+    u32 Type;
     
-    if ( version < 0x1104041 )
-    {
-        struct TEplLeafCommonData5 CommonData5;
-
-        if ( version >= 0x1104701 )
-        {
-            // LAB_009c02ac
-            f32 FieldC0;
-
-            if ( version >= 0x1104040 )
-            {
-                // LAB_009c02d0
-                struct TEplLeafCommonData5 CommonData5;
-
-                if ( version >= 0x1104040 )
-                {
-                }
-                //else goto LAB_009c0188;
-            }
-            //else goto LAB_009c0140
-        }
-        //else goto LAB_009c0128
-    }
-    else
-    {
-        struct TEplLeafCommonData6 CommonData6;
-
-        // LAB_009c0128
-        
-    }
-} TEplLeafCommonData1  <optimize=false>;
-
-typedef struct( u32 version )
-{
-    SetRandomBackColor();
-
-    THashString FileName( version );
-    u32 Field18;
-    
-    if ( Field18 == 2 )
+    if ( version > 0x11084180 )
     {
         u32 Field00;
-        u32 DataLength;
-        u8 Data[ DataLength ];
-    }
-} TEplEmbeddedFile <optimize=false>;
-
-typedef struct( u32 version, u32 in_type )
-{
-    SetRandomBackColor();
-
-    local u32 type = in_type;
-
-    u32 Field15C;
-    f32 Field160;
-    u32 Field164;
-    f32 Field040;
-    TVector2 Field44;
-    f32 FieldB4;
-    u32 FieldC4;
-    TVector2 FieldB8;
-    
-    if ( version >= 0x1104041 )
-        struct TEplLeafCommonData6 Field50;
-
-    if ( version >= 0x1104701 )
-        f32 FieldC0;     
-
-    if ( version < 0x1104041 )
-        struct TEplLeadCommonData5 FieldC8;
-    else 
-        struct TEplLeafCommonData6 FieldC8;
-
-    f32 Field12C;
-    f32 Field130;
-    TVector2 Field134;
-    TVector2 Field13C;
-    f32 Field144;
-    u32 Field148;
-    u32 Field14C;
-    f32 Field150;
-    f32 Field154;
-    f32 Field158;
-
-    switch ( type )
-    {
-        case 1: struct TEplSmokeEffectParams Params; break;
-        case 2: struct TEplExplosionEffectParams Params; break;
-        case 3: struct TEplSpiralEffectParams Params; break;
-        case 4: struct TEplBallEffectParams Params; break;
-        case 5: struct TEplCircleEffectParams Params; break;
-        case 6: struct TEplStraightLineEffectParams Params; break;
-    }
-} TEplParticleEmitter <optimize=false>;
-
-typedef struct 
-{
-    SetRandomBackColor();
-
-    u16 Type;
-    
-    switch ( Type )
-    {
-        case 0:
-        {
-            s32 Field04;
-            s32 Field0C;
-            break;
-        }
-
-        case 1:
-        {
-            f32 Field04;
-            f32 Field0C;
-            break;
-        }
-
-        case 2:
-        {
-            u32 Field04;
-            u32 Field0C;
-            break;
-        }
-
-        case 3:
-        {
-            f32 Field04;
-            f32 Field08;
-            f32 Field0C;
-            f32 Field10;
-            break;
-        }
     }
 
-    TVector4 Field14;
-    u8 Field24[62];
-} TEplLeafCommonData5 <optimize=false>;
+    struct TEplParticleEmitter ParticleEmittter;
+    struct TEplEmbeddedFile EmbeddedFile;
+} TEplDirectionalParticles;
 
-typedef struct 
-{
-    SetRandomBackColor();
-
-    u16 Type;
-    
-    switch ( Type )
-    {
-        case 0:
-        {
-            s32 Field04;
-            s32 Field0C;
-            s32 Field14;
-            s32 Field1C;
-            break;
-        }
-
-        case 1:
-        {
-            f32 Field04;
-            f32 Field0C;
-            f32 Field14;
-            f32 Field1C;
-            break;
-        }
-
-        case 2:
-        {
-            u32 Field04;
-            u32 Field0C;
-            u32 Field14;
-            u32 Field1C;
-            break;
-        }
-
-        case 3:
-        {
-            f32 Field04;
-            f32 Field08;
-            f32 Field0C;
-            f32 Field10;
-            f32 Field14;
-            f32 Field18;
-            f32 Field1C;
-            f32 Field20;
-            break;
-        }
-    }
-
-    TVector4 Field14;
-    u8 Field24[46];
-} TEplLeafCommonData6 <optimize=false>;
-
-typedef struct
+typedef struct( u32 version )
 {
     SetRandomBackColor();
 
@@ -2268,7 +2617,7 @@ typedef struct
     TVector2 Field194;
 } TEplSmokeEffectParams;
 
-typedef struct
+typedef struct( u32 version )
 {
     SetRandomBackColor();
 
@@ -2280,7 +2629,7 @@ typedef struct
     f32 Field198;
 } TEplExplosionEffectParams;
 
-typedef struct
+typedef struct( u32 version )
 {
     SetRandomBackColor();
 
@@ -2293,7 +2642,7 @@ typedef struct
     TVector2 Field198;
 } TEplSpiralEffectParams;
 
-typedef struct
+typedef struct( u32 version )
 {
     SetRandomBackColor();
 
@@ -2304,7 +2653,7 @@ typedef struct
     TVector2 Field18C;
 } TEplBallEffectParams;
 
-typedef struct
+typedef struct( u32 version )
 {
     SetRandomBackColor();
 
@@ -2317,7 +2666,7 @@ typedef struct
     TVector2 Field198;
 } TEplCircleEffectParams;
 
-typedef struct
+typedef struct( u32 version )
 {
     SetRandomBackColor();
 
@@ -2331,6 +2680,7 @@ typedef struct
 
 typedef struct( u32 version )
 {
+    SetRandomBackColor();
     TEplLeafDataHeader Header;
 
     u32 Type;
@@ -2341,13 +2691,14 @@ typedef struct( u32 version )
 
     switch ( Type )
     {
+        case 0: break;
         case 1: struct TEplCameraMeshParams Params( version ); break;
         case 2: struct TEplCameraQuakeParams Params( version ); break;
         default: Assert(false, "Not implemented"); break;
     }
 
-    bool Field84; // r30
-    if ( Field84 )
+    bool HasEmbeddedFile; // 84(r30)
+    if ( HasEmbeddedFile )
         TEplEmbeddedFile EmbeddedFile( version );
 } TEplCamera;
 
@@ -2365,8 +2716,178 @@ typedef struct( u32 version )
     f32 Field20;
 } TEplCameraQuakeParams;
 
+// verified
 typedef struct( u32 version )
 {
+    SetRandomBackColor();
+    TEplLeafDataHeader Header;
+
+    u32 Type;
+    u32 Field00;
+    f32 Field04;
+    f32 Field08;
+
+    switch ( Type )
+    {
+        case 0: break;
+        case 1: struct TEplLightMeshData Data( version ); break;
+        case 2: struct TEplLightSceneData Data( version ); break;
+        default: Assert(false, "Not implemented"); break;
+    }
+
+    bool HasEmbeddedFile; // 84(r30)
+    if ( HasEmbeddedFile )
+        TEplEmbeddedFile EmbeddedFile( version );
+} TEplLight;
+
+// verified
+typedef struct( u32 version )
+{
+    // empty
+} TEplLightMeshData;
+
+// verified
+typedef struct( u32 version )
+{
+    f32 Field0C;
+    TVector2 Field10;
+    u32 Field18;
+    u32 Field1C;
+    u32 Field20;
+    
+    if ( version > 0x1104910 )
+    {
+        f32 Field24;
+        f32 Field28;
+        f32 Field2C;
+    }
+} TEplLightSceneData;
+
+// verified
+typedef struct( u32 version )
+{
+    SetRandomBackColor();
+    TEplLeafDataHeader Header;
+
+    u32 Type;
+    u32 Field00;
+    f32 Field04;
+
+    switch ( Type )
+    {
+        case 0: break;
+        case 1: struct TEplPostEffectRadiationBlurData Data( version ); break;
+        case 2: struct TEplPostEffectStraightBlurData Data( version ); break;
+        case 3: struct TEplPostEffectNoiseBlurData Data( version ); break;
+        case 4: struct TEplPostEffectDistortionBlurData Data( version ); break;
+        case 5: struct TEplPostEffectFillData Data( version ); break;
+        case 6: struct TEplPostEffectLensFlareData Data( version ); break;
+        case 7: struct TEplPostEffectColorCorrectionData Data( version ); break;
+        case 8: struct TEplPostEffectMonotoneData Data( version ); break;
+        default: Assert(false, "Not implemented"); break;
+    }
+
+    bool HasEmbeddedFile; // 4C(r30)
+    if ( HasEmbeddedFile )
+        TEplEmbeddedFile EmbeddedFile( version );
+} TEplPostEffect;
+
+// verified
+typedef struct( u32 version )
+{
+    TEplLeafCommonData6 Field10;
+    u32 Field74;
+    TEplLeafCommonData6 Field78;
+    f32 FieldDC;
+    f32 FieldE0;
+    f32 FieldE4;
+    
+    if ( version > 0x1104930 )
+    {
+        u8 FieldE8;
+    }
+} TEplPostEffectRadiationBlurData;
+
+// verified
+typedef struct( u32 version )
+{
+    TEplLeafCommonData6 Field10;
+    u32 Field74;
+    TEplLeafCommonData6 Field78;
+    f32 FieldDC;
+} TEplPostEffectStraightBlurData;
+
+// verified
+typedef struct( u32 version )
+{
+    TEplLeafCommonData6 Field10;
+    u32 Field74;
+    TEplLeafCommonData6 Field78;
+    TEplLeafCommonData6 FieldDC;
+    
+    if ( version > 0x1104920 )
+    {
+        u8 Field140;
+    }
+} TEplPostEffectNoiseBlurData;
+
+// verified
+typedef struct( u32 version )
+{
+    TEplLeafCommonData6 Field10;
+    u32 Field74;
+    TEplLeafCommonData6 Field78;
+    TEplLeafCommonData6 FieldDC;
+    f32 Field140;
+    f32 Field144;
+    f32 Field148;
+    f32 Field14C;
+} TEplPostEffectDistortionBlurData;
+
+// verified
+typedef struct( u32 version )
+{
+    TEplLeafCommonData6 Field10;
+    TEplLeafCommonData6 Field74;
+    TEplLeafCommonData6 FieldD8;
+    TEplLeafCommonData6 Field13C;
+    u32 FieldlA0;
+} TEplPostEffectFillData;
+
+// verified
+typedef struct( u32 version )
+{
+    u32 Field10;
+    u32 Field14;
+    u32 Field18;
+    TEplLeafCommonData6 Field1C;
+    f32 Field80;
+} TEplPostEffectLensFlareData;
+
+// verified
+typedef struct( u32 version )
+{
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
+    TVector2 Field28;
+} TEplPostEffectColorCorrectionData;
+
+// verified
+typedef struct( u32 version )
+{
+    f32 Field10;
+    TVector2 Field14;
+} TEplPostEffectMonotoneData;
+
+
+// verified
+typedef struct( u32 version )
+{
+    SetRandomBackColor();
     TEplLeafDataHeader Header;
 
     u32 Type;
@@ -2382,8 +2903,6 @@ typedef struct( u32 version )
     if ( Field88 )
         TEplEmbeddedFile EmbeddedFile2( version );
 } TEplHelper;
-
-
 
 //
 // -- End Epl types
@@ -2462,6 +2981,15 @@ typedef struct
     }
 } TModelPackFile <optimize=false>;
 
+
+//
+// -- End Model pack types
+//
+
+//
+// -- BED types
+//
+
 typedef struct
 {
     SetRandomBackColor();
@@ -2475,28 +3003,7 @@ typedef struct
         u32 FieldB8;
     }
 
-    struct 
-    {
-        f32 Field1C;
-        f32 Field20;
-        f32 Field24;
-        u32 Field08;
-        u32 FieldU0;
-        
-        if ( FieldU0 != 0 )
-        {
-            struct
-            {
-                f32 Field04;
-                u16 Field08;
-                u16 Field0C;
-                u16 Field10;
-                f32 Field14;
-                s32 Field18;
-                TEpl Epl( Header.Version );
-            } _[ FieldU0 ] <optimize=false>;
-        }
-    } _[3] <optimize=false>;
+    struct TBedList1Entry Entries( Header.Version )[3];
 
     f32 Field84;
     u32 Field80;
@@ -2522,12 +3029,153 @@ typedef struct
     u8 FieldAE;
     f32 FieldB0;
     f32 FieldB4;
-    u32 FieldA8;
-    
+    u32 FieldA8; 
 } TBedFile;
 
+typedef struct( u32 version )
+{
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
+    u32 Field08;
+    u32 EntryCount;
+    
+    if ( EntryCount > 0 )
+    {
+        struct TBedList2Entry Entries( Header.Version )[EntryCount];
+    }
+} TBedList1Entry <optimize=false>;
+
+typedef struct( u32 version )
+{
+    f32 Field04;
+    u16 Field08;
+    u16 Field0C;
+    u16 Field10;
+    f32 Field14;
+    s32 Field18;
+    TEpl Epl( version );
+} TBedList2Entry <optimize=false>;
+
 //
-// -- End Model pack types
+// -- End BED types
+//
+
+typedef struct
+{
+    TFileHeader Header;
+    TEpl Epl( Header.Version );
+} TEplFile;
+
+typedef struct
+{
+    TFileHeader Header;
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    u32 Field0C;
+    struct TEptTexture Texture( Header.Version );
+} TEptFile;
+
+typedef struct( u32 version )
+{
+    SetRandomBackColor();
+
+    THashString Name( version );
+    u32 FieldU0;
+    u16 FieldU1;
+    ETextureFormat Format;
+    u32 Size;
+    u8 Data[Size];
+} TEptTexture <optimize=false, read=TEptTextureToString>;
+
+string TEptTextureToString( TEptTexture& value )
+{
+    string buffer;
+    SPrintf( buffer, "%s (%s)", THashStringToString( value.Name ), EnumToString( value.Format ) );
+    return buffer;
+}
+
+typedef struct
+{
+    SetRandomBackColor();
+    TFileHeader Header;
+    u32 Field00;
+    TEplLeafCommonData5 Field04;
+    TEplLeafCommonData5 Field58;
+    TEplLeafCommonData5 FieldAC;
+    s32 Field100;
+    s32 Field104;
+    TEplEmbeddedFile EmbeddedFile1( Header.Version ); // 0x108
+    TEplEmbeddedFile EmbeddedFile2( Header.Version ); // 0x10C
+} TEpdFile;
+
+//
+// -- BFL types
+//
+typedef struct
+{
+    SetRandomBackColor();
+    TFileHeader Header;
+    struct TBflList1Entry Entries[5];
+} TBflFile <optimize=true>;
+
+typedef struct
+{
+    SetRandomBackColor();
+    struct TBflList2Entry Entries[32];
+} TBflList1Entry <optimize=true>;
+
+typedef struct
+{
+    SetRandomBackColor();
+    struct TBflList3Entry Allies[4];
+    struct TBflList3Entry Enemies[5];
+    u16 Field1C0;
+    u16 Field1C2;
+    u16 Field1C4;
+    u16 Field1C6;
+    struct TBflList4Entry Entries[4];
+} TBflList2Entry <optimize=true>;
+
+typedef struct
+{
+    SetRandomBackColor();
+    u8 Field0C;
+    f32 Field10;
+    f32 Field14;
+    u16 Field00;
+    f32 Field04;
+    f32 Field08;
+} TBflList3Entry <optimize=true>;
+
+typedef struct
+{
+    SetRandomBackColor();
+    f32 Field00;
+    f32 Field04;
+    f32 Field08;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field20;
+    f32 Field24;
+} TBflList4Entry <optimize=true>;
+
+//
+// -- End BFL types
+//
+
+//
+// -- ENV types
+//
+typedef struct
+{
+    
+} TEnvFile;
+
+//
+// -- End ENV types
 //
 
 //
@@ -2541,6 +3189,22 @@ if ( Stricmp( fileExt, ".BED" ) == 0 )
 {
     TBedFile File;
 }
+else if ( Stricmp( fileExt, ".EPL" ) == 0 )
+{
+    TEplFile File;
+}
+else if ( Stricmp( fileExt, ".EPT" ) == 0 )
+{
+    TEptFile File;
+}
+else if ( Stricmp( fileExt, ".BFL" ) == 0 )
+{
+    TBflFile File;
+}
+//else if ( Stricmp( fileExt, ".ENV" ) == 0 )
+//{
+//    TEnvFile File;
+//}
 else
 {
     TModelPackFile File;

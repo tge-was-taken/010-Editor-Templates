@@ -1,0 +1,39 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h"
+
+typedef struct
+{
+    u32 Signature;
+    u16 Field04;
+    u16 Field06;
+    u32 FileCount;
+    u32 Field0C;
+    u32 HeaderSize;
+    u32 Length;
+    struct
+    {
+        u32 Hash;
+        u32 Offset;
+        u32 Size;
+        u32 AlignedSize;
+        u32 Alignment;
+        u32 Field10;
+        u32 Field14;
+        u32 Field18;
+        char FileName[32];
+    } File[FileCount];    
+} TAPAKFile;
+
+TAPAKFile File;

@@ -1,0 +1,229 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: 
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h"
+
+typedef struct
+{
+    u8 Length;
+    if ( Length > 0 )
+        char Data[ Length ];
+    FAlign(4);
+} TString;
+
+typedef u32 TBoolean;
+
+typedef struct
+{
+    u32 A, R, G, B;
+} TColor;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    TString FieldU0;
+    TString FieldU1;
+    u32 EmitterCount;
+    u32 FieldU3;
+    u32 FieldU4;
+    u32 FieldU5;
+    u32 FieldU6;
+    TString EffectName;
+    f32 InitialLifeTime;
+    f32 ScaleRatio;
+    f32 GenerateCountRatio;
+    TVector4 InitialPosition;
+    TQuaternion InitialRotation;
+    TBoolean IsLoop;
+    TBoolean DeleteChildren;
+    u32 FieldU7;
+    u32 FieldU8;
+    u32 FieldU9;
+    u32 FieldU10;
+    u32 FieldU11;
+    u32 FieldU12;
+    u32 FieldU13;
+    u32 FieldU14;
+    u32 FieldU15;  
+    struct TEmitterSaveLoad EmitterSaveLoadList[EmitterCount]; 
+    u32 SEGA[4];
+} TPartBinFile <optimize=false>;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    TString TypeName;
+    u32 ParticleCount;
+    TString EmitterName;
+    u32 MaxGenerateCount;
+    u32 GenerateCount;
+    u32 ParticleDataFlags;
+    TBoolean Infinite;
+    f32 InitialEmittionGap;
+    TVector4 InitialPosition;
+    TVector4 RotationXYZ;
+    TVector4 RotationXYZBias;
+    TVector4 InitialRotationXYZ;
+    TVector4 InitialRotation;
+    f32 InitialEmitterLifeTime;
+    f32 EmitStartTime;
+    u32 EmitCondition;
+    u32 EmitterType;
+
+    struct
+    {
+        TBoolean m_equiangularly;
+        TBoolean m_circumference;
+        TBoolean m_isCone;
+        f32 m_angle;
+        f32 m_radius;
+        f32 m_height;
+        f32 m_minAngle;
+        f32 m_maxAngle;
+        u32 m_cylinderEmittionType;
+    } CylinderParams;
+
+    struct
+    {
+        f32 m_latitude_max_angle;
+        f32 m_longitude_max_angle;        
+    } SphereParams;
+
+    struct
+    {   
+        TVector4 m_size;
+    } BoxParams;
+
+    struct
+    {
+        TString MeshName;
+    } MeshParams;
+
+    u32 FieldU1;
+    u32 FieldU2;
+    u32 FieldU3;
+    u32 FieldU4;
+    u32 FieldU5;
+    struct TParticleSaveLoad ParticleSaveLoadList[ParticleCount];
+} TEmitterSaveLoad <optimize=false>;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    TString TypeName;
+    TString ParticleName;
+    f32 LifeTime;
+    f32 LifeTimeBias;
+    f32 RotationZ;
+    f32 RotationZBias;
+    f32 InitialRotationZ;
+    f32 InitialRotationZBias;
+    f32 InitialSpeed;
+    u32 InitialSpeedBias;
+    f32 ZOffset;
+    f32 LocusDiff;
+    f32 NumDivision;
+    u32 LocusUVType;
+    TBoolean IsBillboard;
+    TBoolean IsEmitterLocal;
+    u32 LayerType;
+    u32 PivotType;
+    u32 UVDescType;
+    u32 TextureIndexType;
+    f32 TextureIndexChangeInterval;
+    f32 TextureIndexChangeIntervalBias;
+    u32 InitialTextureIndex;
+    u32 DirectionType;
+    u32 ParticleDataFlags;
+    TColor Color;
+    TVector4 Gravity;
+    TVector4 ExternalForce;
+    TVector4 InitialDirection;
+    TVector4 InitialDirectionBias;
+    TVector4 InitialScale;
+    TVector4 InitialScaleBias;
+    TString MeshName;
+    TVector4 RotationXYZ;
+    TVector4 RotationXYZBias;
+    TVector4 InitialRotationXYZ;
+    TVector4 InitialRotationXYZBias;
+    TString RefEffectName;
+    u32 RefEffectEmitTimingType;
+    f32 RefEffectDelayTime;
+
+    u32 FieldU0;
+    u32 FieldU1;
+    u32 FieldU2;
+    u32 FieldU3;
+    u32 FieldU4;
+    TString FieldU5;
+    u32 FieldU6;
+    u32 FieldU7;
+    u32 FieldU8;
+    u32 FieldU9;
+    u32 FieldU10;
+    u32 FieldU11;
+    u32 FieldU12;
+    TString MaterialName;
+    u32 FieldU13;
+    u32 FieldU14;
+    u32 FieldU15;
+    u32 FieldU16;
+    u32 AnimationCountOrBool;
+    struct TAnimation Animation[ AnimationCountOrBool ];
+} TParticleSaveLoad <optimize=false>;
+
+typedef struct
+{
+    TString TypeName;
+    struct TAnimationComponent ColorA;
+    struct TAnimationComponent ColorB;
+    struct TAnimationComponent ColorG;
+    struct TAnimationComponent ColorR;
+    struct TAnimationComponent TransX;
+    struct TAnimationComponent TransY;
+    struct TAnimationComponent TransZ;
+    struct TAnimationComponent ScaleX;
+    struct TAnimationComponent ScaleY;
+    struct TAnimationComponent ScaleZ;
+} TAnimation <optimize=false>;
+
+typedef struct
+{
+    u32 CurveType;
+    u32 KeyCount;
+    u32 FieldU0;
+    
+    if ( KeyCount > 0 )
+    {
+        struct
+        {
+            f32 Time;
+            f32 Value;
+            f32 ValueUpperBias;
+            f32 ValueLowerBias;
+            f32 SlopeL;
+            f32 SlopeR;
+            f32 SlopeLUpperBias;
+            f32 SlopeLLowerBias;
+            f32 SlopeRUpperBias;
+            f32 SlopeRLowerBias;
+            TBoolean KeyBreak;
+        } KeyFrame[ KeyCount ];
+    }
+} TAnimationComponent;
+
+TPartBinFile File;

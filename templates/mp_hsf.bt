@@ -1,0 +1,336 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h"
+
+typedef struct
+{
+    u32 Offset;
+    u32 Count;
+} THSFList;
+
+typedef struct(u32 stringTableOffset)
+{
+    s32 Offset;
+
+    if (Offset != -1)
+    {
+        FPush();
+        FSeek( stringTableOffset + Offset );
+        string Value;
+        FPop();
+    }
+} THSFStringOffset <read=THSFStringOffsetToString>;
+
+string THSFStringOffsetToString(THSFStringOffset& offset)
+{
+    if (offset.Offset == -1) return "<null>";
+    return offset.Value;
+}
+
+typedef struct
+{
+    SetRandomBackColor();
+    char Magic[8];
+    THSFList FogList;
+    THSFList ColorBufferList;
+    THSFList MaterialList;
+    THSFList AttributeList;
+    THSFList PositionBufferList;
+    THSFList NormalBufferList;
+    THSFList TexCoordBufferList;
+    THSFList IndexBufferList;
+    THSFList ObjectList;
+    THSFList TextureList;
+    THSFList PaletteList;
+    THSFList MotionList;
+    THSFList CEnvList;
+    THSFList SkeletonList;
+    THSFList PartList;
+    THSFList ClusterList;
+    THSFList ShapeList;
+    THSFList MapAttributeList;
+    THSFList MatrixList;
+    THSFList SymbolList;
+    THSFList StringList;
+
+    if ( FogList.Count > 0 )
+    {
+        FSeek( FogList.Offset );
+        struct TFogParams FogListEntries[FogList.Count];
+    }
+
+    if ( ColorBufferList.Count > 0 )
+    {
+        FSeek( ColorBufferList.Offset );
+        local u64 colorDataBaseOffset = FTell() + (12 * ColorBufferList.Count);
+        struct TColorBuffer ColorBuffers(StringList.Offset, colorDataBaseOffset)[ColorBufferList.Count];
+    }
+
+    if ( MaterialList.Count > 0 )
+    {
+        FSeek( MaterialList.Offset );
+        struct TMaterial MaterialListEntries(StringList.Offset)[MaterialList.Count];
+    }
+
+    if ( AttributeList.Count > 0 )
+    {
+        FSeek( AttributeList.Offset );
+        struct TAttribute AttributeListEntries(StringList.Offset)[AttributeList.Count];
+    }
+
+    if ( PositionBufferList.Count > 0 )
+    {
+        FSeek( PositionBufferList.Offset );
+        local u64 posDataBaseOffset = FTell() + (12 * PositionBufferList.Count);
+        struct TPositionBuffer PositionBuffers(StringList.Offset, posDataBaseOffset)[PositionBufferList.Count];
+    }
+
+    if ( NormalBufferList.Count > 0 )
+    {
+        FSeek( NormalBufferList.Offset );
+        local u64 normalDataBaseOffset = FTell() + (12 * NormalBufferList.Count);
+        struct TNormalBuffer NormalBuffers(StringList.Offset, normalDataBaseOffset)[NormalBufferList.Count];
+    }
+
+
+    if ( TexCoordBufferList.Count > 0 )
+    {
+        FSeek( TexCoordBufferList.Offset );
+        local u64 texCoordDataBaseOffset = FTell() + (12 * TexCoordBufferList.Count);
+        struct TTexCoordBuffer TexCoordBuffers(StringList.Offset, texCoordDataBaseOffset)[TexCoordBufferList.Count];
+    }
+
+    if ( IndexBufferList.Count > 0 )
+    {
+        FSeek( IndexBufferList.Offset );
+        local u64 indexDataBaseOffset = FTell() + (12 * IndexBufferList.Count);
+        struct TIndexBuffer IndexBuffers(StringList.Offset, indexDataBaseOffset)[IndexBufferList.Count];
+    }
+
+    if ( ObjectList.Count > 0 )
+    {
+        FSeek( ObjectList.Offset );
+        struct TObject Objects(StringList.Offset)[ ObjectList.Count ];
+    }
+} THSFFile;
+
+typedef struct
+{
+    u8 Data[16];
+} TFogParams <optimize=false>;
+
+typedef struct(u32 stringTableOffset)
+{
+	THSFStringOffset NameOffset(stringTableOffset);
+	int EntryCount;
+	int DataOffset; //Relative to Start of Data after Headers
+} TBuffer <optimize=false>;
+
+typedef struct(u32 stringTableOffset, u32 dataBaseOffset)
+{
+    SetRandomBackColor();
+    TBuffer Base( stringTableOffset );
+
+    if ( Base.EntryCount > 0 )
+    {
+        FPush();
+        FSeek( dataBaseOffset + Base.DataOffset );
+        u32 Entries[ Base.EntryCount ];
+        FPop();
+    }
+} TColorBuffer <optimize=false>;
+
+typedef struct(u32 stringTableOffset)
+{
+    SetRandomBackColor();
+	THSFStringOffset name(stringTableOffset); //Relative to Start of String Table
+	int unknown;
+	short alt_flags; //Alternate flags
+	u8 vtx_mode; //Vertex Mode
+	char lit_ambient_color[3];
+	char ambient_color[3];
+	char shadow_color[3];
+	float hilite_scale;
+	float unk_float;
+	float transparency; //Inverted
+	float unknowns[2];
+	float reflect_brightness;
+	float unk;
+	int material_flags;
+	int texture_count;
+	int first_symbol;
+} TMaterial <optimize=false>;
+
+typedef struct
+{
+	TVector2 scale;
+	TVector2 pos;
+} TAttrTransform;
+
+typedef struct(u32 stringTableOffset)
+{
+    SetRandomBackColor();
+	THSFStringOffset name(stringTableOffset); //Relative to Start of String Table
+	int tex_anim_offset; //Replaced with Pointer to Texture Animation at Runtime
+	char unk[12];
+	float nbt_enable; //1.0 for enabled, 0.0 for disabled
+	float texture_enable; //1.0 for enabled, 0.0 for disabled
+	float dontedit;
+	TAttrTransform tex_anim_start;
+	TAttrTransform tex_anim_end;
+	char unknowns[36];
+	int wrap_mode_s;
+	int wrap_mode_t;
+	char unknown[12];
+	int mipmap_max_lod;
+	int texture_flags;
+	int texture_index;
+} TAttribute <optimize=false>;
+
+typedef struct(u32 stringTableOffset, u32 dataBaseOffset)
+{
+    SetRandomBackColor();
+    TBuffer Base(stringTableOffset);
+
+    if ( Base.EntryCount > 0 )
+    {
+        FPush();
+        FSeek( dataBaseOffset + Base.DataOffset );
+        TVector3 Entries[ Base.EntryCount ];
+        FPop();
+    }
+} TPositionBuffer <optimize=false>;
+
+typedef struct(u32 stringTableOffset, u32 dataBaseOffset)
+{
+    SetRandomBackColor();
+    TBuffer Base(stringTableOffset);
+
+    if ( Base.EntryCount > 0 )
+    {
+        FPush();
+        FSeek( dataBaseOffset + Base.DataOffset );
+        TVector3 Entries[ Base.EntryCount ];
+        FPop();
+    }
+} TNormalBuffer <optimize=false>;
+
+typedef struct(u32 stringTableOffset, u32 dataBaseOffset)
+{
+    SetRandomBackColor();
+    TBuffer Base(stringTableOffset);
+
+    if ( Base.EntryCount > 0 )
+    {
+        FPush();
+        FSeek( dataBaseOffset + Base.DataOffset );
+        TVector2 Entries[ Base.EntryCount ];
+        FPop();
+    }
+} TTexCoordBuffer <optimize=false>;
+
+typedef struct(u32 stringTableOffset, u32 dataBaseOffset)
+{
+    SetRandomBackColor();
+    TBuffer Base(stringTableOffset);
+
+    if ( Base.EntryCount > 0 )
+    {
+        FPush();
+        FSeek( dataBaseOffset + Base.DataOffset );
+        struct TPrimitive Entries[ Base.EntryCount ];
+        FPop();
+    }
+} TIndexBuffer <optimize=false>;
+
+typedef struct
+{
+    u16 PositionIndex;
+    u16 NormalIndex;
+    u16 ColorIndex;
+    u16 TexCoordIndex;
+} TVertexIndex;
+
+typedef struct
+{
+	u16 PrimitiveType; 
+	u16 material_index; //Only Lower 12 Bits are Used
+
+    switch ( PrimitiveType )
+    {
+        case 2: // Triangle
+        TVertexIndex Indices[3];
+        u32 StripCount;
+        u32 StripDataIndex;
+        break;
+
+        case 3: // Quad
+        TVertexIndex Indices[4];
+        break;
+
+        case 4: // Tri strip
+        TVertexIndex Indices[3];
+        u32 StripCount;
+        u32 StripDataIndex;
+        break;
+
+        default:
+            Assert( false );
+    }
+
+    float nbt_data[3];
+} TPrimitive <optimize=false>;
+
+typedef struct
+{
+	TVector3 trans;
+	TVector3 rot;
+	TVector3 scale; //Degrees
+} TTransform;
+
+typedef struct(u32 stringTableOffset)
+{
+    SetRandomBackColor();
+	THSFStringOffset Name(stringTableOffset); //Relative to Start of String Table
+	int object_type; //Used to determine whether Object is a Mesh
+	int const_data_offset; //Null in File
+	int render_flags; //Combined with material flags to get true material flags
+	int global_index; //Value of -1 Means Index is the Root Object
+	int children_count; 
+	int symbol_index;
+	TTransform base_transform;
+	TTransform curr_transform;
+	TVector3 cull_box_min;
+	TVector3 cull_box_max;
+	float unk;
+	char unknowns[132];
+	int face_index;
+	int vertex_data_index;
+	int normal_data_index;
+	int color_data_index;
+	int texcoord_data_index;
+	int material_data_offset;
+	int attribute_index;
+	int unknown_int;
+	int vtx_child_count;
+	int vtx_symbol_index;
+	int cluster_count;
+	int cluster_symbol_index;
+	int hook_flag;
+	int cenv_index; //Used for Unknown purpose
+	int file_offset[2];
+} TObject <optimize=false>;
+
+BigEndian();
+THSFFile File;

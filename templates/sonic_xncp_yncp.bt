@@ -1,0 +1,926 @@
+//------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: sg_xncp.bt
+//   Authors: TGE
+//   Version: 0.2.0
+//   Purpose: Parse YNCP/XNCP files.
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h"
+
+void FPushSeek(u64 pos)
+{
+    FPush();
+    FSeek(pos);
+}
+
+u32 MakeFourCCLE( string str )
+{
+    return (u32)str[0] | (u32)str[1] << 8 | (u32)str[2] << 16 | (u32)str[3] << 24; 
+}
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    LittleEndian();
+    u32 Signature;
+    if (Signature == MakeFourCC("CPAF")) BigEndian();
+
+    struct TFAPCEmbeddedRes Resources[2];
+} TFAPC;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    u32 Size;
+    struct TNNChunkFile Content;
+} TFAPCEmbeddedRes <optimize=false>;
+
+typedef struct
+{
+    // Header is always little endian
+    local bool isBigEndian = IsBigEndian();
+    LittleEndian();
+
+    local u64 startPosition = FTell();
+    /* 00 */ u32 Signature;
+    /* 04 */ u32 Size; 
+    local u64 endPosition = startPosition + 8 + Size;
+
+    if ( isBigEndian ) BigEndian();
+} TNNChunkHeader;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    TNNChunkHeader Header;
+    u8 Data[Header.Length];
+    FSeek(Header.endPosition);
+} TNNUnknownChunk;
+
+typedef struct(u32 baseOffset)
+{
+    u32 Offset;
+    
+    local u32 absPosition;
+    if ( Offset == 0 )
+        absPosition = 0;
+    else
+        absPosition = gBasePosition + baseOffset + Offset;
+
+    local bool isValid = absPosition != 0;
+} TNNOffset <read=TNNOffsetToString>;
+
+string TNNOffsetToString(TNNOffset& value)
+{
+    string result;
+    SPrintf(result, "0x%08X (rel: 0x%08X)", value.absPosition, value.Offset);
+    return result;
+}
+
+typedef struct(u32 baseOffset)
+{
+    u32 Offset;
+    
+    local u32 absPosition;
+    if ( Offset == 0 )
+        absPosition = 0;
+    else
+        absPosition = gBasePosition + baseOffset + Offset;
+
+    if ( absPosition != 0 )
+    {
+        FPushAbs( absPosition );
+        string Value;
+        FPop();
+    }
+} TNNStringOffset <read=TNNStringOffsetToString>;
+
+string TNNStringOffsetToString( TNNStringOffset& value )
+{
+    if ( value.absPosition == 0 ) return "<null>";
+    else return value.Value;
+}
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    TNNChunkHeader Header;
+    Assert( Header.Signature == MakeFourCCLE( "NXIF" ) || Header.Signature == MakeFourCCLE("NYIF") );
+    /* 08 */ u32 ChunkCount;
+    /* 0C */ u32 NextChunkOffset;
+    /* 10 */ u32 ChunkListSize;
+    /* 14 */ TNNOffset OffsetChunkOffset(0);
+    /* 18 */ u32 OffsetChunkSize;
+    /* 1C */ u32 Field1C;
+} TNNInfoChunk;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    TNNChunkHeader Header;
+    Assert( Header.Signature == MakeFourCCLE( "NXTL" ) );
+    /* 08 */ TNNOffset ListOffset(0);
+    /* 0C */ u32 Field0C;
+
+    if ( ListOffset.isValid )
+    {
+        FSeek( ListOffset.absPosition );
+        /* 00 */ u32 TextureCount;
+        /* 04 */ TNNOffset DataOffset(0);
+        
+        if ( DataOffset.absPosition != 0 )
+        {
+            FSeek( DataOffset.absPosition );
+            struct TNNXTexture Textures[ TextureCount ];
+        }
+    }
+
+    FSeek( Header.endPosition );
+} TNNXTextureListChunk;
+
+typedef struct
+{
+    SetRandomBackColor();
+    /* 00 */ TNNStringOffset NameOffset(0);
+    /* 04 */ u32 Field04;
+} TNNXTexture <optimize=false>;
+
+// CSD Project
+// "LXD." = Sonic::CCsdTexListMirage
+
+typedef struct
+{
+    SetRandomBackColor();
+    TNNChunkHeader Header;
+    Assert( Header.Signature == MakeFourCCLE( "nCPJ" ) );
+
+    // Fo testing
+    if ( ReadUInt( Header.startPosition + 0x18 ) == MakeFourCC( ".DXL" ) ) BigEndian();
+    else LittleEndian();
+    
+    /* 08 */ u32 Field08; // must be 0x10
+    /* 0C */ u32 Field0C; 
+    /* 10 */ TNNOffset RootNodeOffset(0);
+    /* 14 */ TNNStringOffset ProjectName(0);
+    /* 18 */ u32 DXLSignature; // LXD./.DXL
+    /* 1C */ TNNOffset FontListOffset(0);
+
+    Assert( Field08 == 0x10 );
+    Assert( Field0C == 0 );
+    Assert( RootNodeOffset.Offset == 0x20 );
+    Assert( ProjectName.Offset == 0x38 );
+    Assert( DXLSignature == 0x2E44584C );
+    Assert( FontListOffset.Offset == 0x40 );
+
+    if ( RootNodeOffset.isValid )
+    {
+        FSeek( RootNodeOffset.absPosition );
+        struct TCSDNode Root;
+    }
+
+    if ( FontListOffset.isValid )
+    {
+        FSeek( FontListOffset.absPosition );
+        SetRandomBackColor();
+
+        struct
+        {
+            /* 00 */ u32 FontCount; // #
+            /* 04 */ TNNOffset FontTableOffset(0); // @
+            /* 08 */ TNNOffset FontIDTableOffset(0); // name + something else   
+    
+            if ( FontTableOffset.isValid )
+            {
+                SetRandomBackColor();
+                FSeek( FontTableOffset.absPosition );
+                struct
+                {
+                    struct
+                    {
+                        /* 00 */ u32 CharacterCount;
+                        /* 04 */ TNNOffset CharacterMappingTableOffset(0);
+                        if ( CharacterMappingTableOffset.isValid )
+                        {
+                            FPush();
+                            FSeek( CharacterMappingTableOffset.absPosition );
+                            struct
+                            {
+                                /* 00 */ u32 SourceIndex;
+                                /* 04 */ u32 DestinationIndex;
+                            } CharacterMapping[ CharacterCount ];
+                            FPop();
+                        }    
+                    } Font[FontCount] <optimize=false>;
+                } Fonts;
+            }
+        
+            if ( FontIDTableOffset.isValid )
+            {
+                SetRandomBackColor();
+                FSeek( FontIDTableOffset.absPosition );
+                struct
+                {
+                    struct
+                    {
+                        /* 00 */ TNNStringOffset Name(0);
+                        /* 04 */ u32 Index; // Index into the Font data array                  
+                    } FontID[FontCount] <optimize=false>;
+                } FontIDTable;
+            }
+        } FontList;
+    }
+
+    FSeek( Header.endPosition );
+} TNNNCPJChunk;
+
+typedef struct
+{
+    SetRandomBackColor();
+    /* 00 */ u32 UIControlCount;
+    /* 04 */ TNNOffset UIControlTableOffset(0);
+    /* 08 */ TNNOffset UIControlIDTableOffset(0);
+    /* 0C */ u32 NodeCount;
+    /* 10 */ TNNOffset NodeListOffset(0);
+    /* 14 */ TNNOffset NodeDictionaryOffset(0);
+
+    if ( UIControlTableOffset.isValid )
+    {
+        SetRandomBackColor();
+        FSeek( UIControlTableOffset.absPosition );
+        struct
+        {
+            struct TUIControlOffset UIControl[ UIControlCount ];
+        } UIControls;
+    }
+
+    if ( UIControlIDTableOffset.isValid )
+    {   
+        SetRandomBackColor();
+        FSeek( UIControlIDTableOffset.absPosition );
+        struct
+        {
+            struct TUIControlID UIControlID[ UIControlCount ];
+        } UIControlIDTable;
+    }
+
+
+    if ( NodeListOffset.isValid )
+    {
+        SetRandomBackColor();
+        FSeek( NodeListOffset.absPosition );
+        struct TCSDNode NextNode[ NodeCount ];
+    }
+
+    if ( NodeDictionaryOffset.isValid )
+    {
+        FSeek( NodeDictionaryOffset.absPosition );
+        struct
+        {
+            struct
+            {
+                /* 00 */ TNNStringOffset Name(0);
+                /* 04 */ u32 Index;
+            } NodeDictionaryEntry[ NodeCount ] <optimize=false>;
+        } NodeDictionary;
+    }
+} TCSDNode <optimize=false>;
+
+typedef struct
+{
+    /* 00 */ TNNStringOffset NameOffset(0);
+    /* 04 */ u32 Index; // Index into the UIControl data array
+} TUIControlID <optimize=false>;
+
+typedef struct
+{
+    SetRandomBackColor();
+    /* 00 */ TNNOffset Offset(0);
+    
+    if ( Offset.absPosition != 0 )
+    {
+        FPush();
+        FSeek( Offset.absPosition );
+        struct TUIControl Data;
+        FPop();
+    }
+} TUIControlOffset <optimize=false>;
+
+u32 CountSetBits( u32 value )
+{
+    local u32 count = 0;
+    local u32 i;
+    for ( i = 0; i < 32; ++i )
+    {
+        if ( value & ( 1 << i ) )
+            ++count;
+    }
+
+    return count;
+}
+
+typedef struct
+{
+    SetRandomBackColor();
+    /* 00 */ u32 Field00; // if this is below 3, the element doesn't show up
+    /* 04 */ f32 Field04; // no change (info_time)
+    /* 08 */ f32 Field08; // no change (info_time)
+    /* 0C */ u32 Field0C; // no change (info_time)
+    /* 10 */ f32 Field10; // no change (info_time)
+    /* 14 */ u32 Data1Count; // no change (info_time)
+    /* 18 */ TNNOffset Data1Offset(0); // @
+    /* 1C */ u32 Data2Count; // no change (info_time)
+    /* 20 */ TNNOffset Data2Offset(0); // @
+    /* 24 */ u32 GroupCount; // used (info_time)
+    /* 28 */ TNNOffset CastGroupTableOffset(0); // @
+    /* 2C */ u32 CastCount; // used (info_time)
+    /* 30 */ TNNOffset CastDictionaryOffset(0); // @
+    /* 34 */ u32 AnimationCount; // element doesnt show if there are no anims
+    /* 38 */ TNNOffset AnimationData1Offset(0); // @
+    /* 3C */ TNNOffset AnimationDictionaryOffset(0); // @
+    /* 40 */ f32 AspectRatio;
+    /* 44 */ TNNOffset AnimationData3Offset(0); // @
+    /* 48 */ TNNOffset AnimationCastTableOffset(0); // @
+
+    Assert( Field00 == 3 );
+    // failed: Assert( Field04 == 0 );
+    Assert( Field08 == 60.0f );
+    Assert( Field0C == 0 );
+    //Assert( Field10 == 100.0f );
+
+    Assert( ( ( Data2Offset.absPosition - Data1Offset.absPosition ) / Data1Count ) == 0x08 );
+    Assert( ( ( CastGroupTableOffset.absPosition - Data2Offset.absPosition ) / Data2Count ) == 0x14 );
+    Assert( ( ( CastDictionaryOffset.absPosition - CastGroupTableOffset.absPosition ) / GroupCount ) == 0x10 );
+    //Assert( Field38.absPosition - Field30.absPosition == 0x3C );
+    //Assert( Field3C.absPosition - Field38.absPosition == 0x10 );
+    //Assert( Field44.absPosition - Field3C.absPosition == 0x10 );
+    //Assert( Field48.absPosition - Field44.absPosition == 0x10 );
+
+    // Parse values at offsets
+    FPush();
+
+    if ( Data1Offset.isValid )
+    {
+        FSeek( Data1Offset.absPosition );
+        SetRandomBackColor();
+        TVector2 Data1[Data1Count]; // Constant between elements. If set to 0, element doesnt show
+    }
+
+    if ( Data2Offset.isValid )
+    {
+        FSeek( Data2Offset.absPosition );
+        SetRandomBackColor();
+        struct
+        {
+            /* 00 */ u32 Field00;
+            /* 04 */ TVector2 Field04;
+            /* 08 */ TVector2 Field0C;
+        } Data2[Data2Count];  // Constant between elements. If set to 0, element doesnt show
+    }
+
+    if ( CastGroupTableOffset.isValid )
+    {
+        FSeek( CastGroupTableOffset.absPosition );
+        SetRandomBackColor();
+        struct
+        {
+            struct TUICastGroup Group[GroupCount];
+        } Groups;
+    }
+
+    if ( CastDictionaryOffset.isValid )
+    {
+        FSeek( CastDictionaryOffset.absPosition );
+        SetRandomBackColor();
+        struct
+        {
+            struct
+            {
+                /* 00 */ TNNStringOffset Name(0);
+                /* 04 */ u32 GroupIndex;
+                /* 08 */ u32 CastIndex; 
+            } CastDictionaryEntry[CastCount] <optimize=false>;
+        } CastDictionary;
+    }
+
+    if ( AnimationData1Offset.isValid )
+    {
+        FSeek( AnimationData1Offset.absPosition );
+        SetRandomBackColor();
+        struct // AnimationData1List
+        {
+            struct // AnimationData1
+            {
+                /* 00 */ u32 GroupCount;
+                /* 04 */ TNNOffset GroupDataOffset(0);
+
+                if ( GroupDataOffset.isValid )
+                {
+                    FPush();
+                    FSeek( GroupDataOffset.absPosition );
+                    SetRandomBackColor();
+                    struct // GroupAnimationDataList
+                    {
+                        local u32 i = 0;
+                        for ( i = 0; i < GroupCount; ++i )
+                        {
+                            struct // GroupAnimationData
+                            {
+                                SetRandomBackColor();
+                            
+                                /* 00 */ u32 CastCount;
+                                /* 04 */ TNNOffset CastDataOffset(0);
+                            
+                                if ( CastDataOffset.isValid )
+                                {
+                                    FPush();
+                                    FSeek( CastDataOffset.absPosition );
+                                    struct // CastAnimationDataList
+                                    {
+                                        local u32 j;
+
+                                        local u32 dbgLastFlags = 0xDEADBABE;
+                                        local u32 dbgLastDataOffset;
+                                        for ( j = 0; j < CastCount; ++j )
+                                        {
+                                            struct // CastAnimationData
+                                            {
+                                                SetRandomBackColor();
+                                            
+                                                /* 00 */ u32 Flags;
+                                                /* 04 */ TNNOffset DataOffset(0);
+
+                                                if ( Flags != 0 && dbgLastFlags != 0xDEADBABE )
+                                                {
+                                                    // Print how many entries & what flag
+                                                    //Printf( "Flags: %08X    Count:%08X\n", dbgLastFlags, ( DataOffset.Offset - dbgLastDataOffset ) / 0xC );
+                                                }
+                                                
+                                                if ( Flags != 0 )
+                                                {
+                                                    dbgLastFlags = Flags;
+                                                    dbgLastDataOffset = DataOffset.Offset;
+                                                }
+                                            
+                                                if ( DataOffset.isValid )
+                                                {
+                                                    FPush();
+                                                    FSeek( DataOffset.absPosition );
+                                                    struct // Data5
+                                                    {
+                                                        local u32 count = CountSetBits( Flags );                                        
+
+                                                        struct // Data6
+                                                        {
+                                                            /* 00 */ u32 Field00;
+                                                            /* 04 */ u32 DataCount;
+                                                            /* 08 */ TNNOffset DataOffset(0);
+                                                            //failed: Assert( Field00 == 0 );
+                                                     
+                                                            if ( DataOffset.isValid )
+                                                            {
+                                                                FPush();
+                                                                FSeek( DataOffset.absPosition );
+                                                                struct
+                                                                {
+                                                                    /* 00 */ u32 Field00;
+                                                                    /* 04 */ f32 Field04; // RGBA?
+                                                                    /* 08 */ u32 Field08;
+                                                                    /* 0C */ f32 Field0C;
+                                                                    /* 10 */ u32 Field10;
+                                                                    /* 14 */ u32 Field14;
+                                                                } Data[ DataCount ];
+                                                                FPop();
+                                                            }
+                                                        } CastAnimationDataSubData1[ count ] <optimize=false>;
+                                                    } CastAnimationDataSubData1List;
+                                                    FPop();
+                                                }
+                                            } CastAnimationData;
+                                        }
+                                    } CastAnimationDataList;
+                                    FPop();
+                                }
+                            } GroupAnimationData;
+                        }
+                    } GroupAnimationDataList;
+
+                    FPop();
+                }
+            } AnimationData1[AnimationCount] <optimize=false>;
+        } AnimationData1List;
+    }
+
+    if ( AnimationDictionaryOffset.isValid )
+    {
+        FSeek( AnimationDictionaryOffset.absPosition );
+        SetRandomBackColor();
+        struct
+        {
+            struct
+            {
+                /* 00 */ TNNStringOffset Name(0);
+                /* 04 */ u32 Index;
+            } AnimationDictionaryEntry[AnimationCount] <optimize=false>;
+        } AnimationDictionary;
+    }
+
+    if ( AnimationData3Offset.isValid )
+    {
+        FSeek( AnimationData3Offset.absPosition );
+        SetRandomBackColor();
+        struct
+        {
+            struct
+            {                
+                /* 00 */ u32 Field00;
+                /* 04 */ f32 Field04;
+            } AnimationData3[ AnimationCount ] <optimize=false>;
+        } AnimationData3;
+    }
+
+    if ( AnimationCastTableOffset.isValid )
+    {
+        // We apologise for the fault in the subtitles. 
+        // Those responsible have been sacked. Mynd you, møøse bites Kan be pretti nasti... 
+        // We apologise again for the fault in the subtitles. 
+        // Those responsible for sacking the people who have just been sacked have been sacked.
+
+        // AnimationData2List
+        struct
+        {
+            local u32 animationIndex = 0;
+            for ( animationIndex = 0; animationIndex < AnimationCount; ++animationIndex )
+            {
+                struct // AnimationData2
+                {
+                    /* 00 */ TNNOffset GroupAnimationData2ListOffset(0);
+                    if ( GroupAnimationData2ListOffset.isValid )
+                    {
+                        FPush();
+                        FSeek( GroupAnimationData2ListOffset.absPosition );
+                        struct // GroupAnimationData2List
+                        {
+                            /* 00 */ u32 Field00;
+                            /* 04 */ TNNOffset DataOffset(0);
+                            Assert( Field00 == 0 );
+        
+                            if ( DataOffset.isValid )
+                            {
+                                FPush();
+                                FSeek( DataOffset.absPosition );
+                        
+                                struct // GroupAnimationData2ListData
+                                {
+                                    local u32 groupIndex = 0;
+                                    for ( groupIndex = 0; groupIndex < GroupCount; ++groupIndex )
+                                    {
+                                        struct // GroupAnimationData2
+                                        {
+                                            SetRandomBackColor();
+                                           
+                                            /* 00 */ TNNOffset DataOffset(0);
+                                            if ( DataOffset.isValid )
+                                            {
+                                                FPush();
+                                                FSeek( DataOffset.absPosition );
+                                                struct // CastAnimationData2List
+                                                {
+                                                    /* 00 */ TNNOffset DataOffset(0);
+                                                    if ( DataOffset.isValid )
+                                                    {
+                                                        FPush();
+                                                        FSeek( DataOffset.absPosition );
+                                                        struct // CastAnimationData2ListData
+                                                        {
+                                                            local u32 groupCastIndex = 0;
+                                                            for ( groupCastIndex = 0; groupCastIndex < Groups.Group[groupIndex].CastCount; ++groupCastIndex )
+                                                            {
+                                                                struct // CastAnimationData2
+                                                                {
+                                                                    /* 00 */ TNNOffset DataOffset(0);
+                                                                    if ( DataOffset.isValid )
+                                                                    {
+                                                                        FPush();
+                                                                        FSeek( DataOffset.absPosition );
+                                                                        struct
+                                                                        {
+                                                                            /* 00 */ TNNOffset DataOffset(0);
+                                                                            if ( DataOffset.isValid )
+                                                                            {
+                                                                                FPush();
+                                                                                FSeek( DataOffset.absPosition );
+                                                                        
+                                                                                local u32 flags = 
+                                                                                    AnimationData1List.AnimationData1[animationIndex].GroupAnimationDataList.
+                                                                                    GroupAnimationData[groupIndex].CastAnimationDataList.CastAnimationData[groupCastIndex].Flags;
+
+                                                                                local u32 castAnimationDataSubData1Count = CountSetBits( flags );
+                                                                                local u32 subData1Index;
+                                                                                for ( subData1Index = 0; subData1Index < castAnimationDataSubData1Count; ++subData1Index )
+                                                                                {
+                                                                                    struct // Data6
+                                                                                    {
+                                                                                        /* 00 */ TNNOffset DataOffset(0);
+                                                                                        if ( DataOffset.isValid )
+                                                                                        {
+                                                                                            FPush();
+                                                                                            FSeek( DataOffset.absPosition );
+                                                                                            struct
+                                                                                            {
+                                                                                                /* 00 */ TNNOffset DataOffset(0);
+                                                                                            
+                                                                                                local u32 data8Count = AnimationData1List.AnimationData1[animationIndex].GroupAnimationDataList.
+                                                                                                    GroupAnimationData[groupIndex].CastAnimationDataList.CastAnimationData[groupCastIndex].CastAnimationDataSubData1List.
+                                                                                                    CastAnimationDataSubData1[subData1Index].
+                                                                                                    DataCount;
+                                                                                            
+                                                                                                if ( DataOffset.isValid )
+                                                                                                {
+                                                                                                    FPush();
+                                                                                                    FSeek( DataOffset.absPosition );
+                                                                                                    struct
+                                                                                                    {
+                                                                                                        struct
+                                                                                                        {
+                                                                                                            /* 00 */ TNNOffset ValueOffset(0);
+                                                                                                            if ( ValueOffset.isValid )
+                                                                                                            {
+                                                                                                                FPush();
+                                                                                                                FSeek( ValueOffset.absPosition );
+                                                                                                                /* 00 */ TVector3 Value;
+                                                                                                                FPop();
+                                                                                                            }
+                                                                                                        } Data[data8Count] <optimize=false>;
+                                                                                                    } Data8;
+                                                                                                    FPop();
+                                                                                                }
+                                                                                            } Data7;
+                                                                                            FPop();
+                                                                                        }
+                                                                                    } Data6;   
+                                                                                }
+                                                                                FPop();
+                                                                            }
+                                                                        } Data5;
+                                                                        FPop();
+                                                                    }
+                                                                } CastAnimationData2 <optimize=false>;   
+                                                            }
+                                                        } CastAnimationData2ListData <optimize=false>;
+                                                        FPop();
+                                                    } 
+                                                } CastAnimationData2List <optimize=false>;
+                                                FPop();
+                                            }
+                                        } GroupAnimationData2 <optimize=false>;
+                                    }
+                                } GroupAnimationData2ListData;
+                                FPop();
+                            }
+                        } GroupAnimationData2List <optimize=false>;
+                        FPop();
+                    }
+                } AnimationData2 <optimize=false>;
+            }
+        } AnimationData2List;
+    }
+
+    FPop();
+} TUIControl <optimize=false>;
+
+/*
+    TUICastGroup
+    Grouping of TUICast instances with some extra data.
+*/
+typedef struct
+{
+    SetRandomBackColor();
+
+    /* 00 */ u32 CastCount;
+    /* 04 */ TNNOffset CastTableOffset(0);
+    /* 08 */ u32 Field08;
+    /* 0C */ TNNOffset Data2Offset(0);
+
+    Assert( Field08 == 0 );
+    Assert( ( ( Data2Offset.absPosition - CastTableOffset.absPosition ) / CastCount ) == 0x4 );
+
+    FPush();
+
+    if ( CastTableOffset.isValid )
+    {
+        FSeek( CastTableOffset.absPosition );
+        struct
+        {
+            struct TUICast Cast[CastCount];
+        } Casts;
+    }
+
+    if ( Data2Offset.isValid )
+    {
+        FSeek( Data2Offset.absPosition );
+        struct
+        {
+            struct
+            {
+                s32 Field00;
+                s32 Field04;
+            } Data2[CastCount];
+        } Data2;
+    }
+
+    FPop();
+} TUICastGroup <optimize=false>;
+
+/* 
+    TUICast
+    Placeholder name for these seems to be 'Cast_<...>', hence the name.
+    I think these are layers.
+*/
+typedef struct
+{
+    SetRandomBackColor();
+    TNNOffset DataOffset(0);
+    
+    if ( DataOffset.isValid )
+    {
+        FPush(); 
+        FSeek( DataOffset.absPosition );
+        struct
+        {
+            u32 Field00; // info_rings doesnt show if not 2 or 3
+            u32 Field04; // 0 in info_rings, but if 1 a white box shows in the center of the screen
+            u32 Field08; // info_rings doesnt show if not 1
+            TVector2 Field0C; // [-0.00625,-0.01111111], doesnt affect info_rings
+            TVector2 Field14; // [-0.00625,-0.01111111], doesnt affect info_rings
+            TVector2 Field1C; // [-0.00625,-0.01111111], doesnt affect info_rings
+            TVector2 Field24; // [-0.00625,-0.01111111], doesnt affect info_rings
+            u16 Field2C; // 7FFFh, doesnt affect info_rings
+            u16 Field2E; // 0
+            TNNOffset Field30(0);
+            u16 Field34; // 7FFFh, doesnt affect info_rings
+            u16 Field36; // 0
+            u32 Field38; // 51000h, Bitfield, doesnt affect info_rings
+            u32 Field3C; // 0x20, info_rings unaffected
+            TNNOffset Field40(0);
+            TNNStringOffset FontCharactersOffset(0); // eg: "01234567", string or null terminated, cant find a count for this
+            TNNStringOffset FontNameOffset(0); // eg: "font_count1"
+            u32 Field4C; // 0, BB 19 99 9A, 2 half floats?
+            u32 Field50; // [0x10, 0x98] info_rings unaffected
+            u32 Field54; // [0x10, 0x1B] info_rings unaffected
+            u32 Field58; // [6], info_rings unaffected
+            u32 Field5C; // [0, 3], info_rings unaffected
+            TVector2 Offset; // X = left Y = top
+            f32 Field68; // -400, info_rings unaffected
+            f32 Field6C; // -1, info_rings unaffected
+            u32 Field70; // [0, 2], info_rings unaffected
+
+            Assert( Field00 == 3 );
+            //failed: Assert( Field04 == 1 );
+            Assert( Field08 == 1 );
+        
+            Assert( Field30.absPosition - Field40.absPosition == 0x80 );
+
+            FPush();
+
+            if ( Field30.isValid )
+            {
+                FSeek( Field30.absPosition );
+                struct
+                {
+                    f32 Field00; // info_rings doesnt show if not 0
+                    f32 Field04; // -0.3125, info_rings unaffected
+                    f32 YOffset; // higher value = lower position
+                    f32 Field0C; // 0, info_rings unaffected
+                    TVector2 Scale;
+                    f32 Field18; // -1, info_rings unaffected
+                    s32 Field1C; // -1, info_rings doesnt show if not -1
+                    s32 Field20; // -1, info_rings doesnt show if not -1
+                    s32 Field24; // -1, info_rings doesnt show if not -1
+                    s32 Field28; // -1, info_rings doesnt show if not -1
+                    s32 Field2C; // -1, info_rings doesnt show if not -1
+                    u32 Field30; // 0, info_rings unaffected
+                    u32 Field34; // 0, info_rings unaffected
+                    u32 Field38; // 0, info_rings unaffected
+                } Field30Data;
+            }
+
+            if ( Field40.isValid )
+            {
+                FSeek( Field40.absPosition );
+                struct
+                {
+                    s32 Fields[32]; // shape/texture index?
+                } Field40Data;
+            }
+
+            FPop();
+        } Data;
+        FPop();
+    }
+} TUICast <optimize=false>;
+
+typedef struct
+{
+    SetRandomBackColor();
+    TNNChunkHeader Header;
+    Assert( Header.Signature == MakeFourCCLE( "NOF0" ) );
+    /* 0x08 */ u32 OffsetLocationCount;
+    /* 0x0C */ u32 Field0C;
+    /* 0x10 */ u32 OffsetLocations[ OffsetLocationCount ];
+    FSeek( Header.endPosition );
+} TNNOffsetChunk;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    TNNChunkHeader Header;
+    Assert( Header.Signature == MakeFourCCLE( "NEND" ) );
+    u32 Padding[2];
+} TNNEndChunk;
+
+typedef struct
+{
+    FPushBase();
+
+    local bool done;
+    local u64 start;
+    local u32 signature;
+    local u32 length;
+
+    local bool isBigEndian = IsBigEndian();
+
+    while ( !FEof() && !done )
+    {
+        // Header is always little endian
+        LittleEndian();
+        start = FTell();
+        signature = ReadUInt( start + 0 );
+        length = ReadUInt( start + 4 );
+        if ( isBigEndian ) BigEndian();
+
+        switch ( signature )
+        {
+            case MakeFourCCLE("NXIF"):
+            case MakeFourCCLE("NYIF"):
+                TNNInfoChunk Info;
+                FPushBase();
+                break;
+
+            case MakeFourCCLE("NXTL"):
+                TNNXTextureListChunk TextureList;
+                break;
+
+            case MakeFourCCLE("nCPJ"):
+                TNNNCPJChunk CsdmProject;
+                break;
+
+            case MakeFourCCLE("NOF0"):
+                TNNOffsetChunk Offset;
+                break;
+
+            case MakeFourCCLE("NEND"):
+                TNNEndChunk End;
+                FPopBase();
+                done = true;
+                break;
+
+            default:
+                TNNUnknownChunk Unknown;
+                break;
+        }
+    }
+
+    FPopBase();
+} TNNChunkFile;
+
+//LittleEndian();
+//BigEndian();
+//TNNNCPJChunk CsdmProject;
+
+local string filePath = GetFileName();
+local string fileName = FileNameGetBase( filePath, false );
+local string fileExt = FileNameGetExtension( filePath );
+if ( fileName == "SonicActionCommonHud.ar" )
+{
+    // ui_gameplay.xncp
+    FSeek( 0x102F00 );
+    FPushBase();
+    TFAPC File;
+    FPopBase();
+}
+else
+{
+    TFAPC File;
+}

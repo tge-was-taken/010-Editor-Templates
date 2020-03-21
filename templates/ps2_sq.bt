@@ -1,0 +1,429 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h"
+
+/*
+ * Used in the structure's member below:
+ *	sceSeqMidiCompBlock.compOption
+ */
+#define SCESQ_COMP_KEYON2POLY	0x0001
+
+/*
+ * Used in the structure's member below:
+ *	sceSeqMidiDataBlock.sequenceDataOffset
+ */
+#define SCESQ_NOCOMPBLOCK	6
+
+/****************************************************************
+ * Song Chunk
+ ****************************************************************/
+typedef struct {
+    unsigned int Creator;	/* Creator Code: 'SCEI'	*/
+    unsigned int Type;		/* Chunk Type:   'Song'	*/
+    unsigned int chunkSize;	/* Chunk Size		*/
+
+    unsigned int maxSongNumber;		/* max. number of Song number	*/
+    unsigned int songOffsetAddr[maxSongNumber + 1];	/* offset to Song table	(COFST)	*/
+} sceSeqSongChunk;
+
+/****************************************************************
+ * Midi Chunk
+ ****************************************************************/
+typedef struct	{
+    unsigned short compOption;		/* compression mode		*/
+    unsigned short compTableSize;	/* compression table size	*/
+    unsigned char  compTable[compTableSize];	/* compression table		*/
+} sceSeqMidiCompBlock;
+
+typedef struct
+{
+    u8 Value : 7;
+    u8 Flag : 1;
+} T7Bit;
+
+typedef struct 
+{
+    local u32 Length = CalcVarLen(FTell());
+    u8 Bytes[Length];
+} TVarInt <read=TVarIntToString, write=TVarIntFromString>;
+
+string TVarIntToString(TVarInt& value)
+{
+    u32 calcValue = value.Bytes[0] & 0x7F;
+    local u32 i;
+    for ( i = 1; i < value.Length; ++i )
+    {
+        calcValue |= (calcValue << 7) + (value.Bytes[i] & 0x7F);
+    }
+
+    string buf;
+    SPrintf(buf, "%d", calcValue);
+    return buf;
+}
+
+TVarInt TVarIntFromString(string value)
+{
+    
+}
+
+typedef enum<u8>
+{
+    ESqEvent_NoteOff = 0x8,
+    ESqEvent_NoteOn = 0x9,
+    ESqEvent_PolyKeyPress = 0xA, // Polyphonic Key pressure
+    ESqEvent_Control = 0xB,
+    ESqEvent_SetProg = 0xC,
+    ESqEvent_ChanKeyPress = 0xD, // Channel key pressure
+    ESqEvent_Bend = 0xE,
+    ESqEvent_Meta = 0xF
+} ESqEvent;
+
+typedef enum<u8>
+{   
+    ESqMetaEvent_EndOfTrack = 0x2F,
+    ESqMetaEvent_SetTempo = 0x51,
+} ESqMetaEvent;
+
+typedef struct
+{
+    u8 Channel : 4;
+    ESqEvent Event : 4;
+} ESqStatus;
+
+u32 CalcVarLen(u32 offset)
+{
+    local u32 curOffset = offset;
+    while ( ReadByte(curOffset++) & 0x80 ) {}
+    return curOffset - offset;
+}
+
+// NRPN -> looping
+typedef enum<u8>
+{
+    ESqControl_BankSelectMSB = 0x00,
+    ESqControl_PitchModulationDepth = 0x01,
+    ESqControl_AmpModulationDepth = 0x02,
+    ESqControl_PortamentTime = 0x05,
+    ESqControl_NRPNDataEntry_MSB = 0x06, // NRPNDtM
+    ESqControl_ChannelVolume = 0x07,
+    ESqControl_Pan = 0x0A,
+    ESqControl_Expression = 0x0B,
+    ESqControl_BankSelect_LSB = 0x20,
+    ESqControl_NRPNDataEntry_LSB = 0x26,// NPRNDtL
+    ESqControl_DamperPedal = 0x40,
+    ESqControl_PortamentOnOff = 0x41,
+    ESqControl_PortamentControl = 0x54,
+    ESqControl_NRPNIncrement = 0x60,
+    ESqControl_NRPNDecrement = 0x61,
+    ESqControl_NRPN_LSB = 0x62, // NRPNSub
+    ESqControl_NRPN_MSB = 0x63, // NRPNCom
+} ESqControl;
+
+typedef enum<u8>
+{
+    ESqNPRNCom_LoopStart = 0x00,
+    ESqNPRNCom_LoopEnd = 0x01,
+    ESqNPRNCom_ReverbType = 0x02,
+    ESqNPRNCom_ReverbDepth = 0x03,
+    ESqNPRNCom_MarkCallback = 0x10,
+    ESqNPRNCom_MarkCallback_MSB_7BIT = 0x11,
+    ESqNPRNCom_MarkCallback_MSB_14BIT = 0x12,
+} ESqNPRNCom;
+
+typedef enum<u8>
+{
+    TSqNRPNSub_DepthNormal = 0x00,
+    TSqNRPNSub_DepthBack = 0x01,
+    TSqNRPNSub_Delay = 0x02,
+    TSqNRPNSub_Fade = 0x03,
+} TSqNRPNSub;
+
+typedef enum<u8>
+{
+    TSqNRPNDtM_ReverbOff = 0x00,
+    TSqNRPNDtM_Room = 0x01,
+    TSqNRPNDtM_StudioA = 0x02,
+    TSqNRPNDtM_StudioB = 0x03,
+    TSqNRPNDtM_StudioC = 0x04,
+    TSqNRPNDtM_Hall = 0x05,
+    TSqNRPNDtM_Space = 0x06,
+    TSqNRPNDtM_Echo = 0x07,
+    TSqNRPNDtM_Delay = 0x08,
+    TSqNRPNDtM_Pipe = 0x09,
+} TNPRNDtM;
+
+local bool skipDeltaTime = false;
+typedef struct 
+{
+    if ( !skipDeltaTime )
+    {
+        TVarInt deltaTime;
+        skipDeltaTime = false;
+    }
+    
+    ESqStatus status;
+    
+    switch ( status.Event )
+    {
+        // Note off
+        case ESqEvent_NoteOff:
+            T7Bit key;
+            skipDeltaTime = key.Flag;
+            break;
+    
+        // Note on
+        case ESqEvent_NoteOn:
+            u8 key;
+            T7Bit vel;
+            skipDeltaTime = vel.Flag;
+            break;
+    
+        // Control
+        case ESqEvent_Control:
+            ESqControl controlNum;
+
+            switch ( controlNum )
+            {
+                case ESqControl_NRPN_MSB:
+                    ESqNPRNCom com;
+                    u8 Unknown[4];
+                    Assert( Unknown[0] == 0x01 );
+                    Assert( Unknown[1] == 0x06 );
+                    Assert( Unknown[2] == 0x00 );
+                    if ( Unknown[3] == 1 )
+                    {
+                        u8 Unknown2[3];
+                        Assert( Unknown2[0] == 0x26 );
+                        Assert( Unknown2[1] == 0x00 );
+                        Assert( Unknown2[2] == 0x02 );
+                    }
+                    else if ( Unknown[3] == 2 )
+                    {
+                        // Pass
+                    }
+                    else
+                    {
+                        Assert( false );
+                    }
+
+                    skipDeltaTime = true;
+                    break;
+
+                default:
+                    T7Bit value;
+                    skipDeltaTime = value.Flag;
+                    break;
+            }
+            break;
+    
+        // Set program
+        case ESqEvent_SetProg:
+            T7Bit progNum;
+            skipDeltaTime = progNum.Flag;
+            break;
+    
+        // Pitch bend
+        case ESqEvent_Bend:
+            u8 hi;
+            T7Bit lo;
+            skipDeltaTime = lo.Flag;
+            break;
+    
+        case ESqEvent_Meta:
+            if ( status.Channel == 0xF )
+            {
+                ESqMetaEvent meta;
+                switch ( meta )
+                {
+                    // Tempo
+                    case ESqMetaEvent_SetTempo:
+                    {
+                        
+                        struct
+                        {
+                            BigEndian();
+                            u32 hi : 8;
+                            u32 value : 24;
+                            LittleEndian();
+                        } microsPerQuarter;
+                        
+                        break;
+                    }
+                }
+            }
+            break;
+    }
+} TSqEvent <read=EventToString>;
+
+/* tyfus */ typedef struct	{
+    FPushBase();
+    unsigned int   sequenceDataOffset;	/* offset to sequence data	(POFST)	*/
+    unsigned short Division;		/* resolution of a quarter note		*/
+    sceSeqMidiCompBlock	compBlock[0];	/* compression data block:
+					   [NOTICE: sceSeqMidiDataBlock may have
+					    no compression data block] */
+
+    // Read notes
+    FSeekRel( sequenceDataOffset );
+    
+    while ( !FEof() )
+    {
+        TSqEvent Event;
+    }
+
+    FPopBase();
+} sceSeqMidiDataBlock;
+
+string EventToString(TSqEvent& value)
+{
+    string buffer;
+    SPrintf(buffer, "c:%d %s", 
+        value.status.Channel,
+        EnumToString( value.status.Event ));
+
+
+    switch ( value.status.Event )
+    {
+        case ESqEvent_Meta:
+            SPrintf(buffer, "%s %s",
+                buffer,
+                EnumToString( value.meta ) );
+            break;
+    }
+
+    return buffer; 
+}
+
+typedef struct	{
+    FPushBase();
+    unsigned int Creator;	/* Creator Code: `SCEI'	*/
+    unsigned int Type;		/* Chunk Type:   `Midi'	*/
+    unsigned int chunkSize;	/* Chunk Size		*/
+
+    unsigned int maxMidiNumber;		/* max. number of Midi sequence number	*/
+    unsigned int midiOffsetAddr[maxMidiNumber + 1];	/* offset to Midi table		(COFST)	*/
+
+    FPush();
+    local int i = 0;
+    for ( i = 0; i < maxMidiNumber + 1; ++i )
+    {
+        if ( midiOffsetAddr[i] != 0xFFFFFFFF )
+        {
+            FSeekRel( midiOffsetAddr[i] );
+            sceSeqMidiDataBlock midi;
+        }
+    }
+    FPop();
+
+    FPopBase();
+} sceSeqMidiChunk;
+
+/****************************************************************
+ * SE Sequence Chunk
+ ****************************************************************/
+/*
+ * Contents of SE Sequence Chunk:
+ *   sceSeqSeSequenceChunk
+ *   sceSeqSeSequenceBlock
+ *   sceSeqSeSequenceDataBlock
+ */
+
+typedef struct {
+    unsigned int   Creator;	/* Creator Code: `SCEI'	*/
+    unsigned int   Type;	/* Chunk Type:   `Sesq'	*/
+    unsigned int   chunkSize;	/* Chunk Size		*/
+
+    unsigned int   maxSeSequenceSetNumber;	/* max. no. of SE sequence set no.			*/
+    unsigned int   tableOffset;			/* offset to SE sequence set offset table	(POFST)	*/
+    unsigned char  seSequenceMasterVolume;	/* master volume					*/
+    char           seSequenceMasterPanpot;	/* master panpot (0-64-127=L-C-R; negative says reverse phase) */
+    unsigned short seSequenceMasterTimeScale;	/* master time scale (x1=1000, slowest=1 - fastest=65535) */
+    unsigned int   dmy0;			/* reserved						*/
+    unsigned int   dmy1;			/* reserved						*/
+    unsigned int   seSequenceSetOffsetAddr[0];	/* offset list to SE sequence set		(COFST)	*/
+} sceSeqSeSequenceChunk;
+
+typedef struct {
+    unsigned int   maxSeSequenceNumber;		/* max. no. of SE sequence no. in SE sequence set	*/
+    unsigned int   tableOffset;			/* offset to SE sequence offset table		(POFST)	*/
+    unsigned char  seSequenceSetVolume;		/* volume						*/
+    char           seSequenceSetPanpot;		/* panpot (0-64-127=L-C-R; negative says reverse phase) */
+    unsigned short seSequenceSetTimeScale;	/* time scale (x1=1000; slowest=1 - fastest=65535	*/
+    unsigned int   dmy;				/* reserved						*/
+    unsigned int   seSequenceOffsetAddr[0];	/* offset list to SE sequence			(COFST) */
+} sceSeqSeSequenceBlock;
+
+typedef struct {
+    unsigned int   seSequenceDataOffset;	/* offset to SE sequence Data			(POFST)	*/
+    unsigned char  seSequenceVolume;		/* volume						*/
+    char           seSequencePanpot;		/* panpot (0-64-127=L-C-R; negative says reverse phase) */
+    unsigned short seSequenceTimeScale;		/* time scale (x1=1000; slowest=1 - fastest=65535	*/
+    unsigned int   seSequenceDataSize;		/* data size						*/
+    unsigned int   dmy;				/* reserved 						*/
+    /* SE Sequence starts from here: SE sequence Command, Delta Time, ... */
+} sceSeqSeSequenceDataBlock;
+
+/****************************************************************
+ * Header Chunk
+ ****************************************************************/
+typedef struct	{
+    unsigned int   Creator;	/* Creator Code: `SCEI'	*/
+    unsigned int   Type;	/* Chunk Type:   `Sequ'	*/
+    unsigned int   chunkSize;	/* Chunk Size		*/
+
+    unsigned int   fileSize;		/* file size					*/
+    unsigned int   songChunkAddr;	/* offset address: Song Chunk		(FOFST)	*/
+    unsigned int   midiChunkAddr;	/* offset address: Midi Chunk		(FOFST)	*/
+    unsigned int   seSequenceChunkAddr;	/* offset address: SE Sequence Chunk	(FOFST)	*/
+    unsigned int   seSongChunkAddr;	/* offset address: SE Song Chunk	(FOFST)	*/
+} sceSeqHeaderChunk;
+		
+/****************************************************************
+ * Version Chunk
+ ****************************************************************/
+typedef struct {
+    unsigned int   Creator;	/* Creator Code: `SCEI'	*/
+    unsigned int   Type;	/* Chunk Type:   `Vers'	*/
+    unsigned int   chunkSize;	/* Chunk Size		*/
+
+    unsigned short reserved;		/* reserved		*/
+    unsigned char  versionMajor;	/* major version	*/
+    unsigned char  versionMinor;	/* minor version	*/
+} sceSeqVersionChunk;
+
+struct
+{
+    local u64 start;
+    local unsigned int type;
+    local unsigned int chunkSize;
+    while ( !FEof() )
+    {
+        start = FTell();
+        type = ReadUInt( start + 4 );
+        chunkSize = ReadUInt( start + 8 );
+
+        SetRandomBackColor();
+        switch ( type )
+        {
+            case FourCC("Vers"): sceSeqVersionChunk Version; break;
+            case FourCC("Sequ"): sceSeqHeaderChunk Header; break;
+            case FourCC("Sesq"): sceSeqSeSequenceChunk SeSequence; break;
+            case FourCC("Midi"): sceSeqMidiChunk Midi; break;
+            case FourCC("Song"): sceSeqSongChunk Song; break;
+            default: Assert( false );
+        }
+
+        FSeek( start + chunkSize );
+    }
+} File;

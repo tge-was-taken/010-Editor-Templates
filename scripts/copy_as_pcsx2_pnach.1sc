@@ -1,0 +1,78 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Script File
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+//   History: 
+//------------------------------------------------
+
+local int virtualAddress = 0x5A0330;
+
+local int sectionIndex = 0;
+local int sectionOffset = 0;
+local int sectionSize = 0;
+
+local int instructionCount = 0;
+local int instructionIndex = 0;
+local int instructionOffset = 0;
+
+local int inFile = GetFileNum();
+local int outFile = FileNew();
+
+FileSelect( inFile );
+LittleEndian();
+
+if ( GetSelSize() == 0 )
+{
+    // run template
+    RunTemplate( "elf.bt" );
+    
+    // find text section
+    for ( sectionIndex = 0; sectionIndex < file.elf_header.e_shnum_NUMBER_OF_SECTION_HEADER_ENTRIES; sectionIndex++ )
+    {
+        
+	    if ( file.section_header_table.section_table_element[ sectionIndex ].s_name.s_name_str == ".text" )
+	    {
+		    // get the section start offset
+		    sectionOffset = file.section_header_table.section_table_element[ sectionIndex ].s_offset;
+		    
+		    // calculate number of instructions
+		    instructionCount = file.section_header_table.section_table_element[ sectionIndex ].s_size / 4;
+		    
+		    // write out each instruction
+		    for ( instructionIndex = 0; instructionIndex < instructionCount; instructionIndex++ )
+		    {
+			    instructionOffset = instructionIndex * 4;
+			    FPrintf( outFile, "patch=1,EE,%08X,word,%08X\n", virtualAddress + instructionOffset, ReadUInt( sectionOffset + instructionOffset ) );
+		    }
+		    
+		    break;
+	    }
+    }
+}
+else
+{
+    // get start offset
+    sectionOffset = GetSelStart();
+
+    // calculate number of instructions
+	instructionCount = GetSelSize() / 4;
+	
+	// write out each instruction
+	for ( instructionIndex = 0; instructionIndex < instructionCount; instructionIndex++ )
+	{
+		instructionOffset = instructionIndex * 4;
+		//FPrintf( outFile, "patch=1,EE,%08X,word,%08X\n", virtualAddress + instructionOffset, ReadUInt( sectionOffset + instructionOffset ) );
+        FPrintf( outFile, "patch=1,EE,%08X,word,%08X\n", virtualAddress + instructionOffset, ReadUInt( sectionOffset + instructionOffset ) );
+	}
+}
+
+// copy to clipboard and close temporary file
+FileSelect( outFile );
+SetSelection( 0, FileSize() );
+CutToClipboard();
+FileClose();
+FileSelect( inFile );

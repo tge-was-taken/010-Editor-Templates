@@ -35,8 +35,10 @@
 // Type definition
 //---------------------------------------------
 typedef ubyte u8;
+typedef short s16;
 typedef ushort u16;
 typedef uint u32;
+typedef float f32;
 
 enum<byte>bool
 {
