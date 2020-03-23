@@ -1165,7 +1165,7 @@ typedef struct
     u8 Unknown;
     u16 Unknown;
     u8 Unknown;
-    u8 Unknown
+    u8 Unknown;
     u8 Padding6 [ 2 ];
     u8 Unknown;
     u8 Unknown;
