@@ -1,0 +1,36 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "common/include.h"
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    char Type[16];
+    u32 Flags;
+    u32 Size;
+    u8 Data[Size];
+} TAmdChunk;
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    u32 Signature;
+    Assert( Signature == MakeFourCC( "CHNK" ) );
+
+    u32 ChunkCount;
+    TAmdChunk Chunks[ChunkCount];
+} TAmdFile;
+
+TAmdFile File;

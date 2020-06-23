@@ -1,0 +1,48 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: xact_xsb.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse XACT XSB files
+//  Category: Audio
+// File Mask: *.xsb
+//  ID Bytes: 53 44 42 4B
+//   History: 
+//------------------------------------------------
+#include "common/include.h"
+
+
+typedef struct SOUNDBANK
+{
+    u32 Magic;
+    u16 ToolVersion;
+    u16 FormatVersion;
+    u16 CRC;
+    FILETIME LastModified;
+    u8 Platform;
+    u16 SimpleCueCount;
+    u16 ComplexCueCount;
+    u16 Field17;
+    u16 TotalCueCount;
+    u8 WaveBankCount;
+    u16 SoundCount;
+    u16 CueNameTableLength;
+    u16 Field20;
+    u32 SimpleCuesOffset;
+    u32 ComplexCuesOffset;
+    u32 CueNamesOffset;
+    u32 Field2E;
+    u32 WaveBankNameTableOffset;
+    u32 CueNameHashTableOffset;
+    u32 CueNameHashValuesOffset;
+    u32 SoundsOffset;
+    u32 Field42;
+    u32 Field46;
+    char Name[64];
+} SoundBankHeader;
+
+struct
+{
+    SoundBankHeader Header;
+} SoundBank;
