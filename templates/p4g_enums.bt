@@ -1,0 +1,200 @@
+enum<byte> ArcanaID
+{
+    Fool = 1,
+    Magician = 2,
+    HighPriestess = 3,
+    Empress = 4,
+    Emperor = 5,
+    Hierophant = 6,
+    Lovers = 7,
+    Chariot = 8,
+    Justice = 9,
+    Hermit = 10,
+    Fortune = 11,
+    Strength = 12,
+    HangedMan = 13,
+    Death = 14,
+    Temperance = 15,
+    Devil = 16,
+    Tower = 17,
+    Star = 18,
+    Moon = 19,
+    Sun = 20,
+    Judgement = 21,
+    Aeon = 22,
+    BlankArcana = 23,
+    World = 24,
+};
+
+enum<short> AffinityStatus
+{
+    Neutral = 20,
+    Weak = 2048,
+    Resist = 8192,
+    Resist2 = 4096,
+    Resist3 = 12288,
+    Block = 256,
+    Block2 = 10,
+    Repel = 512,
+    Drain = 1024,
+    Drain2 = 9216,
+    WeakResist = 10240,
+};
+
+enum<ubyte>PersonaInherit
+{
+    InheritNone = 0,
+    InheritPhysical = 1,
+    InheritFire = 2,
+    InheritIce = 3,
+    InheritElec = 4,
+    InheritWind = 5,
+    InheritLight = 6,
+    InheritDark = 7,
+    InheritHealing = 8,
+    InheritAilment = 10,
+    InheritAlmighty = 12,
+    InheritRESERVE = 13
+};
+
+enum<ubyte> ElementalType
+{
+    Passive = 255,
+    Physical = 0,
+    Fire = 1,
+    Ice = 2,
+    Electric = 3,
+    Wind = 4,
+    Almighty = 5,
+    Light = 6,
+    Dark = 7,
+    Panic = 8,
+    Poison = 9,
+    Fear = 10,
+    Rage = 11,
+    Unknown = 12,
+    Exhaustion = 13,
+    Enervation = 14,
+    Silence = 15,
+    Healing = 16,
+    Support = 17,
+    Special = 18,
+};
+
+enum<ubyte>Skill_ApplyOrCureEffect
+{
+    NoEffect = 0,
+    ApplyEffect = 1,
+    CureEffect = 2,
+};
+
+enum<ubyte>Skill_ExtraEffect
+{
+    NoEffect6 = 0,
+    OnlyHitTargetsInflictedWithFear = 1, // used by Ghastly Wail
+    EscapeBattle = 2,
+    ThrowAwayMoney = 6,
+};
+
+enum<ubyte>Skill_HPEffect
+{
+    NoDamageOrHealing = 0,
+    DealDamage = 1, // deal damage, affected by damage stat
+    RestoreHealth = 2, // restore health, varies based on stats
+    SetHP = 3, // set HP to a specified value
+    DealExactDamage = 4, // deals EXACTLY the amount of damage specified, regardless of stats
+    RestoreExactHealth = 5, // restores EXACTLY the amount of health specified, regardless of stats
+    Unknown_Damage6 = 6, // seems to be the same as DealDamage? Needs more testing
+    Unknown_Healing7 = 7, // seems to be the same as RestoreHealth? Needs more testing
+    DamagePercentCurrentHP = 8, // deal a percent of current HP as damage
+    RestorePercentCurrentHP = 9, // restore a percent of current HP as health
+    DamagePercentMaxHP = 10, // deal a percent of max HP as damage
+    RestorePercentMaxHP = 11, // restore a percent of max HP as health
+    DrainDamage = 12, // deals damage, affected by damage stat, and restores equal HP to the user
+    DrainExactDamage = 13, // deals EXACTLY the amount of damage specified and restores equal HP to the user
+    Unknown_Damage14 = 14, // seems to be the same as DealDamage? Needs more testing
+    RestoreHealthWhiffChance = 15, // Has a chance to whiff, healing for minimal HP instead
+    DamageBasedOnHealthyPartyMembers = 16, // used for All-Out Attacks
+};
+
+enum<ubyte>Skill_SPEffect
+{
+    NoSPEffect = 0,
+    RestoreSP = 5,
+    DepletePercentMaxSP = 10,
+    RestorePercentMaxSP = 11,
+    DrainSP = 13,
+};
+
+enum<ubyte>Skill_ValidTargets
+{
+    TargetAlly = 1,
+    TargetEnemy = 2,
+    TargetAny = 3,
+};
+
+enum<ubyte>Skill_NumberOfTargets
+{
+    SingleTarget = 0,
+    MultiTarget = 1,
+    MultiTargetExceptSelf = 2, // might be redundant with Multi + SelfNotAllowed
+};
+
+enum<ubyte>Skill_TargetRestrictions
+{
+    NoAdditionalRestrictions = 0,
+    RandomTwoFromSelection = 1, // used by Diffraction Arrow, Distortion Wave
+    Unknown_DreadfulScreamRelated = 2, // used by Cognitive Wakaba's Dreadful Scream
+    Unknown_WingBlastRelated = 4, // used by Cognitive Wakaba's Wing Blast
+    SelfOnly = 16,
+    SelfNotAllowed = 32,
+    UnconsciousOnly = 64, // used for revival skills
+};
+
+enum<ubyte>Skill_CasterEffect2
+{
+    NoCasterEffect2 = 0,
+    UnknownCasterEffect_SpecialMoveRelated = 1, // used by All-Out Attacks, Navigator skills, and other unique skills. Sometimes plays a mini-cutscene?
+    ModifiedByEquippedGun = 2,
+    ReduceOwnHPTo1 = 4,
+    UnknownCasterEffect1_TheMansWayRelated = 12,
+};
+
+enum<ubyte>Skill_CasterEffect1
+{
+    NoCasterEffect1 = 0,
+    KOSelf = 1,
+    MeleeContact = 2, // needs to be tested
+    SummonAlly_CRASHES_ON_USE = 4, // summons an ally in enemy encounters - DO NOT USE LIKE A NORMAL SKILL, THE GAME WILL CRASH
+    UnknownCasterEffect_SupportRelated = 8, // used by healing and support skills
+    UnknownCasterEffect_RecarmdraRelated = 25, // used by Recarmdra
+    UnknownCasterEffect_TrafuriRelated = 40, // used by Trafuri
+};
+
+
+enum<ubyte>Skill_DamageStat
+{
+    NoApplicableStat = 0,
+    StrengthStat = 1,
+    MagicStat = 2,
+};
+
+enum<ubyte>Skill_CostType
+{
+    NoCost = 0,
+    HPCost = 1,
+    SPCost = 2,
+};
+
+enum<ubyte>Skill_PhysicalOrMagicSkill
+{
+    MagicSkill = 0,
+    PhysicalSkill = 1,
+};
+
+enum<ubyte>Skill_SkillType
+{
+    ActiveSkill = 0,
+    PassiveSkill = 1, // MUST be enabled for passive skills to function properly
+    SupportSkill = 255
+};
