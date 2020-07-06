@@ -65,20 +65,20 @@ enum<ubyte> ElementalType
     Ice = 2,
     Electric = 3,
     Wind = 4,
-    Light = 6,
     Almighty = 5,
+    Light = 6,
     Dark = 7,
-    Dizzy = 11,
     Panic = 8,
+    Poison = 9,
     Fear = 10,
-    Exhaustion = 14,
+    Rage = 11,
+    Unknown = 12,
+    Exhaustion = 13,
+    Enervation = 14,
     Silence = 15,
-    Poison = 13,
-    Rage = 9,
-    Despair = 18,
-    Brainwash = 19,
-    Healing = 20,
-    Support = 21,
+    Healing = 16,
+    Support = 17,
+    Special = 18,
 };
 
 enum<ubyte>Skill_ApplyOrCureEffect
@@ -94,13 +94,6 @@ enum<ubyte>Skill_ExtraEffect
     OnlyHitTargetsInflictedWithFear = 1, // used by Ghastly Wail
     EscapeBattle = 2,
     ThrowAwayMoney = 6,
-    AlwaysKills = 13, // used for 9999 damage Megidolaon (603)
-    BigBangBurgerDocumentVisual = 15, // used by Shadow Okumura's Sacrifice Order
-    DownAndDizzy = 18, //used by The Man's Way
-    TargetedChanceUp = 19, // increases chance of being targeted by enemies
-    TargetedChanceWayUp = 20, // greatly increases chance of being targeted by enemies
-    IfAilmentExistsHealAndCureInstead = 21, // used for Big Bang Challenge; needs testing with other ailments
-    CasterAttackWayDownNonNegatable = 22, // used for Beast Weaver
 };
 
 enum<ubyte>Skill_HPEffect
@@ -145,7 +138,6 @@ enum<ubyte>Skill_NumberOfTargets
     SingleTarget = 0,
     MultiTarget = 1,
     MultiTargetExceptSelf = 2, // might be redundant with Multi + SelfNotAllowed
-    Unknown_PlumeOfDuskRelated = 3, // used by the unused Plume of Dusk item ability - description reads "When MC is KO'd, fully recover to all allies"
 };
 
 enum<ubyte>Skill_TargetRestrictions
@@ -166,7 +158,6 @@ enum<ubyte>Skill_CasterEffect2
     ModifiedByEquippedGun = 2,
     ReduceOwnHPTo1 = 4,
     UnknownCasterEffect1_TheMansWayRelated = 12,
-    UnknownCasterEffect1_StealInfoRelated = 32, // used by Steal Info
 };
 
 enum<ubyte>Skill_CasterEffect1
@@ -178,10 +169,6 @@ enum<ubyte>Skill_CasterEffect1
     UnknownCasterEffect_SupportRelated = 8, // used by healing and support skills
     UnknownCasterEffect_RecarmdraRelated = 25, // used by Recarmdra
     UnknownCasterEffect_TrafuriRelated = 40, // used by Trafuri
-    UnknownCasterEffect_FollowUpRelated = 66, // used by Follow-Up Attacks
-    UnknownCasterEffect_RouletteRelated1 = 128, // used by Roulette: HP and Roulette: SP. Suspect it has to do with being able to be reversed.
-    UnknownCasterEffect_RouletteRelated2 = 136, // used by Roulette: Aid.
-    CRASHES_OFTEN_UnknownCasterEffect2_160 = 160, // used by Barrage and Dispose Item - DO NOT USE WITHOUT APPLYING THE "ThrowAwayMoney" EXTRA EFFECT, THE GAME WILL CRASH
 };
 
 
