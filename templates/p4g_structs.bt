@@ -15,17 +15,15 @@ typedef struct
     AffinityStatus IceAffinity <name = "Ice">;
     AffinityStatus ElecAffinity <name = "Electric">;
     AffinityStatus WindAffinity <name = "Wind">;
+    AffinityStatus AlmightyAffinity <name = "Almighty">;
     AffinityStatus LightAffinity <name = "Light">;
     AffinityStatus DarkAffinity <name = "Dark">;
-
-    //may not be in order, re-test
-    AffinityStatus DizzyAffinity <name = "Dizzy">;
-    AffinityStatus RageAffinity <name = "Rage">;
-    AffinityStatus FearAffinity <name = "Fear">;
-    AffinityStatus SilenceAffinity <name = "Silence">;
     AffinityStatus PanicAffinity <name = "Panic">;
     AffinityStatus PoisonAffinity <name = "Poison">;
+    AffinityStatus FearAffinity <name = "Fear">;
+    AffinityStatus RageAffinity <name = "Rage">;
+    AffinityStatus DizzyAffinity <name = "Dizzy">;
     AffinityStatus ExhaustionAffinity <name = "Exhaustion">;
     AffinityStatus EnervationAffinity <name = "Enervation">;
-    AffinityStatus AlmightyAffinity <name = "Almighty">;
+    AffinityStatus SilenceAffinity <name = "Silence">;
 } ElementalAffinities <name = "Elemental Affinities">;
