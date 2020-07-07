@@ -64,9 +64,6 @@ typedef struct
     u32 unk;
 } TUnknownFooter<name="Unkown Values">;
 
-local string filePath = GetFileName();
-local string fileName = FileNameGetBase( filePath, false );
-
 typedef struct
 {
     TFileHeader header;
@@ -76,7 +73,7 @@ typedef struct
 
 string FileToString( struct TFile& file )
 {
-    return GetFileName();
+    return FileNameGetBase( GetFileName(), true );;
 }
 
 TFile file;
