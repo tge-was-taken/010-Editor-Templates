@@ -1,0 +1,82 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: motionse_dat.bt
+//   Authors: DeathChaos
+//   Version: 1.0
+//   Purpose: Parse Persona 5 Motion Sound Effect Data files.
+//  Category: Persona 5
+// File Mask: *.dat
+//  ID Bytes:
+//   History:
+//   1.0 - Initial release
+//------------------------------------------------
+
+BigEndian();
+
+//---------------------------------------------
+// Type definition
+//---------------------------------------------
+typedef ubyte u8;
+typedef short s16;
+typedef ushort u16;
+typedef uint u32;
+typedef int s32;
+typedef float f32;
+
+typedef struct
+{
+    u32 unk;
+	u32 numOfEntries;
+	byte dataPadding[ (0x40 - FTell() % 0x40) % 0x40 ];
+} TFileHeader<name="File Header">;
+
+enum<s32>SoundType
+{
+    motionse_soundbank = 0,
+	system_soundbank = 1,
+};
+
+typedef struct
+{
+    SoundType type<name="Soundbank Used">;
+    s32 cueID<name="CueID">;
+    s32 timing<name="Timing (frames)">;
+    s32 unk<name="Unknown">;
+} TAnimSEEntry<name="Entry">;
+
+typedef struct
+{
+    TAnimSEEntry Entry;
+    TAnimSEEntry Entry;
+    TAnimSEEntry Entry;
+    TAnimSEEntry Entry;
+    TAnimSEEntry Entry;
+    TAnimSEEntry Entry;
+    TAnimSEEntry Entry;
+    TAnimSEEntry Entry;
+} TMotionSEDat<name="Animation SE Data">;
+
+typedef struct
+{
+    u32 unk;
+    u32 unk;
+    u32 unk;
+} TUnknownFooter<name="Unkown Values">;
+
+local string filePath = GetFileName();
+local string fileName = FileNameGetBase( filePath, false );
+
+typedef struct
+{
+    TFileHeader header;
+    TMotionSEDat AnimationData [ header.numOfEntries ];
+    TUnknownFooter Footer;
+} TFile <name="motionse.dat", read=FileToString>;
+
+string FileToString( struct TFile& file )
+{
+    return GetFileName();
+}
+
+TFile file;
