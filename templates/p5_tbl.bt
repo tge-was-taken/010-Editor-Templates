@@ -523,8 +523,8 @@ typedef struct
 
     struct
         {
-            bool AccuracyDown : 1 <name = "Evasion Down">;
-            bool AccuracyUp : 1 <name = "Evasion Up">;
+            bool AccuracyDown : 1 <name = "Accuracy Down">;
+            bool AccuracyUp : 1 <name = "Accuracy Up">;
             bool DefenseDown : 1 <name = "Defense Down">;
             bool DefenseUp : 1 <name = "Defense Up">;
             bool EvasionDown : 1 <name = "Evasion Down">;
