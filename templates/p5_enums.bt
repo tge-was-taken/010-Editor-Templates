@@ -4129,7 +4129,7 @@ enum<short> AffinityStatus
     Repel = 512,
     Drain = 1024,
     TooFarAwayToHit = 8272, // used in Cognitive Wakaba battle; needs more testing
-    DrainResist2 = 9216, // used in Shadow Madarame battle; needs more testing
+    DrainResist = 9216, // used in Shadow Madarame battle; needs more testing
     WeakResist = 10240,
 };
 

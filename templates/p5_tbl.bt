@@ -1642,7 +1642,7 @@ typedef struct( string tableName, u32 endOffset )
 typedef struct
 {
     LittleEndian();
-    char FileName[ 252 ];
+    char FileName[ 252 ] <hidden = true>;
     u32 FileSize;
 
     if ( Stricmp( FileNameGetExtension( FileName ), ".tbl" ) == 0 )
@@ -1674,7 +1674,7 @@ if ( Stricmp( fileExt, ".pac" ) == 0 )
     // table.pac
     while ( !FEof() )
     {
-        TFile File;
+        TFile File <name = "File">;
     }
 }
 else if ( Stricmp( fileExt, ".tbl" ) == 0 )
