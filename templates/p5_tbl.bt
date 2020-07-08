@@ -28,6 +28,7 @@
 //       - Added bool struct to make bitfields easier to read when editing
 //       - Changed certain skill enums to bitfields (Skill_ValidTargets, AffinityStatus, Buffs/Debuffs, and applied effects)
 //       - Added max HP/SP gain per level of party members in PLAYER.TBL
+//   1.8 - Added attack hit frame data variables to the relevant VISUAL.TBL sections
 //------------------------------------------------
 
 
@@ -1107,10 +1108,26 @@ typedef struct
 
 typedef struct
 {
+	s16 AttackHitRegFrames [ 8 ];
+	s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues1 [ 2 ];
+    s16 CriticalHitRegFrames [ 8 ];
+    s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues2 [ 2 ];
+    s16 AmbushedAttackHitRegFrames [ 8 ];
+    s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues3 [ 2 ];
+}TVisual_AttackFrameData <name = "Attack Frame Data">;
+
+typedef struct
+{
     u32 Field00;
-    f32 Field04;
-    f32 Field08;
-    f32 Field0C;
+    f32 HeartIconXAxis<name="Heart Icon location(X axis)">;
+    f32 HeartIconYAxis<name="Heart Icon location(Y axis)">;
+    f32 HeartIconZAxis<name="Heart Icon location(Z axis)">;;
     f32 Field10;
     f32 Field14;
     f32 Field18;
@@ -1133,7 +1150,7 @@ typedef struct
     f32 Field5C;
     f32 Field60;
     f32 Field64;
-    u16 Field68;
+    u16 ModelScale<name="Model Scale %">;
     u16 Field6A;
     u16 Field6C;
     u16 Field6E;
@@ -1141,12 +1158,22 @@ typedef struct
     f32 Field74;
     f32 Field78;
     f32 Field7C;
-    s16 Field80[36];
+    TVisual_AttackFrameData FrameData;
 } TVisual_EnemyVisualVariablesA <name = "Enemy Visual Variables A">;
 
 typedef struct
 {
-    byte Unknown[ 404 ];
+    byte Unknown[ 0x104 ];
+	u16 ModelScale<name="Model Scale %">;
+    u16 Field6A;
+    u16 Field6C;
+    u16 Field6E;
+    f32 Field70;
+    f32 Field74;
+    f32 Field78;
+    f32 Field7C;
+    TVisual_AttackFrameData FrameData;
+	byte Unknown2 [ 0x30 ];
 } TVisual_PlayerVisualVariablesA <name = "Player Visual Variables A">;
 
 typedef struct
@@ -1642,7 +1669,7 @@ typedef struct( string tableName, u32 endOffset )
 typedef struct
 {
     LittleEndian();
-    char FileName[ 252 ];
+    char FileName[ 252 ]<hidden=true>;
     u32 FileSize;
 
     if ( Stricmp( FileNameGetExtension( FileName ), ".tbl" ) == 0 )
