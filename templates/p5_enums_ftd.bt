@@ -107,7 +107,7 @@ enum<short> ConfidantFunction
     BLANKFUNC89 = 89,
     BLANKFUNC90 = 90,
     MoralSupport_Function = 91,
-    MementosScan_Function 92,
+    MementosScan_Function = 92,
     BLANKFUNC93 = 93,
     PositionHack_Function = 94,
     BLANKFUNC95 = 95,
@@ -237,7 +237,7 @@ enum<short> ConfidantFunction
     BLANKFUNC219 = 219,
     BLANKFUNC220 = 220,
     Cultivation = 221,
-    BLANKFUNC222 = 222
+    BLANKFUNC222 = 222,
     BLANKFUNC223 = 223,
     BLANKFUNC224 = 224,
     BLANKFUNC225 = 225,
