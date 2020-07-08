@@ -431,9 +431,13 @@ typedef struct
         } ValidTargets <name = "Valid Targets">;
 
     Skill_TargetRestrictions TargetRestrictions <name = "Additional Target Restrictions">;
-    u32 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
-    u16 Unknown <name = "Unknown">;
+    u8 Unknown <name = "Unknown">;
+    u8 Unknown <name = "Unknown">;
+    u8 Unknown <name = "Unknown">;
+    u8 Unknown <name = "Unknown">;
+    u8 Unknown <name = "Unknown">;
+    u8 Unknown <name = "Unknown">;
     u8 Accuracy <name = "Accuracy">;
     u8 MinHits <name = "Minimum Number of Hits">;
     u8 MaxHits <name = "Maximum Number of Hits">;
