@@ -415,12 +415,7 @@ typedef struct
     Skill_CasterEffect1 CasterEffect1 <name = "Caster Effect", comment = "Needs more testing">;
     Skill_CasterEffect2 CasterEffect2 <name = "Caster Effect", comment = "Needs more testing">;
 
-    struct
-        {
-            byte : 6;
-            bool Battle : 1 <name = "Usable in Battle">;
-            bool Field : 1 <name = "Usable in Field">;
-        } Skill_Area <name = "Skill Area Type">;
+    Skill_AreaType AreaType;
 
     Skill_DamageStat DamageStat <name = "Damage Stat", comment = "Determines which stat is used to determine damage">;
     Skill_CostType CostType <name = "Cost Type">;
