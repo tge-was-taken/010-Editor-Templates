@@ -284,12 +284,12 @@ typedef struct
     u32 Field1C; // 0 for regular nodes, 2 for geometry nodes
                  // can safely be set to 2 for both kinds of nodes
                  // when set to 0 for a geometry node, transform is wrong
-    Vector4 LocalPosition;
-    Vector4 LocalRotation;
-    Vector4 LocalScale;
-    Vector4 WorldPosition; // can safely set to 0
-    Vector4 Field60; // can be safely set to 0
-    Vector4 Field70; // can be safely set to 0
+    TVector4 LocalPosition;
+    TVector4 LocalRotation;
+    TVector4 LocalScale;
+    TVector4 WorldPosition; // can safely set to 0
+    TVector4 Field60; // can be safely set to 0
+    TVector4 Field70; // can be safely set to 0
 
     if ( NameIndex != -1 )
         local string name = Model.NodeNames[ NameIndex ].Data;
