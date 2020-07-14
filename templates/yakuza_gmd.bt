@@ -41,12 +41,11 @@ typedef struct
     SetRandomBackColor();
     LittleEndian();
     char Magic[4];      // GSGM
-    u8 Version;         // 2
+    u8 VertEndianness;         // 2 for big, 21 for little
     u8 Endianness;      // 1
     if ( Endianness == 1 ) BigEndian();
     u16 Field06;        // 0
-    u16 Field08;        // 0
-    u16 Field0A;
+    u32 Version;
     u32 FileSize; 
 
     SetRandomBackColor();    
