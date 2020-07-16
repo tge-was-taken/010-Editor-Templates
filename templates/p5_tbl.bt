@@ -2,8 +2,8 @@
 //--- 010 Editor v8.0 Binary Template
 //
 //      File: AtlusTable_P5.bt
-//   Authors: TGE, Lillian Goulston, Scarltz
-//   Version: 1.7
+//   Authors: TGE, Lillian Goulston, Scarltz, DeathChaos
+//   Version: 1.9
 //   Purpose: Parse Persona 5 Table files.
 //  Category: Persona 5
 // File Mask: *.tbl, *.pac
@@ -29,6 +29,8 @@
 //       - Changed certain skill enums to bitfields (Skill_ValidTargets, AffinityStatus, Buffs/Debuffs, and applied effects)
 //       - Added max HP/SP gain per level of party members in PLAYER.TBL
 //   1.8 - Added attack hit frame data variables to the relevant VISUAL.TBL sections
+//   1.9 - Added Skill Area Type (Battle/Field/Both)
+//       - Merged some variables since they are always 0
 //------------------------------------------------
 
 
@@ -412,11 +414,10 @@ typedef struct
 {
     Skill_CasterEffect1 CasterEffect1 <name = "Caster Effect", comment = "Needs more testing">;
     Skill_CasterEffect2 CasterEffect2 <name = "Caster Effect", comment = "Needs more testing">;
-    u8 Unknown <name = "Unknown">;
+    Skill_AreaType AreaType;
     Skill_DamageStat DamageStat <name = "Damage Stat", comment = "Determines which stat is used to determine damage">;
     Skill_CostType CostType <name = "Cost Type">;
-    u8 Unknown <name = "Unknown">;
-    u8 Unknown <name = "Unknown">;
+    u16 Unknown <name = "Unknown">;
     u8 SkillCost <name = "Skill Cost", comment = "% of max HP or fixed amount of SP">;
     u8 Unknown <name = "Unknown">;
     Skill_PhysicalOrMagicSkill PhysicalOrMagic <name = "Physical or Magic?", comment = "determines what's affected by either Charge or Concentrate, but doesn't seem to change what's reflected by Tetrakarn or Makarakarn. Needs more testing">;
@@ -537,7 +538,7 @@ typedef struct
     Skill_ExtraEffect ExtraEffect <name = "Extra Effects">;
     u8 CritChance <name = "Crit Chance", comment = "Only works for Physical or Gun skills">;
     u8 Unknown <name = "Unknown">;
-    u8 Unknown <name = "Unknown">;
+    byte : 1;
 } TSkill_ActiveSkillData <name="Active Skill Data: ">;
 
 // Item
