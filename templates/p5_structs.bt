@@ -16,7 +16,7 @@ typedef struct
 typedef struct
 {
     byte : 2;
-    bool ResistBit2 : 1 <name = "Resist2">; // 8192
+    bool NoEffectsOrAilmentsBit : 1 <name = "No Added Effects or Ailments">; // 8192 // Immune to RNG effects from this elements, like Burn from Fire or knockdown from Phys/Gun crits
     bool ResistBit : 1 <name = "Resist">; // 4096
     bool WeakBit : 1 <name = "Weak">; // 2048
     bool DrainBit : 1 <name = "Drain">; // 1024

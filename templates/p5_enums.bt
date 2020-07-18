@@ -4218,7 +4218,7 @@ enum<ubyte>Skill_HPEffect
     DrainDamage = 12, // deals damage, affected by damage stat, and restores equal HP to the user
     DrainExactDamage = 13, // deals EXACTLY the amount of damage specified and restores equal HP to the user
     Unknown_Damage14 = 14, // seems to be the same as DealDamage? Needs more testing
-    RestoreHealthWhiffChance = 15, // Has a chance to whiff, healing for minimal HP instead
+    RestoreHealthChanceToWhiff = 15, // Has a chance to whiff, healing for minimal HP instead
     DamageBasedOnHealthyPartyMembers = 16, // used for All-Out Attacks
 };
 
@@ -4542,4 +4542,11 @@ enum<ubyte>Month
     October = 10,
     November = 11,
     December = 12,
+};
+
+enum<ubyte>VoicePack
+{
+    VoicePackA = 0,
+    VoicePackB = 1,
+    VoicePackC = 2,
 };
