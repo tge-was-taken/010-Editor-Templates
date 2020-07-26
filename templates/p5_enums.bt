@@ -4541,3 +4541,11 @@ enum<ubyte>Month
     November = 11,
     December = 12,
 };
+
+enum<ubyte>Skill_AreaType
+{
+    Unusable = 0,
+    UsableInField = 1,
+    UsableInBattle = 2,
+    UsableInFieldAndBattle = 3
+};
