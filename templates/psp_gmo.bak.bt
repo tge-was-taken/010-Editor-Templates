@@ -104,18 +104,9 @@ typedef enum<short>
 
 	SCEGMO_BLIND_DATA		= 0x00f1,
 	SCEGMO_FILE_INFO		= 0x00ff
-} SceGmoChunkType <read=SceGmoChunkType_ToString>;
+} SceGmoChunkType;
 
-string SceGmoChunkType_ToString(SceGmoChunkType& val)
-{
-    local SceGmoChunkType temp = val & ~SCEGMO_HALF_CHUNK;
-    local string str = EnumToString(temp);
-    if ( val & SCEGMO_HALF_CHUNK ) str += " | SCEGMO_HALF_CHUNK";
-    return str;
-}
-
-typedef enum<int>
-{
+enum {
 	SCEGMO_PRIM_TYPE_MASK		= 0x000f,
 	SCEGMO_PRIM_POINTS		= 0x0000,
 	SCEGMO_PRIM_LINES		= 0x0001,
@@ -134,19 +125,9 @@ typedef enum<int>
 	SCEGMO_PRIM_OPEN_V_OUT		= 0x8000,
 
 	SCEGMO_PRIM_SEQUENTIAL		= 0x0100,
-} SCEGMO_PRIM <read=SCEGMO_PRIM_ToString>;
+} ;
 
-string SCEGMO_PRIM_ToString(SCEGMO_PRIM& val)
-{
-    local SCEGMO_PRIM prim = val & SCEGMO_PRIM_TYPE_MASK;
-    local SCEGMO_PRIM spline = val & SCEGMO_PRIM_SPLINE_MASK;
-    local string str = EnumToString(prim);
-    if ( spline ) str += " | " + EnumToString(spline);
-    if ( val & SCEGMO_PRIM_SEQUENTIAL ) str += " | SCEGMO_PRIM_SEQUENTIAL";
-    return str;
-}
-
-typedef enum {
+enum {
 	SCEGMO_FCURVE_INTERP_MASK	= 0x000f,
 	SCEGMO_FCURVE_CONSTANT		= 0x0000,
 	SCEGMO_FCURVE_LINEAR		= 0x0001,
@@ -174,14 +155,14 @@ typedef enum {
 	SCEGMO_FCURVE_SHUTTLE_RIGHT	= 0x2000,
 	SCEGMO_FCURVE_REPEAT_RIGHT	= 0x3000,
 	SCEGMO_FCURVE_EXTEND_RIGHT	= 0x4000,
-} SCEGMO_FCURVE;
+} ;
 
-typedef enum {
+enum {
 	SCEGMO_REPEAT_HOLD		= 0x0000,
 	SCEGMO_REPEAT_CYCLE		= 0x0001,
-} SCEGMO_REPEAT;
+} ;
 
-typedef enum {
+enum {
 	SCEGMO_STATE_LIGHTING		= 0,
 	SCEGMO_STATE_FOG		= 1,
 	SCEGMO_STATE_TEXTURE		= 2,
@@ -193,9 +174,9 @@ typedef enum {
 
 	SCEGMO_STATE_ENABLE_LIGHTING	= 0,		/* obsolete */
 	SCEGMO_STATE_ENABLE_FOG		= 1		/* obsolete */
-} SCEGMO_STATE;
+} ;
 
-typedef enum {
+enum {
 	SCEGMO_BLEND_ADD		= 0,
 	SCEGMO_BLEND_SUB		= 1,
 	SCEGMO_BLEND_REV		= 2,
@@ -213,122 +194,91 @@ typedef enum {
 	SCEGMO_BLEND_INV_SRC_ALPHA	= 7,		/* != SCEGU */
 	SCEGMO_BLEND_DST_ALPHA		= 8,		/* != SCEGU */
 	SCEGMO_BLEND_INV_DST_ALPHA	= 9,		/* != SCEGU */
-} SCEGMO_BLEND;
+} ;
 
-typedef enum {
+enum {
 	SCEGMO_FUNC_MODULATE		= 0,
 	SCEGMO_FUNC_DECAL		= 1,
 
 	SCEGMO_FUNC_RGB			= 0,
 	SCEGMO_FUNC_RGBA		= 1
-} SCEGMO_FUNC;
+} ;
 
-typedef enum {
+enum {
 	SCEGMO_FILTER_NEAREST		= 0,
 	SCEGMO_FILTER_LINEAR		= 1,
 	SCEGMO_FILTER_NEAREST_MIPMAP_NEAREST = 2,	/* != SCEGU */
 	SCEGMO_FILTER_LINEAR_MIPMAP_NEAREST = 3,	/* != SCEGU */
 	SCEGMO_FILTER_NEAREST_MIPMAP_LINEAR = 4,	/* != SCEGU */
 	SCEGMO_FILTER_LINEAR_MIPMAP_LINEAR = 5		/* != SCEGU */
-} SCEGMO_FILTER;
+} ;
 
-typedef enum {
+enum {
 	SCEGMO_WRAP_REPEAT		= 0,
 	SCEGMO_WRAP_CLAMP		= 1
-} SCEGMO_WRAP;
+} ;
 
 /* ---------------------------------------------------------------- */
 /*  block reference type                                            */
 /* ---------------------------------------------------------------- */
 
-// based on SCEGMO_REF macros
-typedef struct {
-    int index : 12;
-    int level : 4;
-    int type : 15;
-    local SceGmoChunkType chunkType = (SceGmoChunkType)type;
-} SceGmoRef;
+//#define SCEGMO_REF_TYPE(ref) (0x7fff&((ref)>>16))
+//#define SCEGMO_REF_LEVEL(ref) (0x000f&((ref)>>12))
+//#define SCEGMO_REF_INDEX(ref) (0x0fff&(ref))
 
-typedef enum<int> {
-    SCEGU_TEXTURE_NONE       = ( 0 <<  0 ),
-    SCEGU_TEXTURE_UBYTE      = ( 1 <<  0 ),
-    SCEGU_TEXTURE_USHORT     = ( 2 <<  0 ),
-    SCEGU_TEXTURE_FLOAT      = ( 3 <<  0 ),
-    SCEGU_COLOR_NONE         = ( 0 <<  2 ),
-    SCEGU_COLOR_PF5650       = ( 4 <<  2 ),
-    SCEGU_COLOR_PF5551       = ( 5 <<  2 ),
-    SCEGU_COLOR_PF4444       = ( 6 <<  2 ),
-    SCEGU_COLOR_PF8888       = ( 7 <<  2 ),
-    SCEGU_NORMAL_NONE        = ( 0 <<  5 ),
-    SCEGU_NORMAL_BYTE        = ( 1 <<  5 ),
-    SCEGU_NORMAL_SHORT       = ( 2 <<  5 ),
-    SCEGU_NORMAL_FLOAT       = ( 3 <<  5 ),
-    SCEGU_VERTEX_NONE        = ( 0 <<  7 ),
-    SCEGU_VERTEX_BYTE        = ( 1 <<  7 ),
-    SCEGU_VERTEX_SHORT       = ( 2 <<  7 ),
-    SCEGU_VERTEX_FLOAT       = ( 3 <<  7 ),
-    SCEGU_WEIGHT_NONE        = ( 0 <<  9 ),
-    SCEGU_WEIGHT_UBYTE       = ( 1 <<  9 ),
-    SCEGU_WEIGHT_USHORT      = ( 2 <<  9 ),
-    SCEGU_WEIGHT_FLOAT       = ( 3 <<  9 ),
-    SCEGU_INDEX_NONE         = ( 0 << 11 ),
-    SCEGU_INDEX_UBYTE        = ( 1 << 11 ),
-    SCEGU_INDEX_USHORT       = ( 2 << 11 ),
-    SCEGU_WEIGHT_1           = ( 0 << 14 ),
-    SCEGU_WEIGHT_2           = ( 1 << 14 ),
-    SCEGU_WEIGHT_3           = ( 2 << 14 ),
-    SCEGU_WEIGHT_4           = ( 3 << 14 ),
-    SCEGU_WEIGHT_5           = ( 4 << 14 ),
-    SCEGU_WEIGHT_6           = ( 5 << 14 ),
-    SCEGU_WEIGHT_7           = ( 6 << 14 ),
-    SCEGU_WEIGHT_8           = ( 7 << 14 ),
-    SCEGU_VERTEX_1           = ( 0 << 18 ),
-    SCEGU_VERTEX_2           = ( 1 << 18 ),
-    SCEGU_VERTEX_3           = ( 2 << 18 ),
-    SCEGU_VERTEX_4           = ( 3 << 18 ),
-    SCEGU_VERTEX_5           = ( 4 << 18 ),
-    SCEGU_VERTEX_6           = ( 5 << 18 ),
-    SCEGU_VERTEX_7           = ( 6 << 18 ),
-    SCEGU_VERTEX_8           = ( 7 << 18 ),
-    SCEGU_THROUGH            = ( 1 << 23 ),
-} SCEGU_VERTEX_TYPE <read=SCEGU_VERTEX_TYPE_ToString>;
-
-string SCEGU_VERTEX_TYPE_ToString(SCEGU_VERTEX_TYPE& val)
-{
-    local string str = "";
-    local int i;
-    local u32 curBit;
-    local SCEGU_VERTEX_TYPE curVal;
-    local string curStr = "";
-    local int bits = sizeof(SCEGU_VERTEX_TYPE) * 8;
-    local bool first = true;
-
-    for (i = 0; i < bits; ++i)
-    {
-        curBit = 1 << i;
-        curVal = (SCEGU_VERTEX_TYPE)curBit;
-        curStr = EnumToString(curVal);
-        if (curStr == "") curStr = SPrintf(curStr, "0x%08X", curBit);
-        if ((val & curBit) == curBit)
-        {
-            str += first ? curStr : "| " + curStr; 
-            first = false;
-        }    
-    }
-
-    return str;
-}
-
+#define SCEGU_TEXTURE_NONE       ( 0 <<  0 )
+#define SCEGU_TEXTURE_UBYTE      ( 1 <<  0 )
+#define SCEGU_TEXTURE_USHORT     ( 2 <<  0 )
+#define SCEGU_TEXTURE_FLOAT      ( 3 <<  0 )
+#define SCEGU_COLOR_NONE         ( 0 <<  2 )
+#define SCEGU_COLOR_PF5650       ( 4 <<  2 )
+#define SCEGU_COLOR_PF5551       ( 5 <<  2 )
+#define SCEGU_COLOR_PF4444       ( 6 <<  2 )
+#define SCEGU_COLOR_PF8888       ( 7 <<  2 )
+#define SCEGU_NORMAL_NONE        ( 0 <<  5 )
+#define SCEGU_NORMAL_BYTE        ( 1 <<  5 )
+#define SCEGU_NORMAL_SHORT       ( 2 <<  5 )
+#define SCEGU_NORMAL_FLOAT       ( 3 <<  5 )
+#define SCEGU_VERTEX_NONE        ( 0 <<  7 )
+#define SCEGU_VERTEX_BYTE        ( 1 <<  7 )
+#define SCEGU_VERTEX_SHORT       ( 2 <<  7 )
+#define SCEGU_VERTEX_FLOAT       ( 3 <<  7 )
+#define SCEGU_WEIGHT_NONE        ( 0 <<  9 )
+#define SCEGU_WEIGHT_UBYTE       ( 1 <<  9 )
+#define SCEGU_WEIGHT_USHORT      ( 2 <<  9 )
+#define SCEGU_WEIGHT_FLOAT       ( 3 <<  9 )
+#define SCEGU_INDEX_NONE         ( 0 << 11 )
+#define SCEGU_INDEX_UBYTE        ( 1 << 11 )
+#define SCEGU_INDEX_USHORT       ( 2 << 11 )
+#define SCEGU_WEIGHT_1           ( 0 << 14 )
+#define SCEGU_WEIGHT_2           ( 1 << 14 )
+#define SCEGU_WEIGHT_3           ( 2 << 14 )
+#define SCEGU_WEIGHT_4           ( 3 << 14 )
+#define SCEGU_WEIGHT_5           ( 4 << 14 )
+#define SCEGU_WEIGHT_6           ( 5 << 14 )
+#define SCEGU_WEIGHT_7           ( 6 << 14 )
+#define SCEGU_WEIGHT_8           ( 7 << 14 )
+#define SCEGU_VERTEX_1           ( 0 << 18 )
+#define SCEGU_VERTEX_2           ( 1 << 18 )
+#define SCEGU_VERTEX_3           ( 2 << 18 )
+#define SCEGU_VERTEX_4           ( 3 << 18 )
+#define SCEGU_VERTEX_5           ( 4 << 18 )
+#define SCEGU_VERTEX_6           ( 5 << 18 )
+#define SCEGU_VERTEX_7           ( 6 << 18 )
+#define SCEGU_VERTEX_8           ( 7 << 18 )
+#define SCEGU_THROUGH            ( 1 << 23 )
 
 /* ---------------------------------------------------------------- */
 /*  block args                                                      */
 /* ---------------------------------------------------------------- */
 
 typedef struct {
-	SCEGU_VERTEX_TYPE format ;
+	int format ;
 	int n_verts ;
 	int n_morphs ;
 	int format2 ;
+
+    
 } SceGmoArraysHeader ;
 
 typedef struct {
@@ -380,16 +330,16 @@ typedef struct {
 /* ---------------------------------------------------------------- */
 
 typedef struct {
-	SceGmoRef bone ;
+	int bone ;
 } SceGmoParentBone ;
 
 typedef struct {
-	SceGmoRef visibility ;
+	int visibility ;
 } SceGmoVisibility ;
 
 typedef struct {
 	int n_weights ;
-	float weights[ n_weights ] ;
+	float weights[ 1 ] ;
 } SceGmoMorphWeights ;
 
 typedef struct {
@@ -443,7 +393,7 @@ typedef struct {
 } SceGmoScale3 ;
 
 typedef struct {
-	SceGmoRef part ;
+	int part ;
 } SceGmoDrawPart ;
 
 /* ---------------------------------------------------------------- */
@@ -451,7 +401,7 @@ typedef struct {
 /* ---------------------------------------------------------------- */
 
 typedef struct {
-	SceGmoRef material ;
+	int material ;
 } SceGmoSetMaterial ;
 
 typedef struct {
@@ -464,43 +414,41 @@ typedef struct {
 	float div_v ;
 } SceGmoSubdivision ;
 
-typedef struct (){
-	SceGmoRef arrays; // reference to SCE_GMO_ARRAYS
-	SCEGMO_PRIM mode; // maps to SCEGU_PRIM_*
-	int n_verts ; // number of vertices
-	int n_prims ; // number of primitives (tris, tristrips, etc)
-	unsigned short indices[ 1 ]; // if SCEGMO_PRIM_SEQUENTIAL then vertex base index else the actual index buffer
-
-    Printf( SCEGMO_PRIM_ToString( mode ) + "\n" );
+typedef struct {
+	int arrays ;
+	int mode ;
+	int n_verts ;
+	int n_prims ;
+	unsigned short indices[ 1 ] ;
 } SceGmoDrawArrays ;
 
 typedef struct {
-	SceGmoRef arrays ;
-	SCEGMO_PRIM mode ;
+	int arrays ;
+	int mode ;
 	int n_verts ;
 	int n_prims ;
 	unsigned short indices[ 1 ] ;
 } SceGmoDrawParticle ;
 
 typedef struct {
-	SceGmoRef arrays ;
-	SCEGMO_PRIM mode ;
+	int arrays ;
+	int mode ;
 	int width ;
 	int height ;
 	unsigned short indices[ 1 ] ;
 } SceGmoDrawBSpline ;
 
 typedef struct {
-	SceGmoRef arrays ;
-	SCEGMO_PRIM mode ;
+	int arrays ;
+	int mode ;
 	int width ;
 	int height ;
 	unsigned short indices[ 1 ] ;
 } SceGmoDrawRectMesh ;
 
 typedef struct {
-	SceGmoRef arrays ;
-	SCEGMO_PRIM mode ;
+	int arrays ;
+	int mode ;
 	int width ;
 	int height ;
 	unsigned short indices[ 1 ] ;
@@ -549,7 +497,7 @@ typedef struct {
 /* ---------------------------------------------------------------- */
 
 typedef struct {
-	SceGmoRef texture ;
+	int texture ;
 } SceGmoSetTexture ;
 
 typedef struct {
@@ -656,112 +604,6 @@ typedef struct SceGmoHeader {
     Assert( style == SCEGMO_FORMAT_STYLE_PSP );
 } SceGmoHeader;
 
-
-typedef struct{
-    SetRandomBackColor();
-    unsigned short u;
-    unsigned short v;
-    short nx;
-    short ny;
-    short nz;
-    short vx <format=decimal>;
-    short vy;
-    short vz;
-
-
-} GmoArrayData <optimize=false>;
-
-typedef struct
-{
-    u16 r : 5;
-    u16 g : 6;
-    u16 b : 5;
-    //u16 a : 0;
-} SceGuColorPF5650;
-
-typedef struct
-{
-    u16 r : 5;
-    u16 g : 5;
-    u16 b : 5;
-    u16 a : 1;
-} SceGuColorPF5551;
-
-typedef struct
-{
-    u16 r : 4;
-    u16 g : 4;
-    u16 b : 4;
-    u16 a : 4;
-} SceGuColorPF4444;
-
-typedef struct
-{
-    u8 r;
-    u8 g;
-    u8 b;
-    u8 a;
-} SceGuColorPF8888;
-
-typedef struct
-{
-    s8 x, y;
-} SceGuVec2b;
-
-typedef struct
-{
-    u8 x, y;
-} SceGuVec2ub;
-
-typedef struct
-{
-    s16 x, y;
-} SceGuVec2s;
-
-typedef struct
-{
-    u16 x, y;
-} SceGuVec2us;
-
-typedef struct
-{
-    f32 x, y;
-} SceGuVec2f;
-
-typedef struct
-{
-    s8 x, y, z;
-} SceGuVec3b;
-
-typedef struct
-{
-    s16 x, y, z;
-} SceGuVec3s;
-
-typedef struct
-{
-    f32 x, y, z;
-} SceGuVec3f;
-
-typedef struct(SCEGU_VERTEX_TYPE type)
-{
-    SetRandomBackColor();
-    if ((type & SCEGU_TEXTURE_UBYTE) == SCEGU_TEXTURE_UBYTE)    SceGuVec2ub texture;   
-    if ((type & SCEGU_TEXTURE_USHORT) == SCEGU_TEXTURE_USHORT)  SceGuVec2us texture;
-    if ((type & SCEGU_TEXTURE_FLOAT) == SCEGU_TEXTURE_FLOAT)    SceGuVec2f texture;
-    if ((type & SCEGU_COLOR_PF5650) == SCEGU_COLOR_PF5650)      SceGuColorPF5650 color;
-    if ((type & SCEGU_COLOR_PF5551) == SCEGU_COLOR_PF5551)      SceGuColorPF5551 color;
-    if ((type & SCEGU_COLOR_PF4444) == SCEGU_COLOR_PF4444)      SceGuColorPF4444 color;
-    if ((type & SCEGU_COLOR_PF8888) == SCEGU_COLOR_PF8888)      SceGuColorPF8888 color;
-    if ((type & SCEGU_NORMAL_BYTE) == SCEGU_NORMAL_BYTE)        SceGuVec3b normal;
-    if ((type & SCEGU_NORMAL_SHORT) == SCEGU_NORMAL_SHORT)      SceGuVec3s normal;
-    if ((type & SCEGU_NORMAL_FLOAT) == SCEGU_NORMAL_FLOAT)      SceGuVec3f normal;
-    if ((type & SCEGU_VERTEX_BYTE) == SCEGU_VERTEX_BYTE)        SceGuVec3b vertex;
-    if ((type & SCEGU_VERTEX_SHORT) == SCEGU_VERTEX_SHORT)      SceGuVec3s vertex;
-    if ((type & SCEGU_VERTEX_FLOAT) == SCEGU_VERTEX_FLOAT)      SceGuVec3f vertex; 
-    if ((type & SCEGU_WEIGHT_UBYTE) == SCEGU_WEIGHT_UBYTE) u8 temp[6];
-} SceGuVertex <optimize=false>;
-
 typedef struct {
     SetRandomBackColor();
     local u32 p = FTell();
@@ -778,7 +620,7 @@ typedef struct {
     }
     else
     {
-        local string name = "<no name>";
+        local string name = "";
     }
 
     switch ( ( type & ~SCEGMO_HALF_CHUNK ) )
@@ -799,46 +641,16 @@ typedef struct {
         // SCEGMO_MESH
         case SCEGMO_SET_MATERIAL: SceGmoSetMaterial Args; break;
         case SCEGMO_DRAW_ARRAYS: SceGmoDrawArrays Args; break;
-        case SCEGMO_ARRAYS: 
-        {    
-            FSeek( Chunk.p + Chunk.args_offs );
-            SceGmoArraysHeader Args; 
-            FSeek( Chunk.p + Chunk.data_offs );
-
-            local u32 start = FTell();
-            local u32 end = start + (Chunk.child_offs - Chunk.data_offs);
-            local int stride = Args.format >> 24;
-            stride += ( ( Args.format >> 18 ) & 7 ) * stride ;
-            //FSeek(start);
-            while(FTell() < end){
-                SceGuVertex Vertex(Args.format);                      
-                start += stride;                
-                FSeek(start);    
-            }
-        }
-        break;
-        case SCEGMO_BLEND_SUBSET: SceGmoBlendSubset Args; break;
+        case SCEGMO_ARRAYS: SceGmoArraysHeader Args; break;
 
         case SCEGMO_ANIMATE: SceGmoAnimate Args; break;
     }
 } SceGmoChunk <optimize=false, read=SceGmoChunkToString>;
 
-
 string SceGmoChunkToString(SceGmoChunk& value)
 {
     SceGmoChunkType temp = value.type & ~SCEGMO_HALF_CHUNK;
     return EnumToString( temp ) + " (" + value.name + ")"; 
-}
-
-u32 SceGmoNext(SceGmoChunk& Chunk){
-    return Chunk.p + Chunk.next_offs;
-}
-
-u32 SceGmoChild(SceGmoChunk& Chunk) {
-    if((SCEGMO_HALF_CHUNK) & Chunk.type){
-        return SceGmoNext(Chunk);
-    }
-    return Chunk.p + Chunk.child_offs;
 }
 
 struct
@@ -853,13 +665,6 @@ struct
             continue;
         }
 
-        FSeek(SceGmoChild(Chunk));
-
-        while(SceGmoChild(Chunk) < SceGmoNext(Chunk) && !FEof()){
-
-            SceGmoChunk child;
-            FSeek(SceGmoChild(Child));
-        }
-            
+        FSeek( Chunk.p + Chunk.next_offs );
     }
 } File;

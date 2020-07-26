@@ -52,9 +52,9 @@ typedef DWORD WAVEBANKOFFSET;
 //
 
 #define WAVEBANKMINIFORMAT_TAG_PCM      0x0     // PCM data
-#define WAVEBANKMINIFORMAT_TAG_XMA      0x1     // XMA data
+#define WAVEBANKMINIFORMAT_TAG_XMA      0x1     // XMA data (XMA2)
 #define WAVEBANKMINIFORMAT_TAG_ADPCM    0x2     // ADPCM data
-#define WAVEBANKMINIFORMAT_TAG_WMA      0x3     // WMA data
+#define WAVEBANKMINIFORMAT_TAG_WMA      0x3     // WMA data (XWMA)
 
 #define WAVEBANKMINIFORMAT_BITDEPTH_8   0x0     // 8-bit data (PCM only)
 #define WAVEBANKMINIFORMAT_BITDEPTH_16  0x1     // 16-bit data (PCM only)
@@ -148,6 +148,7 @@ typedef union WAVEBANKMINIWAVEFORMAT
 //
 // Entry meta-data
 //
+local int temp = 0;
 
 typedef struct WAVEBANKENTRY( DWORD entryWaveDataOffset )
 {
@@ -210,6 +211,7 @@ typedef struct WAVEBANKDATA
 
 struct
 {
+    SetRandomBackColor();
     WAVEBANKHEADER Header;
 
     FSeek( Header.Segments[WAVEBANK_SEGIDX_BANKDATA].dwOffset );
@@ -217,8 +219,10 @@ struct
 
     FSeek( Header.Segments[WAVEBANK_SEGIDX_ENTRYMETADATA].dwOffset );
     local DWORD entryWaveDataOffset = Header.Segments[WAVEBANK_SEGIDX_ENTRYWAVEDATA].dwOffset;
-    WAVEBANKENTRY Entries( entryWaveDataOffset )[ Data.dwEntryCount ] <optimize=false>;
+    struct { WAVEBANKENTRY Entries( entryWaveDataOffset )[ Data.dwEntryCount ] <optimize=false>; } Entries;
 
-    Assert( Header.Segments[WAVEBANK_SEGIDX_SEEKTABLES].dwLength == 0 );
+    FSeek( Header.Segments[WAVEBANK_SEGIDX_SEEKTABLES].dwOffset );
+    u32 SeekTable[ Header.Segments[WAVEBANK_SEGIDX_SEEKTABLES].dwLength / 4 ];
+
     Assert( Header.Segments[WAVEBANK_SEGIDX_ENTRYNAMES].dwLength == 0 );
 } WAVEBANK;
