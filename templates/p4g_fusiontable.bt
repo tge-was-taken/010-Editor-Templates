@@ -1,0 +1,201 @@
+
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: P4G_FusionTable.bt
+//   Authors: Scarltz, Blacklight
+//   Version: 1.0
+//   Purpose: Parse Persona 4 Golden fusion table files.
+//  Category: Persona 4 Golden
+// File Mask: *.ftd
+//  ID Bytes:
+//   History:
+//   1.0 - Initial release
+//------------------------------------------------
+
+
+//---------------------------------------------
+// Type definition
+//---------------------------------------------
+typedef ubyte u8;
+typedef short s16;
+typedef ushort u16;
+typedef uint u32;
+typedef float f32;
+
+enum<byte>bool
+{
+    False = 0,
+    True = 1,
+};
+
+typedef struct
+{
+    u8 bit0 : 1;
+    u8 bit1 : 1;
+    u8 bit2 : 1;
+    u8 bit3 : 1;
+    u8 bit4 : 1;
+    u8 bit5 : 1;
+    u8 bit6 : 1;
+    u8 bit7 : 1;
+} b8;
+
+typedef struct
+{
+    u8 bit0 : 1;
+    u8 bit1 : 1;
+    u8 bit2 : 1;
+    u8 bit3 : 1;
+    u8 bit4 : 1;
+    u8 bit5 : 1;
+    u8 bit6 : 1;
+    u8 bit7 : 1;
+    u8 bit8 : 1;
+    u8 bit9 : 1;
+    u8 bit10 : 1;
+    u8 bit11 : 1;
+    u8 bit12 : 1;
+    u8 bit13 : 1;
+    u8 bit14 : 1;
+    u8 bit15 : 1;
+} b16;
+
+typedef struct
+{
+    u8 bit0 : 1;
+    u8 bit1 : 1;
+    u8 bit2 : 1;
+    u8 bit3 : 1;
+    u8 bit4 : 1;
+    u8 bit5 : 1;
+    u8 bit6 : 1;
+    u8 bit7 : 1;
+    u8 bit8 : 1;
+    u8 bit9 : 1;
+    u8 bit10 : 1;
+    u8 bit11 : 1;
+    u8 bit12 : 1;
+    u8 bit13 : 1;
+    u8 bit14 : 1;
+    u8 bit15 : 1;
+    u8 bit16 : 1;
+    u8 bit17 : 1;
+    u8 bit18 : 1;
+    u8 bit19 : 1;
+    u8 bit20 : 1;
+    u8 bit21 : 1;
+    u8 bit22 : 1;
+    u8 bit23 : 1;
+    u8 bit24 : 1;
+    u8 bit25 : 1;
+    u8 bit26 : 1;
+    u8 bit27 : 1;
+    u8 bit28 : 1;
+    u8 bit29 : 1;
+    u8 bit30 : 1;
+    u8 bit31 : 1;
+} b32;
+
+
+//---------------------------------------------
+// Includes
+//---------------------------------------------
+#include "p4g_enums.bt"
+#include "p4g_structs.bt"
+//---------------------------------------------
+// Helper functions
+//---------------------------------------------
+local uint __RandomSeed = 0xDEADBABE;
+local uint __RandomBit = 0;
+local uint __RandomCount = 0;
+
+uint MyRandom( uint to )
+{
+    ++__RandomCount;
+    __RandomBit  = ( (__RandomSeed >> 0 ) ^ ( __RandomSeed >> 2 ) ^ ( __RandomSeed >> 3 ) ^ ( __RandomSeed >> 5 ) ) & 1;
+    __RandomSeed = ( ( ( ( __RandomBit << 15 ) | ( __RandomSeed >> 1 ) ) + ( 0xBABE / __RandomCount ) ) % to );
+
+    while( __RandomSeed < 0 )
+        __RandomSeed += to;
+
+    return __RandomSeed;
+}
+
+void DetectEndianness()
+{
+    // Test endianness
+    LittleEndian();
+    local uint sizeTest = ReadUInt();
+    if ( sizeTest & 0xFF000000 )
+        BigEndian();
+}
+
+u32 Align( u32 value, u32 alignment )
+{
+  return (value + (alignment - 1)) & ~(alignment - 1);
+}
+
+void FAlign( u32 alignment )
+{
+  FSeek( Align( FTell(), alignment ) );
+}
+
+//---------------------------------------------
+// Define structures
+//---------------------------------------------
+
+typedef struct {
+    PersonasID PersonaID <name = "Persona ID">;
+    u8 Unknown;
+    u8 Unknown;
+    u8 Unknown;
+    u8 Unknown;
+    u8 Unknown;
+    u8 Unknown;
+    u8 Unknown;
+    u8 Unknown;
+    u8 Unknown;
+    u8 Unknown;
+    PersonasID PersonaMatID1 <name = "Persona Material ID 1">;
+    PersonasID PersonaMatID2 <name = "Persona Material ID 2">;
+    PersonasID PersonaMatID3 <name = "Persona Material ID 3">;
+    PersonasID PersonaMatID4 <name = "Persona Material ID 4">;
+    PersonasID PersonaMatID5 <name = "Persona Material ID 5">;
+    PersonasID PersonaMatID6 <name = "Persona Material ID 6">;
+    PersonasID PersonaMatID7 <name = "Persona Material ID 7">;
+    PersonasID PersonaMatID8 <name = "Persona Material ID 8">;
+    PersonasID PersonaMatID9 <name = "Persona Material ID 9">;
+    PersonasID PersonaMatID10 <name = "Persona Material ID 10">;
+    PersonasID PersonaMatID11 <name = "Persona Material ID 11">;
+    PersonasID PersonaMatID12 <name = "Persona Material ID 12">;
+    u8 Unknown;
+    u8 Unknown;
+    u8 Unknown;
+    u8 Unknown;
+    u8 Unknown;
+    u8 Unknown;
+    u8 Unknown;
+    u8 Unknown;
+} FusionTable <name = "Fusion Table">;
+
+/*typedef struct {
+    u8 Unknown;
+} FusionTableNormal <name = "Fusion Table Normal">;*/
+
+//---------------------------------------------
+// Parse file structure
+//---------------------------------------------
+
+LittleEndian();
+u16 FileSize <name = "Size">;
+FSeek(4);
+u8 TotalTable <name = "Total of Fusion Table">;
+FSeek(16);
+
+if ( Stricmp( GetFileName(), "fclCombineTable_Normal" ) == 0 ){
+    //FusionTableNormal FTableNormal[TotalTable];
+}
+else {
+    FusionTable FTable[TotalTable];
+}

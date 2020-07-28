@@ -3,8 +3,8 @@
 //--- 010 Editor v8.0 Binary Template
 //
 //      File: AtlusTable_P4G.bt
-//   Authors: TGE, Lillian Goulston, Scarltz, Lipsum, Kit
-//   Version: 1.1
+//   Authors: TGE, Lillian Goulston, Scarltz, Lipsum, Kit, Blacklight, DniweTamp
+//   Version: 1.2
 //   Purpose: Parse Persona 4 Golden Table files.
 //  Category: Persona 4 Golden
 // File Mask: *.tbl
@@ -14,6 +14,8 @@
 //   1.1 - Added Skill Area Type
 //       - Added Fusion Table (Still a bit unknown)
 //       - Fixes and clean-up
+//   1.2 - Added Persona Flags
+//       - Added proper enum for skills, persona names, and enemies
 //------------------------------------------------
 
 
@@ -152,7 +154,18 @@ void FAlign( u32 alignment )
 
 typedef struct
 {
-    u16 Type;
+    struct
+        {
+            bool Unknown : 1;
+            bool SpecialFusion : 1;
+            bool Unknown : 1;
+            bool RESERVEPersona : 1;
+            bool PartyPersona : 1;
+            bool NotRegisterable : 1;
+            bool UnlockOnMaxSLink : 1;
+            bool Fusable : 1;
+        } PersonaFlags <name = "Persona Flags">;
+    byte : 1;
     ArcanaID Arcana <name = "Arcana">;
     u8 Level <name = "Base Level">;
     PersonaStats Stats <name = "Base Stats">;
@@ -172,7 +185,7 @@ typedef struct
     {
         u8 PendingLevels <name = "Pending Levels">;
         bool Learnable <name = "Learnable?">;
-        u16 Skill  <name = "Skill">;
+        BattleSkill Skill  <name = "Skill">;
     } PersonaSkill[ 16 ] <name = "Skills">;
     
 } TPersonaSkillsAndStatGrowths <name = "Skills & Stat Growths">;
@@ -206,9 +219,9 @@ typedef struct
 
 typedef struct
 {
-    u16 AsFusionTarget;
-    u16 AsFusionMaterial;
-} TPersonaFusion <name = "Persona Fusion">;
+    u16 FusionTargetSet;
+    u16 FusionMaterialSet;
+} TPersonaFusion <name = "Persona Fusion Set">;
 
 //UNIT.TBL
 
