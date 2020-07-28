@@ -3,7 +3,7 @@
 //--- 010 Editor v8.0 Binary Template
 //
 //      File: AtlusTable_P4G.bt
-//   Authors: TGE, Lillian Goulston, Scarltz, Lipsum, Kit, Blacklight, DniweTamp
+//   Authors: TGE, Lillian Goulston, Scarltz, Lipsum, Kit, Blacklight, DniweTamp, Sierra
 //   Version: 1.2
 //   Purpose: Parse Persona 4 Golden Table files.
 //  Category: Persona 4 Golden
@@ -16,6 +16,7 @@
 //       - Fixes and clean-up
 //   1.2 - Added Persona Flags
 //       - Added proper enum for skills, persona names, and enemies
+//       - Added partial ENCOUNT support
 //------------------------------------------------
 
 
@@ -150,6 +151,19 @@ void FAlign( u32 alignment )
 // Define structures
 //---------------------------------------------
 
+// ENCOUNT.TBL
+
+typedef struct
+{
+    b32 Flags <name = "Flags">;
+    u16 Field04;
+    u16 Field06;
+    EnemiesID Units[ 5 ] <name = "Battle Units">;
+    u16 FieldId <name = "Field ID">;
+    u16 RoomId <name = "Room ID">;
+    MusicID MusicId <name = "Music">;
+} TEncounter <name = "Enemy Encounters">;
+
 //PERSONA.TBL
 
 typedef struct
@@ -232,16 +246,28 @@ typedef struct
     u8 Level <name = "Level">;
     u16 Hp <name = "HP">;
     u16 Sp <name = "SP">;
-    PersonaStats Stats;
-    byte : 1;
-    u16 SkillID[ 8 ] <name = "Battle Skills">;
+    u8 Strength <name = "Strength">;
+    u8 Magic <name = "Magic">;
+    u8 Endurance <name = "Endurance">;
+    u8 Agility <name = "Agility">;
+    u8 Luck <name = "Luck">;
+	u8 Unknown6;
+    BattleSkill SkillIds[ 8 ] <name = "Battle Skills">;
     u16 ExpReward <name = "EXP Reward">;
     u16 MoneyReward <name = "Money Reward">;
-    u16 Unknown4;
-    u16 Unknown5;
-    u8 Unknown6[ 18 ];
-    b16 Unknown7;
-    u16 AttackDamage <name = "Attack Damage">;
+    Items Item1 <name = "Item 1 Drop">;
+	u16 Unknown7;
+	Items Item2 <name = "Item 2 Drop">;
+	u16 Unknown8;
+	u16 Unknown9;
+	u16 Unknown10;
+	u16 Unknown11;
+	u16 Unknown12;
+	u16 Unknown13;
+	u16 Unknown14;
+	u16 Unknown15;
+	u16 Unknown16;
+	u16 Unknown17;
 } TEnemyUnitStats <name = "Enemy Unit Stats">;
 
 // SKILL.TBL
@@ -397,6 +423,7 @@ typedef struct {
 enum TableSegmentType
 {
     TableSegmentType_Unknown,
+    TableSegmentType_Encounter,
     TableSegmentType_Persona_Stats,
     TableSegmentType_Persona_SkillsAndStatGrowths,
     TableSegmentType_Persona_PartyPersonas,
@@ -421,6 +448,10 @@ typedef struct( TableSegmentType _type )
 
     switch ( type )
     {
+        case TableSegmentType_Encounter:
+            TEncounter TEncounters[ Size / sizeof( TEncounter ) ];
+            break;
+
         case TableSegmentType_Persona_Stats:
             TPersonaStats Stats[ Size / sizeof( TPersonaStats ) ];
             break;
@@ -501,7 +532,15 @@ typedef struct( string tableName, u16 endOffset )
     while ( FTell() < endOffset )
     {
         segmentType = TableSegmentType_Unknown;
-        if ( !Stricmp( tableName, "persona" ) )
+
+        if ( !Stricmp( tableName, "encount" ) )
+        {
+            switch ( segmentIndex )
+            {
+                case 0: segmentType = TableSegmentType_Encounter; break;
+            }
+        }
+        else if ( !Stricmp( tableName, "persona" ) )
         {
             switch ( segmentIndex )
             {
