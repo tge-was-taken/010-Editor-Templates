@@ -4194,6 +4194,7 @@ enum<ubyte>Skill_ExtraEffect
     ThrowAwayMoney = 6,
     AlwaysKills = 13, // used for 9999 damage Megidolaon (603)
     BigBangBurgerDocumentVisual = 15, // used by Shadow Okumura's Sacrifice Order
+    BatonPassDamageUp = 17, 
     TargetedChanceUp = 19, // increases chance of being targeted by enemies
     TargetedChanceWayUp = 20, // greatly increases chance of being targeted by enemies
     IfAilmentExistsHealAndCureInstead = 21, // used for Big Bang Challenge; needs testing with other ailments
