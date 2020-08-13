@@ -352,20 +352,20 @@ typedef struct
             bool AttackDown1 : 1 <name = "Attack Down 1">;
             bool AttackUp2 : 1 <name = "Attack Up 2">;
             bool AttackDown2 : 1 <name = "Attack Down 2">;
-            bool HitEvasionUp : 1 <name = "Hit/Evasion Up">;
-            bool HitEvasionDown : 1 <name = "Hit/Evasion Down">;
+            bool HitEvasionUp : 1 <name = "Hit/Evasion Up 1">;
+            bool HitEvasionDown : 1 <name = "Hit/Evasion Down 1">;
             bool DefenseUp : 1 <name = "Defense Up">;
             bool DefenseDown : 1 <name = "Defense Down">;
         } BuffDebuff1 <name = "Buffs and Debuffs 1">;
 
    struct
         {
-            bool RemoveDebuffs : 1 <name = "Remove Debuffs", comment = "Removes stat-lowering debuffs">;
-            bool RemoveBuffs : 1 <name = "Remove Buffs", comment = "Removes stat-raising buffs">;
+            bool HitEvasionUp2 : 1 <name = "Hit/Evasion Up 2">;
+            bool HitEvasionDown2 : 1 <name = "Hit/Evasion Down 2">;
             bool PowerCharge : 1 <name = "Power Charge", comment = "Next Strength-based attack deals 2.5x damage">;
             bool MindCharge : 1 <name = "Mind Charge", comment = "Next Magic-based attack deals 2.5x damage">;
-            bool MagicShield : 1 <name = "Magic Shield", comment = "Reflects the next magic attack received">;
-            bool PhysicalShield : 1 <name = "Physical Shield", comment = "Reflects the next physical attack received">;
+            bool Dekaja : 1 <name = "Dekaja", comment = "Removes stat-raising buffs">;
+            bool Dekunda : 1 <name = "Dekunda", comment = "Removes stat-lowering debuffs">;
             bool CritUp : 1 <name = "Critical Chance Up">;
             bool CritWayUp : 1 <name = "Critical Chance Way Up">;
         } BuffDebuff2 <name = "Buffs and Debuffs 2">;

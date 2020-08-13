@@ -120,7 +120,7 @@ typedef struct(u32 version)
         char Str[Length];  
     
         if ( version >= 0x01105100 )
-            SeekCurrent( 1 ); // padding byte
+            FSeek( FTell() + 1 ); // padding byte
         
         if ( version > 0x1080000 )
         {
