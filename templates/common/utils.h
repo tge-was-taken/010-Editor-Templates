@@ -17,7 +17,7 @@ void PrintValueUIntEx( string name, u64 value, bool newline )
         PrintNl();
 }
 
-void PrintValueFloat( string name, u64 value )
+void PrintValueFloat( string name, f32 value )
 {
     PrintValueFloatEx( name, value, true );
 }

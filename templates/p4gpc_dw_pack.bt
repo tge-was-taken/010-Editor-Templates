@@ -16,7 +16,8 @@ typedef struct( u32 dataStartOffset )
 {
     SetRandomBackColor();
     u32 Field00;
-    u32 Id;
+    u16 Index;
+    u16 PackIndex;
     char Path[260];
     u32 Field104;
     u32 CompressedSize;
@@ -44,7 +45,7 @@ typedef struct
     u64 Signature; // DW_PACK\0
     u32 Field08;
     u32 FileCount;
-    u32 Field10;  
+    u32 Index;  
     local u32 dataStartOffset = 20 + (FileCount * 0x120);
     struct { DwPackFileEntry Files(dataStartOffset)[FileCount]; } Files;
 } DwPack <optimize=false>;

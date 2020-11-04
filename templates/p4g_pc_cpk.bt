@@ -13,10 +13,26 @@
 
 #include "common/include.h"
 
+typedef struct
+{
+    u32 Field00;
+    u32 CompressedSize;
+    u32 UncompressedSize;
+    u32 Flags;
+} TCompressedCpkHeader;
+
+typedef struct
+{
+    u32 Magic;
+    u32 ChunkCount;
+    u32 ChunkSize;
+    u32 HeaderSize;
+} TCompressedDataHeader;
+
 typedef struct( u32 dataStartOffset )
 {
     SetRandomBackColor();
-    u32 Size;
+    u32 UncompressedSize;
     u32 CompressedSize;
     u32 DataOffset;
     
@@ -24,20 +40,63 @@ typedef struct( u32 dataStartOffset )
     FSeek( dataStartOffset + DataOffset );
     u8 Data[ CompressedSize ];
     FPop();
-} TCpkEntry <optimize=false>;
+} TCompressedChunk <optimize=false>;
 
 typedef struct 
 {
     SetRandomBackColor();
-    u32 Field00;
-    u32 Size; // - 16
-    u32 Field08; // Uncompressed size?
-    u32 Field0C; // 1, flag?
-    u32 Field10; // 0x1234
-    u32 EntryCount;
-    u32 Field18;
-    u32 DataOffset; // offset to first file
-    TCpkEntry Entries( DataOffset + 0x10 )[EntryCount];
+    TCompressedCpkHeader Header;
+    TCompressedDataHeader DataHeader;
+    TCompressedChunk Chunks( sizeof(TCompressedCpkHeader) + DataHeader.HeaderSize )[DataHeader.ChunkCount];
+} TCompressedCpkFile;
+
+/*
+typedef struct( u32 subdivision )
+{
+    SetRandomBackColor();
+    s32 Field00;
+    s32 Field04;
+
+    if ( subdivision < 16 )
+    {
+        struct TCpkTableEntry Left( subdivision + 1 );
+        struct TCpkTableEntry Right( subdivision + 1 );
+    }
+} TCpkTableEntry <optimize=false>;
+*/
+
+typedef struct
+{
+    SetRandomBackColor();
+    s32 Field00;
+    s32 Field04;
+} TCpkTableEntry;
+
+typedef struct
+{
+    SetRandomBackColor();
+    char Path[260];
+    u16 FileIndex;
+    u16 PacIndex;
+} TCpkFileEntry <read=TCpkFileEntryToString, optimize=false>;
+
+string TCpkFileEntryToString(TCpkFileEntry& val)
+{
+    string res = "";
+    SPrintf(res, "%s (pac: %d, file: %d)", val.Path, val.PacIndex, val.FileIndex);
+    return res;
+}
+
+typedef struct
+{
+    SetRandomBackColor();
+    char Magic[8];
+    u32 Field08;
+    u32 FileCount;
+    TCpkTableEntry Table[65536];
+    local u32 realFileCount = (FileSize() - FTell()) / 0x108; 
+    TCpkFileEntry Files[realFileCount];
 } TCpkFile;
 
 TCpkFile File;
+//TCompressedCpkFile File;
