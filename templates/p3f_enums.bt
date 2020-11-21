@@ -128,8 +128,8 @@ enum<ubyte>Skill_BuffDebuff
 {
     AttackUp = 5,
     AttackDown = 10,
-    HitUp = 16,
-    HitDown = 32,
+    SpeedUp = 16,
+    SpeedDown = 32,
     DefenceUp = 64,
     DefenceDown = 128,
     HeatRiser = 85,
@@ -139,8 +139,6 @@ enum<ubyte>Skill_BuffDebuff
 
 enum<ubyte>Skill_SpecialEffects1
 {
-    EvasionUp = 1,
-    EvasionDown = 2,
     PhysCharge = 4,
     MagicCharge = 8,
     RemoveBuffs = 16,
