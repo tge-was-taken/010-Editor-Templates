@@ -1,0 +1,41 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h"
+
+LittleEndian();
+
+typedef struct
+{
+    local u32 firstOffset = ReadUInt( 0 );
+    local u32 offsetCount = firstOffset / 4;
+
+    u32 Offsets[offsetCount];
+    local u32 i;
+    for ( i = 0; i < offsetCount; ++i )
+    {
+        if ( Offsets[i] == 0 || Offsets[i] >= FileSize() ) continue;
+        FSeek( Offsets[i] );
+        FPush();
+        struct TEOStruct1 Struct1;
+        FPop();
+    }
+} TE0;
+
+typedef struct
+{
+    s16 Field00[26];
+    
+} TEOStruct1;
+
+TE0 File;

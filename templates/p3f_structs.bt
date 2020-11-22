@@ -1,0 +1,49 @@
+
+typedef struct
+{
+    u8 Strength <name = "Strength">;
+    u8 Magic <name = "Magic">;
+    u8 Endurance <name = "Endurance">;
+    u8 Agility <name = "Agility">;
+    u8 Luck <name = "Luck">;
+} PersonaStats;
+
+typedef struct
+{
+    AffinityStatus SlashAffinity <name = "Slash">;
+    AffinityStatus StrikeAffinity <name = "Strike">;
+    AffinityStatus PierceAffinity <name = "Pierce">;
+    AffinityStatus FireAffinity <name = "Fire">;
+    AffinityStatus IceAffinity <name = "Ice">;
+    AffinityStatus ElectricAffinity <name = "Electric">;
+    AffinityStatus WindAffinity <name = "Wind">;
+    AffinityStatus AlmightyAffinity <name = "Almighty">;
+    AffinityStatus LightAffinity <name = "Light">;
+    AffinityStatus DarkAffinity <name = "Dark">;
+    AffinityStatus EnervationAffinity <name = "Enervation">;
+    AffinityStatus PoisonAffinity <name = "Poison">;
+    AffinityStatus SpecialAffinity <name = "Dizzy">;
+    AffinityStatus PanicAffinity <name = "Panic">;
+    AffinityStatus FearAffinity <name = "Fear">;
+    AffinityStatus SilenceAffinity <name = "Silence">;
+} ElementalAffinities <name = "Elemental Affinities">;
+
+typedef struct
+{
+    AffinityStatus SlashAffinity <name = "Slash">;
+    AffinityStatus StrikeAffinity <name = "Strike">;
+    AffinityStatus PierceAffinity <name = "Pierce">;
+    AffinityStatus FireAffinity <name = "Fire">;
+    AffinityStatus IceAffinity <name = "Ice">;
+    AffinityStatus ElectricAffinity <name = "Electric">;
+    AffinityStatus WindAffinity <name = "Wind">;
+    AffinityStatus AlmightyAffinity <name = "Almighty">;
+    AffinityStatus LightAffinity <name = "Light">;
+    AffinityStatus DarkAffinity <name = "Dark">;
+    AffinityStatus EnervationAffinity <name = "Enervation">;
+    AffinityStatus PoisonAffinity <name = "Poison">;
+    AffinityStatus SpecialAffinity <name = "Dizzy">;
+    AffinityStatus PanicAffinity <name = "Panic">;
+    AffinityStatus FearAffinity <name = "Fear">;
+    AffinityStatus SilenceAffinity <name = "Silence">;
+} ElementalAffinitiesF <name = "Elemental Affinities">;

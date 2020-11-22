@@ -1,0 +1,344 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: xact_xsb.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse XACT XSB files
+//  Category: Audio
+// File Mask: *.xsb
+//  ID Bytes: 53 44 42 4B
+//   History: 
+//------------------------------------------------
+#include "common/include.h"
+
+// references:
+// https://wiki.multimedia.cx/index.php/XACT
+
+
+typedef struct
+{
+    SetRandomBackColor(); 
+    /* 00 */ u32 Magic;
+    /* 04 */ u16 ToolVersion;
+    /* 06 */ u16 FormatVersion;
+    /* 08 */ u16 CRC; // FCS16 checksum of all following data
+    /* 0A */ FILETIME LastModified;
+    /* 12 */ u8 Platform; // 1=PC, 3=X360
+    /* 13 */ u16 SimpleCueCount;
+    /* 15 */ u16 ComplexCueCount;
+    /* 17 */ u16 Field17; // Unknown count?
+    /* 19 */ u16 TotalCueCount;
+    /* 1B */ u8 WaveBankCount;
+    /* 1C */ u16 SoundCount;
+    /* 1E */ u16 CueNameTableLength;
+    /* 20 */ u16 Field20;
+    /* 22 */ u32 SimpleCuesOffset;
+    /* 26 */ u32 ComplexCuesOffset;
+    /* 2A */ u32 CueNamesOffset;
+    /* 2E */ u32 Offset2E; 
+    /* 32 */ u32 VariationTablesOffset;
+    /* 36 */ u32 Offset36;
+    /* 3A */ u32 WaveBankNameTableOffset;
+    /* 3E */ u32 CueNameHashTableOffset;
+    /* 42 */ u32 CueNameHashValuesOffset;
+    /* 46 */ u32 SoundsOffset;
+    /* 4A */ char Name[64];
+} SoundBankHeader;
+
+typedef struct
+{
+    SetRandomBackColor(); 
+    u8 Flags;
+    u32 SoundOffset;
+    
+    FPush();
+    FSeek( SoundOffset );
+    struct SoundEntry Sound;
+    FPop();
+} SimpleCueEntry <optimize=false>;
+
+typedef struct
+{
+    SetRandomBackColor(); 
+    u8 Flags;
+    if (((Flags >> 2) & 1) != 0)
+    {
+        u32 SoundOffset;
+        u32 Field08;
+        FPush();
+        FSeek( SoundOffset );
+        struct SoundEntry Sound;
+        FPop();
+    }
+    else
+    {
+        u32 VariationTableOffset;
+        u32 TransitionTableOffset;
+        u8 InstanceLimit;
+        u16 FadeInSec;
+        u16 FadeOutSec;
+        u8 InstanceFlags;
+
+        FPush();
+        FSeek( VariationTableOffset );
+        struct VariationTable VariationTableData;
+        FPop();
+    }
+} ComplexCueEntry <optimize=false>;
+
+typedef struct
+{
+    SetRandomBackColor(); 
+    string Name;
+} CueName <optimize=false>;
+
+typedef struct
+{
+    SetRandomBackColor(); 
+    u16 TrackIndex;
+    u8 WaveBankIndex;
+    u8 WeightMin;
+    u8 WeightMax;
+} WaveVariation;
+
+typedef struct
+{
+    SetRandomBackColor(); 
+    u32 SoundOffset;
+    u8 WeightMin;
+    u8 WeightMax;
+
+    FPush();
+    FSeek( SoundOffset );
+    struct SoundEntry Sound;
+    FPop();
+} SoundVariation;
+
+typedef struct
+{
+    SetRandomBackColor(); 
+    u32 SoundOffset;
+    u8 WeightMin;
+    u8 WeightMax;
+    u32 Flags;
+
+    FPush();
+    FSeek( SoundOffset );
+    struct SoundEntry Sound;
+    FPop();
+} SoundVariation2;
+
+typedef struct
+{
+    SetRandomBackColor(); 
+    u16 TrackIndex;
+    u8 WaveBankIndex;
+} CompactWaveVariation;
+
+typedef enum 
+{
+    VariationType_Wave,
+    VariationType_Sound,
+    VariationType_Sound2,
+    VariationType_CompactWave
+} VariationType;
+
+typedef struct
+{
+    SetRandomBackColor(); 
+    u16 EntryCount;
+    u16 VariationFlags;
+    u8 Field03;
+    u16 Field04;
+    u8 Field06;
+    local u32 tableType = (VariationFlags >> 3) & 0x7;
+    switch ( tableType )
+    {
+        case VariationType_Wave: WaveVariation Entries[EntryCount]; break;
+        case VariationType_Sound: SoundVariation Entries[EntryCount]; break;
+        case VariationType_Sound2: SoundVariation2 Entries[EntryCount]; break;
+        case VariationType_CompactWave: CompactWaveVariation Entries[EntryCount]; break;
+    }
+} VariationTable;
+
+typedef struct
+{
+    SetRandomBackColor(); 
+    char Name[64];
+} WaveBankNameTableEntry <optimize=false>;
+
+typedef struct
+{
+    SetRandomBackColor(); 
+    u16 Field00;
+} CueNameHashTable <optimize=false>;
+
+typedef struct
+{
+    SetRandomBackColor(); 
+    u32 Key;
+    u16 Value;
+} CueNameHashValue <optimize=false>;
+
+typedef enum<u8>
+{
+    EventPlayWaveFlags_PlayRelease = 1,
+    EventPlayWaveFlags_PanEnabled = 2,
+    EventPlayWaveFlags_UseCenterSpeaker = 4
+} EventPlayWaveFlags;
+
+// event id 1, size 16
+typedef struct
+{
+    SetRandomBackColor(); 
+    u8 Field00;
+    EventPlayWaveFlags Flags;
+    u16 TrackIndex;
+    u8 WaveBankIndex;
+    u8 LoopCount;
+    u16 PanAngle;
+    u16 PanArc;
+} EventPlayWave <optimize=false>;
+
+typedef enum<u8>
+{   
+    EventPlayWaveVariationFlags_VariationTypeMask = 0x0F,
+    EventPlayWaveVariationFlags_NewWaveOnLoop = 0x40,
+} EventPlayWaveVariationFlags;
+
+// event id 3
+typedef struct
+{
+    SetRandomBackColor();
+    EventPlayWave Base;
+    struct VariationTable VariationTableData;
+} EventPlayWaveVariation;
+
+typedef struct
+{
+    SetRandomBackColor(); 
+    /* 00 */ u32 EventInfo; // event id in lower 5 bits
+    /* 04 */ u16 RandomOffset;
+
+    switch ( EventInfo & 0x1F )
+    {
+        case 1: EventPlayWave EventData; break;
+        case 3: EventPlayWaveVariation EventData; break; // not used in p4
+        default: Assert( false ); break;
+    }
+} ClipEvent;
+
+typedef struct 
+{
+    SetRandomBackColor(); 
+    /* 00 */ u8 EventCount;
+    /* 01 */ ClipEvent Events[EventCount];
+} SoundClipEvents <optimize=false>;
+
+typedef struct
+{
+    SetRandomBackColor(); 
+    u8 Volume;
+    u32 EventsOffset;
+    u16 FilterFlags;
+    u16 FilterFrequency;
+
+    FPush();
+    FSeek( EventsOffset );
+    SoundClipEvents Clip;
+    FPop();
+} SoundClip <optimize=false>;
+
+enum<u8> SoundEntryFlags
+{
+    SoundEntryFlags_Complex = 0x01,
+    SoundEntryFlags_RPC = 0x0E,
+    SoundEntryFlags_DSP = 0x10,
+};
+
+typedef struct
+{
+    /* 12 */ u16 ExtraLength;
+    /* 14 */ u8 RpcCodeCount;
+    /* 15 */ u32 RpcCodes[RpcCodeCount];
+} SoundEntryRPC;
+
+typedef struct
+{
+    /* 12 */ u16 ExtraLength;
+    /* 14 */ u8 DspCodeCount;
+    /* 15 */ u32 DspCodes[DspCodeCount];
+} SoundEntryDSP;
+
+typedef struct
+{
+    SetRandomBackColor(); 
+    local u64 p = FTell();
+
+    /* 00 */ SoundEntryFlags Flags;
+    /* 01 */ u16 CategoryId;
+    /* 03 */ u8 Volume;
+    /* 04 */ s16 Pitch; // maybe Pitch
+    /* 06 */ u8 Priority;
+    /* 07 */ u16 EntryLength;
+
+    if (Flags & SoundEntryFlags_Complex)
+    {
+        /* 09 */ u8 ClipCount;
+    }
+    else 
+    {
+        /* 09 */ u16 TrackIndex;
+        /* 11 */ u8 WaveBankIndex;
+    }
+
+    if ( Flags & SoundEntryFlags_RPC )
+    {
+        SoundEntryRPC RPC;
+    }
+
+    if ( Flags & SoundEntryFlags_DSP )
+    {
+       SoundEntryDSP DSP;
+    }
+
+    if ( Flags & SoundEntryFlags_Complex )
+    {
+        SoundClip Clips[ClipCount];
+    }
+
+    Assert( FTell() <= p + EntryLength );
+    FSeek( p + EntryLength );
+} SoundEntry <optimize=false>;
+
+struct
+{
+    SoundBankHeader Header;
+
+    FSeek( Header.SimpleCuesOffset );
+    struct { struct SimpleCueEntry SimpleCues[Header.SimpleCueCount]; } SimpleCues;
+
+    FSeek( Header.ComplexCuesOffset );
+    struct { struct ComplexCueEntry ComplexCues[Header.ComplexCueCount]; } ComplexCues;
+
+    FSeek( Header.CueNamesOffset );
+    struct { struct CueName CueNames[Header.TotalCueCount]; } CueNames;
+    // Offset2E
+    // VariationTablesOffset
+    FSeek( Header.VariationTablesOffset );
+    struct VariationTable VariationTableData;
+
+    // Offset36
+    FSeek( Header.WaveBankNameTableOffset );
+    struct WaveBankNameTableEntry WaveBankNames[Header.WaveBankCount];
+
+    FSeek( Header.CueNameHashTableOffset );
+    struct { struct CueNameHashTable CueNameHashTables[Header.TotalCueCount]; } CueNameHashTables;
+
+    FSeek( Header.CueNameHashValuesOffset );
+    struct { struct CueNameHashValue CueNameHashValues[Header.TotalCueCount]; } CueNameHashValues;
+
+    FSeek( Header.SoundsOffset );
+    struct { struct SoundEntry Sounds[Header.SoundCount]; } Sounds;
+} SoundBank;

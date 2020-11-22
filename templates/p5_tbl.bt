@@ -2,8 +2,8 @@
 //--- 010 Editor v8.0 Binary Template
 //
 //      File: AtlusTable_P5.bt
-//   Authors: TGE, Lillian Goulston, Scarltz
-//   Version: 1.7
+//   Authors: TGE, Lillian Goulston, Scarltz, DeathChaos
+//   Version: 1.9
 //   Purpose: Parse Persona 5 Table files.
 //  Category: Persona 5
 // File Mask: *.tbl, *.pac
@@ -28,6 +28,9 @@
 //       - Added bool struct to make bitfields easier to read when editing
 //       - Changed certain skill enums to bitfields (Skill_ValidTargets, AffinityStatus, Buffs/Debuffs, and applied effects)
 //       - Added max HP/SP gain per level of party members in PLAYER.TBL
+//   1.8 - Added attack hit frame data variables to the relevant VISUAL.TBL sections
+//   1.9 - Added Skill Area Type (Battle/Field/Both)
+//       - Merged some variables since they are always 0
 //------------------------------------------------
 
 
@@ -414,11 +417,10 @@ typedef struct
 {
     Skill_CasterEffect1 CasterEffect1 <name = "Caster Effect", comment = "Needs more testing">;
     Skill_CasterEffect2 CasterEffect2 <name = "Caster Effect", comment = "Needs more testing">;
-    u8 Unknown <name = "Unknown">;
+    Skill_AreaType AreaType;
     Skill_DamageStat DamageStat <name = "Damage Stat", comment = "Determines which stat is used to determine damage">;
     Skill_CostType CostType <name = "Cost Type">;
-    u8 Unknown <name = "Unknown">;
-    u8 Unknown <name = "Unknown">;
+    u16 Unknown <name = "Unknown">;
     u8 SkillCost <name = "Skill Cost", comment = "% of max HP or fixed amount of SP">;
     u8 Unknown <name = "Unknown">;
     Skill_PhysicalOrMagicSkill PhysicalOrMagic <name = "Physical or Magic?", comment = "determines what's affected by either Charge or Concentrate, but doesn't seem to change what's reflected by Tetrakarn or Makarakarn. Needs more testing">;
@@ -534,7 +536,7 @@ typedef struct
     Skill_ExtraEffect ExtraEffect <name = "Extra Effects">;
     u8 CritChance <name = "Crit Chance", comment = "Only works for Physical or Gun skills">;
     u8 Unknown <name = "Unknown">;
-    u8 Unknown <name = "Unknown">;
+    byte : 1;
 } TSkill_ActiveSkillData <name="Active Skill Data: ">;
 
 // Item
@@ -1105,10 +1107,26 @@ typedef struct
 
 typedef struct
 {
+	s16 AttackHitRegFrames [ 8 ];
+	s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues1 [ 2 ];
+    s16 CriticalHitRegFrames [ 8 ];
+    s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues2 [ 2 ];
+    s16 AmbushedAttackHitRegFrames [ 8 ];
+    s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues3 [ 2 ];
+}TVisual_AttackFrameData <name = "Attack Frame Data">;
+
+typedef struct
+{
     u32 Field00;
-    f32 Field04;
-    f32 Field08;
-    f32 Field0C;
+    f32 HeartIconXAxis<name="Heart Icon location(X axis)">;
+    f32 HeartIconYAxis<name="Heart Icon location(Y axis)">;
+    f32 HeartIconZAxis<name="Heart Icon location(Z axis)">;;
     f32 Field10;
     f32 Field14;
     f32 Field18;
@@ -1131,7 +1149,7 @@ typedef struct
     f32 Field5C;
     f32 Field60;
     f32 Field64;
-    u16 Field68;
+    u16 ModelScale<name="Model Scale %">;
     u16 Field6A;
     u16 Field6C;
     u16 Field6E;
@@ -1139,12 +1157,22 @@ typedef struct
     f32 Field74;
     f32 Field78;
     f32 Field7C;
-    s16 Field80[36];
+    TVisual_AttackFrameData FrameData;
 } TVisual_EnemyVisualVariablesA <name = "Enemy Visual Variables A">;
 
 typedef struct
 {
-    byte Unknown[ 404 ];
+    byte Unknown[ 0x104 ];
+	u16 ModelScale<name="Model Scale %">;
+    u16 Field6A;
+    u16 Field6C;
+    u16 Field6E;
+    f32 Field70;
+    f32 Field74;
+    f32 Field78;
+    f32 Field7C;
+    TVisual_AttackFrameData FrameData;
+	byte Unknown2 [ 0x30 ];
 } TVisual_PlayerVisualVariablesA <name = "Player Visual Variables A">;
 
 typedef struct

@@ -1,0 +1,103 @@
+//------------------------------------------------
+//--- 010 Editor v10.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "common/include.h"
+
+typedef struct
+{
+    u8 Bytes[16];
+} TGUID;
+
+typedef enum<u32>
+{
+    REGSECT = 0,
+    MAXREGSECT = 0xFFFFFFFA,
+    RESERVED = 0xFFFFFFFB,
+    DIFSECT = 0xFFFFFFFC, // Specifies DIFAT sector
+    FATSECT = 0xFFFFFFFD, // Specifies FAT sector
+    ENDOFCHAIN = 0xFFFFFFFE,
+    FREESECT = 0xFFFFFFFF,
+} TSectorNumber;
+
+// OLE structures
+typedef struct
+{
+    SetRandomBackColor();
+    u64 Signature;
+    TGUID HeaderCLSID;
+    u16 MinorVersion;
+    u16 MajorVersion;
+    u16 ByteOrder;
+    u16 SectorShift;
+    u16 MiniSectorShift;
+    u8 Reserved[6];
+    u32 DirectorySectorCount;
+    u32 FATSectorCount;
+    TSectorNumber FirstDirectorySectorLocation; 
+    u32 TransactionSignatureNumber;
+    u32 MiniStreamCutoffSize;
+    TSectorNumber FirstMiniFATSectorLocation;
+    u32 MiniFATSectorCount;
+    TSectorNumber FirstDIFATSectorLocation;
+    u32 DIFATSectorCount;
+    TSectorNumber DIFATSectors[109];
+} TCompoundFileHeader;
+
+typedef struct( TCompoundFileHeader& header )
+{
+    SetRandomBackColor();
+    wchar_t Name[32];
+    u16 NameLength;
+    u8 Type;
+    u8 ColorFlag;
+    u32 LeftSiblingID;
+    u32 RightSiblingID;
+    u32 ChildID;
+    u8 CLSID[16];
+    u32 StateBis;
+    u64 CreationTime;
+    u64 ModifiedTime;
+    u32 StartSectorLocation;
+    u64 Size;
+
+    local u64 SectorSize = ( 1 << header.SectorShift );
+    local bool IsPropertyStream = Name[0] == 5;
+    local bool IsStream = Type == 2;
+
+    if ( ChildID != -1 )
+    {
+        FSeek( SectorOffsetToAddress( header, ChildID + 1 ) );
+        //struct TCompoundFileEntry Child;
+    }
+} TCompoundFileEntry;
+
+u32 SectorOffsetToAddress( TCompoundFileHeader& header, u32 sector )
+{
+    return ( sector + 1 ) * ( 1 << header.SectorShift );
+}
+
+u32 MiniSectorOffsetToAddress( TCompoundFileHeader& header, u32 sector )
+{
+    return ( sector + 1 ) * ( 1 << header.MiniSectorShift );
+}
+
+typedef struct 
+{
+    SetRandomBackColor();
+
+    TCompoundFileHeader Header;
+    
+    FSeek( SectorOffsetToAddress( Header, 1 ) );
+    TCompoundFileEntry Root( Header );
+} TCompoundFile;
+
+TCompoundFile File;

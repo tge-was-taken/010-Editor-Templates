@@ -1,0 +1,54 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "common/include.h"
+
+typedef struct( u32 dataStartOffset )
+{
+    SetRandomBackColor();
+    u32 Field00;
+    u16 Index;
+    u16 PackIndex;
+    char Path[260];
+    u32 Field104;
+    u32 CompressedSize;
+    u32 UncompressedSize;
+    u32 Flags;
+    u32 DataOffset;
+
+    Assert( Field00 == 0 );
+    Assert( Field104 == 0 );
+
+    FPush();
+    FSeek( dataStartOffset + DataOffset );
+    u8 Data[ CompressedSize ];
+    FPop();
+} DwPackFileEntry <optimize=false, read=DwPackFileEntryToString>;
+
+string DwPackFileEntryToString(DwPackFileEntry& entry)
+{
+    return entry.Path;
+}
+
+typedef struct
+{
+    SetRandomBackColor();
+    u64 Signature; // DW_PACK\0
+    u32 Field08;
+    u32 FileCount;
+    u32 Index;  
+    local u32 dataStartOffset = 20 + (FileCount * 0x120);
+    struct { DwPackFileEntry Files(dataStartOffset)[FileCount]; } Files;
+} DwPack <optimize=false>;
+
+DwPack File;
+

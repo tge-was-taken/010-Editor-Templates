@@ -1,0 +1,420 @@
+//------------------------------------------------
+//--- 010 Editor v11.0 Binary Template
+//
+//      File:
+//   Authors:
+//   Version:
+//   Purpose:
+//  Category:
+// File Mask:
+//  ID Bytes:
+//   History:
+//------------------------------------------------
+
+typedef char sbyte;
+
+local long gNameTableOffset = -1;
+local int gVersion = -1;
+
+string getName(int index)
+{
+	if (gNameTableOffset == -1 || index == -1)
+		return "";
+	return ReadString(gNameTableOffset + (index * 32));
+}
+
+typedef struct
+{
+	sbyte FileType;		// 0x10
+	sbyte FileFormat;	// 0x11
+	short UserID;		// 0x12
+	int FileSize;		// 0x14
+	byte MagicCode[4];	// 0x18
+	int ExpandSize;		// 0x20
+	int TypeTableCount; // 0x24
+	int Version;		// 0x28
+	int Reserve2;		// 0x2C
+	int Reserve3;		// 0x30
+
+	gVersion = Version;
+} pmdHeader_t<bgcolor = 0xdd47e5>;
+
+typedef union
+{
+	// Fields
+	sbyte c[4]; // 0x0
+	short s[2];
+	int i;	 // 0x0
+	float f; // 0x0
+		//IntPtr p; // 0x0
+} pmdDataInfo_t<bgcolor = 0x3154f4>;
+
+typedef enum<int>
+{
+	PMD_DATATYPE_CUTINFO = 0,
+	PMD_DATATYPE_NAME = 1,
+	PMD_DATATYPE_STAGE = 2,
+	PMD_DATATYPE_UNIT = 3,
+	PMD_DATATYPE_FRAME = 4,
+	PMD_DATATYPE_CAMERA = 5,
+	PMD_DATATYPE_MESSAGE = 6,
+	PMD_DATATYPE_EFFECT = 7,
+	PMD_DATATYPE_EFFECTDATA = 8,
+	PMD_DATATYPE_UNITDATA = 9,
+	PMD_DATATYPE_F1 = 10,
+	PMD_DATATYPE_F2 = 11,
+	PMD_DATATYPE_FTB = 12,
+	PMD_DATATYPE_SLIGHT = 13,
+	PMD_DATATYPE_SFOG = 14,
+	PMD_DATATYPE_BLUR2 = 15,
+	PMD_DATATYPE_MULTBLUR = 16,
+	PMD_DATATYPE_DISTBLUR = 17,
+	PMD_DATATYPE_FILTER = 18,
+	PMD_DATATYPE_MULTFILTER = 19,
+	PMD_DATATYPE_RIPBLUR = 20,
+	PMD_DATATYPE_MAX = 21,
+} PMD_DATATYPE;
+
+typedef struct
+{
+	int FirstFrame;
+	int LastFrame;
+	int TotalFrame;
+	int Reserve1;
+
+	if (gVersion == 12)
+	{
+		int FIeld10;
+		int Field14;
+		short Field18;
+		short Field1A;
+		int Field1C;
+		int Field20;
+	}
+} pmdCutInfo_t<bgcolor = 0x8864df>;
+
+typedef struct
+{
+	char Name[32];
+} pmdNameTable_t<bgcolor = 0x21b0b6>;
+
+typedef struct
+{
+	int NameIndex;
+	int FileIndex;
+	int MajorNum;
+	int MinorNum;
+
+	local string Name = getName(NameIndex);
+} pmdStageTable_t<optimize = false, bgcolor = 0xa93c41>;
+
+typedef struct
+{
+	int NameIndex;	// 0x10
+	int FileIndex;	// 0x14
+	int MajorNum;	// 0x18
+	int MinorNum;	// 0x1C
+	int DataOffset; // 0x20
+	int DataSize;	// 0x24
+	int Reserve1;	// 0x28
+	int Reserve2;	// 0x2C
+
+	local string Name = getName(NameIndex);
+} pmdUnitTable_t<optimize = false, bgcolor = 0x80bdc6>;
+
+typedef enum<ushort>
+{
+	PMD_OBJTYPE_STAGE = 0,
+	PMD_OBJTYPE_UNIT = 1,
+	PMD_OBJTYPE_CAMERA = 2,
+	PMD_OBJTYPE_EFFECT = 3,
+	PMD_OBJTYPE_MESSAGE = 4,
+	PMD_OBJTYPE_SE = 5,
+	PMD_OBJTYPE_FADE = 6,
+	PMD_OBJTYPE_QUAKE = 7,
+	PMD_OBJTYPE_BLUR = 8,
+	PMD_OBJTYPE_LIGHT = 9,
+	PMD_OBJTYPE_SLIGHT = 10,
+	PMD_OBJTYPE_SFOG = 11,
+	PMD_OBJTYPE_SKY = 12,
+	PMD_OBJTYPE_BLUR2 = 13,
+	PMD_OBJTYPE_MBLUR = 14,
+	PMD_OBJTYPE_DBLUR = 15,
+	PMD_OBJTYPE_FILTER = 16,
+	PMD_OBJTYPE_MFILTER = 17,
+	PMD_OBJTYPE_BED = 18,
+	PMD_OBJTYPE_BGM = 19,
+	PMD_OBJTYPE_MG1 = 20,
+	PMD_OBJTYPE_MG2 = 21,
+	PMD_OBJTYPE_FB = 22,
+	PMD_OBJTYPE_RBLUR = 23,
+	PMD_OBJTYPE_MAX = 24,
+} PMD_OBJTYPE;
+
+typedef struct
+{
+	PMD_OBJTYPE ObjectType; // 0x10
+	ushort Frame;			// 0x12
+	ushort Length;			// 0x14
+	short NameIndex;		// 0x16
+
+	if (gVersion == 4)
+	{
+		// SMT3
+		pmdDataInfo_t Data[2]; // 0x18
+	}
+	else if (gVersion == 9)
+	{
+		// DDS
+		pmdDataInfo_t Data[9];
+	}
+	else if (gVersion == 12)
+	{
+		// P3
+		pmdDataInfo_t Data[13];
+	}
+	else
+	{
+		Assert(false, "Unknown version");
+	}
+
+	local string Name = getName(NameIndex);
+} pmdFrameTable_t<optimize = false, bgcolor = 0x94af2c>;
+
+typedef struct
+{
+	int NameIndex; // 0x10
+	int Reserve1;  // 0x14
+	int Reserve2;  // 0x18
+	int Reserve3;  // 0x1C
+
+	local string Name = getName(NameIndex);
+} pmdCameraTable_t<optimize = false, bgcolor = 0xa8dc59>;
+
+typedef enum<int>
+{
+	PMD_EFFTYPE_D3P = 0,
+	PMD_EFFTYPE_BED = 1,
+	PMD_EFFTYPE_MG1 = 2,
+	PMD_EFFTYPE_MG2 = 3,
+} PMD_EFFTYPE;
+
+typedef struct
+{
+	int NameIndex;	  // 0x10
+	int DataOffset;	  // 0x14
+	PMD_EFFTYPE Type; // 0x18
+	int Reserve2;	  // 0x1C
+
+	local string Name = getName(NameIndex);
+} pmdEffectTable_t<optimize = false, bgcolor = 0x77e65b>;
+
+typedef struct
+{
+	float X, Y, Z, W;
+} Vector4;
+
+typedef struct
+{
+	Vector4 Color;
+	Vector4 Dir;
+	Vector4 Ambient;
+} pmdSceneLightTable_t<bgcolor = 0x55e87d>;
+
+typedef struct
+{
+	float Min;	  // 0x10
+	float Max;	  // 0x14
+	float Near;	  // 0x18
+	float Far;	  // 0x1C
+	uint Color;	  // 0x20
+	int Reserve1; // 0x24
+	int Reserve2; // 0x28
+	int Reserve3; // 0x2C
+} pmdSceneFogTable_t<bgcolor = 0xd91023>;
+
+typedef enum
+{
+	PMD_FADE_WHITE_IN = 0,
+	PMD_FADE_WHITE_OUT = 1,
+	PMD_FADE_BLACK_IN = 2,
+	PMD_FADE_BLACK_OUT = 3,
+} PMD_FADE;
+
+typedef enum
+{
+	PMD_BGM_TYPE_PLAY = 0,
+	PMD_BGM_TYPE_FADEIN = 1,
+	PMD_BGM_TYPE_FADEOUT = 2,
+	PMD_BGM_TYPE_TRANS = 3,
+	PMD_BGM_TYPE_VOLDOWN = 4,
+	PMD_BGM_TYPE_VOLUP = 5,
+	PMD_BGM_TYPE_ALLSTOP = 6,
+} PMD_BGM;
+
+typedef enum
+{
+	PMD_UNIT_DISP_ON = 0,
+	PMD_UNIT_DISP_OFF = 1,
+	PMD_UNIT_SHADOW_OFF = 2,
+	PMD_UNIT_MSHADOW_ON = 3,
+	PMD_UNIT_VSHADOW_ON = 4,
+} PMD_UNIT;
+
+typedef struct
+{
+	int X;
+	int Y;
+} sdfIVector2_t;
+
+typedef struct
+{
+	uint abgr;			  // 0x10
+	int blend;			  // 0x14
+	float rotate;		  // 0x18
+	float scale;		  // 0x1C
+	sdfIVector2_t center; // 0x20
+	sdfIVector2_t xy[2];  // 0x28
+} dds3Effect_Blur_t;
+
+typedef struct
+{
+	int area;
+	dds3Effect_Blur_t Blur;
+} dds3Effect_PartialMultiBlurParam_t;
+
+typedef struct
+{
+	uint number;		  // 0x10
+	uint interval;		  // 0x14
+	float speed;		  // 0x18
+	uint abgr;			  // 0x1C
+	int blend;			  // 0x20
+	float rotate;		  // 0x24
+	float distortion;	  // 0x28
+	sdfIVector2_t center; // 0x30
+	int area;			  // 0x38
+	int width;			  // 0x3C
+} dds3Effect_DistortionBlurParam_t;
+
+typedef struct
+{
+	uint abgr;			 // 0x10
+	int blend;			 // 0x14
+	sdfIVector2_t xy[2]; // 0x18
+} dds3Effect_Filter_t;
+
+typedef struct
+{
+	int area;					// 0x10
+	sdfIVector2_t center;		// 0x18
+	dds3Effect_Filter_t Filter; // 0x20
+} dds3Effect_PartialMultiFilterParam_t;
+
+typedef struct
+{
+	uint number;		  // 0x10
+	float speed;		  // 0x14
+	float interval;		  // 0x18
+	uint abgr;			  // 0x1C
+	int blend;			  // 0x20
+	float rotate;		  // 0x24
+	float power;		  // 0x28
+	float frequency;	  // 0x2C
+	sdfIVector2_t center; // 0x30
+	int area;			  // 0x38
+/*
+	float unitycalc_center_x; // 0x3C
+	float unitycalc_center_y; // 0x40
+	float unitycalc_area; // 0x44
+*/
+} dds3Effect_RippleBlurParam_t;
+
+typedef struct
+{
+	PMD_DATATYPE Type;
+	int ItemSize;
+	int ItemCount;
+	int ItemAddress;
+
+	local long temp = FTell();
+	FSeek(ItemAddress);
+	switch (Type)
+	{
+	case PMD_DATATYPE_CUTINFO:
+		pmdCutInfo_t Items[ItemCount];
+		break;
+	case PMD_DATATYPE_NAME:
+		gNameTableOffset = FTell();
+		pmdNameTable_t Items[ItemCount];
+		break;
+	case PMD_DATATYPE_STAGE:
+		pmdStageTable_t Items[ItemCount];
+		break;
+	case PMD_DATATYPE_UNIT:
+		pmdUnitTable_t Items[ItemCount];
+		break;
+	case PMD_DATATYPE_FRAME:
+		pmdFrameTable_t Items[ItemCount];
+		break;
+	case PMD_DATATYPE_CAMERA:
+		pmdCameraTable_t Items[ItemCount];
+		break;
+	case PMD_DATATYPE_MESSAGE:
+		byte Items[ItemCount * ItemSize]<bgcolor = 0x8799dd>;
+		break;
+	case PMD_DATATYPE_EFFECT:
+		pmdEffectTable_t Items[ItemCount];
+		break;
+	case PMD_DATATYPE_EFFECTDATA:
+		byte Items[ItemCount * ItemSize]<bgcolor = 0x1625b6>;
+		break;
+	case PMD_DATATYPE_UNITDATA:
+		byte Items[ItemCount * ItemSize]<bgcolor = 0xee582a>;
+		break;
+	case PMD_DATATYPE_F1:
+		byte Items[ItemCount * ItemSize]<bgcolor = 0xba6efd>;
+		break;
+	case PMD_DATATYPE_F2:
+		byte Items[ItemCount * ItemSize]<bgcolor = 0xf9a5e1>;
+		break;
+	case PMD_DATATYPE_FTB:
+		byte Items[ItemCount * ItemSize]<bgcolor = 0x681b0f>;
+		break;
+	case PMD_DATATYPE_SLIGHT:
+		pmdSceneLightTable_t Items[ItemCount];
+		break;
+	case PMD_DATATYPE_SFOG:
+		pmdSceneFogTable_t Items[ItemCount];
+		break;
+	case PMD_DATATYPE_BLUR2:
+		dds3Effect_Blur_t Items[ItemCount]<bgcolor = 0x34318b>;
+		break;
+	case PMD_DATATYPE_MULTBLUR:
+		dds3Effect_PartialMultiBlurParam_t Items[ItemCount]<bgcolor = 0x6cdaef>;
+		break;
+	case PMD_DATATYPE_DISTBLUR:
+		dds3Effect_DistortionBlurParam_t Items[ItemCount]<bgcolor = 0xa6ac91>;
+		break;
+	case PMD_DATATYPE_FILTER:
+		dds3Effect_Filter_t Items[ItemCount]<bgcolor = 0x71622d>;
+		break;
+	case PMD_DATATYPE_MULTFILTER:
+		dds3Effect_PartialMultiFilterParam_t Items[ItemCount]<bgcolor = 0x7ed159>;
+		break;
+	case PMD_DATATYPE_RIPBLUR:
+		dds3Effect_RippleBlurParam_t Items[ItemCount]<bgcolor = 0x0d8991>;
+		break;
+	default:
+		byte Items[ItemCount * ItemSize];
+		break;
+	}
+	Assert((FTell() - ItemAddress) == (ItemCount * ItemSize));
+	FSeek(temp);
+} pmdTypeTable_t<bgcolor = 0xc946fd, optimize = false>;
+
+struct
+{
+	pmdHeader_t Header;
+	pmdTypeTable_t TypeTable[Header.TypeTableCount];
+} File;

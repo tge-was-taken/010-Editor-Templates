@@ -1,0 +1,865 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "common/include.h"
+
+typedef struct SceGmoVec3F { float x, y, z ; } SceGmoVec3F ;
+typedef struct SceGmoVec4F { float x, y, z, w ; } SceGmoVec4F ;
+typedef struct SceGmoMat4F { SceGmoVec4F x, y, z, w ; } SceGmoMat4F ;
+typedef struct SceGmoQuatF { float x, y, z, w ; } SceGmoQuatF ;
+typedef struct SceGmoRectF { float x, y, w, h ; } SceGmoRectF ;
+typedef struct SceGmoCol4F { float r, g, b, a ; } SceGmoCol4F ;
+
+#define	SCEGMO_FORMAT_SIGNATURE		(0x2e474d4f)	/* '.GMO' */
+#define	SCEGMO_FORMAT_VERSION		(0x312e3030)	/* '1.00' */
+#define	SCEGMO_FORMAT_STYLE_PSP		(0x00505350)	/* 'PSP'  */
+
+typedef enum<short>
+{
+	SCEGMO_BASE_RESERVED		= 0x0000,	/* 0000-0fff : reserved */
+	SCEGMO_BASE_PRIVATE		= 0x1000,	/* 1000-3fff : private use */
+	SCEGMO_BASE_PUBLIC		= 0x4000,	/* 4000-7fff : public use */
+
+	SCEGMO_HALF_CHUNK		= 0x8000,	/* half chunk flag */
+
+	SCEGMO_BLOCK			= 0x0001,
+	SCEGMO_FILE			= 0x0002,
+	SCEGMO_MODEL			= 0x0003,
+	SCEGMO_BONE			= 0x0004,
+	SCEGMO_PART			= 0x0005,
+	SCEGMO_MESH			= 0x0006,
+	SCEGMO_ARRAYS			= 0x0007,
+	SCEGMO_MATERIAL			= 0x0008,
+	SCEGMO_LAYER			= 0x0009,
+	SCEGMO_TEXTURE			= 0x000a,
+	SCEGMO_MOTION			= 0x000b,
+	SCEGMO_FCURVE			= 0x000c,
+	SCEGMO_BLIND_BLOCK		= 0x000f,
+
+	SCEGMO_COMMAND			= 0x0011,
+	SCEGMO_FILE_NAME		= 0x0012,
+	SCEGMO_FILE_IMAGE		= 0x0013,
+	SCEGMO_BOUNDING_BOX		= 0x0014,
+	SCEGMO_VERTEX_OFFSET		= 0x0015,
+
+	SCEGMO_PARENT_BONE		= 0x0041,
+	SCEGMO_VISIBILITY		= 0x0042,
+	SCEGMO_MORPH_WEIGHTS		= 0x0043,
+	SCEGMO_MORPH_INDEX		= 0x004f,
+	SCEGMO_BLEND_BONES		= 0x0044,
+	SCEGMO_BLEND_OFFSETS		= 0x0045,
+	SCEGMO_PIVOT			= 0x0046,
+	SCEGMO_MULT_MATRIX		= 0x0047,
+	SCEGMO_TRANSLATE		= 0x0048,
+	SCEGMO_ROTATE_ZYX		= 0x0049,
+	SCEGMO_ROTATE_YXZ		= 0x004a,
+	SCEGMO_ROTATE_Q			= 0x004b,
+	SCEGMO_SCALE			= 0x004c,
+	SCEGMO_SCALE_2			= 0x004d,
+	SCEGMO_SCALE_3			= 0x00e1,
+	SCEGMO_DRAW_PART		= 0x004e,
+
+	SCEGMO_SET_MATERIAL		= 0x0061,
+	SCEGMO_BLEND_SUBSET		= 0x0062,
+	SCEGMO_SUBDIVISION		= 0x0063,
+	SCEGMO_KNOT_VECTOR_U		= 0x0064,
+	SCEGMO_KNOT_VECTOR_V		= 0x0065,
+	SCEGMO_DRAW_ARRAYS		= 0x0066,
+	SCEGMO_DRAW_PARTICLE		= 0x0067,
+	SCEGMO_DRAW_B_SPLINE		= 0x0068,
+	SCEGMO_DRAW_RECT_MESH		= 0x0069,
+	SCEGMO_DRAW_RECT_PATCH		= 0x006a,
+
+	SCEGMO_RENDER_STATE		= 0x0081,
+	SCEGMO_DIFFUSE			= 0x0082,
+	SCEGMO_SPECULAR			= 0x0083,
+	SCEGMO_EMISSION			= 0x0084,
+	SCEGMO_AMBIENT			= 0x0085,
+	SCEGMO_REFLECTION		= 0x0086,
+	SCEGMO_REFRACTION		= 0x0087,
+	SCEGMO_BUMP			= 0x0088,
+
+	SCEGMO_SET_TEXTURE		= 0x0091,
+	SCEGMO_MAP_TYPE			= 0x0092,
+	SCEGMO_MAP_FACTOR		= 0x0093,
+	SCEGMO_BLEND_FUNC		= 0x0094,
+	SCEGMO_TEX_FUNC			= 0x0095,
+	SCEGMO_TEX_FILTER		= 0x0096,
+	SCEGMO_TEX_WRAP			= 0x0097,
+	SCEGMO_TEX_CROP			= 0x0098,
+
+	SCEGMO_FRAME_LOOP		= 0x00b1,
+	SCEGMO_FRAME_RATE		= 0x00b2,
+	SCEGMO_FRAME_REPEAT		= 0x00b4,
+	SCEGMO_ANIMATE			= 0x00b3,
+
+	SCEGMO_BLIND_DATA		= 0x00f1,
+	SCEGMO_FILE_INFO		= 0x00ff
+} SceGmoChunkType <read=SceGmoChunkType_ToString>;
+
+string SceGmoChunkType_ToString(SceGmoChunkType& val)
+{
+    local SceGmoChunkType temp = val & ~SCEGMO_HALF_CHUNK;
+    local string str = EnumToString(temp);
+    if ( val & SCEGMO_HALF_CHUNK ) str += " | SCEGMO_HALF_CHUNK";
+    return str;
+}
+
+typedef enum<int>
+{
+	SCEGMO_PRIM_TYPE_MASK		= 0x000f,
+	SCEGMO_PRIM_POINTS		= 0x0000,
+	SCEGMO_PRIM_LINES		= 0x0001,
+	SCEGMO_PRIM_LINE_STRIP		= 0x0002,
+	SCEGMO_PRIM_TRIANGLES		= 0x0003,
+	SCEGMO_PRIM_TRIANGLE_STRIP	= 0x0004,
+	SCEGMO_PRIM_TRIANGLE_FAN	= 0x0005,
+	SCEGMO_PRIM_RECTANGLES		= 0x0006,
+
+	SCEGMO_PRIM_SPLINE_MASK		= 0xf000,
+	SCEGMO_PRIM_OPEN_U		= 0x3000,
+	SCEGMO_PRIM_OPEN_V		= 0xc000,
+	SCEGMO_PRIM_OPEN_U_IN		= 0x1000,
+	SCEGMO_PRIM_OPEN_U_OUT		= 0x2000,
+	SCEGMO_PRIM_OPEN_V_IN		= 0x4000,
+	SCEGMO_PRIM_OPEN_V_OUT		= 0x8000,
+
+	SCEGMO_PRIM_SEQUENTIAL		= 0x0100,
+} SCEGMO_PRIM <read=SCEGMO_PRIM_ToString>;
+
+string SCEGMO_PRIM_ToString(SCEGMO_PRIM& val)
+{
+    local SCEGMO_PRIM prim = val & SCEGMO_PRIM_TYPE_MASK;
+    local SCEGMO_PRIM spline = val & SCEGMO_PRIM_SPLINE_MASK;
+    local string str = EnumToString(prim);
+    if ( spline ) str += " | " + EnumToString(spline);
+    if ( val & SCEGMO_PRIM_SEQUENTIAL ) str += " | SCEGMO_PRIM_SEQUENTIAL";
+    return str;
+}
+
+typedef enum {
+	SCEGMO_FCURVE_INTERP_MASK	= 0x000f,
+	SCEGMO_FCURVE_CONSTANT		= 0x0000,
+	SCEGMO_FCURVE_LINEAR		= 0x0001,
+	SCEGMO_FCURVE_HERMITE		= 0x0002,
+	SCEGMO_FCURVE_CUBIC		= 0x0003,
+	SCEGMO_FCURVE_SPHERICAL		= 0x0004,
+
+	SCEGMO_FCURVE_EXTRAP_MASK	= 0xff00,
+	SCEGMO_FCURVE_HOLD		= 0x0000,
+	SCEGMO_FCURVE_CYCLE		= 0x1100,
+	SCEGMO_FCURVE_SHUTTLE		= 0x2200,
+	SCEGMO_FCURVE_REPEAT		= 0x3300,
+	SCEGMO_FCURVE_EXTEND		= 0x4400,
+
+	SCEGMO_FCURVE_EXTRAP_LEFT_MASK	= 0x0f00,
+	SCEGMO_FCURVE_HOLD_LEFT		= 0x0000,
+	SCEGMO_FCURVE_CYCLE_LEFT	= 0x0100,
+	SCEGMO_FCURVE_SHUTTLE_LEFT	= 0x0200,
+	SCEGMO_FCURVE_REPEAT_LEFT	= 0x0300,
+	SCEGMO_FCURVE_EXTEND_LEFT	= 0x0400,
+
+	SCEGMO_FCURVE_EXTRAP_RIGHT_MASK	= 0xf000,
+	SCEGMO_FCURVE_HOLD_RIGHT	= 0x0000,
+	SCEGMO_FCURVE_CYCLE_RIGHT	= 0x1000,
+	SCEGMO_FCURVE_SHUTTLE_RIGHT	= 0x2000,
+	SCEGMO_FCURVE_REPEAT_RIGHT	= 0x3000,
+	SCEGMO_FCURVE_EXTEND_RIGHT	= 0x4000,
+} SCEGMO_FCURVE;
+
+typedef enum {
+	SCEGMO_REPEAT_HOLD		= 0x0000,
+	SCEGMO_REPEAT_CYCLE		= 0x0001,
+} SCEGMO_REPEAT;
+
+typedef enum {
+	SCEGMO_STATE_LIGHTING		= 0,
+	SCEGMO_STATE_FOG		= 1,
+	SCEGMO_STATE_TEXTURE		= 2,
+	SCEGMO_STATE_CULL_FACE		= 3,
+	SCEGMO_STATE_DEPTH_TEST		= 4,
+	SCEGMO_STATE_DEPTH_MASK		= 5,
+	SCEGMO_STATE_ALPHA_TEST		= 6,
+	SCEGMO_STATE_ALPHA_MASK		= 7,
+
+	SCEGMO_STATE_ENABLE_LIGHTING	= 0,		/* obsolete */
+	SCEGMO_STATE_ENABLE_FOG		= 1		/* obsolete */
+} SCEGMO_STATE;
+
+typedef enum {
+	SCEGMO_BLEND_ADD		= 0,
+	SCEGMO_BLEND_SUB		= 1,
+	SCEGMO_BLEND_REV		= 2,
+	SCEGMO_BLEND_MIN		= 3,
+	SCEGMO_BLEND_MAX		= 4,
+	SCEGMO_BLEND_DIFF		= 5,
+
+	SCEGMO_BLEND_ZERO		= 0,		/* != SCEGU */
+	SCEGMO_BLEND_ONE		= 1,		/* != SCEGU */
+	SCEGMO_BLEND_SRC_COLOR		= 2,		/* != SCEGU */
+	SCEGMO_BLEND_INV_SRC_COLOR	= 3,		/* != SCEGU */
+	SCEGMO_BLEND_DST_COLOR		= 4,		/* != SCEGU */
+	SCEGMO_BLEND_INV_DST_COLOR	= 5,		/* != SCEGU */
+	SCEGMO_BLEND_SRC_ALPHA		= 6,		/* != SCEGU */
+	SCEGMO_BLEND_INV_SRC_ALPHA	= 7,		/* != SCEGU */
+	SCEGMO_BLEND_DST_ALPHA		= 8,		/* != SCEGU */
+	SCEGMO_BLEND_INV_DST_ALPHA	= 9,		/* != SCEGU */
+} SCEGMO_BLEND;
+
+typedef enum {
+	SCEGMO_FUNC_MODULATE		= 0,
+	SCEGMO_FUNC_DECAL		= 1,
+
+	SCEGMO_FUNC_RGB			= 0,
+	SCEGMO_FUNC_RGBA		= 1
+} SCEGMO_FUNC;
+
+typedef enum {
+	SCEGMO_FILTER_NEAREST		= 0,
+	SCEGMO_FILTER_LINEAR		= 1,
+	SCEGMO_FILTER_NEAREST_MIPMAP_NEAREST = 2,	/* != SCEGU */
+	SCEGMO_FILTER_LINEAR_MIPMAP_NEAREST = 3,	/* != SCEGU */
+	SCEGMO_FILTER_NEAREST_MIPMAP_LINEAR = 4,	/* != SCEGU */
+	SCEGMO_FILTER_LINEAR_MIPMAP_LINEAR = 5		/* != SCEGU */
+} SCEGMO_FILTER;
+
+typedef enum {
+	SCEGMO_WRAP_REPEAT		= 0,
+	SCEGMO_WRAP_CLAMP		= 1
+} SCEGMO_WRAP;
+
+/* ---------------------------------------------------------------- */
+/*  block reference type                                            */
+/* ---------------------------------------------------------------- */
+
+// based on SCEGMO_REF macros
+typedef struct {
+    int index : 12;
+    int level : 4;
+    int type : 15;
+    local SceGmoChunkType chunkType = (SceGmoChunkType)type;
+} SceGmoRef;
+
+typedef enum<int> {
+    SCEGU_TEXTURE_NONE       = ( 0 <<  0 ),
+    SCEGU_TEXTURE_UBYTE      = ( 1 <<  0 ),
+    SCEGU_TEXTURE_USHORT     = ( 2 <<  0 ),
+    SCEGU_TEXTURE_FLOAT      = ( 3 <<  0 ),
+    SCEGU_COLOR_NONE         = ( 0 <<  2 ),
+    SCEGU_COLOR_PF5650       = ( 4 <<  2 ),
+    SCEGU_COLOR_PF5551       = ( 5 <<  2 ),
+    SCEGU_COLOR_PF4444       = ( 6 <<  2 ),
+    SCEGU_COLOR_PF8888       = ( 7 <<  2 ),
+    SCEGU_NORMAL_NONE        = ( 0 <<  5 ),
+    SCEGU_NORMAL_BYTE        = ( 1 <<  5 ),
+    SCEGU_NORMAL_SHORT       = ( 2 <<  5 ),
+    SCEGU_NORMAL_FLOAT       = ( 3 <<  5 ),
+    SCEGU_VERTEX_NONE        = ( 0 <<  7 ),
+    SCEGU_VERTEX_BYTE        = ( 1 <<  7 ),
+    SCEGU_VERTEX_SHORT       = ( 2 <<  7 ),
+    SCEGU_VERTEX_FLOAT       = ( 3 <<  7 ),
+    SCEGU_WEIGHT_NONE        = ( 0 <<  9 ),
+    SCEGU_WEIGHT_UBYTE       = ( 1 <<  9 ),
+    SCEGU_WEIGHT_USHORT      = ( 2 <<  9 ),
+    SCEGU_WEIGHT_FLOAT       = ( 3 <<  9 ),
+    SCEGU_INDEX_NONE         = ( 0 << 11 ),
+    SCEGU_INDEX_UBYTE        = ( 1 << 11 ),
+    SCEGU_INDEX_USHORT       = ( 2 << 11 ),
+    SCEGU_WEIGHT_1           = ( 0 << 14 ),
+    SCEGU_WEIGHT_2           = ( 1 << 14 ),
+    SCEGU_WEIGHT_3           = ( 2 << 14 ),
+    SCEGU_WEIGHT_4           = ( 3 << 14 ),
+    SCEGU_WEIGHT_5           = ( 4 << 14 ),
+    SCEGU_WEIGHT_6           = ( 5 << 14 ),
+    SCEGU_WEIGHT_7           = ( 6 << 14 ),
+    SCEGU_WEIGHT_8           = ( 7 << 14 ),
+    SCEGU_VERTEX_1           = ( 0 << 18 ),
+    SCEGU_VERTEX_2           = ( 1 << 18 ),
+    SCEGU_VERTEX_3           = ( 2 << 18 ),
+    SCEGU_VERTEX_4           = ( 3 << 18 ),
+    SCEGU_VERTEX_5           = ( 4 << 18 ),
+    SCEGU_VERTEX_6           = ( 5 << 18 ),
+    SCEGU_VERTEX_7           = ( 6 << 18 ),
+    SCEGU_VERTEX_8           = ( 7 << 18 ),
+    SCEGU_THROUGH            = ( 1 << 23 ),
+} SCEGU_VERTEX_TYPE <read=SCEGU_VERTEX_TYPE_ToString>;
+
+string SCEGU_VERTEX_TYPE_ToString(SCEGU_VERTEX_TYPE& val)
+{
+    local string str = "";
+    local int i;
+    local u32 curBit;
+    local SCEGU_VERTEX_TYPE curVal;
+    local string curStr = "";
+    local int bits = sizeof(SCEGU_VERTEX_TYPE) * 8;
+    local bool first = true;
+
+    for (i = 0; i < bits; ++i)
+    {
+        curBit = 1 << i;
+        curVal = (SCEGU_VERTEX_TYPE)curBit;
+        curStr = EnumToString(curVal);
+        if (curStr == "") curStr = SPrintf(curStr, "0x%08X", curBit);
+        if ((val & curBit) == curBit)
+        {
+            str += first ? curStr : "| " + curStr; 
+            first = false;
+        }    
+    }
+
+    return str;
+}
+
+
+/* ---------------------------------------------------------------- */
+/*  block args                                                      */
+/* ---------------------------------------------------------------- */
+
+typedef struct {
+	SCEGU_VERTEX_TYPE format ;
+	int n_verts ;
+	int n_morphs ;
+	int format2 ;
+} SceGmoArraysHeader ;
+
+typedef struct {
+	int format ;
+	int n_dims ;
+	int n_keys ;
+	int reserved ;
+} SceGmoFCurveHeader ;
+
+/* ---------------------------------------------------------------- */
+/*  command args ( common commands )                                */
+/* ---------------------------------------------------------------- */
+
+typedef struct {
+    string name;
+} SceGmoFileName ;
+
+typedef struct {
+	int size ;
+	int data[ size ] ;
+} SceGmoFileImage ;
+
+typedef struct {
+	SceGmoVec3F lower ;
+	SceGmoVec3F upper ;
+} SceGmoBoundingBox ;
+
+typedef struct {
+	int format ;
+    // float offset[ 1 ];
+
+    if ( format == SCEGU_VERTEX_FLOAT )
+    {
+	    float tx, ty, tz, sx, sy, sz;
+    }
+    else if ( format == SCEGU_TEXTURE_FLOAT )
+    {
+        float x, y, w, h;
+    }
+    else
+    {
+        Assert( false );
+    }
+
+} SceGmoVertexOffset ;
+
+/* ---------------------------------------------------------------- */
+/*  command args ( bone commands )                                  */
+/* ---------------------------------------------------------------- */
+
+typedef struct {
+	SceGmoRef bone ;
+} SceGmoParentBone ;
+
+typedef struct {
+	SceGmoRef visibility ;
+} SceGmoVisibility ;
+
+typedef struct {
+	int n_weights ;
+	float weights[ n_weights ] ;
+} SceGmoMorphWeights ;
+
+typedef struct {
+	float index ;
+} SceGmoMorphIndex ;
+
+typedef struct {
+	int n_bones ;
+	int bones[ n_bones ] ;
+} SceGmoBlendBones ;
+
+typedef struct {
+	int n_offsets ;
+	SceGmoMat4F offsets[ n_offsets ] ;
+} SceGmoBlendOffsets ;
+
+typedef struct {
+	SceGmoVec3F pivot ;
+} SceGmoPivot ;
+
+typedef struct {
+	SceGmoMat4F matrix ;
+} SceGmoMultMatrix ;
+
+typedef struct {
+	SceGmoVec3F translate ;
+} SceGmoTranslate ;
+
+typedef struct {
+	SceGmoVec3F rotate ;
+} SceGmoRotateZYX ;
+
+typedef struct {
+	SceGmoVec3F rotate ;
+} SceGmoRotateYXZ ;
+
+typedef struct {
+	SceGmoQuatF rotate ;
+} SceGmoRotateQ ;
+
+typedef struct {
+	SceGmoVec3F scale ;
+} SceGmoScale ;
+
+typedef struct {
+	SceGmoVec3F scale ;
+} SceGmoScale2 ;
+
+typedef struct {
+	SceGmoVec3F scale ;
+} SceGmoScale3 ;
+
+typedef struct {
+	SceGmoRef part ;
+} SceGmoDrawPart ;
+
+/* ---------------------------------------------------------------- */
+/*  command args ( mesh commands )                                  */
+/* ---------------------------------------------------------------- */
+
+typedef struct {
+	SceGmoRef material ;
+} SceGmoSetMaterial ;
+
+typedef struct {
+	int n_indices ;
+	int indices[ n_indices ] ;
+} SceGmoBlendSubset ;
+
+typedef struct {
+	float div_u ;
+	float div_v ;
+} SceGmoSubdivision ;
+
+typedef struct (){
+	SceGmoRef arrays; // reference to SCE_GMO_ARRAYS
+	SCEGMO_PRIM mode; // maps to SCEGU_PRIM_*
+	int n_verts ; // number of vertices
+	int n_prims ; // number of primitives (tris, tristrips, etc)
+	unsigned short indices[ 1 ]; // if SCEGMO_PRIM_SEQUENTIAL then vertex base index else the actual index buffer
+
+    Printf( SCEGMO_PRIM_ToString( mode ) + "\n" );
+} SceGmoDrawArrays ;
+
+typedef struct {
+	SceGmoRef arrays ;
+	SCEGMO_PRIM mode ;
+	int n_verts ;
+	int n_prims ;
+	unsigned short indices[ 1 ] ;
+} SceGmoDrawParticle ;
+
+typedef struct {
+	SceGmoRef arrays ;
+	SCEGMO_PRIM mode ;
+	int width ;
+	int height ;
+	unsigned short indices[ 1 ] ;
+} SceGmoDrawBSpline ;
+
+typedef struct {
+	SceGmoRef arrays ;
+	SCEGMO_PRIM mode ;
+	int width ;
+	int height ;
+	unsigned short indices[ 1 ] ;
+} SceGmoDrawRectMesh ;
+
+typedef struct {
+	SceGmoRef arrays ;
+	SCEGMO_PRIM mode ;
+	int width ;
+	int height ;
+	unsigned short indices[ 1 ] ;
+} SceGmoDrawRectPatch ;
+
+/* ---------------------------------------------------------------- */
+/*  command args ( material commands )                              */
+/* ---------------------------------------------------------------- */
+
+typedef struct {
+	int state ;
+	int value ;
+} SceGmoRenderState ;
+
+typedef struct {
+	SceGmoCol4F color ;
+} SceGmoDiffuse ;
+
+typedef struct {
+	SceGmoCol4F color ;
+	float shininess ;
+} SceGmoSpecular ;
+
+typedef struct {
+	SceGmoCol4F color ;
+} SceGmoEmission ;
+
+typedef struct {
+	SceGmoCol4F color ;
+} SceGmoAmbient ;
+
+typedef struct {
+	float reflection ;
+} SceGmoReflection ;
+
+typedef struct {
+	float refraction ;
+} SceGmoRefraction ;
+
+typedef struct {
+	float bump ;
+} SceGmoBump ;
+
+/* ---------------------------------------------------------------- */
+/*  command args ( layer commands )                                 */
+/* ---------------------------------------------------------------- */
+
+typedef struct {
+	SceGmoRef texture ;
+} SceGmoSetTexture ;
+
+typedef struct {
+	int type ;
+} SceGmoMapType ;
+
+typedef struct {
+	float factor ;
+} SceGmoMapFactor ;
+
+typedef struct {
+	int mode ;
+	int src ;
+	int dst ;
+} SceGmoBlendFunc ;
+
+typedef struct {
+	int func ;
+	int comp ;
+} SceGmoTexFunc ;
+
+typedef struct {
+	int mag ;
+	int min ;
+} SceGmoTexFilter ;
+
+typedef struct {
+	int wrap_u ;
+	int wrap_v ;
+} SceGmoTexWrap ;
+
+typedef struct {
+	SceGmoRectF crop ;
+} SceGmoTexCrop ;
+
+/* ---------------------------------------------------------------- */
+/*  command args ( motion commands )                                */
+/* ---------------------------------------------------------------- */
+
+typedef struct {
+	float start ;
+	float end ;
+} SceGmoFrameLoop ;
+
+typedef struct {
+	float fps ;
+} SceGmoFrameRate ;
+
+typedef struct {
+	int mode ;
+} SceGmoFrameRepeat ;
+
+typedef struct {
+	int block ;
+	int cmd ;
+	int index ;
+	int fcurve ;
+} SceGmoAnimate ;
+
+/* ---------------------------------------------------------------- */
+/*  command args ( other commands )                                 */
+/* ---------------------------------------------------------------- */
+
+typedef struct {
+	string name;
+    FAlign(4);
+
+    switch ( name )
+    {
+    case "BlindData":
+        u32 unk1;
+        string testdataStr;
+        FAlign(4);
+        break;
+
+    case "per3Helper":
+        u32 id;
+        u8 data[36]; // TODO
+        break;
+    }
+    
+    // TODO: verify this mess
+    // char name[ 1 ] ;
+	/* char pad[ n ] ; */
+	/* void data[ m ] ; */ /* use SCEGMO_CHUNK_SKIPSTRING() */
+} SceGmoBlindData ;
+
+typedef struct {
+	char project_name[ 1 ] ;
+	/* char user_name[ n ] ; */	/* use SCEGMO_CHUNK_SKIPSTRING() */
+	/* char saved_date[ n ] ; */	/* use SCEGMO_CHUNK_SKIPSTRING() */
+	/* char originator[ n ] ; */	/* use SCEGMO_CHUNK_SKIPSTRING() */
+} SceGmoFileInfo ;
+
+typedef struct SceGmoHeader {
+    SetRandomBackColor();
+	unsigned int signature ;
+	unsigned int version ;
+	unsigned int style ;
+	unsigned int option ;
+
+    Assert( signature == SCEGMO_FORMAT_SIGNATURE );
+    Assert( version == SCEGMO_FORMAT_VERSION );
+    Assert( style == SCEGMO_FORMAT_STYLE_PSP );
+} SceGmoHeader;
+
+
+typedef struct{
+    SetRandomBackColor();
+    unsigned short u;
+    unsigned short v;
+    short nx;
+    short ny;
+    short nz;
+    short vx <format=decimal>;
+    short vy;
+    short vz;
+
+
+} GmoArrayData <optimize=false>;
+
+typedef struct
+{
+    u16 r : 5;
+    u16 g : 6;
+    u16 b : 5;
+    //u16 a : 0;
+} SceGuColorPF5650;
+
+typedef struct
+{
+    u16 r : 5;
+    u16 g : 5;
+    u16 b : 5;
+    u16 a : 1;
+} SceGuColorPF5551;
+
+typedef struct
+{
+    u16 r : 4;
+    u16 g : 4;
+    u16 b : 4;
+    u16 a : 4;
+} SceGuColorPF4444;
+
+typedef struct
+{
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 a;
+} SceGuColorPF8888;
+
+typedef struct
+{
+    s8 x, y;
+} SceGuVec2b;
+
+typedef struct
+{
+    u8 x, y;
+} SceGuVec2ub;
+
+typedef struct
+{
+    s16 x, y;
+} SceGuVec2s;
+
+typedef struct
+{
+    u16 x, y;
+} SceGuVec2us;
+
+typedef struct
+{
+    f32 x, y;
+} SceGuVec2f;
+
+typedef struct
+{
+    s8 x, y, z;
+} SceGuVec3b;
+
+typedef struct
+{
+    s16 x, y, z;
+} SceGuVec3s;
+
+typedef struct
+{
+    f32 x, y, z;
+} SceGuVec3f;
+
+typedef struct(SCEGU_VERTEX_TYPE type)
+{
+    SetRandomBackColor();
+    if ((type & SCEGU_TEXTURE_UBYTE) == SCEGU_TEXTURE_UBYTE)    SceGuVec2ub texture;   
+    if ((type & SCEGU_TEXTURE_USHORT) == SCEGU_TEXTURE_USHORT)  SceGuVec2us texture;
+    if ((type & SCEGU_TEXTURE_FLOAT) == SCEGU_TEXTURE_FLOAT)    SceGuVec2f texture;
+    if ((type & SCEGU_COLOR_PF5650) == SCEGU_COLOR_PF5650)      SceGuColorPF5650 color;
+    if ((type & SCEGU_COLOR_PF5551) == SCEGU_COLOR_PF5551)      SceGuColorPF5551 color;
+    if ((type & SCEGU_COLOR_PF4444) == SCEGU_COLOR_PF4444)      SceGuColorPF4444 color;
+    if ((type & SCEGU_COLOR_PF8888) == SCEGU_COLOR_PF8888)      SceGuColorPF8888 color;
+    if ((type & SCEGU_NORMAL_BYTE) == SCEGU_NORMAL_BYTE)        SceGuVec3b normal;
+    if ((type & SCEGU_NORMAL_SHORT) == SCEGU_NORMAL_SHORT)      SceGuVec3s normal;
+    if ((type & SCEGU_NORMAL_FLOAT) == SCEGU_NORMAL_FLOAT)      SceGuVec3f normal;
+    if ((type & SCEGU_VERTEX_BYTE) == SCEGU_VERTEX_BYTE)        SceGuVec3b vertex;
+    if ((type & SCEGU_VERTEX_SHORT) == SCEGU_VERTEX_SHORT)      SceGuVec3s vertex;
+    if ((type & SCEGU_VERTEX_FLOAT) == SCEGU_VERTEX_FLOAT)      SceGuVec3f vertex; 
+    if ((type & SCEGU_WEIGHT_UBYTE) == SCEGU_WEIGHT_UBYTE) u8 temp[6];
+} SceGuVertex <optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    local u32 p = FTell();
+
+	SceGmoChunkType type ;
+	unsigned short args_offs ;
+	unsigned int next_offs ;
+
+    if ( ( type & SCEGMO_HALF_CHUNK ) == 0 )
+    {
+	    unsigned int child_offs ;
+	    unsigned int data_offs ;
+        string name;
+    }
+    else
+    {
+        local string name = "<no name>";
+    }
+
+    switch ( ( type & ~SCEGMO_HALF_CHUNK ) )
+    {
+        // SCEGMO_FILE
+        case SCEGMO_BLIND_DATA: SceGmoBlindData Args; break;
+        // SCEGMO_MODEL
+        case SCEGMO_VERTEX_OFFSET: SceGmoVertexOffset Args; break;
+        case SCEGMO_BOUNDING_BOX: SceGmoBoundingBox Args; break;
+        // SCEGMO_BONE
+        case SCEGMO_TRANSLATE: SceGmoTranslate Args; break;
+        case SCEGMO_ROTATE_ZYX: SceGmoRotateZYX Args; break;
+        case SCEGMO_SCALE: SceGmoScale Args; break;
+        case SCEGMO_PARENT_BONE: SceGmoParentBone Args; break;
+        case SCEGMO_BLEND_BONES: SceGmoBlendBones Args; break;
+        case SCEGMO_BLEND_OFFSETS: SceGmoBlendOffsets Args; break;        
+        case SCEGMO_DRAW_PART: SceGmoDrawPart Args; break;  
+        // SCEGMO_MESH
+        case SCEGMO_SET_MATERIAL: SceGmoSetMaterial Args; break;
+        case SCEGMO_DRAW_ARRAYS: SceGmoDrawArrays Args; break;
+        case SCEGMO_ARRAYS: 
+        {    
+            FSeek( Chunk.p + Chunk.args_offs );
+            SceGmoArraysHeader Args; 
+            FSeek( Chunk.p + Chunk.data_offs );
+
+            local u32 start = FTell();
+            local u32 end = start + (Chunk.child_offs - Chunk.data_offs);
+            local int stride = Args.format >> 24;
+            stride += ( ( Args.format >> 18 ) & 7 ) * stride ;
+            //FSeek(start);
+            while(FTell() < end){
+                SceGuVertex Vertex(Args.format);                      
+                start += stride;                
+                FSeek(start);    
+            }
+        }
+        break;
+        case SCEGMO_BLEND_SUBSET: SceGmoBlendSubset Args; break;
+
+        case SCEGMO_ANIMATE: SceGmoAnimate Args; break;
+    }
+} SceGmoChunk <optimize=false, read=SceGmoChunkToString>;
+
+
+string SceGmoChunkToString(SceGmoChunk& value)
+{
+    SceGmoChunkType temp = value.type & ~SCEGMO_HALF_CHUNK;
+    return EnumToString( temp ) + " (" + value.name + ")"; 
+}
+
+u32 SceGmoNext(SceGmoChunk& Chunk){
+    return Chunk.p + Chunk.next_offs;
+}
+
+u32 SceGmoChild(SceGmoChunk& Chunk) {
+    if((SCEGMO_HALF_CHUNK) & Chunk.type){
+        return SceGmoNext(Chunk);
+    }
+    return Chunk.p + Chunk.child_offs;
+}
+
+struct
+{
+    SceGmoHeader Header;
+    while ( !FEof() )
+    {
+        SceGmoChunk Chunk;
+        if ( ( Chunk.type & SCEGMO_HALF_CHUNK ) == 0 )
+        {
+            FSeek( Chunk.p + Chunk.child_offs );
+            continue;
+        }
+
+        FSeek(SceGmoChild(Chunk));
+
+        while(SceGmoChild(Chunk) < SceGmoNext(Chunk) && !FEof()){
+
+            SceGmoChunk child;
+            FSeek(SceGmoChild(Child));
+        }
+            
+    }
+} File;

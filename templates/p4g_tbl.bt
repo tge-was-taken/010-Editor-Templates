@@ -1,0 +1,638 @@
+
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: AtlusTable_P4G.bt
+//   Authors: TGE, Lillian Goulston, Scarltz, Lipsum, Kit, Blacklight, DniweTamp, Sierra
+//   Version: 1.2
+//   Purpose: Parse Persona 4 Golden Table files.
+//  Category: Persona 4 Golden
+// File Mask: *.tbl
+//  ID Bytes:
+//   History:
+//   1.0 - Initial release
+//   1.1 - Added Skill Area Type
+//       - Added Fusion Table (Still a bit unknown)
+//       - Fixes and clean-up
+//   1.2 - Added Persona Flags
+//       - Added proper enum for skills, persona names, and enemies
+//       - Added partial ENCOUNT support
+//------------------------------------------------
+
+
+//---------------------------------------------
+// Type definition
+//---------------------------------------------
+typedef ubyte u8;
+typedef short s16;
+typedef ushort u16;
+typedef uint u32;
+typedef float f32;
+
+enum<byte>bool
+{
+    False = 0,
+    True = 1,
+};
+
+typedef struct
+{
+    u8 bit0 : 1;
+    u8 bit1 : 1;
+    u8 bit2 : 1;
+    u8 bit3 : 1;
+    u8 bit4 : 1;
+    u8 bit5 : 1;
+    u8 bit6 : 1;
+    u8 bit7 : 1;
+} b8;
+
+typedef struct
+{
+    u8 bit0 : 1;
+    u8 bit1 : 1;
+    u8 bit2 : 1;
+    u8 bit3 : 1;
+    u8 bit4 : 1;
+    u8 bit5 : 1;
+    u8 bit6 : 1;
+    u8 bit7 : 1;
+    u8 bit8 : 1;
+    u8 bit9 : 1;
+    u8 bit10 : 1;
+    u8 bit11 : 1;
+    u8 bit12 : 1;
+    u8 bit13 : 1;
+    u8 bit14 : 1;
+    u8 bit15 : 1;
+} b16;
+
+typedef struct
+{
+    u8 bit0 : 1;
+    u8 bit1 : 1;
+    u8 bit2 : 1;
+    u8 bit3 : 1;
+    u8 bit4 : 1;
+    u8 bit5 : 1;
+    u8 bit6 : 1;
+    u8 bit7 : 1;
+    u8 bit8 : 1;
+    u8 bit9 : 1;
+    u8 bit10 : 1;
+    u8 bit11 : 1;
+    u8 bit12 : 1;
+    u8 bit13 : 1;
+    u8 bit14 : 1;
+    u8 bit15 : 1;
+    u8 bit16 : 1;
+    u8 bit17 : 1;
+    u8 bit18 : 1;
+    u8 bit19 : 1;
+    u8 bit20 : 1;
+    u8 bit21 : 1;
+    u8 bit22 : 1;
+    u8 bit23 : 1;
+    u8 bit24 : 1;
+    u8 bit25 : 1;
+    u8 bit26 : 1;
+    u8 bit27 : 1;
+    u8 bit28 : 1;
+    u8 bit29 : 1;
+    u8 bit30 : 1;
+    u8 bit31 : 1;
+} b32;
+
+
+//---------------------------------------------
+// Includes
+//---------------------------------------------
+#include "p4g_enums.bt"
+#include "p4g_structs.bt"
+//---------------------------------------------
+// Helper functions
+//---------------------------------------------
+local uint __RandomSeed = 0xDEADBABE;
+local uint __RandomBit = 0;
+local uint __RandomCount = 0;
+
+uint MyRandom( uint to )
+{
+    ++__RandomCount;
+    __RandomBit  = ( (__RandomSeed >> 0 ) ^ ( __RandomSeed >> 2 ) ^ ( __RandomSeed >> 3 ) ^ ( __RandomSeed >> 5 ) ) & 1;
+    __RandomSeed = ( ( ( ( __RandomBit << 15 ) | ( __RandomSeed >> 1 ) ) + ( 0xBABE / __RandomCount ) ) % to );
+
+    while( __RandomSeed < 0 )
+        __RandomSeed += to;
+
+    return __RandomSeed;
+}
+
+void DetectEndianness()
+{
+    // Test endianness
+    LittleEndian();
+    local uint sizeTest = ReadUInt();
+    if ( sizeTest & 0xFF000000 )
+        BigEndian();
+}
+
+u32 Align( u32 value, u32 alignment )
+{
+  return (value + (alignment - 1)) & ~(alignment - 1);
+}
+
+void FAlign( u32 alignment )
+{
+  FSeek( Align( FTell(), alignment ) );
+}
+
+//---------------------------------------------
+// Define structures
+//---------------------------------------------
+
+// ENCOUNT.TBL
+
+typedef struct
+{
+    b32 Flags <name = "Flags">;
+    u16 Field04;
+    u16 Field06;
+    EnemiesID Units[ 5 ] <name = "Battle Units">;
+    u16 FieldId <name = "Field ID">;
+    u16 RoomId <name = "Room ID">;
+    MusicID MusicId <name = "Music">;
+} TEncounter <name = "Enemy Encounters">;
+
+//PERSONA.TBL
+
+typedef struct
+{
+    struct
+        {
+            bool Unknown : 1;
+            bool SpecialFusion : 1;
+            bool Unknown : 1;
+            bool RESERVEPersona : 1;
+            bool PartyPersona : 1;
+            bool NotRegisterable : 1;
+            bool UnlockOnMaxSLink : 1;
+            bool Fusable : 1;
+        } PersonaFlags <name = "Persona Flags">;
+    byte : 1;
+    ArcanaID Arcana <name = "Arcana">;
+    u8 Level <name = "Base Level">;
+    PersonaStats Stats <name = "Base Stats">;
+    u8 Unknown;
+    PersonaInherit Inheritance <name = "Inheritance">;
+    u16 Unknown;
+    u8 Unknown < name = "Unknown", comment = "Biggest number = Best Personas?" >;
+} TPersonaStats <name = "Stats">;
+
+local u32 personaSkillsAndStatGrowth = 0;
+typedef struct
+{
+    PersonaStats WeightedStatDistribution <name = "Weighted Stat Growth Distribution">;
+    u8 Unknown;
+
+    struct
+    {
+        u8 PendingLevels <name = "Pending Levels">;
+        bool Learnable <name = "Learnable?">;
+        BattleSkill Skill  <name = "Skill">;
+    } PersonaSkill[ 16 ] <name = "Skills">;
+    
+} TPersonaSkillsAndStatGrowths <name = "Skills & Stat Growths">;
+
+typedef struct
+{
+    u16 Member <name = "Character">;
+    u16 LevelsAvailable <name = "Levels Available">;
+
+    struct
+    {
+        bool Learnable <name = "Learnable?">;
+        u8 Level <name = "Level Learned">;
+        u16 Skill <name = "Skill">;
+    } PersonaSkill[ 32 ] <name = "Persona Skills">;
+
+    PersonaStats StatGain[ 98 ] <name = "Persona Stat Gain by Level">;
+
+} TPersonaPartyPersonas <name = "Party Member Personas">;
+
+typedef struct
+{
+    u32 Thresholds[98] <name = "EXP Threshold">;
+} TPersonaLevelUpThresholds <name = "Party Member Level Up Thresholds">;
+
+typedef struct
+{
+    u8 ID;
+    u8 Unknown;
+} TExist <name = "EXIST.TBL Equivalent">;
+
+typedef struct
+{
+    u16 FusionTargetSet;
+    u16 FusionMaterialSet;
+} TPersonaFusion <name = "Persona Fusion Set">;
+
+//UNIT.TBL
+
+typedef struct
+{
+    b16 Flags <name = "Flags">;
+    ArcanaID Arcana <name = "Arcana">;
+    u8 Level <name = "Level">;
+    u16 Hp <name = "HP">;
+    u16 Sp <name = "SP">;
+    u8 Strength <name = "Strength">;
+    u8 Magic <name = "Magic">;
+    u8 Endurance <name = "Endurance">;
+    u8 Agility <name = "Agility">;
+    u8 Luck <name = "Luck">;
+	u8 Unknown6;
+    BattleSkill SkillIds[ 8 ] <name = "Battle Skills">;
+    u16 ExpReward <name = "EXP Reward">;
+    u16 MoneyReward <name = "Money Reward">;
+    Items Item1 <name = "Item 1 Drop">;
+	u16 Unknown7;
+	Items Item2 <name = "Item 2 Drop">;
+	u16 Unknown8;
+	u16 Unknown9;
+	u16 Unknown10;
+	u16 Unknown11;
+	u16 Unknown12;
+	u16 Unknown13;
+	u16 Unknown14;
+	u16 Unknown15;
+	u16 Unknown16;
+	u16 Unknown17;
+} TEnemyUnitStats <name = "Enemy Unit Stats">;
+
+// SKILL.TBL
+
+typedef struct
+{
+    ElementalType Element <name = "Elemental Type">;
+    Skill_SkillType SkillType <name = "Skill Type", comment = "Must be set correctly for the element icon to appear properly, even though it's otherwise redundant">;
+} TSkill_Elements <name = "Skill Elements">;
+
+typedef struct
+{
+    Skill_CasterEffect1 CasterEffect1 <name = "Caster Effect", comment = "Needs more testing">;
+    Skill_CasterEffect2 CasterEffect2 <name = "Caster Effect", comment = "Needs more testing">;
+    u16 Unknown <name = "Unknown">;
+
+    struct
+        {
+            bool Field : 1 <name = "Usable in Field">;
+            bool Battle : 1 <name = "Usable in Battle">;
+            byte : 6;
+        } Skill_Area <name = "Skill Area Type">;
+
+    Skill_DamageStat DamageStat <name = "Damage Stat", comment = "Determines which stat is used to determine damage">;
+    Skill_CostType CostType <name = "Cost Type">;
+    u8 Unknown <name = "Unknown">;
+    u16 SkillCost <name = "Skill Cost", comment = "% of max HP or fixed amount of SP">;
+    Skill_PhysicalOrMagicSkill PhysicalOrMagic <name = "Physical or Magic?", comment = "determines what's affected by either Charge or Concentrate, but doesn't seem to change what's reflected by Tetrakarn or Makarakarn. Needs more testing">;
+    u8 Unknown; //Skill_TargetRestrictions TargetRestrictions <name = "Additional Target Restrictions">;
+    Skill_NumberOfTargets NumberOfTargets <name = "Number of Targets">;
+
+    struct
+        {
+            bool Allies : 1 <name = "Allies">;
+            bool Enemies : 1 <name = "Enemies">;
+            byte : 6;
+        } ValidTargets <name = "Valid Targets">;
+
+    u8 Unknown <name = "Unknown">;
+    u8 Unknown <name = "Unknown">;
+    u8 Unknown <name = "Unknown">;
+    u8 Unknown <name = "Unknown">;
+    u8 Accuracy <name = "Accuracy">;
+    u8 MinHits <name = "Minimum Number of Hits">;
+    u8 MaxHits <name = "Maximum Number of Hits">;
+    Skill_HPEffect HPEffect <name = "Damage/Healing Type">;
+    u16 BaseDamage <name = "Base Damage">;
+    Skill_SPEffect SPEffect <name = "Deplete or Restore SP?">;
+    u8 Unknown <name = "Unknown">;
+    u8 SPAmount <name = "SP Amount">;
+    u8 Unknown <name = "Unknown">;
+    Skill_ApplyOrCureEffect ApplyOrCureEffect <name = "Apply or Cure Effect?">;
+    u8 SecondaryEffectChance <name = "Effect Chance">;
+    u8 Unknown <name = "Unknown">;
+    u8 Unknown <name = "Unknown">;
+
+   struct
+        {
+            bool Dizzy : 1 <name = "Dizzy">;
+            bool Rage : 1 <name = "Rage">;
+            bool Fear : 1 <name = "Fear">;
+            bool Silence : 1 <name = "Silence">;
+            bool Panic : 1 <name = "Panic">;
+            bool Poison : 1 <name = "Poison">;
+            bool Exhaustion : 1 <name = "Exhaustion">;
+            bool Enervation : 1 <name = "Enervation">;
+        } Effect2 <name = "Ailments">;
+
+    u8 Unknown <name = "Unknown">;
+
+   struct
+        {
+            bool Unconscious : 1 <name = "Unconscious">;
+            bool KnockDown : 1 <name = "Knock Down">;
+        } Effect4 <name = "Member Status">;
+
+    u8 Unknown <name = "Unknown">;
+
+    struct
+        {
+            bool AttackUp1 : 1 <name = "Attack Up 1">;
+            bool AttackDown1 : 1 <name = "Attack Down 1">;
+            bool AttackUp2 : 1 <name = "Attack Up 2">;
+            bool AttackDown2 : 1 <name = "Attack Down 2">;
+            bool HitEvasionUp : 1 <name = "Hit/Evasion Up 1">;
+            bool HitEvasionDown : 1 <name = "Hit/Evasion Down 1">;
+            bool DefenseUp : 1 <name = "Defense Up">;
+            bool DefenseDown : 1 <name = "Defense Down">;
+        } BuffDebuff1 <name = "Buffs and Debuffs 1">;
+
+   struct
+        {
+            bool HitEvasionUp2 : 1 <name = "Hit/Evasion Up 2">;
+            bool HitEvasionDown2 : 1 <name = "Hit/Evasion Down 2">;
+            bool PowerCharge : 1 <name = "Power Charge", comment = "Next Strength-based attack deals 2.5x damage">;
+            bool MindCharge : 1 <name = "Mind Charge", comment = "Next Magic-based attack deals 2.5x damage">;
+            bool Dekaja : 1 <name = "Dekaja", comment = "Removes stat-raising buffs">;
+            bool Dekunda : 1 <name = "Dekunda", comment = "Removes stat-lowering debuffs">;
+            bool CritUp : 1 <name = "Critical Chance Up">;
+            bool CritWayUp : 1 <name = "Critical Chance Way Up">;
+        } BuffDebuff2 <name = "Buffs and Debuffs 2">;
+
+   struct
+        {
+            bool PhysicalShield : 1 <name = "Physical Shield", comment = "Reflects the next physical attack received">;
+            bool MagicShield : 1 <name = "Magic Shield", comment = "Reflects the next magic attack received">;
+            bool NegateFireResist : 1 <name = "Negate Fire Resistance", comment = "Changes innate Fire resistance to neutral; does not override Cover Weakness effects">;
+            bool NegateIceResist : 1 <name = "Negate Ice Resistance", comment = "Changes innate Ice resistance to neutral; does not override Cover Weakness effects">;
+            bool NegateWindResist : 1 <name = "Negate Wind Resistance", comment = "Changes innate Wind resistance to neutral; does not override Cover Weakness effects">;
+            bool NegateElecResist : 1 <name = "Negate Electric Resistance", comment = "Changes innate Electric resistance to neutral; does not override Cover Weakness effects">;
+            bool AilmentSusceptibility : 1 <name = "Ailment Susceptibility", comment = "increases the likelihood of receiving ailments">;
+            bool AttackCantConnect : 1 <name = "Attack Can't Connect", comment = "Every attack from the opposite side will miss">;
+        } ElementResistance1 <name = "Element Resistance 1">;
+
+   struct
+        {
+            bool BreakPhysicalShield : 1 <name = "Break Physical Shield", comment = "Breaks physical-reflecting shields like Tetrakarn">;
+            bool BreakMagicShield : 1 <name = "Break Magic Shield", comment = "Breaks magic-reflecting shields like Makarakarn">;
+            bool InstakillShield : 1 <name = "Instakill Shield", comment = "Blocks one instakill attack">;
+            bool CoverFire : 1 <name = "Cover Fire Weakness", comment = "Changes innate Fire weakness to neutral">;
+            bool CoverIce : 1 <name = "Cover Ice Weakness", comment = "Changes innate Ice weakness to neutral">;
+            bool CoverElec : 1 <name = "Cover Electric Weakness", comment = "Changes innate Electric weakness to neutral">;
+            bool CoverWind : 1 <name = "Cover Wind Weakness", comment = "Changes innate Wind weakness to neutral">;
+        } ElementResistance2 <name = "Element Resistance 2">;
+
+    Skill_ExtraEffect ExtraEffect <name = "Extra Effects">;
+    u8 CritChance <name = "Crit Chance", comment = "Only works for Physical skills">;
+    u8 Unknown <name = "Unknown">;
+    u8 Unknown <name = "Unknown">;
+} TSkill_ActiveSkillData <name="Active Skill Data: ">;
+
+// MSG.TBL
+
+typedef struct {
+    char ArcanaName[21] <name = "Arcana Name">;
+} TMSG_ArcanaNames <name = "Arcana Names">;
+
+typedef struct {
+    char SkillName[23] <name = "Skill Name">;
+} TMSG_SkillNames <name = "Skill Names">;
+
+typedef struct {
+    char EnemyName[21] <name = "Enemy Name">;
+} TMSG_EnemyNames <name = "Enemy Names">;
+
+typedef struct {
+    char PersonaName[21] <name = "Persona Name">;
+} TMSG_PersonaNames <name = "Persona Names">;
+
+//---------------------------------------------
+// Parse file structure
+//---------------------------------------------
+enum TableSegmentType
+{
+    TableSegmentType_Unknown,
+    TableSegmentType_Encounter,
+    TableSegmentType_Persona_Stats,
+    TableSegmentType_Persona_SkillsAndStatGrowths,
+    TableSegmentType_Persona_PartyPersonas,
+    TableSegmentType_Persona_PartyLevelUpThresholds,
+    TableSegmentType_Persona_Exist,
+    TableSegmentType_Persona_Fusion,
+    TableSegmentType_Unit_EnemyUnitStats,
+    TableSegmentType_Unit_EnemyElementalAffinities,
+    TableSegmentType_Unit_PersonaElementalAffinities,
+    TableSegmentType_Skill_Elements,
+    TableSegmentType_Skill_ActiveSkillData,
+    TableSegmentType_MSG_ArcanaNames,
+    TableSegmentType_MSG_SkillNames,
+    TableSegmentType_MSG_EnemyNames,
+    TableSegmentType_MSG_PersonaNames,
+};
+
+typedef struct( TableSegmentType _type )
+{
+    uint Size;
+    local TableSegmentType type = _type; // for debugging
+
+    switch ( type )
+    {
+        case TableSegmentType_Encounter:
+            TEncounter TEncounters[ Size / sizeof( TEncounter ) ];
+            break;
+
+        case TableSegmentType_Persona_Stats:
+            TPersonaStats Stats[ Size / sizeof( TPersonaStats ) ];
+            break;
+
+        case TableSegmentType_Persona_SkillsAndStatGrowths:
+            TPersonaSkillsAndStatGrowths SkillsAndStatGrowths[ Size / sizeof( TPersonaSkillsAndStatGrowths ) ];
+            break;
+
+        case TableSegmentType_Persona_PartyPersonas:
+            TPersonaPartyPersonas PartyPersonas[ Size / sizeof( TPersonaPartyPersonas ) ];
+            break;
+
+        case TableSegmentType_Persona_PartyLevelUpThresholds:
+            TPersonaLevelUpThresholds PartyLevelUpThresholds[ Size / sizeof( TPersonaLevelUpThresholds ) ];
+            break;
+
+        case TableSegmentType_Persona_Exist:
+            TExist Exist[ Size / sizeof( TExist ) ];
+            break;
+
+        case TableSegmentType_Persona_Fusion:
+            TPersonaFusion PersonaFusion[ Size / sizeof( TPersonaFusion ) ];
+            break;
+
+        case TableSegmentType_Unit_EnemyUnitStats:
+            TEnemyUnitStats Stats[ Size / sizeof( TEnemyUnitStats ) ];
+            break;
+
+        case TableSegmentType_Unit_EnemyElementalAffinities:
+            ElementalAffinities Affinities[ Size / sizeof( ElementalAffinities ) ];
+            break;
+
+        case TableSegmentType_Unit_PersonaElementalAffinities:
+            ElementalAffinities Affinities[ Size / sizeof( ElementalAffinities ) ];
+            break;
+
+        case TableSegmentType_Skill_Elements:
+            TSkill_Elements SkillElements[ Size / sizeof( TSkill_Elements ) ];
+            break;
+
+        case TableSegmentType_Skill_ActiveSkillData:
+            TSkill_ActiveSkillData ActiveSkillData[ Size / sizeof( TSkill_ActiveSkillData ) ];
+            break;
+
+        case TableSegmentType_MSG_ArcanaNames:
+            TMSG_ArcanaNames ArcanaNames[ Size / sizeof( TMSG_ArcanaNames ) ];
+            break;
+
+        case TableSegmentType_MSG_SkillNames:
+            TMSG_SkillNames SkillNames[ Size / sizeof( TMSG_SkillNames ) ];
+            break;
+
+        case TableSegmentType_MSG_EnemyNames:
+            TMSG_EnemyNames EnemyNames[ Size / sizeof( TMSG_EnemyNames ) ];
+            break;
+
+        case TableSegmentType_MSG_PersonaNames:
+            TMSG_PersonaNames PersonaNames[ Size / sizeof( TMSG_PersonaNames ) ];
+            break;
+
+        default:
+            byte Data[ Size ];
+    }
+
+    FAlign( 16 );
+} TTableSegment <read=TableSegmentToString>;
+
+string TableSegmentToString( TTableSegment& segment )
+{
+    return EnumToString( segment.type );
+}
+
+typedef struct( string tableName, u16 endOffset )
+{
+    local int segmentIndex = 0;
+    local TableSegmentType segmentType;
+
+    while ( FTell() < endOffset )
+    {
+        segmentType = TableSegmentType_Unknown;
+
+        if ( !Stricmp( tableName, "encount" ) )
+        {
+            switch ( segmentIndex )
+            {
+                case 0: segmentType = TableSegmentType_Encounter; break;
+            }
+        }
+        else if ( !Stricmp( tableName, "persona" ) )
+        {
+            switch ( segmentIndex )
+            {
+                case 0: segmentType = TableSegmentType_Persona_Stats; break;
+                case 1: segmentType = TableSegmentType_Persona_SkillsAndStatGrowths; break;
+                case 2: segmentType = TableSegmentType_Persona_PartyPersonas; break;
+                case 3: segmentType = TableSegmentType_Persona_PartyLevelUpThresholds; break;
+                case 4: segmentType = TableSegmentType_Persona_Exist; break;
+                case 5: segmentType = TableSegmentType_Persona_Fusion; break;
+            }
+        }
+        else if ( !Stricmp( tableName, "unit" ) )
+        {
+            switch ( segmentIndex )
+            {
+                case 0: segmentType = TableSegmentType_Unit_EnemyUnitStats; break;
+                case 1: segmentType = TableSegmentType_Unit_EnemyElementalAffinities; break;
+                case 2: segmentType = TableSegmentType_Unit_PersonaElementalAffinities; break;
+            }
+        }
+
+        else if ( !Stricmp( tableName, "msg" ) )
+        {
+            switch ( segmentIndex )
+            {
+                case 0: segmentType = TableSegmentType_MSG_ArcanaNames; break;
+                case 1: segmentType = TableSegmentType_MSG_SkillNames; break;
+                case 2: segmentType = TableSegmentType_MSG_EnemyNames; break;
+                case 3: segmentType = TableSegmentType_MSG_PersonaNames; break;
+            }
+        }
+
+        else if ( !Stricmp( tableName, "skill" ) )
+        {
+            switch ( segmentIndex )
+            {
+                case 0: segmentType = TableSegmentType_Skill_Elements; break;
+                case 1: segmentType = TableSegmentType_Skill_ActiveSkillData; break;
+            }
+        }
+
+        Printf( "%s\n", EnumToString( segmentType ) );
+        SetBackColor( MyRandom( 0xFFFFFFFF ) );
+        TTableSegment Segment( segmentType );
+
+        ++segmentIndex;
+    }
+
+} TTable;
+
+typedef struct
+{
+    LittleEndian();
+    char FileName[ 252 ];
+    u16 FileSize;
+
+    if ( Stricmp( FileNameGetExtension( FileName ), ".tbl" ) == 0 )
+    {
+        BigEndian();
+        TTable Table( FileNameGetBase( FileName, false ), FTell() + FileSize );
+    }
+    else
+    {
+        u8 Data[ FileSize ];
+    }
+
+    FAlign( 64 );
+} TFile <read=FileToString>;
+
+string FileToString( struct TFile& file )
+{
+    return file.FileName;
+}
+
+
+// Read table
+local string filePath = GetFileName();
+local string fileName = FileNameGetBase( filePath, false );
+local string fileExt = FileNameGetExtension( filePath );
+
+if ( Stricmp( fileExt, ".pac" ) == 0 )
+{
+    // table.pac
+    while ( !FEof() )
+    {
+        TFile File;
+    }
+}
+else if ( Stricmp( fileExt, ".tbl" ) == 0 )
+{
+    // tbl file
+    LittleEndian();
+    TTable Table( fileName, FileSize() );
+}
+
