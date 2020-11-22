@@ -15,26 +15,45 @@ typedef struct
 
 typedef struct
 {
-    AffinityStatus PhysAffinity <name = "Physical">;
-    AffinityStatus GunAffinity <name = "Gun">;
-    AffinityStatus FireAffinity <name = "Fire">;
-    AffinityStatus IceAffinity <name = "Ice">;
-    AffinityStatus ElecAffinity <name = "Electric">;
-    AffinityStatus WindAffinity <name = "Wind">;
-    AffinityStatus PsyAffinity <name = "Psy">;
-    AffinityStatus NukeAffinity <name = "Nuke">;
-    AffinityStatus BlessAffinity <name = "Bless">;
-    AffinityStatus CurseAffinity <name = "Curse">;
-    AffinityStatus AlmightyAffinity <name = "Almighty">;
-    AffinityStatus DizzyAffinity <name = "Dizzy">;
-    AffinityStatus ConfuseAffinity <name = "Confuse">;
-    AffinityStatus FearAffinity <name = "Fear">;
-    AffinityStatus ForgetAffinity <name = "Forget">;
-    AffinityStatus HungerAffinity <name = "Hunger">;
-    AffinityStatus SleepAffinity <name = "Sleep">;
-    AffinityStatus RageAffinity <name = "Rage">;
-    AffinityStatus DespairAffinity <name = "Despair">;
-    AffinityStatus BrainwashAffinity <name = "Brainwash">; 
+    byte : 2;
+    bool NoEffectsOrAilmentsBit : 1 <name = "No Added Effects or Ailments">; // 8192 // Immune to RNG effects from this elements, like Burn from Fire or knockdown from Phys/Gun crits
+    bool ResistBit : 1 <name = "Resist">; // 4096
+    bool WeakBit : 1 <name = "Weak">; // 2048
+    bool DrainBit : 1 <name = "Drain">; // 1024
+    bool RepelBit : 1 <name = "Repel">; // 512
+    bool BlockBit : 1 <name = "Null">; // 256
+    bool Unknown : 1 <name = "Unknown">; // 128
+    bool Unknown : 1 <name = "Unknown">; // 64
+    bool Unknown : 1 <name = "Unknown">; // 32
+    bool Unknown : 1 <name = "Unknown">; // 16
+    bool Unknown : 1 <name = "Unknown">; // 8
+    bool Unknown : 1 <name = "Unknown">; // 4
+    bool Unknown : 1 <name = "Unknown">; // 2
+    bool Unknown : 1 <name = "Unknown">; // 1
+} AffinityBitfield <name = "Affinity Status">;
+
+typedef struct
+{
+    AffinityBitfield PhysAffinity <name = "Physical">;
+    AffinityBitfield GunAffinity <name = "Gun">;
+    AffinityBitfield FireAffinity <name = "Fire">;
+    AffinityBitfield IceAffinity <name = "Ice">;
+    AffinityBitfield ElecAffinity <name = "Electric">;
+    AffinityBitfield WindAffinity <name = "Wind">;
+    AffinityBitfield PsyAffinity <name = "Psy">;
+    AffinityBitfield NukeAffinity <name = "Nuke">;
+    AffinityBitfield BlessAffinity <name = "Bless">;
+    AffinityBitfield CurseAffinity <name = "Curse">;
+    AffinityBitfield AlmightyAffinity <name = "Almighty">;
+    AffinityBitfield DizzyAffinity <name = "Dizzy">;
+    AffinityBitfield ConfuseAffinity <name = "Confuse">;
+    AffinityBitfield FearAffinity <name = "Fear">;
+    AffinityBitfield ForgetAffinity <name = "Forget">;
+    AffinityBitfield HungerAffinity <name = "Hunger">;
+    AffinityBitfield SleepAffinity <name = "Sleep">;
+    AffinityBitfield RageAffinity <name = "Rage">;
+    AffinityBitfield DespairAffinity <name = "Despair">;
+    AffinityBitfield BrainwashAffinity <name = "Brainwash">; 
 } ElementalAffinities <name = "Elemental Affinities">;
 
 typedef struct

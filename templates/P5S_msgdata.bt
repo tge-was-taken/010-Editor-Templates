@@ -1,0 +1,53 @@
+//------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: msgdata.bin / 0.bin
+//   Authors: DeathChaos
+//   Version: 1.00
+//   Purpose: P5 Scramble text file
+//   History
+//   1.00    2020-05-02  DeathChaos - started this
+//------------------------------------------------
+
+LittleEndian();
+
+struct MSGData{
+	uint32 MessageDataMagic;
+	uint32 numMessageData;
+	uint32 SizeOfMessageData;
+	struct MessageDataHeaderPadding{
+		byte Padding[0x34];
+	}MessageDatapadding<name="Padding">;
+	
+	local int StringCount = (SizeOfMessageData/4)*numMessageData;
+	local int Offsets[StringCount]<hidden=true>;
+	local int i<hidden=true>;
+	local int j<hidden=true>;
+	
+	struct StringOffsets
+	{
+		for(i = 0; i < StringCount; i++)
+		{
+			uint32 StringLocation<name="Pointer to Text",format=hex>;
+			Offsets[i] = StringLocation + 0x2B790;
+		}
+	}stringoffsets<name="String Pointers">;
+	
+	struct TheString
+	{
+		for(j = 0; j < StringCount; j++)
+		{
+			FSeek(Offsets[j]);
+			struct TextStruct
+			{
+				string TextString<name="Text">;
+			}textstruct<read=GetName,name="Text">;
+		}
+	}thestring<name="Text String">;
+	
+}msgdata<bgcolor=cDkRed,name="Message Data">;
+
+string GetName(TextStruct& value)
+{
+    return value.TextString;
+}
