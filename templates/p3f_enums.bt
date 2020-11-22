@@ -139,6 +139,8 @@ enum<ubyte>Skill_BuffDebuff
 
 enum<ubyte>Skill_SpecialEffects1
 {
+    EvasionUp = 1,
+    EvasionDown = 2,
     PhysCharge = 4,
     MagicCharge = 8,
     RemoveBuffs = 16,
