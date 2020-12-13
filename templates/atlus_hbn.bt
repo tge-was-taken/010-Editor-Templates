@@ -6,7 +6,7 @@ typedef float f32;
 
 typedef struct
 {
-	u8 Unknown0;
+	u8 entrynum <name = "Entry Number">;
 	u8 Unknown1;
 	u8 Unknown2;
 	u8 Unknown3;
@@ -14,9 +14,9 @@ typedef struct
 	u8 Unknown5;
 	u8 Unknown6;
 	u8 Unknown7;
-	float Unknown8 <name = "X Pos(?)">;
-	float Unknown9 <name = "Z Pos(?)">;
-	float Unknown10 <name = "Y Pos(?)">;
+	float Unknown8 <name = "Y Pos">;
+	float Unknown9 <name = "Z Pos">;
+	float Unknown10 <name = "X Pos">;
 	float Unknown11;
 	float Unknown12;
 	float Unknown13;
@@ -24,14 +24,14 @@ typedef struct
 
 typedef struct
 {
-	u8 Unknown0;
+	u8 entrynum <name = "Entry Number">;
 	u8 Unknown1;
 	u8 Unknown2;
 	u8 Unknown3;
 	float Unknown4 <name = "X Pos">;
 	float Unknown5 <name = "Z Pos">;
 	float Unknown6 <name = "Y Pos">;
-	float Unknown7 <name = "Rotation(?)">;
+	float rot <name = "Rotation">;
 } THBNEntries2 <name = "Type 2 Entries">;
 
 typedef struct TableSegment
