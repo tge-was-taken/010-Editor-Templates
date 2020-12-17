@@ -392,8 +392,11 @@ typedef struct
 
 typedef struct
 {
-    u8 Values[ 24 ];
-} TUnitSegment3Entry;
+    u8 VoiceACBFile <name = "Voice ACB File (minus 1)", comment = "Subtract 1 from the Voice ACB to load">;
+    u8 Value;
+    VoicePack Pack <name = "Voice Pack">;
+    u8 Values[ 21 ];
+} TUnitVoiceIndex <name = "Voice Index">;
 
 typedef struct
 {
@@ -422,14 +425,9 @@ typedef struct
     u8 Unknown <name = "Unknown">;
     Skill_PhysicalOrMagicSkill PhysicalOrMagic <name = "Physical or Magic?", comment = "determines what's affected by either Charge or Concentrate, but doesn't seem to change what's reflected by Tetrakarn or Makarakarn. Needs more testing">;
     Skill_NumberOfTargets NumberOfTargets <name = "Number of Targets">;
-
-    struct
-        {
-            byte : 6;
-            bool Enemies : 1 <name = "Enemies">;
-            bool Allies : 1 <name = "Allies">;
-        } ValidTargets <name = "Valid Targets">;
-
+    byte : 6;
+    bool UsableOnEnemies : 1 <name = "Usable on Enemies">;
+    bool UsableOnAllies : 1 <name = "Usable on Allies">;
     Skill_TargetRestrictions TargetRestrictions <name = "Additional Target Restrictions">;
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
@@ -525,8 +523,8 @@ typedef struct
 
     struct
         {
-            bool AccuracyDown : 1 <name = "Evasion Down">;
-            bool AccuracyUp : 1 <name = "Evasion Up">;
+            bool AccuracyDown : 1 <name = "Accuracy Down">;
+            bool AccuracyUp : 1 <name = "Accuracy Up">;
             bool DefenseDown : 1 <name = "Defense Down">;
             bool DefenseUp : 1 <name = "Defense Up">;
             bool EvasionDown : 1 <name = "Evasion Down">;
@@ -1349,7 +1347,7 @@ enum TableSegmentType
     TableSegmentType_Unit_EnemyUnitStats,
     TableSegmentType_Unit_EnemyElementalAffinities,
     TableSegmentType_Unit_PersonaElementalAffinities,
-    TableSegmentType_Unit_Segment3,
+    TableSegmentType_Unit_VoiceIndex,
     TableSegmentType_Unit_VisualIndex,
     TableSegmentType_Visual_EnemyVisualVariablesA,
     TableSegmentType_Visual_PlayerVisualVariablesA,
@@ -1504,8 +1502,8 @@ typedef struct( TableSegmentType _type )
             ElementalAffinities Affinities[ Size / sizeof( ElementalAffinities ) ];
             break;
 
-        case TableSegmentType_Unit_Segment3:
-            TUnitSegment3Entry Entries[ Size / sizeof( TUnitSegment3Entry ) ];
+        case TableSegmentType_Unit_VoiceIndex:
+            TUnitVoiceIndex Entries[ Size / sizeof( TUnitVoiceIndex ) ];
             break;
 
         case TableSegmentType_Unit_VisualIndex:
@@ -1641,7 +1639,7 @@ typedef struct( string tableName, u32 endOffset )
                 case 0: segmentType = TableSegmentType_Unit_EnemyUnitStats; break;
                 case 1: segmentType = TableSegmentType_Unit_EnemyElementalAffinities; break;
                 case 2: segmentType = TableSegmentType_Unit_PersonaElementalAffinities; break;
-                case 3: segmentType = TableSegmentType_Unit_Segment3; break;
+                case 3: segmentType = TableSegmentType_Unit_VoiceIndex; break;
                 case 4: segmentType = TableSegmentType_Unit_VisualIndex; break;
             }
         }
@@ -1670,7 +1668,7 @@ typedef struct( string tableName, u32 endOffset )
 typedef struct
 {
     LittleEndian();
-    char FileName[ 252 ]<hidden=true>;
+    char FileName[ 252 ] <hidden = true>;
     u32 FileSize;
 
     if ( Stricmp( FileNameGetExtension( FileName ), ".tbl" ) == 0 )
@@ -1702,7 +1700,7 @@ if ( Stricmp( fileExt, ".pac" ) == 0 )
     // table.pac
     while ( !FEof() )
     {
-        TFile File;
+        TFile File <name = "File">;
     }
 }
 else if ( Stricmp( fileExt, ".tbl" ) == 0 )

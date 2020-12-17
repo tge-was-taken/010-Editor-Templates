@@ -4129,9 +4129,10 @@ enum<short> AffinityStatus
     Repel = 512,
     Drain = 1024,
     TooFarAwayToHit = 8272, // used in Cognitive Wakaba battle; needs more testing
-    Drain2 = 9216, // used in Shadow Madarame battle; needs more testing
+    DrainResist = 9216, // used in Shadow Madarame battle; needs more testing
     WeakResist = 10240,
 };
+
 
 enum<ushort>PersonaInherit
 {
@@ -4218,7 +4219,7 @@ enum<ubyte>Skill_HPEffect
     DrainDamage = 12, // deals damage, affected by damage stat, and restores equal HP to the user
     DrainExactDamage = 13, // deals EXACTLY the amount of damage specified and restores equal HP to the user
     Unknown_Damage14 = 14, // seems to be the same as DealDamage? Needs more testing
-    RestoreHealthWhiffChance = 15, // Has a chance to whiff, healing for minimal HP instead
+    RestoreHealthChanceToWhiff = 15, // Has a chance to whiff, healing for minimal HP instead
     DamageBasedOnHealthyPartyMembers = 16, // used for All-Out Attacks
 };
 
@@ -4226,12 +4227,13 @@ enum<ubyte>Skill_SPEffect
 {
     NoSPEffect = 0,
     RestoreSP = 5,
+//  DepleteSP = 8,
     DepletePercentMaxSP = 10,
     RestorePercentMaxSP = 11,
     DrainSP = 13,
 };
 
-enum<ubyte>Skill_ValidTargets
+enum<ubyte>Skill_ValidTargets // definitely a bitfield
 {
     TargetAlly = 1,
     TargetEnemy = 2,
@@ -4246,7 +4248,7 @@ enum<ubyte>Skill_NumberOfTargets
     Unknown_PlumeOfDuskRelated = 3, // used by the unused Plume of Dusk item ability - description reads "When MC is KO'd, fully recover to all allies"
 };
 
-enum<ubyte>Skill_TargetRestrictions
+enum<ubyte>Skill_TargetRestrictions // definitely a bitfield
 {
     NoAdditionalRestrictions = 0,
     RandomTwoFromSelection = 1, // used by Diffraction Arrow, Distortion Wave
@@ -4257,7 +4259,7 @@ enum<ubyte>Skill_TargetRestrictions
     UnconsciousOnly = 64, // used for revival skills
 };
 
-enum<ubyte>Skill_CasterEffect1
+enum<ubyte>Skill_CasterEffect1 // definitely a bitfield
 {
     NoCasterEffect1 = 0,
     UnknownCasterEffect_SpecialMoveRelated = 1, // used by All-Out Attacks, Navigator skills, and other unique skills. Sometimes plays a mini-cutscene?
@@ -4266,7 +4268,7 @@ enum<ubyte>Skill_CasterEffect1
     UnknownCasterEffect1_StealInfoRelated = 32, // used by Steal Info
 };
 
-enum<ubyte>Skill_CasterEffect2
+enum<ubyte>Skill_CasterEffect2 // definitely a bitfield
 {
     NoCasterEffect2 = 0,
     KOSelf = 1,
@@ -4282,14 +4284,14 @@ enum<ubyte>Skill_CasterEffect2
 };
 
 
-enum<ubyte>Skill_DamageStat
+enum<ubyte>Skill_DamageStat // rewrite as bools
 {
     NoApplicableStat = 0,
     StrengthStat = 1,
     MagicStat = 2,
 };
 
-enum<ubyte>Skill_CostType
+enum<ubyte>Skill_CostType // rewrite as bools
 {
     NoCost = 0,
     HPCost = 1,
@@ -4309,7 +4311,7 @@ enum<ubyte>Skill_PassiveOrActive
     NULL_Skill = 255
 };
 
-enum<int>GearEquippable
+enum<int>GearEquippable // DEFINITELY a bitfield
 {
     NotEquippable = 0,
     AnyoneEquippable = -1,
@@ -4542,6 +4544,12 @@ enum<ubyte>Month
     November = 11,
     December = 12,
 };
+
+enum<ubyte>VoicePack
+{
+    VoicePackA = 0,
+    VoicePackB = 1,
+    VoicePackC = 2,
 
 enum<ubyte>Skill_AreaType
 {
