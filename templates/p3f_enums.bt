@@ -201,7 +201,6 @@ enum<ubyte>Skill_CasterEffect1
     UnknownCasterEffect_TrafuriRelated = 40, // used by Trafuri
 };
 
-
 enum<ubyte>Skill_DamageStat
 {
     NoApplicableStat = 0,
@@ -404,13 +403,13 @@ enum<ushort>BattleSkill
     ArrowRain = 141,
     MyriadArrows = 142,
     PrimalForce = 143,
-    VorpalBlade144 = 144,
-    WearyThrust145 = 145,
+    VorpalBladeJourney = 144,
+    WearyThrustJourney = 145,
     CruelAttack = 146,
     VileAssault = 147,
     PoisonArrow = 148,
-    WearyThrust149 = 149,
-    VorpalBlade150 = 150,
+    WearyThrustAnswer = 149,
+    VorpalBladeAnswer = 150,
     hh0x097 = 151,
     hh0x098 = 152,
     hh0x099 = 153,
@@ -1484,6 +1483,7 @@ enum<ushort>PersonaID
 	Personah0FE254 = 254,
 	Personah0FF255 = 255,
 };
+
 enum<ushort>CharacterID
 {
     PlaceholderEntry1 = 0,
@@ -1495,7 +1495,7 @@ enum<ushort>CharacterID
     FuukaYamagishi = 6,
     AkihikoSanada = 7,
     KenAmada = 8,
-    ShinjiroAragaki = 9,
+    ShinjiroJ_MetisA = 9,
     Koromaru = 10,
 };
 
@@ -1505,6 +1505,20 @@ enum<ushort>MusicID
     MasterOfShadow = 1,
     UnavoidableBattle = 2,
     MasterOfTartarus = 3,
-	HeartfulCry = 7,
-	Darkness = 8,
+	  HeartfulCry = 7,
+	  Darkness = 8,
+};
+
+enum<ubyte>SkillProgression
+{
+    Unused = 0,
+    Learn = 1,
+    Remove = 2, //for Party members only
+    Final = 4, //after the last skill for any Persona (minus Party)
+};
+
+enum<ubyte>TargetStatus
+{
+    Normal = 0,
+    Unconscious = 4,
 };

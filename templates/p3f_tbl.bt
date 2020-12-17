@@ -3,7 +3,7 @@
 //--- 010 Editor v8.0 Binary Template
 //
 //      File: AtlusTable_P3F.bt
-//   Authors: DniweTamp, Sierra
+//   Authors: DniweTamp, Sierra, Phoenix
 //   Version: 1.1
 //   Purpose: Parse Persona 3 FES Table files.
 //  Category: Persona 3 FES
@@ -199,7 +199,7 @@ typedef struct
     struct
     {
         u8 PendingLevels <name = "Pending Levels">;
-        bool Learnable <name = "Learnable?">;
+        SkillProgression Learnable <name = "Learnable?">;
         BattleSkill Skill  <name = "Skill">;
     } PersonaSkill[ 16 ] <name = "Skills">;
     
@@ -213,7 +213,7 @@ typedef struct
     struct
     {
         u8 Level <name = "Level Learned">;
-        bool Learnable <name = "Learnable?">;
+        SkillProgression Learnable <name = "Learnable?">;
         BattleSkill Skill <name = "Skill">;
     } PersonaSkill[ 32 ] <name = "Persona Skills">;
 
@@ -275,7 +275,7 @@ typedef struct
     struct
     {
         u8 Level <name = "Level Learned">;
-        bool Learnable <name = "Learnable?">;
+        SkillProgression Learnable <name = "Learnable?">;
         BattleSkill Skill <name = "Skill">;
     } PersonaSkill[ 32 ] <name = "Persona Skills">;
 
@@ -377,10 +377,10 @@ typedef struct
             byte : 6;
         } ValidTargets <name = "Valid Targets">;
 
-    u8 Unknown <name = "Unknown">;
+    TargetStatus Status<name = "Target Status", comment = "for revival skills">;
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">; //Skill_TargetRestrictions TargetRestrictions <name = "Additional Target Restrictions">;
-    u8 Unknown <name = "Unknown">;
+    u8 Unknown <name = "Unknown", comment = "seems to check if there are any available targets (healing related) in conjuction with above variable. Needs testing">;
     u8 SkillAccuracy <name = "Skill's Accuracy">;
     u8 MinHit <name = "Minimum Amount of Hits">;
     u8 MaxHit <name = "Maximum Amount of Hits">;
@@ -391,15 +391,12 @@ typedef struct
     u8 Unknown <name = "Unknown">;
     u16 Sp2 <name = "SP Amount">;
     Skill_EnableAilment EnableAilment <name = "Enable Ailment", comment = "AilmentOn also applies to insta-kill spells (light/dark)">;
-
     u8 AlimentChance <name = "Aliments Hit Chance">;
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
 
-
-	
-				   struct
-        {
+    struct
+    {
             bool Charm : 1 <name = "Charm">;
             bool Distress : 1 <name = "Distress">;
             bool Panic : 1 <name = "Panic">;
@@ -408,18 +405,15 @@ typedef struct
             bool Freeze : 1 <name = "Freeze">;
             bool Shock : 1 <name = "Shock">;
             bool Poison : 1 <name = "Poison">;
-        } Effect2 <name = "Ailments">;
+    } Effect2 <name = "Ailments">;
 
-	struct
-     {
+	  struct
+    {
          bool Unconscious : 1 <name = "Unconscious">;
          bool KnockDown : 1 <name = "Knocked Down">;
-     } Effect4 <name = "Member Status">;
+    } Effect4 <name = "Member Status", comment = "I think this is unused but idk keeping just in case -Phoenix">;
 	 
     Skill_SpecialAilments SpecialAil <name = "Special Ailments">;
-	
-
-
     u8 Unknown <name = "Unknown">;
     Skill_BuffDebuff BuffDebuff <name = "Buffs/Debuffs", comment = "Heat Riser is used for a fusion spell, Debilitate is unused">;
     Skill_SpecialEffects1 SpecialEff <name = "Special Effects">;
@@ -481,130 +475,6 @@ typedef struct
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
 } TSkill_ActiveSkillData <name="Active Skill Data: ">;
-
-// SKILL_F.TBL
-//
-//typedef struct
-//{
-//    ElementalType Element <name = "Elemental Type">;
-//    Skill_SkillType SkillType <name = "Skill Type", comment = "Must be set correctly for the element icon to appear properly, even though it's otherwise redundant">;
-//} TSkill_ElementsF <name = "Skill Elements">;
-//
-//typedef struct
-//{
-//    Skill_CostTypeType skill_CostTypeType <name = "Skill's Cost Type">;
-//    u8 Unknown <name = "Unknown">;
-//    Skill_PhysicalOrMagicSkill PhysicalOrMagic <name = "Physical or Magic?", comment = "determines what's affected by either Charge or Concentrate, but doesn't seem to change what's reflected by Tetrakarn or Makarakarn. Needs more testing">;
-//    Skill_CostType CostType <name = "Cost Type">;
-//    u8 SkillCost <name = "Skill Cost", comment = "% of max HP or fixed amount of SP">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    Skill_NumberOfTargets NumberOfTargets <name = "Number of Targets">;
-//
-//    struct
-//        {
-//            bool Allies : 1 <name = "Allies">;
-//            bool Enemies : 1 <name = "Enemies">;
-//            byte : 6;
-//        } ValidTargets <name = "Valid Targets">;
-//
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">; //Skill_TargetRestrictions TargetRestrictions <name = "Additional Target Restrictions">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 SkillAccuracy <name = "Skill's Accuracy">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u16 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//
-//   struct
-//        {
-//            bool Poison : 1 <name = "Poison">;
-//            bool Charm : 1 <name = "Charm">;
-//            bool Panic : 1 <name = "Panic">;
-//            bool Rage : 1 <name = "Rage">;
-//            bool Fear : 1 <name = "Fear">;
-//            bool Distress : 1 <name = "Distress">;
-//            bool Freeze : 1 <name = "Freeze">;
-//            bool Shock : 1 <name = "Enervation">;
-//        } Effect2 <name = "Ailments">;
-//
-//    u8 Unknown <name = "Unknown">;
-//
-//   struct
-//        {
-//            bool Unconscious : 1 <name = "Unconscious">;
-//            bool KnockDown : 1 <name = "Knock Down">;
-//        } Effect4 <name = "Member Status">;
-//
-//    u8 Unknown <name = "Unknown">;
-//
-//    struct
-//        {
-//            bool AttackUp1 : 1 <name = "Attack Up 1">;
-//            bool AttackDown1 : 1 <name = "Attack Down 1">;
-//            bool AttackUp2 : 1 <name = "Attack Up 2">;
-//            bool AttackDown2 : 1 <name = "Attack Down 2">;
-//            bool HitEvasionUp : 1 <name = "Hit/Evasion Up">;
-//            bool HitEvasionDown : 1 <name = "Hit/Evasion Down">;
-//            bool DefenseUp : 1 <name = "Defense Up">;
-//            bool DefenseDown : 1 <name = "Defense Down">;
-//        } BuffDebuff1 <name = "Buffs and Debuffs 1">;
-//
-//   struct
-//        {
-//            bool RemoveDebuffs : 1 <name = "Remove Debuffs", comment = "Removes stat-lowering debuffs">;
-//            bool RemoveBuffs : 1 <name = "Remove Buffs", comment = "Removes stat-raising buffs">;
-//            bool PowerCharge : 1 <name = "Power Charge", comment = "Next Strength-based attack deals 2.5x damage">;
-//            bool MindCharge : 1 <name = "Mind Charge", comment = "Next Magic-based attack deals 2.5x damage">;
-//            bool MagicShield : 1 <name = "Magic Shield", comment = "Reflects the next magic attack received">;
-//            bool PhysicalShield : 1 <name = "Physical Shield", comment = "Reflects the next physical attack received">;
-//            bool CritUp : 1 <name = "Critical Chance Up">;
-//            bool CritWayUp : 1 <name = "Critical Chance Way Up">;
-//        } BuffDebuff2 <name = "Buffs and Debuffs 2">;
-//
-//   struct
-//        {
-//            bool PhysicalShield : 1 <name = "Physical Shield", comment = "Reflects the next physical attack received">;
-//            bool MagicShield : 1 <name = "Magic Shield", comment = "Reflects the next magic attack received">;
-//            bool NegateFireResist : 1 <name = "Negate Fire Resistance", comment = "Changes innate Fire resistance to neutral; does not override Cover Weakness effects">;
-//            bool NegateIceResist : 1 <name = "Negate Ice Resistance", comment = "Changes innate Ice resistance to neutral; does not override Cover Weakness effects">;
-//            bool NegateWindResist : 1 <name = "Negate Wind Resistance", comment = "Changes innate Wind resistance to neutral; does not override Cover Weakness effects">;
-//            bool NegateElecResist : 1 <name = "Negate Electric Resistance", comment = "Changes innate Electric resistance to neutral; does not override Cover Weakness effects">;
-//            bool AilmentSusceptibility : 1 <name = "Ailment Susceptibility", comment = "increases the likelihood of receiving ailments">;
-//            bool AttackCantConnect : 1 <name = "Attack Can't Connect", comment = "Every attack from the opposite side will miss">;
-//        } ElementResistance1 <name = "Element Resistance 1">;
-//
-//   struct
-//        {
-//            bool BreakPhysicalShield : 1 <name = "Break Physical Shield", comment = "Breaks physical-reflecting shields like Tetrakarn">;
-//            bool BreakMagicShield : 1 <name = "Break Magic Shield", comment = "Breaks magic-reflecting shields like Makarakarn">;
-//            bool InstakillShield : 1 <name = "Instakill Shield", comment = "Blocks one instakill attack">;
-//            bool CoverFire : 1 <name = "Cover Fire Weakness", comment = "Changes innate Fire weakness to neutral">;
-//            bool CoverIce : 1 <name = "Cover Ice Weakness", comment = "Changes innate Ice weakness to neutral">;
-//            bool CoverElec : 1 <name = "Cover Electric Weakness", comment = "Changes innate Electric weakness to neutral">;
-//            bool CoverWind : 1 <name = "Cover Wind Weakness", comment = "Changes innate Wind weakness to neutral">;
-//        } ElementResistance2 <name = "Element Resistance 2">;
-//
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//    u8 Unknown <name = "Unknown">;
-//} TSkill_ActiveSkillDataF <name="Active Skill Data: ">;
 
 // MSG.TBL
 
