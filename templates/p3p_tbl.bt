@@ -3,7 +3,7 @@
 //--- 010 Editor v8.0 Binary Template
 //
 //      File: AtlusTable_P3F.bt
-//   Authors: D3, DniweTamp, Phoenix, Sierra
+//   Authors: DniweTamp, Sierra, Phoenix
 //   Version: 1.1
 //   Purpose: Parse Persona 3 FES Table files.
 //  Category: Persona 3 FES
@@ -12,7 +12,6 @@
 //   History:
 //   1.0 - Initial release
 //   1.1 - Added partial support for ENCOUNT.TBL and ENCOUNT_F.TBL
-//   1.2 - Support for AICALC.TBL and AICALC_F.TBL
 //------------------------------------------------
 
 
@@ -21,7 +20,6 @@
 //---------------------------------------------
 typedef ubyte u8;
 typedef short s16;
-typedef ushort u16;
 typedef ushort u16;
 typedef uint u32;
 typedef float f32;
@@ -104,8 +102,8 @@ typedef struct
 //---------------------------------------------
 // Includes
 //---------------------------------------------
-#include "p3f_enums.bt"
-#include "p3f_structs.bt"
+#include "p3p_enums.bt"
+#include "p3p_structs.bt"
 //---------------------------------------------
 // Helper functions
 //---------------------------------------------
@@ -397,8 +395,8 @@ typedef struct
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
 
-    struct
-    {
+				   struct
+        {
             bool Charm : 1 <name = "Charm">;
             bool Distress : 1 <name = "Distress">;
             bool Panic : 1 <name = "Panic">;
@@ -407,13 +405,13 @@ typedef struct
             bool Freeze : 1 <name = "Freeze">;
             bool Shock : 1 <name = "Shock">;
             bool Poison : 1 <name = "Poison">;
-    } Effect2 <name = "Ailments">;
+        } Effect2 <name = "Ailments">;
 
-	  struct
-    {
+	struct
+     {
          bool Unconscious : 1 <name = "Unconscious">;
          bool KnockDown : 1 <name = "Knocked Down">;
-    } Effect4 <name = "Member Status", comment = "I think this is unused but idk keeping just in case -Phoenix">;
+     } Effect4 <name = "Member Status", comment = "I think this is unused but idk keeping just in case -Phoenix">;
 	 
     Skill_SpecialAilments SpecialAil <name = "Special Ailments">;
     u8 Unknown <name = "Unknown">;
@@ -447,10 +445,6 @@ typedef struct
     u8 CritChance <name = "Crit Chance (%)">;
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
-    u8 Unknown <name = "Unknown">;
-    u8 Unknown <name = "Unknown">;
-    u8 Unknown <name = "Unknown">;
-    u8 Unknown <name = "Unknown">;
 } TSkill_ActiveSkillData <name="Active Skill Data: ">;
 
 // MSG.TBL
@@ -474,206 +468,6 @@ typedef struct {
 typedef struct {
     char TextBMD[1] <name = "BMD Message">;
 } TMSG_TextsBMD <name = "BMD Messages">;
-
-// Elsai
-typedef struct
-{
-    u16 Unused;
-    u16 AiId <name = "AI ID", comment = "All I know about this value is that if it's not 0, it causes the game to load an AI script for this enemy">; 
-    u32 Unknown[ 10 ];
-} TElsaiSegment1Entry;
-
-typedef struct
-{
-    u8 Data[ 320 ];
-} TElsaiSegment2Entry;
-
-// AICalc tables
-// Segment1 probably has bigger chunks than u32
-typedef struct
-{
-    f32 Unknown;
-} TAICalc_Segment1;
-
-typedef struct
-{
-    f32 Unknown;
-} TAICalc_Segment2;
-
-typedef struct
-{
-    f32 Unknown;
-} TAICalc_Segment3;
-
-typedef struct
-{
-    f32 Unknown;
-} TAICalc_Segment4;
-
-typedef struct
-{
-    f32 Unknown;
-} TAICalc_Segment5;
-
-typedef struct
-{
-    u8 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-} TAICalc_Segment6;
-
-typedef struct
-{
-    f32 Unknown;
-} TAICalc_Segment7;
-
-typedef struct
-{
-    f32 Unknown;
-} TAICalc_Segment8;
-
-typedef struct
-{
-    f32 Unknown;
-} TAICalc_Segment9;
-
-typedef struct
-{
-	u8 Unknown0;
-	u8 Unknown1;
-	AIFunctions Unknown2 <name = "Which AI function to use">;
-	u8 Unknown3;
-	u8 Unknown4;
-	u8 Unknown5;
-	u8 Unknown6;
-	u8 Unknown7;
-	u8 Unknown8;
-	u8 Unknown9;
-	u8 Unknown10;
-	u8 Unknown11;
-	u8 Unknown12;
-	u8 Unknown13;
-	u8 Unknown14;
-	u8 Unknown15;
-	u8 Unknown16;
-	u8 Unknown17;
-	u8 Unknown18;
-	u8 Unknown19;
-	u8 Unknown20;
-	u8 Unknown21;
-	u8 Unknown22;
-	u8 Unknown23;
-	u8 Unknown24;
-	u8 Unknown25;
-	u8 Unknown26;
-	u8 Unknown27;
-	u8 Unknown28;
-	u8 Unknown29;
-	u8 Unknown30;
-	u8 Unknown31;
-	u8 Unknown32;
-	u8 Unknown33;
-	u8 Unknown34;
-	u8 Unknown35;
-	u8 Unknown36;
-	u8 Unknown37;
-	u8 Unknown38;
-	u8 Unknown39;
-	u8 Unknown40;
-	u8 Unknown41;
-	u8 Unknown42;
-	u8 Unknown43;
-	u16 Unknown44 <name = "Chance to use skill">;
-	BattleSkill Unknown46 <name = "Skill">;
-	u8 Unknown47;
-	u8 Unknown48;
-	u16 Unknown49 <name = "Unknown Data">;
-	u16 Unknown51 <name = "Chance to use skill">;
-	BattleSkill Unknown53 <name = "Skill">;
-	u8 Unknown55;
-	u8 Unknown56;
-	u16 Unknown57 <name = "Unknown Data">;
-	u16 Unknown59 <name = "Chance to use skill">;
-	BattleSkill Unknown61 <name = "Skill">;
-	u8 Unknown63;
-	u8 Unknown64;
-	u8 Unknown65;
-	u8 Unknown66;
-	u16 Unknown67 <name = "Chance to use skill">;
-	BattleSkill Unknown69 <name = "Skill">;
-	u8 Unknown71;
-	u8 Unknown72;
-	u8 Unknown73;
-	u8 Unknown74;
-	u16 Unknown75 <name = "Chance to use skill">;
-	BattleSkill Unknown77 <name = "Skill">;
-	u8 Unknown79;
-	u8 Unknown80;
-	u8 Unknown81;
-	u8 Unknown82;
-	u16 Unknown83 <name = "Chance to use skill">;
-	BattleSkill Unknown85 <name = "Skill">;
-	u8 Unknown87;
-	u8 Unknown88;
-	u16 Unknown89 <name = "Unknown Data">;
-	u16 Unknown91 <name = "Chance to use skill">;
-	BattleSkill Unknown93 <name = "Skill">;
-	u8 Unknown95;
-	u8 Unknown96;
-	u16 Unknown97 <name = "Unknown Data">;
-	u16 Unknown99 <name = "Chance to use skill">;
-	BattleSkill Unknown101 <name = "Skill">;
-	u8 Unknown103;
-	u8 Unknown104;
-	u8 Unknown105;
-	u8 Unknown106;
-	u16 Unknown107 <name = "Chance to use skill">;
-	BattleSkill Unknown109 <name = "Skill">;
-	u8 Unknown111;
-	u8 Unknown112;
-	u8 Unknown113;
-	u8 Unknown114;
-	u8 Unknown115;
-	u8 Unknown116;
-	u8 Unknown117;
-	u8 Unknown118;
-	u8 Unknown119;
-	u8 Unknown120;
-	u8 Unknown121;
-	u8 Unknown122;
-	u16 Unknown123 <name = "Chance to use skill">;
-	BattleSkill Unknown126 <name = "Skill">;
-	u8 Unknown127;
-	u8 Unknown128;
-	u16 Unknown129 <name = "Unknown Data">;
-	u16 Unknown131 <name = "Chance to use skill">;
-	BattleSkill Unknown133 <name = "Skill">;
-	u8 Unknown135;
-	u8 Unknown136;
-	u16 Unknown137 <name = "Unknown Data">;
-	u16 Unknown139 <name = "Chance to use skill">;
-	BattleSkill Unknown141 <name = "Skill">;
-	u8 Unknown143;
-	u8 Unknown144;
-	u8 Unknown145;
-	u8 Unknown146;
-	u8 Unknown147;
-	u8 Unknown148;
-	u8 Unknown149;
-	u8 Unknown150;
-	u8 Unknown151;
-	u8 Unknown152;
-	u8 Unknown153;
-	u8 Unknown154;
-	u8 Unknown155;
-	u8 Unknown156;
-	u8 Unknown157;
-	u8 Unknown158;
-	u8 Unknown159;
-	u8 Unknown160;
-	u8 Unknown161;
-	u8 Unknown162;
-} TAICalc_Generic_Enemy_AI;
 
 //---------------------------------------------
 // Parse file structure
@@ -710,18 +504,6 @@ enum TableSegmentType
     TableSegmentType_MSG_TextsBMD,
 	TableSegmentType_Encounter,
     TableSegmentType_EncounterF,
-    TableSegmentType_Elsai_Segment0,
-    TableSegmentType_Elsai_Segment1,
-    TableSegmentType_AICalc_Segment1,
-    TableSegmentType_AICalc_Segment2,
-    TableSegmentType_AICalc_Segment3,
-    TableSegmentType_AICalc_Segment4,
-    TableSegmentType_AICalc_Segment5,
-    TableSegmentType_AICalc_Segment6,
-    TableSegmentType_AICalc_Segment7,
-	TableSegmentType_AICalc_Segment8,
-	TableSegmentType_AICalc_Segment9,
-	TableSegmentType_AICalc_Generic_Enemy_AI,
 };
 
 typedef struct( TableSegmentType _type )
@@ -819,6 +601,14 @@ typedef struct( TableSegmentType _type )
             TSkill_ActiveSkillData ActiveSkillData[ Size / sizeof( TSkill_ActiveSkillData ) ];
             break;
 
+//        case TableSegmentType_Skill_ElementsF:
+//            TSkill_ElementsF SkillElementsF[ Size / sizeof( TSkill_ElementsF ) ];
+            break;
+
+//        case TableSegmentType_Skill_ActiveSkillDataF:
+//            TSkill_ActiveSkillDataF ActiveSkillDataF[ Size / sizeof( TSkill_ActiveSkillDataF ) ];
+            break;
+
         case TableSegmentType_MSG_ArcanaNames:
             TMSG_ArcanaNames ArcanaNames[ Size / sizeof( TMSG_ArcanaNames ) ];
             break;
@@ -837,54 +627,6 @@ typedef struct( TableSegmentType _type )
 
         case TableSegmentType_MSG_TextsBMD:
             TMSG_TextsBMD TextsBMD[ Size / sizeof( TMSG_TextsBMD ) ];
-            break;
-
-        case TableSegmentType_Elsai_Segment0:
-            TElsaiSegment1Entry Entries[ Size / sizeof( TElsaiSegment1Entry ) ];
-            break;
-
-        case TableSegmentType_Elsai_Segment1:
-            TElsaiSegment2Entry Entries[ Size / sizeof( TElsaiSegment2Entry ) ];
-            break;
-
-        case TableSegmentType_AICalc_Segment1:
-            TAICalc_Segment1 Entries[ Size / sizeof( TAICalc_Segment1 ) ];
-            break;
-
-        case TableSegmentType_AICalc_Segment2:
-            TAICalc_Segment2 Entries[ Size / sizeof( TAICalc_Segment2 ) ];
-            break;
-
-        case TableSegmentType_AICalc_Segment3:
-            TAICalc_Segment3 Entries[ Size / sizeof( TAICalc_Segment3 ) ];
-            break;
-
-        case TableSegmentType_AICalc_Segment4:
-            TAICalc_Segment4 Entries[ Size / sizeof( TAICalc_Segment4 ) ];
-            break;
-
-        case TableSegmentType_AICalc_Segment5:
-            TAICalc_Segment5 Entries[ Size / sizeof( TAICalc_Segment5 ) ];
-            break;
-
-        case TableSegmentType_AICalc_Segment6:
-            TAICalc_Segment6 Entries[ Size / sizeof( TAICalc_Segment6 ) ];
-            break;
-
-        case TableSegmentType_AICalc_Segment7:
-            TAICalc_Segment7 Entries[ Size / sizeof( TAICalc_Segment7 ) ];
-            break;
-			
-		case TableSegmentType_AICalc_Segment8:
-            TAICalc_Segment8 Entries[ 380 / sizeof( TAICalc_Segment8 ) ];
-            break;
-			
-		case TableSegmentType_AICalc_Segment9:
-            TAICalc_Segment8 Entries[ 188 / sizeof( TAICalc_Segment9 ) ];
-            break;
-			
-		case TableSegmentType_AICalc_Generic_Enemy_AI:
-            TAICalc_Generic_Enemy_AI Entries[ Size / sizeof( TAICalc_Generic_Enemy_AI ) ];
             break;
 
         default:
@@ -997,46 +739,6 @@ typedef struct( string tableName, u16 endOffset )
                 case 1: segmentType = TableSegmentType_Skill_ActiveSkillData; break;
             }
         }
-        else if ( !Stricmp( tableName, "elsai" ) )
-        {
-            switch ( segmentIndex )
-            {
-                case 0: segmentType = TableSegmentType_Elsai_Segment0; break;
-                case 1: segmentType = TableSegmentType_Elsai_Segment1; break;
-            }
-        } 
-        else if ( !Stricmp( tableName, "aicalc" ) )
-        {
-            switch ( segmentIndex )
-            {
-                case 0: segmentType = TableSegmentType_AICalc_Segment1; break;
-                case 1: segmentType = TableSegmentType_AICalc_Segment2; break;
-                case 2: segmentType = TableSegmentType_AICalc_Segment3; break;
-                case 3: segmentType = TableSegmentType_AICalc_Segment4; break;
-                case 4: segmentType = TableSegmentType_AICalc_Segment5; break;
-                case 5: segmentType = TableSegmentType_AICalc_Segment6; break;
-                case 6: segmentType = TableSegmentType_AICalc_Segment7; break;
-				case 7: segmentType = TableSegmentType_AICalc_Segment8; break;
-				case 8: segmentType = TableSegmentType_AICalc_Segment9; break;
-				case 9: segmentType = TableSegmentType_AICalc_Generic_Enemy_AI; break;
-            }
-        } 
-        else if ( !Stricmp( tableName, "aicalc_f" ) )
-        {
-            switch ( segmentIndex )
-            {
-                case 0: segmentType = TableSegmentType_AICalc_Segment1; break;
-                case 1: segmentType = TableSegmentType_AICalc_Segment2; break;
-                case 2: segmentType = TableSegmentType_AICalc_Segment3; break;
-                case 3: segmentType = TableSegmentType_AICalc_Segment4; break;
-                case 4: segmentType = TableSegmentType_AICalc_Segment5; break;
-                case 5: segmentType = TableSegmentType_AICalc_Segment6; break;
-                case 6: segmentType = TableSegmentType_AICalc_Segment7; break;
-				case 7: segmentType = TableSegmentType_AICalc_Segment8; break;
-				case 8: segmentType = TableSegmentType_AICalc_Segment9; break;
-				case 9: segmentType = TableSegmentType_AICalc_Generic_Enemy_AI; break;
-            }
-        } 
 
         Printf( "%s\n", EnumToString( segmentType ) );
         SetBackColor( MyRandom( 0xFFFFFFFF ) );
