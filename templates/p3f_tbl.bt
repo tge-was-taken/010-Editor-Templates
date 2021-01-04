@@ -397,8 +397,8 @@ typedef struct
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
 
-				   struct
-        {
+    struct
+    {
             bool Charm : 1 <name = "Charm">;
             bool Distress : 1 <name = "Distress">;
             bool Panic : 1 <name = "Panic">;
@@ -407,13 +407,13 @@ typedef struct
             bool Freeze : 1 <name = "Freeze">;
             bool Shock : 1 <name = "Shock">;
             bool Poison : 1 <name = "Poison">;
-        } Effect2 <name = "Ailments">;
+    } Effect2 <name = "Ailments">;
 
-	struct
-     {
+	  struct
+    {
          bool Unconscious : 1 <name = "Unconscious">;
          bool KnockDown : 1 <name = "Knocked Down">;
-     } Effect4 <name = "Member Status", comment = "I think this is unused but idk keeping just in case -Phoenix">;
+    } Effect4 <name = "Member Status", comment = "I think this is unused but idk keeping just in case -Phoenix">;
 	 
     Skill_SpecialAilments SpecialAil <name = "Special Ailments">;
     u8 Unknown <name = "Unknown">;
