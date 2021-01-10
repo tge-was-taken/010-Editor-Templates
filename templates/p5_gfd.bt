@@ -126,7 +126,7 @@ typedef struct(u32 version)
         char Str[Length];  
     
         if ( version >= 0x01105100 )
-            SeekCurrent( 1 ); // padding byte
+            FSeek( FTell() + 1 ); // padding byte
         
         if ( version > 0x1080000 )
         {
@@ -2944,7 +2944,8 @@ typedef struct( u32 version )
 //
 // == Physics Data Chunk type stuff --
 //
-typedef struct{
+typedef struct
+{
 	u32 Field140;
 	f32 Field13C;
 	f32 Field138;
@@ -2955,7 +2956,8 @@ typedef struct{
 	u32 Entry3Count;
 } TChunkTypePhysicsDictionaryHeader <name="PhysicsDictionaryHeader">;
 
-typedef struct{
+typedef struct( u32 version )
+{
 	f32 Field34;
 	f32 Field38;
 	f32 Field3C;
@@ -2963,7 +2965,7 @@ typedef struct{
 	TBool8 hasName;
 	if (hasName > 0)
 	{
-		THashString Name( 0x01105070 );
+		THashString Name( version );
 	}
 	else{
 		f32 Field18;
@@ -2973,7 +2975,8 @@ typedef struct{
 	
 }TEntryType1<name = "Type 1 Entry">;
 
-typedef struct{
+typedef struct( u32 version )
+{
 	u16 Field94;
 	f32 field84;
 	if (Field94 == 1)
@@ -2984,7 +2987,7 @@ typedef struct{
 	TBool8 hasName;
 	if (hasName > 0)
 	{
-		THashString Name( 0x01105070 );
+		THashString Name( version );
 	}
 }TEntryType2<name = "Type 2 Entry">;
 
@@ -2997,24 +3000,24 @@ typedef struct{
 	u16 childBone;
 }TEntryType3<name = "Type 3 Entry">;
 
-typedef struct(u32 count) {
-	local u32 i;
+typedef struct(u32 count, u32 version) {
+	local u32 i<hidden=true>;
 	for (i = 0; i < count; i++)
 	{
-		TEntryType1 entryType1<read=NameToStringT1>;
+		TEntryType1 entryType1(version)<read=NameToStringT1>;
 	}
 }TEntryType1Wrapper;
 
-typedef struct(u32 count) {
-	local u32 i;
+typedef struct(u32 count, u32 version) {
+	local u32 i<hidden=true>;
 	for (i = 0; i < count; i++)
 	{
-		TEntryType2 entryType2<read=NameToStringT2>;
+		TEntryType2 entryType2(version)<read=NameToStringT2>;
 	}
 }TEntryType2Wrapper;
 
 typedef struct(u32 count) {
-	local u32 i;
+	local u32 i<hidden=true>;
 	for (i = 0; i < count; i++)
 	{
 		TEntryType3 entryType3;
@@ -3053,8 +3056,8 @@ typedef struct
 
     TChunkHeader ChunkHeader;
     TChunkTypePhysicsDictionaryHeader Header;
-    TEntryType1Wrapper Type1Entries(Header.Entry1Count)<name = "Entry Type 1 List">;
-    TEntryType2Wrapper Type2Entries(Header.Entry2Count)<name = "Entry Type 2 List">;
+    TEntryType1Wrapper Type1Entries(Header.Entry1Count, ChunkHeader.Version)<name = "Entry Type 1 List">;
+    TEntryType2Wrapper Type2Entries(Header.Entry2Count, ChunkHeader.Version)<name = "Entry Type 2 List">;
     TEntryType3Wrapper Type3Entries(Header.Entry3Count)<name = "Entry Type 3 List">;
 } TPhysicsDictionary <optimize=false>;
 //
