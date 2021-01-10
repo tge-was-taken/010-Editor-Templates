@@ -73,7 +73,7 @@ typedef enum<u32>
  {
      False = 0,
      True = 1,
- } TrueFalse;
+ } TBool8;
 
 typedef struct
 {
@@ -125,8 +125,8 @@ typedef struct(u32 version)
     {
         char Str[Length];  
     
-        /*if ( version >= 0x01105100 )
-            SeekCurrent( 1 ); // padding byte*/
+        if ( version >= 0x01105100 )
+            SeekCurrent( 1 ); // padding byte
         
         if ( version > 0x1080000 )
         {
@@ -462,7 +462,7 @@ typedef struct( u32 version )
     THashString Name( version );
     s32 Field44;
     u8 Field48;
-    TrueFalse HasTextureFiltering <name = "Has Texture Filtering">;
+    TBool8 HasTextureFiltering <name = "Has Texture Filtering">;
     u8 Field4A;
     u8 Field4B;
     f32 Field4C;
@@ -2945,33 +2945,30 @@ typedef struct( u32 version )
 // == Physics Data Chunk type stuff --
 //
 typedef struct{
-	u32 unk;
-	f32 unk;
-	f32 unk;
-	f32 unk;
-	f32 unk;
-	u32 entry1count;
-	u32 entry2count;
-	u32 entry3count;
+	u32 Field140;
+	f32 Field13C;
+	f32 Field138;
+	f32 Field134;
+	f32 Field130;
+	u32 Entry1Count;
+	u32 Entry2Count;
+	u32 Entry3Count;
 } TChunkTypePhysicsDictionaryHeader <name="PhysicsDictionaryHeader">;
 
 typedef struct{
-	f32 field34;
-	f32 field38;
-	f32 field3C;
-	f32 field40;
-	byte hasName;
+	f32 Field34;
+	f32 Field38;
+	f32 Field3C;
+	f32 Field40;
+	TBool8 hasName;
 	if (hasName > 0)
 	{
-		byte unk<hidden = true>;
-		byte nameSize;
-		char boneName[nameSize];
-		u32 stringHash<format=hex>;
+		THashString Name( 0x01105070 );
 	}
 	else{
-		f32 field18;
-		f32 field14;
-		f32 field10;
+		f32 Field18;
+		f32 Field14;
+		f32 Field10;
 	}
 	
 }TEntryType1<name = "Type 1 Entry">;
@@ -2984,13 +2981,10 @@ typedef struct{
 		f32 Field88;
 	}
 	TMatrix4x4 Field8C;
-	byte hasName;
+	TBool8 hasName;
 	if (hasName > 0)
 	{
-		byte unk<hidden = true>;
-		byte nameSize;
-		char boneName[nameSize];
-		u32 stringHash<format=hex>;
+		THashString Name( 0x01105070 );
 	}
 }TEntryType2<name = "Type 2 Entry">;
 
@@ -3032,7 +3026,8 @@ string NameToStringT1( TEntryType1& value )
     string buffer;
 	if (value.hasName > 0)
 	{
-		buffer = value.boneName;
+		SPrintf( buffer, "%s", THashStringToString( value.Name ) );
+		return buffer;
 	}
 	else buffer = "null";
 	
@@ -3044,7 +3039,8 @@ string NameToStringT2( TEntryType2& value )
     string buffer;
 	if (value.hasName > 0)
 	{
-		buffer = value.boneName;
+		SPrintf( buffer, "%s", THashStringToString( value.Name ) );
+		return buffer;
 	}
 	else buffer = "null";
 	
@@ -3057,9 +3053,9 @@ typedef struct
 
     TChunkHeader ChunkHeader;
     TChunkTypePhysicsDictionaryHeader Header;
-    TEntryType1Wrapper Type1Entries(Header.entry1count)<name = "Entry Type 1 List">;
-    TEntryType2Wrapper Type2Entries(Header.entry2count)<name = "Entry Type 2 List">;
-    TEntryType3Wrapper Type3Entries(Header.entry3count)<name = "Entry Type 3 List">;
+    TEntryType1Wrapper Type1Entries(Header.Entry1Count)<name = "Entry Type 1 List">;
+    TEntryType2Wrapper Type2Entries(Header.Entry2Count)<name = "Entry Type 2 List">;
+    TEntryType3Wrapper Type3Entries(Header.Entry3Count)<name = "Entry Type 3 List">;
 } TPhysicsDictionary <optimize=false>;
 //
 // -- Physics Data Chunk End --
@@ -3120,12 +3116,12 @@ typedef struct
                 struct TAnimationPack AnimationPack;
                 break;
 
-            case EChunkType_EOF:
-                struct TEOFChunk EOF;
-                break;
-				
 			case EChunkType_PhysicsDictionary:
                 struct TPhysicsDictionary PhysicsChunkType;
+                break;
+
+            case EChunkType_EOF:
+                struct TEOFChunk EOF;
                 break;
 
             default:
