@@ -402,7 +402,9 @@ typedef struct(u32 version)
     u32 Field6C;
     u32 Field70;
     s16 Field50;
-	u32 Field98;
+    {
+        u32 Field98;
+    }
 
     if ( Flags & EMaterialFlags_HasDiffuseMap ) struct TTextureMap DiffuseMap( version );
     if ( Flags & EMaterialFlags_HasNormalMap ) struct TTextureMap NormalMap( version );
