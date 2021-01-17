@@ -1,13 +1,13 @@
 //------------------------------------------------
 //--- 010 Editor v8.0 Binary Template
 //
-//      File: 
+//      File: p5_gfd.bt
 //   Authors: 
 //   Version: 
 //   Purpose: 
 //  Category: 
 // File Mask: 
-//  ID Bytes: 
+//  ID Bytes: GFS0
 //   History: 
 //------------------------------------------------
 
@@ -42,7 +42,7 @@ typedef enum<u32>
     EFileType_MorphTarget,
     EFileType_MorphTargetList,
     EFileType_MaterialDictionary,
-    EFileType_ChunkType000100F9,
+    EFileType_PhysicsDictionary,
     EFileType_ChunkType000100F8,
     EFileType_AnimationPack,
     EFileType_MaterialAttribute,
@@ -63,11 +63,17 @@ typedef enum<u32>
     EChunkType_EOF = 0,
     EChunkType_Model              = 0x00010003,
     EChunkType_ChunkType000100F8  = 0x000100F8,
-    EChunkType_ChunkType000100F9  = 0x000100F9,
+    EChunkType_PhysicsDictionary  = 0x000100F9,
     EChunkType_MaterialDictionary = 0x000100FB,
     EChunkType_TextureDictionary  = 0x000100FC,
     EChunkType_AnimationPack      = 0x000100FD
 } EChunkType;
+
+ typedef enum<byte>
+ {
+     False = 0,
+     True = 1,
+ } TBool8;
 
 typedef struct
 {
@@ -236,7 +242,8 @@ typedef enum<u16>
 {
     ETextureFormat_Invalid = 0,
     ETextureFormat_DDS = 1,
-    ETextureFormat_GXT = 6
+    ETextureFormat_GXT = 6,
+    ETextureFormat_GNF = 9
 } ETextureFormat;
 
 typedef struct
@@ -331,6 +338,7 @@ typedef enum<u8>
 {
     EMaterialDrawMethod_Opaque = 0,
     EMaterialDrawMethod_Translucent = 1,
+    EMaterialDrawMethod_BlackAsAlpha = 2,
 } EMaterialDrawMethod;
 
 typedef struct(u32 version)
@@ -394,8 +402,6 @@ typedef struct(u32 version)
     u32 Field6C;
     u32 Field70;
     s16 Field50;
-    
-    if ( version <= 0x1105070 || version >= 0x1105090 )
     {
         u32 Field98;
     }
@@ -435,7 +441,9 @@ typedef struct(u32 version)
                 case EMaterialAttributeType_Type7: struct TMaterialAttributeType7 Attribute( version ); break;
                 case EMaterialAttributeType_Type8: struct TMaterialAttributeType8 Attribute( version ); break;
                 default:
-                    Assert( false, "Unknown material attribute type" );
+                    local string buffer;
+                    SPrintf( buffer, "Unknown material attribute type %01d", ( attributeHeader & 0xFFFF ) );
+                    Assert( false, buffer );
                     break;
             }
         }
@@ -456,7 +464,7 @@ typedef struct( u32 version )
     THashString Name( version );
     s32 Field44;
     u8 Field48;
-    u8 Field49;
+    TBool8 HasTextureFiltering <name = "Has Texture Filtering">;
     u8 Field4A;
     u8 Field4B;
     f32 Field4C;
@@ -1441,6 +1449,8 @@ typedef enum<u32>
     EKeyType_Type31 = 31,
     EKeyType_NodeRHalf = 32,
     EKeyType_NodeSHalf = 33,
+	EKeyType_34P5R = 34,
+	EKeyType_35P5R = 35,
 } EKeyType;
 
 typedef struct( u32 version )
@@ -1518,18 +1528,27 @@ typedef struct( u32 version )
                     }
                 }
                 break;
+				
+			// P5R keys
+			case 34: struct TKeyType34P5R Keys [ KeyCount ]; break;
+			//case 34: byte UnkKeyType [ KeyCount*12 ]; break;
+			case 35: struct TKeyType35P5R Keys [ KeyCount ]; break;
+			
             default:
-                Assert( false, "Unknown/Invalid Key frame type" );
+			    local string buffer;
+                SPrintf( buffer, "Unknown/Invalid Key frame type %01d", KeyType );
+                Assert( false, buffer );
         }
         
-        // Read scale values for compressed keys
+         // Read scale values for compressed keys
         if ( KeyType == EKeyType_NodePRHalf   || KeyType == EKeyType_NodePRSHalf ||
              KeyType == EKeyType_NodePRHalf_2 || KeyType == EKeyType_Type31 ||
-             KeyType == EKeyType_NodeRHalf    || KeyType == EKeyType_NodeSHalf )
+             KeyType == EKeyType_NodeRHalf    || KeyType == EKeyType_NodeSHalf || 
+			 KeyType == EKeyType_34P5R        || KeyType == EKeyType_35P5R      )
         {
             TVector3 PositionScale;
             
-            if ( version < 0x01105100 || KeyType != EKeyType_Type31 )
+            if ( version < 0x01105100 || KeyType != EKeyType_Type31)
                 TVector3 ScaleScale;
         }
     }
@@ -1613,6 +1632,18 @@ typedef struct
 {
     TVector3Half Position;
 } TKeyType31Dancing;
+
+typedef struct
+{
+    TVector3Half Position;
+	TVector3Half Scale;
+} TKeyType34P5R;
+
+typedef struct
+{
+    TQuaternionHalf Rotation;
+    TVector3Half Scale;
+} TKeyType35P5R;
 
 typedef struct
 {
@@ -2912,6 +2943,129 @@ typedef struct( u32 version )
 // -- Model pack types --
 //
 
+//
+// == Physics Data Chunk type stuff --
+//
+typedef struct
+{
+	u32 Field140;
+	f32 Field13C;
+	f32 Field138;
+	f32 Field134;
+	f32 Field130;
+	u32 Entry1Count;
+	u32 Entry2Count;
+	u32 Entry3Count;
+} TChunkTypePhysicsDictionaryHeader <name="PhysicsDictionaryHeader">;
+
+typedef struct( u32 version )
+{
+	f32 Field34;
+	f32 Field38;
+	f32 Field3C;
+	f32 Field40;
+	TBool8 hasName;
+	if (hasName > 0)
+	{
+		THashString Name( version );
+	}
+	else{
+		f32 Field18;
+		f32 Field14;
+		f32 Field10;
+	}
+	
+}TEntryType1<name = "Type 1 Entry">;
+
+typedef struct( u32 version )
+{
+	u16 Field94;
+	f32 field84;
+	if (Field94 == 1)
+	{
+		f32 Field88;
+	}
+	TMatrix4x4 Field8C;
+	TBool8 hasName;
+	if (hasName > 0)
+	{
+		THashString Name( version );
+	}
+}TEntryType2<name = "Type 2 Entry">;
+
+typedef struct{
+	f32 Field00;
+	f32 Field04;
+	
+	f32 field08;
+	u16 parentBone;
+	u16 childBone;
+}TEntryType3<name = "Type 3 Entry">;
+
+typedef struct(u32 count, u32 version) {
+	local u32 i<hidden=true>;
+	for (i = 0; i < count; i++)
+	{
+		TEntryType1 entryType1(version)<read=NameToStringT1>;
+	}
+}TEntryType1Wrapper;
+
+typedef struct(u32 count, u32 version) {
+	local u32 i<hidden=true>;
+	for (i = 0; i < count; i++)
+	{
+		TEntryType2 entryType2(version)<read=NameToStringT2>;
+	}
+}TEntryType2Wrapper;
+
+typedef struct(u32 count) {
+	local u32 i<hidden=true>;
+	for (i = 0; i < count; i++)
+	{
+		TEntryType3 entryType3;
+	}
+}TEntryType3Wrapper;
+
+string NameToStringT1( TEntryType1& value )
+{
+    string buffer;
+	if (value.hasName > 0)
+	{
+		SPrintf( buffer, "%s", THashStringToString( value.Name ) );
+		return buffer;
+	}
+	else buffer = "null";
+	
+	return buffer;
+}
+
+string NameToStringT2( TEntryType2& value )
+{
+    string buffer;
+	if (value.hasName > 0)
+	{
+		SPrintf( buffer, "%s", THashStringToString( value.Name ) );
+		return buffer;
+	}
+	else buffer = "null";
+	
+	return buffer;
+}
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    TChunkHeader ChunkHeader;
+    TChunkTypePhysicsDictionaryHeader Header;
+    TEntryType1Wrapper Type1Entries(Header.Entry1Count, ChunkHeader.Version)<name = "Entry Type 1 List">;
+    TEntryType2Wrapper Type2Entries(Header.Entry2Count, ChunkHeader.Version)<name = "Entry Type 2 List">;
+    TEntryType3Wrapper Type3Entries(Header.Entry3Count)<name = "Entry Type 3 List">;
+} TPhysicsDictionary <optimize=false>;
+//
+// -- Physics Data Chunk End --
+//
+
 typedef struct
 {
     SetRandomBackColor();
@@ -2965,6 +3119,10 @@ typedef struct
 
             case EChunkType_AnimationPack:
                 struct TAnimationPack AnimationPack;
+                break;
+
+			case EChunkType_PhysicsDictionary:
+                struct TPhysicsDictionary PhysicsChunkType;
                 break;
 
             case EChunkType_EOF:
