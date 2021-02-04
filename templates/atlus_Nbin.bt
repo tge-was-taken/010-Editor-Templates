@@ -1,0 +1,47 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct file{
+    uint entries;
+    FSkip(28);
+    
+    struct entry {
+     uint16 unknown1;
+     uint16 unknown2;
+     uint unknown3;
+    FSkip(4);
+    uint unknown4;
+    FSkip(16);
+    }SEC1[entries];             
+                    
+     struct Section2{
+           uint16 npcNum;
+           uint16 AmountNPC;
+           uint32 modelID;
+           uint32 uknown1;
+           uint32 ScriptID;
+           FSkip(16);
+    }SEC2[entries];//No idea how long this is suppossed to be only a place holder value
+            
+        
+        
+   
+}File;
+FSeek(0);
+FSkip(32);
+ uint16 unknown1;
+ uint16 unknown2;
+ uint unknown3;
+FSkip(4);
+uint unknown4;
+FSkip(4);
