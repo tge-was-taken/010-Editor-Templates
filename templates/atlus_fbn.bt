@@ -6,9 +6,9 @@ typedef float f32;
 
 typedef enum<u16>
 {
-	Trigger = 4,
+	NPCSpawnPos = 4,// Not sure but this is what I could get from my research
 	NPC = 5,
-} Major_Type;
+} MajorType;
 
 typedef struct
 {
@@ -16,34 +16,34 @@ typedef struct
 	u8 Unknown1;
 	u8 Unknown2;
 	u8 Unknown3;
-	Major_Type Major <name = "Major">;
+	MajorType Major <name = "Major">;
 	s16 Minor <name = "Minor">;
 	u8 Res_ID <name = "Res ID">;
 	u8 Unknown;
 	u16 Field000;
-	float Field001 <name = "Collision Radius">;
+	float CollidRadius <name = "Collision Radius">;
 	float Field002;
 	float Field003;
 	float Field004;
 	float Field005;
-	float Field006 <name = "Unknown Float">;
+	float Field006 ;
 	float Field007;
 	float Field008;
 	float Field009;
 	float Field010;
-	float Field011 <name = "Unknown Float">;
+	float Field011 ;
 	float Field012;
 	float Field013;
 	float Field014;
 	float Field015;
-	float Field016 <name = "Unknown Float">;
+	float Field016 ;
 	float Field017;
-	float Field018 <name = "Y Pos">;
+	float YPos <name = "Y Pos">;
 	float Field019;
-	float Field020 <name = "X Pos">;
+	float XPos <name = "X Pos">;
 	float Field021;
-	u32 Field022 <name = "Shadow Type">;
-	float Field023 <name = "Shadow Radius">;
+	u32 ShadowType <name = "Shadow Type">;
+	float ShadowRadius <name = "Shadow Radius">;
 	u8 Unknown4;
 	u8 Unknown5;
 	u8 Unknown6;
@@ -52,7 +52,7 @@ typedef struct
 	u8 Unknown9;
 	u8 Unknown10;
 	u8 Unknown11;
-	if (Type_1_Entry_Size==320)
+	if (Type1EntrySize==320)
 	{
 		float Unknown12;
 		float Unknown13;
@@ -107,7 +107,7 @@ typedef struct
 		float Unknown62;
 		float Unknown63;
 	}
-} TFBNEntries1 <name = "FBNEntries">;
+} Type1Entries <name = "Type 1 FBNEntries">;
 
 typedef struct
 {
@@ -125,19 +125,19 @@ typedef struct
 	float Unknown11;
 	float Unknown12;
 	float Unknown13;
-} TFBNEntries2 <name = "FBNEntries">;
+} Type2Entries <name = "Type 2 FBNEntries">;
 
 typedef struct TableSegment
 {
-    u32 Field01;
-	u16 Version_Major <name = "Version Major Number">;
-	u16 Version_Minor<name = "Version Minor Number">;
-	u32 Num_Of_Type_1_Entries <name = "Number of Type 1 Entries">;
-	u32 Type_1_Entry_Size <name = "Size of Type 1 Entry">;
-	u32 Num_Of_Type_2_Entries <name = "Number of Type 2 Entries">;
-	u32 Type_2_Entry_Size <name = "Size of Type 2 Entry">;
-	TFBNEntries1 Entry_Type_1_Data[ Num_Of_Type_1_Entries ];
-	TFBNEntries2 Entry_Type_2_Data[ Num_Of_Type_2_Entries ];
+    u32 Magic;
+	u16 VersionMajor <name = "Version Major Number">;
+	u16 VersionMinor<name = "Version Minor Number">;
+	u32 NumType1Entries <name = "Number of Type 1 Entries">;
+	u32 Type1EntrySize <name = "Size of Type 1 Entry">;
+	u32 NumType2Entries <name = "Number of Type 2 Entries">;
+	u32 Type2EntrySize <name = "Size of Type 2 Entry">;
+	Type1Entries EntryType1Data[ NumType1Entries ];
+	Type2Entries EntryType2Data[ NumType2Entries ];
 };
 
 TableSegment Segment;

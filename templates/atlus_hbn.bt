@@ -6,7 +6,7 @@ typedef float f32;
 
 typedef struct
 {
-	u8 entrynum <name = "Entry Number">;
+	u8 EntryNum <name = "Entry Number">;
 	u8 Unknown1;
 	u8 Unknown2;
 	u8 Unknown3;
@@ -14,49 +14,49 @@ typedef struct
 	u8 Unknown5;
 	u8 Unknown6;
 	u8 Unknown7;
-	float Unknown8 <name = "Y Pos">;
-	float Unknown9 <name = "Z Pos">;
-	float Unknown10 <name = "X Pos">;
+	float YPos <name = "Y Pos">;
+	float ZPos <name = "Z Pos">;
+	float XPos <name = "X Pos">;
 	float Unknown11;
 	float Unknown12;
 	float Unknown13;
-} THBNEntries1 <name = "Type 1 Entries">;
+} HBNEntryType1 <name = "Type 1 Entries">;
 
 typedef struct
 {
-	u8 entrynum <name = "Entry Number">;
+	u8 EntryNum <name = "Entry Number">;
 	u8 Unknown1;
 	u8 Unknown2;
 	u8 Unknown3;
-	float Unknown4 <name = "X Pos">;
-	float Unknown5 <name = "Z Pos">;
-	float Unknown6 <name = "Y Pos">;
-	float rot <name = "Rotation">;
-} THBNEntries2 <name = "Type 2 Entries">;
+	float XPos <name = "X Pos">;
+	float ZPos <name = "Z Pos">;
+	float YPos <name = "Y Pos">;
+	float Rot <name = "Rotation">;
+} HBNEntryType2 <name = "Type 2 Entries">;
 
 typedef struct TableSegment
 {
     u32 Field01;
-	u16 Version_Major <name = "Version Major Number">;
-	u16 Version_Minor<name = "Version Minor Number">;
-	u32 Num_Of_Type_1_Entries <name = "Number of Type 1 Entries">;
-	u32 Type_1_Entry_Size <name = "Size of Type 1 Entry">;
-	u32 Num_Of_Type_2_Entries <name = "Number of Type 2 Entries">;
-	u32 Type_2_Entry_Size <name = "Size of Type 2 Entry">;
-	u32 Num_Of_Type_3_Entries <name = "Number of Type 2 Entries">;
-	u32 Type_3_Entry_Size <name = "Size of Type 2 Entry">;
-	u32 Num_Of_Type_4_Entries <name = "Number of Type 2 Entries">;
-	u32 Type_4_Entry_Size <name = "Size of Type 2 Entry">;
-	u32 Num_Of_Type_5_Entries <name = "Number of Type 2 Entries">;
-	u32 Type_5_Entry_Size <name = "Size of Type 2 Entry">;
-	u32 Num_Of_Type_6_Entries <name = "Number of Type 2 Entries">;
-	u32 Type_6_Entry_Size <name = "Size of Type 2 Entry">;
-	u32 Num_Of_Type_7_Entries <name = "Number of Type 2 Entries">;
-	u32 Type_7_Entry_Size <name = "Size of Type 2 Entry">;
-	u32 Num_Of_Type_8_Entries <name = "Number of Type 2 Entries">;
-	u32 Type_8_Entry_Size <name = "Size of Type 2 Entry">;
-	THBNEntries1 Entry_1_Data[ Num_Of_Type_1_Entries ];
-	THBNEntries2 Entry_2_Data[ Num_Of_Type_2_Entries ];
+	u16 VersionMajor <name = "Version Major Number">;
+	u16 VersionMinor <name = "Version Minor Number">;
+	u32 NumType1Entries <name = "Number of Type 1 Entries">;
+	u32 Type1EntrySize <name = "Size of Type 1 Entry">;
+	u32 NumType2Entries <name = "Number of Type 2 Entries">;
+	u32 Type2EntrySize <name = "Size of Type 2 Entry">;
+	u32 NumType3Entries <name = "Number of Type 3 Entries">;
+	u32 Type3EntrySize <name = "Size of Type 3 Entry">;
+	u32 NumType4Entries <name = "Number of Type 4 Entries">;
+	u32 TypeEntrySize <name = "Size of Type 4 Entry">;
+	u32 NumType5Entries <name = "Number of Type 5 Entries">;
+	u32 Type5EntrySize <name = "Size of Type 5 Entry">;
+	u32 NumType6Entries <name = "Number of Type 6 Entries">;
+	u32 Type6EntrySize <name = "Size of Type 6 Entry">;
+	u32 NumType7Entries <name = "Number of Type 7 Entries">;
+	u32 Type7EntrySize <name = "Size of Type 7 Entry">;
+	u32 NumTypeEntries <name = "Number of Type 8 Entries">;
+	u32 TypeEntrySize <name = "Size of Type 8 Entry">;
+	HBNEntryType1 Entry1Data[ NumType1Entries ];
+	HBNEntryType2 Entry2Data[ NumType2Entries ];
 };
 
 TableSegment Segment;
