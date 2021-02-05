@@ -1,0 +1,62 @@
+typedef ubyte u8;
+typedef short s16;
+typedef ushort u16;
+typedef uint u32;
+typedef float f32;
+
+typedef struct
+{
+	u8 EntryNum <name = "Entry Number">;
+	u8 Unknown1;
+	u8 Unknown2;
+	u8 Unknown3;
+	byte Unknown4;
+	u8 Unknown5;
+	u8 Unknown6;
+	u8 Unknown7;
+	float YPos <name = "Y Pos">;
+	float ZPos <name = "Z Pos">;
+	float XPos <name = "X Pos">;
+	float Unknown11;
+	float Unknown12;
+	float Unknown13;
+} HBNEntryType1 <name = "Type 1 Entries">;
+
+typedef struct
+{
+	u8 EntryNum <name = "Entry Number">;
+	u8 Unknown1;
+	u8 Unknown2;
+	u8 Unknown3;
+	float XPos <name = "X Pos">;
+	float ZPos <name = "Z Pos">;
+	float YPos <name = "Y Pos">;
+	float Rot <name = "Rotation">;
+} HBNEntryType2 <name = "Type 2 Entries">;
+
+typedef struct HBNFile
+{
+    u32 Field01;
+	u16 VersionMajor <name = "Version Major Number">;
+	u16 VersionMinor <name = "Version Minor Number">;
+	u32 NumType1Entries <name = "Number of Type 1 Entries">;
+	u32 Type1EntrySize <name = "Size of Type 1 Entry">;
+	u32 NumType2Entries <name = "Number of Type 2 Entries">;
+	u32 Type2EntrySize <name = "Size of Type 2 Entry">;
+	u32 NumType3Entries <name = "Number of Type 3 Entries">;
+	u32 Type3EntrySize <name = "Size of Type 3 Entry">;
+	u32 NumType4Entries <name = "Number of Type 4 Entries">;
+	u32 TypeEntrySize <name = "Size of Type 4 Entry">;
+	u32 NumType5Entries <name = "Number of Type 5 Entries">;
+	u32 Type5EntrySize <name = "Size of Type 5 Entry">;
+	u32 NumType6Entries <name = "Number of Type 6 Entries">;
+	u32 Type6EntrySize <name = "Size of Type 6 Entry">;
+	u32 NumType7Entries <name = "Number of Type 7 Entries">;
+	u32 Type7EntrySize <name = "Size of Type 7 Entry">;
+	u32 NumTypeEntries <name = "Number of Type 8 Entries">;
+	u32 TypeEntrySize <name = "Size of Type 8 Entry">;
+	HBNEntryType1 Entry1Data[ NumType1Entries ];
+	HBNEntryType2 Entry2Data[ NumType2Entries ];
+};
+
+HBNFile HBN;
