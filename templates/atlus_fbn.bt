@@ -10,7 +10,7 @@ typedef enum<u16>
 	NPC = 5,
 } MajorType;
 
-typedef struct
+typedef struct(u32 Type1EntrySize)
 {
 	u8 Unknown0;
 	u8 Unknown1;
@@ -127,7 +127,7 @@ typedef struct
 	float Unknown13;
 } Type2Entries <name = "Type 2 FBNEntries">;
 
-typedef struct TableSegment
+typedef struct FBNFile
 {
     u32 Magic;
 	u16 VersionMajor <name = "Version Major Number">;
@@ -136,8 +136,8 @@ typedef struct TableSegment
 	u32 Type1EntrySize <name = "Size of Type 1 Entry">;
 	u32 NumType2Entries <name = "Number of Type 2 Entries">;
 	u32 Type2EntrySize <name = "Size of Type 2 Entry">;
-	Type1Entries EntryType1Data[ NumType1Entries ];
+	Type1Entries EntryType1Data(Type1EntrySize)[ NumType1Entries ];
 	Type2Entries EntryType2Data[ NumType2Entries ];
 };
 
-TableSegment Segment;
+FBNFile FBN;

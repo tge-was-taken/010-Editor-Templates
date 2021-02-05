@@ -34,7 +34,7 @@ typedef struct
 	float Rot <name = "Rotation">;
 } HBNEntryType2 <name = "Type 2 Entries">;
 
-typedef struct TableSegment
+typedef struct HBNFile
 {
     u32 Field01;
 	u16 VersionMajor <name = "Version Major Number">;
@@ -59,4 +59,4 @@ typedef struct TableSegment
 	HBNEntryType2 Entry2Data[ NumType2Entries ];
 };
 
-TableSegment Segment;
+HBNFile HBN;

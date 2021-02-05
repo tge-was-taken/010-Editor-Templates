@@ -13,35 +13,24 @@
 
 struct file{
     uint entries;
-    FSkip(28);
+    FSkip(28);//FF padding
     
     struct entry {
      uint16 unknown1;
      uint16 unknown2;
      uint unknown3;
-    FSkip(4);
+    FSkip(4);//FF padding
     uint unknown4;
-    FSkip(16);
+    FSkip(16);//00 padding
     }SEC1[entries];             
                     
      struct Section2{
-           uint16 npcNum;
-           uint16 AmountNPC;
+           uint16 unknown1;
+           uint16 unknown2;
            uint32 modelID;
-           uint32 uknown1;
+           uint32 uknown3;
            uint32 ScriptID;
-           FSkip(16);
-    }SEC2[entries];//No idea how long this is suppossed to be only a place holder value
-            
-        
-        
+           FSkip(16);// padding
+    }SEC2[entries];//No idea how long this is suppossed to be only a place holder value           
    
-}File;
-FSeek(0);
-FSkip(32);
- uint16 unknown1;
- uint16 unknown2;
- uint unknown3;
-FSkip(4);
-uint unknown4;
-FSkip(4);
+}File;;
