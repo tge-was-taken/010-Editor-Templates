@@ -4,9 +4,9 @@
 //      File: p5_gfd.bt
 //   Authors: 
 //   Version: 
-//   Purpose: 
-//  Category: 
-// File Mask: 
+//   Purpose: GFD
+//  Category: Persona 5
+// File Mask: *.GAP, *.GMD, *.GFS, *.EPL, *.BED
 //  ID Bytes: GFS0
 //   History: 
 //------------------------------------------------
@@ -71,14 +71,19 @@ typedef enum<u32>
 
  typedef enum<byte>
  {
-     False = 0,
-     True = 1,
+     EBool8_False = 0,
+     EBool8_True = 1,
  } TBool8;
+  typedef enum<u32>
+ {
+     EBool32_False = 0,
+     EBool32_True = 1,
+ } TBool32;
 
 typedef struct
 {
     char Signature[4];
-    u32 Version;
+    u32 Version <format=hex>;
     EFileType Type;
     u32 Reserved;
     Assert( Reserved == 0 );
@@ -340,13 +345,49 @@ typedef enum<u8>
     EMaterialDrawMethod_Translucent = 1,
     EMaterialDrawMethod_BlackAsAlpha = 2,
 } EMaterialDrawMethod;
+typedef struct
+{
+ TBool32 TMaterialFlags_Flag80000000     : 1;
+ TBool32 TMaterialFlags_Flag40000000     : 1;
+ TBool32 TMaterialFlags_Flag20000000Crash: 1;
+ TBool32 TMaterialFlags_HasShadowMap     : 1;
+ TBool32 TMaterialFlags_HasDetailMap     : 1;
+ TBool32 TMaterialFlags_HasNightMap      : 1;
+ TBool32 TMaterialFlags_HasGlowMap       : 1;
+ TBool32 TMaterialFlags_HasHighlightMap  : 1;
+ TBool32 TMaterialFlags_HasReflectionMap : 1;
+ TBool32 TMaterialFlags_HasSpecularMap   : 1;
+ TBool32 TMaterialFlags_HasNormalMap     : 1;
+ TBool32 TMaterialFlags_HasDiffuseMap    : 1;
+ TBool32 TMaterialFlags_DisableBloom     : 1;
+ TBool32 TMaterialFlags_Flag40000Crash   : 1;
+ TBool32 TMaterialFlags_Flag20000Crash   : 1;
+ TBool32 TMaterialFlags_HasAttributes    : 1;
+ TBool32 TMaterialFlags_CastShadow       : 1;
+ TBool32 TMaterialFlags_ReceiveShadow    : 1;
+ TBool32 TMaterialFlags_Flag2000         : 1;
+ TBool32 TMaterialFlags_PurpleWireframe  : 1;
+ TBool32 TMaterialFlags_EnableLight2     : 1;
+ TBool32 TMaterialFlags_Flag400          : 1;
+ TBool32 TMaterialFlags_Flag200          : 1;
+ TBool32 TMaterialFlags_Flag100          : 1;
+ TBool32 TMaterialFlags_EnableLight      : 1;
+ TBool32 TMaterialFlags_Flag40           : 1;
+ TBool32 TMaterialFlags_Flag20           : 1;
+ TBool32 TMaterialFlags_Flag10Crash      : 1;
+ TBool32 TMaterialFlags_Flag8            : 1;
+ TBool32 TMaterialFlags_Flag4            : 1;
+ TBool32 TMaterialFlags_Flag2            : 1;
+ TBool32 TMaterialFlags_Flag1            : 1;
+} TMaterialFlags;
 
 typedef struct(u32 version)
 {
     SetRandomBackColor();
 
     THashString Name( version );
-    EMaterialFlags Flags;
+    local EMaterialFlags Flags;
+	TMaterialFlags MaterialFlags;
     
     if ( version < 0x1104000 )
     {
@@ -406,17 +447,17 @@ typedef struct(u32 version)
         u32 Field98;
     }
 
-    if ( Flags & EMaterialFlags_HasDiffuseMap ) struct TTextureMap DiffuseMap( version );
-    if ( Flags & EMaterialFlags_HasNormalMap ) struct TTextureMap NormalMap( version );
-    if ( Flags & EMaterialFlags_HasSpecularMap  ) struct TTextureMap SpecularMap( version );
-    if ( Flags & EMaterialFlags_HasReflectionMap ) struct TTextureMap ReflectionMap( version );
-    if ( Flags & EMaterialFlags_HasHighlightMap ) struct TTextureMap HighlightMap( version );
-    if ( Flags & EMaterialFlags_HasGlowMap ) struct TTextureMap GlowMap( version );
-    if ( Flags & EMaterialFlags_HasNightMap ) struct TTextureMap NightMap( version );
-    if ( Flags & EMaterialFlags_HasDetailMap ) struct TTextureMap DetailMap( version );
-    if ( Flags & EMaterialFlags_HasShadowMap ) struct TTextureMap ShadowMap( version );
+    if (MaterialFlags.TMaterialFlags_HasDiffuseMap    ) struct TTextureMap DiffuseMap( version );
+    if (MaterialFlags.TMaterialFlags_HasNormalMap     ) struct TTextureMap NormalMap( version );
+    if (MaterialFlags.TMaterialFlags_HasSpecularMap   ) struct TTextureMap SpecularMap( version );
+    if (MaterialFlags.TMaterialFlags_HasReflectionMap ) struct TTextureMap ReflectionMap( version );
+    if (MaterialFlags.TMaterialFlags_HasHighlightMap  ) struct TTextureMap HighlightMap( version );
+    if (MaterialFlags.TMaterialFlags_HasGlowMap       ) struct TTextureMap GlowMap( version );
+    if (MaterialFlags.TMaterialFlags_HasNightMap      ) struct TTextureMap NightMap( version );
+    if (MaterialFlags.TMaterialFlags_HasDetailMap     ) struct TTextureMap DetailMap( version );
+    if (MaterialFlags.TMaterialFlags_HasShadowMap     ) struct TTextureMap ShadowMap( version );
 
-    if ( Flags & EMaterialFlags_HasAttributes )
+    if (MaterialFlags.TMaterialFlags_HasAttributes )
     {
         u32 AttributeCount;
 
@@ -509,7 +550,6 @@ typedef enum<u32>
 {
     EMaterialAttributeFlags_Bit0 = 1 << 0,
 } EMaterialAttributeFlags;
-
 typedef struct
 {
     EMaterialAttributeFlags Flags : 16;
