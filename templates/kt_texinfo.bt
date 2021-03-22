@@ -1,0 +1,33 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: texinfo
+//   Authors: Tupelov 
+//   Version: 1.0
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 1.0: Intial Template
+//------------------------------------------------
+
+int EntryCount;
+
+typedef struct{
+	float X;
+	float Y;
+}Coordinate;
+
+struct Entry{
+	
+	char Name[64];
+	int TextureID;
+	struct Box{
+		Coordinate TL<name="Top Left">;
+		Coordinate TR<name="Top Right">;
+		Coordinate BL<name="Bottom Left">;
+		Coordinate BR<name="Bottom Right">;
+	}BoundingBox;
+	
+	int unknownInt<comment="Always 1?">;
+}Entries[EntryCount];
