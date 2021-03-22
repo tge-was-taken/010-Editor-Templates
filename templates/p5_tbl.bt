@@ -598,8 +598,7 @@ typedef struct
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
+    u32 PurchasePrice <name = "Purchase Price">;
     u16 Unknown;
     u16 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
