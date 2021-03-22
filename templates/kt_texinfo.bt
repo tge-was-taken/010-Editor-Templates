@@ -13,17 +13,21 @@
 
 int EntryCount;
 
+typedef struct{
+	float X;
+	float Y;
+}Coordinate;
 
 struct Entry{
 	
-	char Name[68];
-	float Unknown1;
-	float Unknown2;
-	float Unknown3;
-	float Unknown4;
-	float Unknown5;
-	float Unknown6;
-	float Unknown7;
-	float Unknown8;
+	char Name[64];
+	int TextureID;
+	struct Box{
+		Coordinate TL<name="Top Left">;
+		Coordinate TR<name="Top Right">;
+		Coordinate BL<name="Bottom Left">;
+		Coordinate BR<name="Bottom Right">;
+	}BoundingBox;
+	
 	int unknownInt<comment="Always 1?">;
 }Entries[EntryCount];
