@@ -1,0 +1,29 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: texinfo
+//   Authors: Tupelov 
+//   Version: 1.0
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 1.0: Intial Template
+//------------------------------------------------
+
+int EntryCount;
+
+
+struct Entry{
+	
+	char Name[68];
+	float Unknown1;
+	float Unknown2;
+	float Unknown3;
+	float Unknown4;
+	float Unknown5;
+	float Unknown6;
+	float Unknown7;
+	float Unknown8;
+	int unknownInt<comment="Always 1?">;
+}Entries[EntryCount];
