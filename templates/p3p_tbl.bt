@@ -5,13 +5,14 @@
 //      File: AtlusTable_P3F.bt
 //   Authors: DniweTamp, Sierra, Phoenix
 //   Version: 1.1
-//   Purpose: Parse Persona 3 FES Table files.
+//   Purpose: Parse Persona 3 Portable Table files.
 //  Category: Persona 3 FES
 // File Mask: *.tbl
 //  ID Bytes:
 //   History:
 //   1.0 - Initial release
 //   1.1 - Added partial support for ENCOUNT.TBL and ENCOUNT_F.TBL
+//   1.2 - Branched off from FES template
 //------------------------------------------------
 
 
@@ -161,21 +162,6 @@ typedef struct
 	u16 Field10<name="Unknown">;
 } TEncounter <name = "Enemy Encounters">;
 
-// ENCOUNT_F.TBL
-
-typedef struct
-{
-    u32 Unknown <name="Encounter Flags">;
-	u16 Field04<name="Unknown">;
-	u16 Field06<name="Unknown">;
-    EnemyID Units[ 5 ] <name = "Battle Units">;
-    u16 FieldId <name = "Field ID">;
-    u16 RoomId <name = "Room ID">;
-    MusicID MusicId <name = "Music">;
-	u16 Field08<name="Unknown">;
-	u16 Field10<name="Unknown">;
-} TEncounterF <name = "Enemy Encounters">;
-
 //PERSONA.TBL
 
 typedef struct
@@ -238,68 +224,6 @@ typedef struct
     u16 AsFusionMaterial;
 } TPersonaFusion <name = "Persona Fusion">;
 
-//PERSONA_F.TBL
-
-typedef struct
-{
-    u16 Type;
-    ArcanaID Arcana <name = "Arcana">;
-    u8 Level <name = "Base Level">;
-    PersonaStats Stats <name = "Base Stats">;
-    u8 Unknown;
-    PersonaInherit Inheritance <name = "Inheritance">;
-    u16 Unknown;
-    u8 Unknown < name = "Unknown", comment = "Biggest number = Best Personas?" >;
-} TPersonaStatsF <name = "Stats">;
-
-local u32 personaSkillsAndStatGrowthF = 0;
-typedef struct
-{
-    PersonaStats WeightedStatDistribution <name = "Weighted Stat Growth Distribution">;
-    u8 Unknown;
-
-    struct
-    {
-        u8 PendingLevels <name = "Pending Levels">;
-        bool Learnable <name = "Learnable?">;
-        BattleSkill Skill  <name = "Skill">;
-    } PersonaSkill[ 16 ] <name = "Skills">;
-    
-} TPersonaSkillsAndStatGrowthsF <name = "Skills & Stat Growths">;
-
-typedef struct
-{
-    CharacterID Member <name = "Character">;
-    u16 LevelsAvailable <name = "Levels Available">;
-
-    struct
-    {
-        u8 Level <name = "Level Learned">;
-        SkillProgression Learnable <name = "Learnable?">;
-        BattleSkill Skill <name = "Skill">;
-    } PersonaSkill[ 32 ] <name = "Persona Skills">;
-
-    PersonaStats StatGain[ 98 ] <name = "Persona Stat Gain by Level">;
-
-} TPersonaPartyPersonasF <name = "Party Member Personas">;
-
-typedef struct
-{
-    u32 Thresholds[98] <name = "EXP Threshold">;
-} TPersonaLevelUpThresholdsF <name = "Party Member Level Up Thresholds">;
-
-typedef struct
-{
-    u8 ID;
-    u8 Unknown;
-} TExistF <name = "EXIST.TBL Equivalent">;
-
-typedef struct
-{
-    u16 AsFusionTarget;
-    u16 AsFusionMaterial;
-} TPersonaFusionF <name = "Persona Fusion">;
-
 //UNIT.TBL
 
 typedef struct
@@ -321,28 +245,6 @@ typedef struct
     b16 Unknown8;
     u16 AttackDamage <name = "Attack Damage">;
 } TEnemyUnitStats <name = "Enemy Unit Stats">;
-
-//UNIT_F.TBL
-
-typedef struct
-{
-    b16 Flags <name = "Flags">;
-    ArcanaID Arcana <name = "Arcana">;
-    u8 Level <name = "Level">;
-    u16 Hp <name = "HP">;
-    u16 Sp <name = "SP">;
-    PersonaStats Stats;
-    byte : 1;
-    BattleSkill SkillID[ 8 ] <name = "Battle Skills">;
-    u16 ExpReward <name = "EXP Reward">;
-    u16 MoneyReward <name = "Money Reward">;
-    u16 Unknown4;
-    u16 Unknown5;
-    u8 Unknown6[ 18 ];
-    b16 Unknown7;
-    b16 Unknown8;
-    u16 AttackDamage <name = "Attack Damage">;
-} TEnemyUnitStatsF <name = "Enemy Unit Stats">;
 
 // SKILL.TBL
 
@@ -545,30 +447,6 @@ typedef struct( TableSegmentType _type )
             TPersonaFusion PersonaFusion[ Size / sizeof( TPersonaFusion ) ];
             break;
 
-        case TableSegmentType_Persona_StatsF:
-            TPersonaStatsF StatsF[ Size / sizeof( TPersonaStatsF ) ];
-            break;
-
-        case TableSegmentType_Persona_SkillsAndStatGrowthsF:
-            TPersonaSkillsAndStatGrowthsF SkillsAndStatGrowthsF[ Size / sizeof( TPersonaSkillsAndStatGrowthsF ) ];
-            break;
-
-        case TableSegmentType_Persona_PartyPersonasF:
-            TPersonaPartyPersonasF PartyPersonasF[ Size / sizeof( TPersonaPartyPersonasF ) ];
-            break;
-
-        case TableSegmentType_Persona_PartyLevelUpThresholdsF:
-            TPersonaLevelUpThresholdsF PartyLevelUpThresholdsF[ Size / sizeof( TPersonaLevelUpThresholdsF ) ];
-            break;
-
-        case TableSegmentType_Persona_ExistF:
-            TExistF ExistF[ Size / sizeof( TExistF ) ];
-            break;
-
-        case TableSegmentType_Persona_FusionF:
-            TPersonaFusionF PersonaFusionF[ Size / sizeof( TPersonaFusionF ) ];
-            break;
-
         case TableSegmentType_Unit_EnemyUnitStats:
             TEnemyUnitStats Stats[ Size / sizeof( TEnemyUnitStats ) ];
             break;
@@ -581,17 +459,6 @@ typedef struct( TableSegmentType _type )
             ElementalAffinities Affinities[ Size / sizeof( ElementalAffinities ) ];
             break;
 
-        case TableSegmentType_Unit_EnemyUnitStatsF:
-            TEnemyUnitStatsF StatsF[ Size / sizeof( TEnemyUnitStatsF ) ];
-            break;
-
-        case TableSegmentType_Unit_EnemyElementalAffinitiesF:
-            ElementalAffinitiesF AffinitiesF[ Size / sizeof( ElementalAffinitiesF ) ];
-            break;
-
-        case TableSegmentType_Unit_PersonaElementalAffinitiesF:
-            ElementalAffinitiesF AffinitiesF[ Size / sizeof( ElementalAffinitiesF ) ];
-            break;
 
         case TableSegmentType_Skill_Elements:
             TSkill_Elements SkillElements[ Size / sizeof( TSkill_Elements ) ];
@@ -599,14 +466,6 @@ typedef struct( TableSegmentType _type )
 
         case TableSegmentType_Skill_ActiveSkillData:
             TSkill_ActiveSkillData ActiveSkillData[ Size / sizeof( TSkill_ActiveSkillData ) ];
-            break;
-
-//        case TableSegmentType_Skill_ElementsF:
-//            TSkill_ElementsF SkillElementsF[ Size / sizeof( TSkill_ElementsF ) ];
-            break;
-
-//        case TableSegmentType_Skill_ActiveSkillDataF:
-//            TSkill_ActiveSkillDataF ActiveSkillDataF[ Size / sizeof( TSkill_ActiveSkillDataF ) ];
             break;
 
         case TableSegmentType_MSG_ArcanaNames:
