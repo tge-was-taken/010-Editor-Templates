@@ -63,6 +63,8 @@ typedef enum<u16>
 {
     ETextureFormat_Invalid = 0,
     ETextureFormat_DDS = 1,
+    ETextureFormat_TGA = 2,
+    ETextureFormat_TMX = 3,
     ETextureFormat_GXT = 6,
     ETextureFormat_GNF = 9
 } ETextureFormat;
@@ -100,7 +102,7 @@ typedef enum<u32>
     EMaterialFlags_ReceiveShadow    = 1 << 14,
     EMaterialFlags_CastShadow       = 1 << 15,
     EMaterialFlags_HasAttributes    = 1 << 16,
-    EMaterialFlags_Flag20000Crash   = 1 << 17,
+    TMaterialFlags_HasOutline       = 1 << 17,
     EMaterialFlags_Flag40000Crash   = 1 << 18,
     EMaterialFlags_DisableBloom     = 1 << 19,
     EMaterialFlags_HasDiffuseMap    = 1 << 20,
@@ -126,9 +128,9 @@ typedef enum<u8>
 
 typedef enum<u32>
 {
-    EMaterialAttributeType_Type0 = 0,
+    EMaterialAttributeType_RimLight = 0,
     EMaterialAttributeType_Type1 = 1,
-    EMaterialAttributeType_Type2 = 2,
+    EMaterialAttributeType_Outline = 2,
     EMaterialAttributeType_Type3 = 3,
     EMaterialAttributeType_Type4 = 4,
     EMaterialAttributeType_Type5 = 5,
@@ -144,11 +146,11 @@ typedef enum<u32>
 
 typedef enum<u32>
 {
-    EMaterialAttributeType0Flags_Bit0 = 1 << 0,
-    EMaterialAttributeType0Flags_Bit1 = 1 << 1,
-    EMaterialAttributeType0Flags_Bit2 = 1 << 2,
-    EMaterialAttributeType0Flags_Bit3 = 1 << 3,
-} EMaterialAttributeType0Flags;
+    EMaterialAttributeRimLightFlags_Bit0 = 1 << 0,
+    EMaterialAttributeRimLightFlags_Bit1 = 1 << 1,
+    EMaterialAttributeRimLightFlags_Bit2 = 1 << 2,
+    EMaterialAttributeRimLightFlags_Bit3 = 1 << 3,
+} EMaterialAttributeRimLightFlags;
 
 typedef enum<u32>
 {

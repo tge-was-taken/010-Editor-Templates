@@ -39,7 +39,7 @@ string TFileHeaderToString( TFileHeader& value )
 
 typedef struct
 {
-    u32 Version;
+    u32 Version<format=hex>;
     EChunkType Type;
     u32 Length;
     u32 Reserved;
@@ -239,7 +239,7 @@ typedef struct
  TBool32 TMaterialFlags_HasDiffuseMap    : 1;
  TBool32 TMaterialFlags_DisableBloom     : 1;
  TBool32 TMaterialFlags_Flag40000Crash   : 1;
- TBool32 TMaterialFlags_Flag20000Crash   : 1;
+ TBool32 TMaterialFlags_HasOutline       : 1;
  TBool32 TMaterialFlags_HasAttributes    : 1;
  TBool32 TMaterialFlags_CastShadow       : 1;
  TBool32 TMaterialFlags_ReceiveShadow    : 1;
@@ -313,16 +313,16 @@ typedef struct(u32 version)
     }
     else
     {
-        s16 Field94;
+        s16 Field94<format=hex>;
         s16 Field96;
     }
 
     s16 Field5C;
-    u32 Field6C;
-    u32 Field70;
+    u32 Field6C<format=hex>;
+    u32 Field70<format=hex>;
     s16 Field50;
     {
-        u32 Field98;
+        u32 Field98<format=hex>;
     }
 
     if (MaterialFlags.TMaterialFlags_HasDiffuseMap    ) struct TTextureMap DiffuseMap( version );
@@ -350,9 +350,9 @@ typedef struct(u32 version)
             
             switch ( ( enum EMaterialAttributeType )( attributeHeader & 0xFFFF ) )
             {
-                case EMaterialAttributeType_Type0: struct TMaterialAttributeType0 Attribute( version ); break;
+                case EMaterialAttributeType_RimLight: struct TMaterialAttributeRimLight Attribute( version ); break;
                 case EMaterialAttributeType_Type1: struct TMaterialAttributeType1 Attribute( version ); break;
-                case EMaterialAttributeType_Type2: struct TMaterialAttributeType2 Attribute( version ); break;
+                case EMaterialAttributeType_Outline: struct TMaterialAttributeOutline Attribute( version ); break;
                 case EMaterialAttributeType_Type3: struct TMaterialAttributeType3 Attribute( version ); break;
                 case EMaterialAttributeType_Type4: struct TMaterialAttributeType4 Attribute( version ); break;
                 case EMaterialAttributeType_Type5: struct TMaterialAttributeType5 Attribute( version ); break;
@@ -417,10 +417,46 @@ typedef struct
     EMaterialAttributeType Type : 16;
 } TMaterialAttributeHeader;
 
+typedef struct
+{
+    u32 TMaterialAttributeRimLightFlags_Bit0 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit1 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit2 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit3 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit4 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit5 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit6 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit7 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit8 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit9 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit10 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit11 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit12 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit13 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit14 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit15 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit16 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit17 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit18 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit19 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit20 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit21 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit22 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit23 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit24 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit25 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit26 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit27 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit28 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit29 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit30 : 1;
+    u32 TMaterialAttributeRimLightFlags_Bit31 : 1;
+} TMaterialAttributeRimLightFlags;
+
 typedef struct(u32 version)
 {
     TMaterialAttributeHeader Header;
-    Assert( Header.Type == EMaterialAttributeType_Type0 );
+    Assert( Header.Type == EMaterialAttributeType_RimLight );
 
     if ( version > 0x1104500 )
     {
@@ -430,7 +466,8 @@ typedef struct(u32 version)
         f32 Field24;
         f32 Field28;
         f32 Field2C;
-        EMaterialAttributeType0Flags Flags;
+        local EMaterialAttributeRimLightFlags Flags;
+        TMaterialAttributeRimLightFlags MaterialFlags;
     }
     else if ( version > 0x1104220 )
     {
@@ -441,7 +478,7 @@ typedef struct(u32 version)
         f32 Field28;
         f32 Field2C;
 
-        local EMaterialAttributeType0Flags Flags;
+        local EMaterialAttributeRimLightFlags Flags;
         bool Flag1;
         bool Flag2;
         bool Flag4;
@@ -452,18 +489,18 @@ typedef struct(u32 version)
         }
 
         if ( Flag1 )
-            Flags |= EMaterialAttributeType0Flags_Bit0;
+            Flags |= EMaterialAttributeRimLightFlags_Bit0;
 
         if ( Flag2 )
-            Flags |= EMaterialAttributeType0Flags_Bit1;
+            Flags |= EMaterialAttributeRimLightFlags_Bit1;
 
         if ( Flag4 )
-            Flags |= EMaterialAttributeType0Flags_Bit2;
+            Flags |= EMaterialAttributeRimLightFlags_Bit2;
 
         if ( Version > 0x1104260 )
         {
             if ( Flag8 )
-                Flags |= EMaterialAttributeType0Flags_Bit3;
+                Flags |= EMaterialAttributeRimLightFlags_Bit3;
         }
     }
     else
@@ -475,7 +512,7 @@ typedef struct(u32 version)
         f32 Field28;
         f32 Field2C;
     }
-} TMaterialAttributeType0 <optimize=false>;
+} TMaterialAttributeRimLight <optimize=false>;
 
 typedef struct(u32 version)
 {
@@ -531,11 +568,11 @@ typedef struct(u32 version)
     SetBackColorToShadeOfLastColor( 0x10 );
 
     TMaterialAttributeHeader Header;
-    Assert( Header.Type == EMaterialAttributeType_Type2 );
+    Assert( Header.Type == EMaterialAttributeType_Outline );
 
-    s32 Field0C;
-    s32 Field10;
-} TMaterialAttributeType2;
+    s32 Type;
+    s32 Color;
+} TMaterialAttributeOutline;
 
 typedef struct(u32 version)
 {
@@ -2674,7 +2711,7 @@ typedef struct
         f32 Field94;
         u32 Field90;
         f32 Field9C;
-        u32 Field98;
+        u32 Field98<format=hex>;
         f32 FieldA4;
         u32 FieldA0;
     }
