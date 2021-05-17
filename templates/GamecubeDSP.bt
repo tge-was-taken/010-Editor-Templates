@@ -1,0 +1,41 @@
+//------------------------------------------------
+//--- 010 Editor v7.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef struct
+{
+    // for header generation during decode
+    uint num_samples; // total number of RAW samples
+    uint num_adpcm_nibbles; // number of ADPCM nibbles (including frame headers)
+    uint sample_rate; // Sample rate, in Hz
+    // DSP addressing and decode context
+    ushort loop_flag; // 1=LOOPED, 0=NOT LOOPED
+    ushort format; // Always 0x0000, for ADPCM
+    uint sa; // Start offset address for looped samples (zero for non-looped)
+    uint ea; // End offset address for looped samples
+    uint ca; // always zero
+    ushort coef[16]; // decode coefficients (eight pairs of 16-bit words)
+    // DSP decoder initial state
+    ushort gain; // always zero for ADPCM
+    ushort ps; // predictor/scale
+    ushort yn1; // sample history
+    ushort yn2; // sample history
+    // DSP decoder loop context
+    ushort lps; // predictor/scale for loop context
+    ushort lyn1; // sample history (n-1) for loop context
+    ushort lyn2; // sample history (n-2) for loop context
+    ushort pad[11]; // reserved
+} sDSPADPCM;
+
+BigEndian();
+
+sDSPADPCM dspFile <bgcolor=cLtBlue>;

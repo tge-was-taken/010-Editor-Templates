@@ -1,0 +1,1035 @@
+//------------------------------------------------
+//--- 010 Editor v7.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+// Defines
+#define BASE_OFFSET 32
+
+// Globals
+local uint g_DoSlowStaticAnalysis = false;
+local string g_CurFileName = GetFileName();
+local uint g_IsWaitAnimFile = Strstr(g_CurFileName, "DViWaitAJ.dat") != -1;
+local uint g_IsAnimFile = (!g_IsWaitAnimFile && Strstr(g_CurFileName, "AJ.dat") != -1);
+local uint g_IsCharModelFile = ((!g_IsWaitAnimFile && !g_IsAnimFile) && ((Strstr(g_CurFileName, "Ty") != -1)));
+local uint g_IsRelocated = Strstr(g_CurFileName, ".reloc") != -1;
+local uint g_SavedFilePos[1024];
+local uint g_SavedFilePosStackIdx = -1;
+local uint i;
+
+Printf(g_CurFileName + "\n");
+
+if (g_IsWaitAnimFile)
+{
+    Printf("Wait animation file\n");
+}
+else if (g_IsAnimFile)
+{   
+    Printf("Animation file\n");
+}
+else if (g_IsCharModelFile)
+{
+    Printf("Character model file\n");
+}
+else if (g_IsRelocated)
+{
+    Printf("File is relocated\n");
+}
+
+void FSeekPtr(uint ptr)
+{
+    if (!g_IsRelocated)
+        ptr += BASE_OFFSET;
+
+    FSeek(ptr);
+}
+
+void PushFP()
+{
+    g_SavedFilePosStackIdx++;
+    g_SavedFilePos[g_SavedFilePosStackIdx] = FTell();
+}
+
+void PopFP()
+{
+    FSeek(g_SavedFilePos[g_SavedFilePosStackIdx]);
+    g_SavedFilePosStackIdx--;
+}
+
+void Swap(uint &left, uint &right)
+{
+    local uint temp = left;
+    left = right;
+    right = temp;
+}
+
+void BubbleSort(uint array[], uint outArray[], uint num)
+{
+    local int swapped = true;  
+    local uint temp;
+
+    for (i = 0; i < num; i++)
+    {
+        outArray[i] = array[i];
+    }
+
+    while (swapped)
+    {
+        swapped = false;
+
+        for (i = 1; i < num - 1; i++)
+        {
+            if (outArray[i - 1] > outArray[i])
+            {  
+                temp = outArray[i - 1];
+                outArray[i - 1] = outArray[i];
+                outArray[i] = temp;
+                    
+                swapped = true;
+            }
+        }
+    }
+}
+
+// Define enums
+enum <uint> TextureWrapMode
+{
+    Clamp,
+    Repeat,
+    Mirror
+};
+
+enum <uint> TextureFormat
+{
+    Indexed4 = 0x0,
+    Indexed8 = 0x1,
+    IndexedAlpha4 = 0x2,
+    IndexedAlpha8 = 0x3,
+    RGB565 = 0x4,
+    RGB5A3 = 0x5,
+    RGBA8 = 0x6,
+    C4 = 0x8,
+    C8 = 0x9,
+    C14X2 = 0xA,
+    CMPR = 0xE,
+    A8 = (0x20 | Indexed8),
+    Z8 = (0x10 | Indexed8),
+    Z16 = (0x10 | IndexedAlpha8),
+    Z24X8 = (0x10 | RGBA8)
+};
+
+// GXTlutFmt
+enum <uint> PaletteTextureFormat
+{
+    Pal_IndexedAlpha8,
+    Pal_RGB565,
+    Pal_RGB5A3
+};
+
+// GXAttr
+enum <uint> AttributeType
+{
+    PositionNormalMatrixIndex,
+    Texture0MatrixIndex,
+    Texture1MatrixIndex,
+    Texture2MatrixIndex,
+    Texture3MatrixIndex,
+    Texture4MatrixIndex,
+    Texture5MatrixIndex,
+    Texture6MatrixIndex,
+    Texture7MatrixIndex,
+
+    Position,
+    Normal,
+    Color0,
+    Color1,
+    Texture0,
+    Texture1,
+    Texture2,
+    Texture3,
+    Texture4,
+    Texture5,
+    Texture6,
+    Texture7,
+
+    PositionMatrixArray,
+    NormalMatrixArray,
+    TextureMatrixArray,
+    LightArray,
+    NormalBinormalTangent,
+
+    Null = 0xFF
+};
+
+// GXAttrType
+enum <uint> AttributeUsage
+{
+    None,
+    Direct,
+    Index8,
+    Index16
+};
+
+// GXCompCnt
+enum <uint> ComponentLayout
+{
+    PositionXY = 0,
+    PositionXYZ = 1,
+
+    NormalXYZ = 0,
+    NormalBinormalTangentSingleIndex = 1,
+    NormalBinormalTangentSeperateIndex = 2,
+
+    ColorRGB = 0,
+    ColorRGBA = 1,
+
+    TextureS = 0,
+    TextureST = 1
+};
+
+// GXCompType
+enum <uint> ComponentType
+{
+    U8 = 0,
+    S8 = 1,
+    U16 = 2,
+    S16 = 3,
+    F32 = 4,
+
+    CMP_RGB565 = 0,
+    CMP_RGB8 = 1,
+    CMP_RGBX8 = 2,
+    CMP_RGBA4 = 3,
+    CMP_RGBA6 = 4,
+    CMP_RGBA8 = 5
+};
+
+// GXPrimitive
+enum <uint> PrimitiveType
+{
+    Points = 0xB8,
+    Lines = 0xA8,
+    LineStrip = 0xB0,
+    Triangles = 0x90,
+    TriangleStrip = 0x98,
+    TriangleFan = 0xA0,
+    Quads = 0x80
+};
+
+enum <ushort> MapJointGroupNodeType
+{
+    SpawnPlayer1 = 0,
+    SpawnPlayer2,
+    SpawnPlayer3,
+    SpawnPlayer4,
+    PlayerRespawn,
+    SpawnItem1 = 127,
+    SpawnItem2,
+    SpawnItem3,
+    SpawnItem4,
+    SpawnItem5,
+    SpawnItem6,
+    SpawnItem7,
+    SpawnItem8,
+    SpawnItem9,
+    SpawnItem10,
+    DeltaAngleCamera = 148,
+    LeftTopCameraBounds,
+    RightBottomCameraBounds,
+    LeftTopBlastZone,
+    LeftRightBlastZone,
+    Target1 = 199,
+    Target2,
+    Target3,
+    Target4,
+    Target5,
+    Target6,
+    Target7,
+    Target8,
+    Target9,
+    Target10,
+};
+
+// Enum functions
+uint CalcByteSize(TextureFormat format, uint width, uint height)
+{
+    local uint numPixels = width * height;
+    local uint imageSize = 0;
+
+    switch (Header.Format)
+    {   
+        case Indexed4:
+            imageSize = numPixels / 2;
+            break;
+
+        case Indexed8:
+            imageSize = numPixels;
+            break;
+
+        case IndexedAlpha4:
+            imageSize = numPixels;
+            break;
+
+        case IndexedAlpha8:
+            imageSize = numPixels * 2;
+            break;
+
+        case RGB565:
+            imageSize = numPixels * 2;
+            break;
+
+        case RGB5A3:
+            imageSize = numPixels * 2;
+            break;
+
+        case RGBA8:
+            imageSize = numPixels * 4;
+            break;
+
+        case C4:
+            imageSize = numPixels / 2;
+            break;
+
+        case C8:
+            imageSize = numPixels;
+            break;
+
+        case C14X2:
+            imageSize = numPixels * 2;
+            break;
+
+        case CMPR:
+            imageSize = (numPixels / 16) * 8;
+            break;
+    }
+
+    return imageSize;
+}
+
+
+/*** Structures ***/
+struct ArchiveHeader
+{
+    uint FileSize;
+    uint RelocTableOffset;
+    uint NumRelocs;
+    uint NumExpSymbols;
+    uint NumImpSymbols;
+    uint Field1;
+    uint Field18;
+    uint Field1C;
+};
+
+struct SymbolHeader
+{
+   uint Address;
+   uint NameIndex;
+};
+
+struct JointHeader
+{
+    uint NameOffset;
+    uint Flags;
+    uint ChildOffset;
+    uint SiblingOffset;
+    uint DrawObjectOffset;
+    float Rotation[3];
+    float Scale[3];
+    float Translation[3];
+    uint InverseMatrixOffset;
+    uint Field3C;
+};
+
+struct DrawObjectHeader
+{
+    uint NameOffset;
+    uint SiblingOffset;
+    uint MaterialOffset;
+    uint MeshOffset;
+};
+
+struct MaterialHeader
+{
+    uint NameOffset;
+    uint Flags;
+    uint TextureDescOffset;
+    uint MaterialDescOffset;
+    uint Field10;
+    uint Field14;
+};
+
+struct MaterialDescriptor
+{
+    uint Diffuse;
+    uint Ambient;
+    uint Specular;
+    float TransparencyLevel;
+    float SpecularLevel;
+};
+
+struct TextureDescriptorHeaderField58Struct
+{
+	uint Field00;
+	uint Field04;
+	uint Field08;
+	uint Field10;
+	uint Field14;
+	uint Field18;
+	uint Field1C;
+	uint Field20;
+};
+
+struct TextureDescriptorHeader
+{
+    uint NameOffset;
+    uint SiblingOffset;
+    uint Field08;
+    uint LayerFlags;
+
+    /*
+    uint RelYOffset;
+    uint RelXOffset;
+    uint Field1C;
+    float MaxX;
+    float MaxY;
+    float MaxZ;
+    float Angle;
+    float MinX;
+    float MinY;
+    */
+
+    float Rotation[3];
+    float Scale[3];
+    float Translation[3];
+    TextureWrapMode WrapS;
+    TextureWrapMode WrapT;
+    byte ScaleX;
+    byte ScaleY;
+    ushort Field3E;
+    uint Field40;
+    float Field44; // lod bias?
+    uint Field48;
+    uint ImageDescOffset;
+    uint PaletteDescOffset;
+    uint Field54;
+    uint Field58StructOffset;
+};
+
+struct ImageDescriptorHeader
+{
+    uint DataOffset;
+    ushort Width;
+    ushort Height;
+    TextureFormat Format;
+    uint Field0C;
+    uint Field10;
+    uint Field14;
+};
+
+struct PaletteDescriptorHeader
+{
+    uint DataOffset;
+    PaletteTextureFormat Format;
+    uint Field08;
+    ushort NumColors;
+    ushort Field0A;
+};
+
+struct JointWeightHeader
+{
+    uint JointOffset;
+    float Weight;
+};
+
+struct VertexAttributeHeader
+{
+    AttributeType Type;
+    AttributeUsage Usage;
+    ComponentLayout CompLayout;
+    ComponentType CompType;
+    byte Fraction;
+    byte Field11;
+    ushort Stride;
+    uint DataOffset;
+};
+
+struct MeshHeader
+{
+    uint Field00;
+    uint SiblingOffset;
+    uint VertAttrListOffset;
+    ushort Flags;
+    ushort NumDispListBlocks;
+    uint DispListOffset;
+    uint JointWeightListOffset;
+};
+
+struct MaterialAnimJointHeader
+{
+	uint ChildOffset;
+	uint SiblingOffset;
+	uint MatAnimHdr08StructOffset;
+};
+
+struct MatAnimHdr00Struct
+{
+	uint Field00;
+	uint Field04;
+	uint Field08;
+};
+
+struct MatAnimHdr08Struct
+{
+	uint Field00;
+	uint Field04;
+	uint Field08;
+	uint Field0C;
+};
+
+struct MapHeader
+{
+    uint MapJointsOffset;
+    uint NumMapJoints;
+    uint MapHeaderBOffset;
+    uint NumMapHeaderB;
+    // https://docs.google.com/document/d/1TIFquuPCrFEANPAH_CM7A138SX07BQ3c4Q2Wms5I1OU/edit?pli=1#heading=h.ankhhn88larp
+};
+
+struct MapJointHeader
+{
+    uint JointOffset;
+    uint NodesOffset;
+    uint NumNodes;
+};
+
+struct MapJointNode
+{
+    ushort Index;
+    MapJointGroupNodeType Type;
+};
+
+string StructSizeHint(uint size)
+{
+    local string hint = "";
+
+    if (size == sizeof(JointHeader))
+        hint += "(JointHeader) ";
+
+    if (size == sizeof(DrawObjectHeader) || size == (sizeof(DrawObjectHeader) + 24))
+        hint += "(DrawObjectHeader) ";
+
+    if (size == sizeof(MaterialHeader))
+        hint += "(MaterialHeader) ";
+
+    if (size == sizeof(MaterialDescriptor))
+        hint += "(MaterialDescriptor) ";
+
+    if (size == sizeof(TextureDescriptorHeader))
+        hint += "(TextureDescriptorHeader) ";
+
+    if (size == sizeof(ImageDescriptorHeader))
+        hint += "(ImageDescriptorHeader) ";
+    
+    if (size == sizeof(PaletteDescriptorHeader))
+        hint += "(PaletteDescriptorHeader) ";
+
+    /* Not listed in the relocation table?
+    if (size == sizeof(VertexAttributeHeader))
+        hint += "(VertexAttributeHeader) ";
+    */
+
+    if (size == sizeof(MeshHeader))
+        hint += "(MeshHeader) ";
+
+    return hint;
+}
+
+void RelocTableStaticAnalysis(uint relocTable[], uint relocOffset, uint numReloc)
+{
+    // Read the actual pointer values
+    local uint pointers[numReloc];
+    for (i = 0; i < numReloc; i++)
+    {
+        pointers[i] = ReadUInt(relocTable[i] + BASE_OFFSET);
+        if (!g_IsRelocated)
+            pointers[i] += BASE_OFFSET;
+    }
+    
+    // Sort the pointers from high to low
+    local uint sorted[numReloc];
+    BubbleSort(pointers, sorted, numReloc); 
+
+    // Print out the structures between the pointers
+    local string hint;
+    local uint nextPtr;
+    local uint size;
+    local uint lastSize;
+    local uint origRelocVal;
+    local uint j;
+    for (i = 0; i < numReloc; i++)
+    {
+        // If not last iteration then use the next ptr
+        if (i + 1 != numReloc)
+        {
+            nextPtr = sorted[i + 1];
+        }
+        else
+        {  
+            nextPtr = relocOffset;
+        }
+    
+        for (j = 0; j < numReloc; j++)
+        {
+            if (sorted[i] == pointers[j])
+            {   
+                origRelocVal = relocTable[j] + BASE_OFFSET;
+                break;
+            }
+        }
+
+        // calculate struct size, includes padding though
+        size = nextPtr - sorted[i];
+        
+        if (size != 0)
+        {
+            lastSize = size;
+        }
+        else if (size > 0)
+        {
+            size = lastSize;
+        }
+        else if (i != 0)
+        {
+            // last hope lol
+            size = nextPtr - sorted[i - 1];
+        }
+    
+        Printf("Offset at %08X points to structure at %08X of size %08X (%d) %s\n",  origRelocVal, sorted[i], size, size, StructSizeHint(size));
+    } 
+}
+
+struct PaletteDescriptor
+{
+    PaletteDescriptorHeader Header;
+
+    PushFP();
+
+    if (Header.DataOffset != 0)
+    {
+        FSeekPtr(Header.DataOffset);
+    
+        local uint imageSize = Header.NumColors * 2; 
+        
+        char Data[imageSize] <bgcolor=0xCCF000>;
+    }
+
+    PopFP();
+};
+
+struct ImageDescriptor
+{
+    ImageDescriptorHeader Header;
+
+    PushFP();
+
+    if (Header.DataOffset != 0)
+    {
+        FSeekPtr(Header.DataOffset);
+        char Data[CalcByteSize(Header.Format, Header.Width, Header.Height)] <bgcolor=0xCCFF66>;
+    }
+
+    Assert(Header.Field0C == 0, "ImageDescriptor header field at 0x0C is not zero");
+    Assert(Header.Field10 == 0, "ImageDescriptor header field at 0x10 is not zero");
+    Assert(Header.Field14 == 0, "ImageDescriptor header field at 0x14 is not zero");
+
+    PopFP();
+};
+
+// Forward declare
+struct TextureDescriptor;
+
+struct TextureDescriptor
+{
+    TextureDescriptorHeader Header;
+
+    PushFP();
+    
+    if (Header.NameOffset != 0)
+    {   
+        FSeekPtr(Header.NameOffset);
+        string Name <bgcolor=cLtBlue>;
+    }
+
+    if (Header.SiblingOffset != 0)
+    {   
+        FSeekPtr(Header.SiblingOffset);
+        TextureDescriptor Sibling;
+    }
+
+    if (Header.ImageDescOffset != 0)
+    {   
+        FSeekPtr(Header.ImageDescOffset);
+        ImageDescriptor ImageDesc;
+    }
+
+    if (Header.PaletteDescOffset != 0)
+    {   
+        FSeekPtr(Header.PaletteDescOffset);
+        PaletteDescriptor PaletteDesc;
+    }
+
+    if (Header.Field58StructOffset != 0)
+    {
+        FSeekPtr(Header.Field58StructOffset);
+        TextureDescriptorHeaderField58Struct Field58Struct <bgcolor=0xFFFB00>;
+    }
+
+    // Assert(Header.Field08 == 0, "TextureDescriptor header field at 0x08 is not zero");
+    Printf("TextureDescriptorHeader.Field08 %d\n", Header.Field08);
+    // Assert(Header.Field1C == 0, "TextureDescriptor header field at 0x1C is not zero");
+    Assert(Header.Field54 == 0, "TextureDescriptor header field at 0x54 is not zero");
+
+    PopFP();
+};
+
+struct Material
+{
+    MaterialHeader Header;
+
+    PushFP();
+    
+    if (Header.NameOffset != 0)
+    {   
+        FSeekPtr(Header.NameOffset);
+        string Name <bgcolor=cLtBlue>;
+    }
+
+    if (Header.TextureDescOffset != 0)
+    {   
+        FSeekPtr(Header.TextureDescOffset);
+        TextureDescriptor TextureDesc <bgcolor=0xff9933>;
+    }
+
+    if (Header.MaterialDescOffset != 0)
+    {   
+        FSeekPtr(Header.MaterialDescOffset);
+        MaterialDescriptor MaterialDesc <bgcolor=0xffcc99>;
+    }
+
+    Assert(Header.Field10 == 0, "Material header field at 0x10 is not zero");
+    Assert(Header.Field14 == 0, "Material header field at 0x10 is not zero");
+
+    PopFP();
+};
+
+struct VertexAttributeList
+{
+    VertexAttributeHeader VertexAttribute;
+
+    Assert(VertexAttribute.Field11 == 0, "VertexAttribute header field at 0x11 is not zero");
+    
+    while (VertexAttribute.Type != Null)
+    {
+        VertexAttributeHeader VertexAttribute;
+
+        Assert(VertexAttribute.Field11 == 0, "VertexAttribute header field at 0x11 is not zero");
+    }
+};
+
+struct JointWeightList
+{      
+    while (true)
+    {
+        uint Offset;
+
+        if (Offset == 0)
+            break;
+
+        PushFP();
+    
+        FSeekPtr(Offset);
+        JointWeightHeader JointWeight;
+    
+        PopFP();
+    }
+};
+
+// Fwd declare
+struct Mesh;
+
+struct Mesh
+{
+    MeshHeader Header;
+
+    PushFP();
+
+    if (Header.SiblingOffset != 0)
+    {
+        FSeekPtr(Header.SiblingOffset);
+        Mesh Sibling;
+    }
+
+    if (Header.VertAttrListOffset != 0)
+    {
+        FSeekPtr(Header.VertAttrListOffset);
+        VertexAttributeList VertAttributes <bgcolor=0x00FFCC>;
+    }
+
+    if (Header.DispListOffset != 0)
+    {
+        FSeekPtr(Header.DispListOffset);
+        char DisplayListData[Header.NumDispListBlocks * 32] <bgcolor=0x00D9FF>;
+    }
+
+    if (Header.JointWeightListOffset != 0)
+    {
+        FSeekPtr(Header.JointWeightListOffset);
+        JointWeightList JointWeightListData;
+    }
+
+    Assert(Header.Field00 == 0, "Mesh header field at 0x00 is not zero");
+    
+    PopFP();
+};
+
+// Forward declare this
+struct DrawObject;
+
+struct DrawObject
+{
+    DrawObjectHeader Header;
+
+    PushFP();
+    
+    if (Header.NameOffset != 0)
+    {   
+        FSeekPtr(Header.NameOffset);
+        string Name <bgcolor=cLtBlue>;
+    }
+
+    if (Header.SiblingOffset != 0)
+    {   
+        FSeekPtr(Header.SiblingOffset);
+        DrawObject Sibling;
+    }
+
+    if (Header.MaterialOffset != 0)
+    {   
+        FSeekPtr(Header.MaterialOffset);
+        Material MaterialData <bgcolor=0xbf9c73>;
+    }
+
+    if (Header.MeshOffset != 0)
+    {   
+        FSeekPtr(Header.MeshOffset);
+        Mesh MeshData <bgcolor=cYellow>;
+    }
+
+    PopFP();
+};
+
+// Forward declare this
+struct Joint;
+
+struct Joint
+{
+    JointHeader Header;
+
+    PushFP();
+    
+    if (Header.NameOffset != 0)
+    {   
+        FSeekPtr(Header.NameOffset);
+        string Name <bgcolor=cLtBlue>;
+    }
+
+    if (Header.ChildOffset != 0)
+    {   
+        FSeekPtr(Header.ChildOffset);
+        Joint Child;
+    }
+
+    if (Header.SiblingOffset != 0)
+    {   
+        FSeekPtr(Header.SiblingOffset);
+        Joint Sibling;
+    }
+
+    if (Header.DrawObjectOffset != 0)
+    {   
+        FSeekPtr(Header.DrawObjectOffset);
+        DrawObject DrawObjectData <bgcolor=cLtGreen>;
+    }
+
+    if (Header.InverseMatrixOffset != 0)
+    {   
+        FSeekPtr(Header.InverseMatrixOffset);
+        float InverseMatrix[12] <bgcolor=cGreen>;
+    }
+
+    Assert(Header.Field3C == 0, "Material header field at 0x10 is not zero");
+
+    PopFP();
+};
+
+struct MaterialAnimJoint;
+
+struct MaterialAnimJoint
+{ 
+    MaterialAnimJointHeader Header;
+
+    PushFP();
+
+    if (Header.ChildOffset != 0)
+    {
+        FSeekPtr(Header.ChildOffset);
+        MaterialAnimJoint Child;
+    }
+
+    if (Header.SiblingOffset != 0)
+    {
+        FSeekPtr(Header.SiblingOffset);
+        MaterialAnimJointHeader Sibling;
+    }
+
+    if (Header.MatAnimHdr08StructOffset != 0)
+    {
+        FSeekPtr(Header.MatAnimHdr08StructOffset);
+        MatAnimHdr08Struct Hdr08Struct;
+    }
+
+    PopFP();
+};
+
+struct MapJointGroup
+{
+    MapJointHeader Header;
+
+    PushFP();
+
+    if (Header.RootJointOffset != 0)
+    {
+        FSeekPtr(Header.RootJointOffset);
+        Joint RootJoint <bgcolor=cLtRed>;
+    }
+
+    if (Header.NodesOffset != 0)
+    {
+        FSeekPtr(Header.NodesOffset);
+        MapJointNode Nodes[Header.NumNodes] <bgcolor=0xFFA6E1>;;
+    }
+    
+    PopFP();
+};
+
+struct JointGroups
+{
+    while (true)
+    {
+        MapJointGroup Group;
+
+        if (Group.Header.RootJointOffset == 0)
+            break;
+    }
+};
+
+struct Map
+{
+    MapHeader Header;
+
+    PushFP();
+
+    if (Header.MapJointGroupsOffset != 0)
+    {
+        FSeekPtr(Header.MapJointGroupsOffset);
+        JointGroups Groups <bgcolor=0xFF63CB>;;        
+    }    
+
+    PopFP();
+};
+
+typedef struct _Symbol(uint strTableOffset)
+{
+    // Read header
+    SymbolHeader Header;
+
+    PushFP();
+    
+    // Seek to string, and read it
+    FSeek(strTableOffset + Header.NameIndex);
+    string Name;
+    
+    // Seek to data
+    FSeek(Header.Address + BASE_OFFSET);
+
+    if (Strstr(Name, "_matanim_joint") != -1)
+    {
+        MaterialAnimJoint MatAnim <bgcolor=cPurple>;
+    }
+    else if (Strstr(Name, "_joint") != -1)
+    {
+        Joint JointData <bgcolor=cLtRed>;
+    }
+    else if (Strstr(Name, "map_head") != -1)
+    {
+        Map MapData <bgcolor=0xFF0099>;
+    }
+
+    PopFP();
+
+} Symbol <read=SymbolRead>;
+
+string SymbolRead(Symbol &sym)
+{
+    string s;
+    SPrintf(s, "%s", sym.Name);
+    return s;
+};
+
+struct SymbolTable(uint numSymbols, uint strTableOffset)
+{
+    // Read the symbols
+    for (i = 0; i < numSymbols; i++)
+    {
+        Symbol Entry(strTableOffset);
+    }
+};
+
+struct ArchiveFile
+{
+    ArchiveHeader Header <bgcolor=cLtGray>;
+
+    PushFP();
+      
+    // Reloc table
+    FSeek(Header.RelocTableOffset + BASE_OFFSET);   
+    uint RelocTable[Header.NumRelocs] <bgcolor=0xC3D4D0>;
+
+    if (g_DoSlowStaticAnalysis)
+        RelocTableStaticAnalysis(RelocTable, Header.RelocTableOffset + BASE_OFFSET, Header.NumRelocs);
+
+    // Calculate string table offset
+    local uint strTableOffset = FTell() + (Header.NumImpSymbols + Header.NumExpSymbols) * sizeof(SymbolHeader);
+
+    // Symbol tables
+    SymbolTable ImpSymbols(Header.NumImpSymbols, strTableOffset) <bgcolor=0xefe9dc>;
+    SymbolTable ExpSymbols(Header.NumExpSymbols, strTableOffset) <bgcolor=0xdfcdb9>;
+
+    // String table
+    char StringTable[Header.FileSize - strTableOffset] <bgcolor=0xdfcdA0>;
+
+    PopFP();
+};
+
+// Start parsing
+BigEndian();
+
+ArchiveFile file;

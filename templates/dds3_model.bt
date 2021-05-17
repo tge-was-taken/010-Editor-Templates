@@ -303,9 +303,9 @@ typedef struct
     u32 Field04; Assert( Field04 == 0, "Node Field04 isnt 0" );
     s32 Index;
     s32 ParentIndex;
-    Vector4 Rotation;
-    Vector4 Position;
-    Vector4 Scale;
+    TVector4 Rotation;
+    TVector4 Position;
+    TVector4 Scale;
     u32 BoundingBoxOffset;
     u32 GeometryOffset;
     u32 Field48; Assert( Field48 == 0, "Node Field48 isnt 0" );
@@ -317,7 +317,7 @@ typedef struct
     {
         SetRandomBackColor();
         FSeek( gBaseOffset + BoundingBoxOffset );
-        BoundingBox MeshBoundingBox;
+        TBoundingBox3D MeshBoundingBox;
     }
 
 
@@ -1347,7 +1347,7 @@ typedef struct
     SetRandomBackColor();
     u32 Id;
     u32 Type;
-    StringOffset Name( gBaseOffset );
+    TStringOffset Name( gBaseOffset );
     u32 Field0C;
     u32 TransformOffset;
     u32 Field14;
@@ -1362,9 +1362,9 @@ typedef struct
         struct
         {
             SetRandomBackColor();
-            Vector4 Position;
-            Vector4 Rotation;
-            Vector4 Scale;
+            TVector4 Position;
+            TVector4 Rotation;
+            TVector4 Scale;
         } Transform;
     }
 
@@ -1463,7 +1463,7 @@ typedef struct
             {
                 FSeek( gBaseOffset + Field0C );
                 SetRandomBackColor();
-                Vector4 Field0CData[ Field00 ];
+                TVector4 Field0CData[ Field00 ];
             }
 
             if ( Field10 != 0 )

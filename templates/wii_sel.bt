@@ -13,6 +13,9 @@
 
 #include "common/include.h"
 
+//#define OUTPUT_IDC
+#define OUTPUT_MAP
+
 BigEndian();
 
 typedef struct(u32 nameTableOffset)
@@ -33,18 +36,25 @@ typedef struct(u32 nameTableOffset)
         //virtualAddress = 0x80007FC0 + Field04;
         virtualAddress = 0x80007480 + Field04;
 
+#ifdef OUTPUT_IDC
+        Printf( "MakeUnkn(0x%08X, 0);MakeCode(0x%08X);MakeFunction(0x%08X, BADADDR);MakeName(0x%08X,\"%s\");\n",
+            virtualAddress, virtualAddress, virtualAddress, virtualAddress, Name );
+#endif
+
+#ifdef OUTPUT_MAP
+        // Dolphin MAP
+        Printf( "%08X 0 %08X 0 %s\n", virtualAddress, virtualAddress, Name ); 
+#endif
+
         //Printf( "idc.MakeCode(0x%08X)\nidc.MakeFunction(0x%08X)\n", virtualAddress, virtualAddress );
         //Printf( "idc.MakeName(0x%08X, \"%s\")\n", virtualAddress, Name ); 
-        //Printf( "%08X %s\n", virtualAddress, Name );
-
-        // Dolphin MAP
-        //Printf( "%08X 0 %08X 0 %s\n", virtualAddress, virtualAddress, Name );   
+        //Printf( "%08X %s\n", virtualAddress, Name );  
     }
     else if ( Type == 0xB )
     {
         //virtualAddress = 0x807049A0 + Field04;
         //Printf( "idc.MakeName(0x%08X, \"%s\")\n", virtualAddress, Name ); 
-        Printf( "%08X 0 %08X 0 %s\n", virtualAddress, virtualAddress, Name );   
+        //Printf( "%08X 0 %08X 0 %s\n", virtualAddress, virtualAddress, Name );   
     }
     
     
@@ -93,4 +103,13 @@ typedef struct
     }
 } TSelFile;
 
+
+#ifdef OUTPUT_IDC
+Printf( "#include <idc.idc>\nstatic main(){\n" );
+#endif
+
 TSelFile File;
+
+#ifdef OUTPUT_IDC
+Printf( "}\n" );
+#endif

@@ -124,6 +124,8 @@ string TExtents3DToString( TExtents3D& value )
     return buffer;
 }
 
+typedef TExtents3D TBoundingBox3D;
+
 typedef struct
 {
 	TVector3 Center;

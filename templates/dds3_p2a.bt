@@ -1,0 +1,90 @@
+//------------------------------------------------
+//--- 010 Editor v11.0 Binary Template
+//
+//      File: dds3_p2a.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse P2A files
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef struct
+{
+	byte fileType; // 0x10
+	byte compression; // 0x11
+	short userId; // 0x12
+	int fileSize; // 0x14
+	uint formatId; // 0x18
+	int realSize; // 0x1C
+	byte numOfCLUT; // 0x20
+	byte CLUTFormat; // 0x21
+	short width; // 0x22
+	short height; // 0x24
+	byte pixelFormat; // 0x26
+	byte numOfMipmap; // 0x27
+	ushort mipmapParam; // 0x28
+	byte flags; // 0x2A
+	byte texWrapMode; // 0x2B
+	byte userArea[8]; // 0x30
+	byte comment[28]; // 0x38
+} TMX_HEADER_t <bgcolor=0xc946fd>;
+
+typedef struct
+{
+    TMX_HEADER_t header;
+    byte data[header.fileSize - sizeof(TMX_HEADER_t)];
+} sdfTmx <bgcolor=0x3154f4, optimize=false>;
+
+typedef struct
+{
+    int tmxofs;
+    int AnimNum;
+} P2A_HEAD_t <bgcolor=0xf9a5e1>;
+
+typedef struct
+{
+	short sx; // 0x10
+	short sy; // 0x12
+	short cx; // 0x14
+	short cy; // 0x16
+	short u1; // 0x18
+	short v1; // 0x1A
+	short u2; // 0x1C
+	short v2; // 0x1E
+	short texid; // 0x20
+	short attr; // 0x22
+	float angle; // 0x24
+} P2A_TEXANIM_tag <bgcolor=0xba6efd>;
+
+typedef struct
+{
+	uint spranm; // 0x10
+	uint alpha; // 0x14
+	uint attr; // 0x18
+	uint times; // 0x1C
+	uint mode; // 0x20
+
+    P2A_TEXANIM_tag texAnims[times];
+} P2A_ANIMATION_tag <optimize=false, bgcolor=0x7ed159>;
+
+typedef struct
+{
+    int TexNum;
+    int Offset;
+    FSeek( Offset );
+    sdfTmx Textures[TexNum];
+} P2A_TMX_tag <bgcolor=0x21b0b6>;
+
+typedef struct
+{
+    P2A_HEAD_t header;
+    P2A_ANIMATION_tag anims[header.AnimNum];
+    
+    FSeek( header.tmxofs );
+    P2A_TMX_tag tmx;
+} dds3BillAnimResource <bgcolor=0x55e87d>;
+
+dds3BillAnimResource File;
