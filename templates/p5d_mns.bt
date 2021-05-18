@@ -1,0 +1,85 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: p5d_mns.bt
+//   Authors: DniweTamp
+//   Version: 1.0
+//   Purpose: Parse P5D MNS files
+//  Category: 
+// File Mask: *.bin
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+LittleEndian();
+//---------------------------------------------
+// Helper functions
+//---------------------------------------------
+#include "common/include.h"
+
+//---------------------------------------------
+// Enums
+//---------------------------------------------
+typedef enum<u16>
+{
+    Easy,
+    Normal,
+    Hard,
+    AllNight,
+} EDifficulty;
+
+typedef enum<u8>
+{
+    FeverScratch = 1,
+    DoubleNote   = 2,
+} ENoteMetadata;
+
+typedef enum<u8>
+{
+    Down,
+    Cross,
+    Left,
+    Circle,
+    Up,
+    Triangle,
+    Scratch,
+} ENoteLocation;
+
+//---------------------------------------------
+// Parse file structure
+//---------------------------------------------
+SetBackColor( MyRandom( 0xFFFFFFFF ) );
+struct THeader
+{
+    char Magic[4];
+    u32 Field04;
+    u32 Field08;
+    u32 MusicID;
+    f32 Tempo;
+    u16 Field14;
+    EDifficulty Difficulty;
+    u32 Field18;
+    u32 NumberOfNotes;
+    u32 Field20;
+} Header;
+
+typedef struct TNoteData
+{
+    u8 NoteBeat;
+    u8 Field01;
+    u8 BeatMeasure;
+    u8 Field03;
+    ENoteLocation NoteLocation;
+    u8 HoldTimer;
+    ENoteMetadata NoteMetadata;
+    u8 Field07;
+};
+
+struct
+{
+    while ( !FEof() )
+    {
+        SetBackColor( MyRandom( 0xFFFFFFFF ) );
+        TNoteData NoteData;
+    }
+
+} NoteData;
