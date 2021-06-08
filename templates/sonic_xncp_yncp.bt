@@ -1,7 +1,7 @@
 //------------------------------------------------
 //--- 010 Editor v9.0.2 Binary Template
 //
-//      File: sg_xncp.bt
+//      File: sonic_xncp_yncp.bt
 //   Authors: TGE
 //   Version: 0.2.0
 //   Purpose: Parse YNCP/XNCP files.
@@ -216,8 +216,9 @@ typedef struct
                             FSeek( CharacterMappingTableOffset.absPosition );
                             struct
                             {
-                                /* 00 */ u32 SourceIndex;
-                                /* 04 */ u32 DestinationIndex;
+                                /* 00 */ char SourceCharacter[1];
+                                char Allignment[3] <hidden = true>; 
+                                /* 04 */ u32 SubImageIndex;
                             } CharacterMapping[ CharacterCount ];
                             FPop();
                         }    
@@ -333,34 +334,34 @@ typedef struct
 {
     SetRandomBackColor();
     /* 00 */ u32 Field00; // if this is below 3, the element doesn't show up
-    /* 04 */ f32 Field04; // no change (info_time)
+    /* 04 */ f32 ZIndex; // no change (info_time)
     /* 08 */ f32 Field08; // no change (info_time)
     /* 0C */ u32 Field0C; // no change (info_time)
     /* 10 */ f32 Field10; // no change (info_time)
     /* 14 */ u32 Data1Count; // no change (info_time)
     /* 18 */ TNNOffset Data1Offset(0); // @
-    /* 1C */ u32 Data2Count; // no change (info_time)
-    /* 20 */ TNNOffset Data2Offset(0); // @
+    /* 1C */ u32 SubImagesCount; // no change (info_time)
+    /* 20 */ TNNOffset SubImagesOffset(0); // @
     /* 24 */ u32 GroupCount; // used (info_time)
     /* 28 */ TNNOffset CastGroupTableOffset(0); // @
     /* 2C */ u32 CastCount; // used (info_time)
     /* 30 */ TNNOffset CastDictionaryOffset(0); // @
     /* 34 */ u32 AnimationCount; // element doesnt show if there are no anims
-    /* 38 */ TNNOffset AnimationData1Offset(0); // @
+    /* 38 */ TNNOffset AnimationKeyFrameDataListOffset(0); // @
     /* 3C */ TNNOffset AnimationDictionaryOffset(0); // @
     /* 40 */ f32 AspectRatio;
-    /* 44 */ TNNOffset AnimationData3Offset(0); // @
+    /* 44 */ TNNOffset AnimationFrameDataListOffset(0); // @
     /* 48 */ TNNOffset AnimationCastTableOffset(0); // @
 
-    Assert( Field00 == 3 );
-    // failed: Assert( Field04 == 0 );
-    Assert( Field08 == 60.0f );
-    Assert( Field0C == 0 );
+//    Assert( Field00 == 3 );
+    // failed: Assert( ZIndex == 0 );
+//    Assert( Field08 == 60.0f );
+//    Assert( Field0C == 0 );
     //Assert( Field10 == 100.0f );
 
-    Assert( ( ( Data2Offset.absPosition - Data1Offset.absPosition ) / Data1Count ) == 0x08 );
-    Assert( ( ( CastGroupTableOffset.absPosition - Data2Offset.absPosition ) / Data2Count ) == 0x14 );
-    Assert( ( ( CastDictionaryOffset.absPosition - CastGroupTableOffset.absPosition ) / GroupCount ) == 0x10 );
+//    Assert( ( ( Data2Offset.absPosition - Data1Offset.absPosition ) / Data1Count ) == 0x08 );
+//    Assert( ( ( CastGroupTableOffset.absPosition - Data2Offset.absPosition ) / Data2Count ) == 0x14 );
+//    Assert( ( ( CastDictionaryOffset.absPosition - CastGroupTableOffset.absPosition ) / GroupCount ) == 0x10 );
     //Assert( Field38.absPosition - Field30.absPosition == 0x3C );
     //Assert( Field3C.absPosition - Field38.absPosition == 0x10 );
     //Assert( Field44.absPosition - Field3C.absPosition == 0x10 );
@@ -376,16 +377,16 @@ typedef struct
         TVector2 Data1[Data1Count]; // Constant between elements. If set to 0, element doesnt show
     }
 
-    if ( Data2Offset.isValid )
+    if ( SubImagesOffset.isValid )
     {
-        FSeek( Data2Offset.absPosition );
+        FSeek( SubImagesOffset.absPosition );
         SetRandomBackColor();
         struct
         {
-            /* 00 */ u32 Field00;
-            /* 04 */ TVector2 Field04;
-            /* 08 */ TVector2 Field0C;
-        } Data2[Data2Count];  // Constant between elements. If set to 0, element doesnt show
+            /* 00 */ u32 TextureIndex;
+            /* 04 */ TVector2 TopLeft;
+            /* 08 */ TVector2 BottomRight;
+        } SubImages[SubImagesCount];  // Constant between elements. If set to 0, element doesnt show
     }
 
     if ( CastGroupTableOffset.isValid )
@@ -413,9 +414,9 @@ typedef struct
         } CastDictionary;
     }
 
-    if ( AnimationData1Offset.isValid )
+    if ( AnimationKeyFrameDataListOffset.isValid )
     {
-        FSeek( AnimationData1Offset.absPosition );
+        FSeek( AnimationKeyFrameDataListOffset.absPosition );
         SetRandomBackColor();
         struct // AnimationData1List
         {
@@ -483,7 +484,7 @@ typedef struct
                                                         struct // Data6
                                                         {
                                                             /* 00 */ u32 Field00;
-                                                            /* 04 */ u32 DataCount;
+                                                            /* 04 */ u32 KeyFrameCount;
                                                             /* 08 */ TNNOffset DataOffset(0);
                                                             //failed: Assert( Field00 == 0 );
                                                      
@@ -493,13 +494,13 @@ typedef struct
                                                                 FSeek( DataOffset.absPosition );
                                                                 struct
                                                                 {
-                                                                    /* 00 */ u32 Field00;
-                                                                    /* 04 */ f32 Field04; // RGBA?
+                                                                    /* 00 */ u32 Frame;
+                                                                    /* 04 */ f32 Data; // RGBA?
                                                                     /* 08 */ u32 Field08;
-                                                                    /* 0C */ f32 Field0C;
-                                                                    /* 10 */ u32 Field10;
+                                                                    /* 0C */ f32 Offset;
+                                                                    /* 10 */ f32 Offset2;
                                                                     /* 14 */ u32 Field14;
-                                                                } Data[ DataCount ];
+                                                                } KeyFrame[ KeyFrameCount ];
                                                                 FPop();
                                                             }
                                                         } CastAnimationDataSubData1[ count ] <optimize=false>;
@@ -517,8 +518,8 @@ typedef struct
 
                     FPop();
                 }
-            } AnimationData1[AnimationCount] <optimize=false>;
-        } AnimationData1List;
+            } AnimationKeyFrameData[AnimationCount] <optimize=false>;
+        }  AnimationKeyFrameDataList;
     }
 
     if ( AnimationDictionaryOffset.isValid )
@@ -535,18 +536,18 @@ typedef struct
         } AnimationDictionary;
     }
 
-    if ( AnimationData3Offset.isValid )
+    if ( AnimationFrameDataListOffset.isValid )
     {
-        FSeek( AnimationData3Offset.absPosition );
+        FSeek( AnimationFrameDataListOffset.absPosition );
         SetRandomBackColor();
         struct
         {
             struct
             {                
                 /* 00 */ u32 Field00;
-                /* 04 */ f32 Field04;
-            } AnimationData3[ AnimationCount ] <optimize=false>;
-        } AnimationData3;
+                /* 04 */ f32 FrameCount;
+            } AnimationFrameData[ AnimationCount ] <optimize=false>;
+        }  AnimationFrameDataList;
     }
 
     if ( AnimationCastTableOffset.isValid )
@@ -573,7 +574,7 @@ typedef struct
                         {
                             /* 00 */ u32 Field00;
                             /* 04 */ TNNOffset DataOffset(0);
-                            Assert( Field00 == 0 );
+//                            Assert( Field00 == 0 );
         
                             if ( DataOffset.isValid )
                             {
@@ -622,7 +623,7 @@ typedef struct
                                                                                 FSeek( DataOffset.absPosition );
                                                                         
                                                                                 local u32 flags = 
-                                                                                    AnimationData1List.AnimationData1[animationIndex].GroupAnimationDataList.
+                                                                                    AnimationKeyFrameDataList.AnimationKeyFrameData[animationIndex].GroupAnimationDataList.
                                                                                     GroupAnimationData[groupIndex].CastAnimationDataList.CastAnimationData[groupCastIndex].Flags;
 
                                                                                 local u32 castAnimationDataSubData1Count = CountSetBits( flags );
@@ -640,10 +641,10 @@ typedef struct
                                                                                             {
                                                                                                 /* 00 */ TNNOffset DataOffset(0);
                                                                                             
-                                                                                                local u32 data8Count = AnimationData1List.AnimationData1[animationIndex].GroupAnimationDataList.
+                                                                                                local u32 data8Count =  AnimationKeyFrameDataList.AnimationKeyFrameData[animationIndex].GroupAnimationDataList.
                                                                                                     GroupAnimationData[groupIndex].CastAnimationDataList.CastAnimationData[groupCastIndex].CastAnimationDataSubData1List.
                                                                                                     CastAnimationDataSubData1[subData1Index].
-                                                                                                    DataCount;
+                                                                                                    KeyFrameCount;
                                                                                             
                                                                                                 if ( DataOffset.isValid )
                                                                                                 {
@@ -710,10 +711,10 @@ typedef struct
     /* 00 */ u32 CastCount;
     /* 04 */ TNNOffset CastTableOffset(0);
     /* 08 */ u32 Field08;
-    /* 0C */ TNNOffset Data2Offset(0);
+    /* 0C */ TNNOffset CastHierarchyTreeOffset(0);
 
-    Assert( Field08 == 0 );
-    Assert( ( ( Data2Offset.absPosition - CastTableOffset.absPosition ) / CastCount ) == 0x4 );
+//    Assert( Field08 == 0 );
+    Assert( ( ( CastHierarchyTreeOffset.absPosition - CastTableOffset.absPosition ) / CastCount ) == 0x4 );
 
     FPush();
 
@@ -726,17 +727,17 @@ typedef struct
         } Casts;
     }
 
-    if ( Data2Offset.isValid )
+    if ( CastHierarchyTreeOffset.isValid )
     {
-        FSeek( Data2Offset.absPosition );
+        FSeek( CastHierarchyTreeOffset.absPosition );
         struct
         {
             struct
             {
-                s32 Field00;
-                s32 Field04;
-            } Data2[CastCount];
-        } Data2;
+                s32 ChildIndex;
+                s32 NextIndex;
+            } CastHierarchyTreeNode[CastCount];
+        } CastHierarchyTree;
     }
 
     FPop();
@@ -760,7 +761,7 @@ typedef struct
         {
             u32 Field00; // info_rings doesnt show if not 2 or 3
             u32 Field04; // 0 in info_rings, but if 1 a white box shows in the center of the screen
-            u32 Field08; // info_rings doesnt show if not 1
+            u32 IsEnabled; // info_rings doesnt show if not 1
             TVector2 Field0C; // [-0.00625,-0.01111111], doesnt affect info_rings
             TVector2 Field14; // [-0.00625,-0.01111111], doesnt affect info_rings
             TVector2 Field1C; // [-0.00625,-0.01111111], doesnt affect info_rings
@@ -776,8 +777,8 @@ typedef struct
             TNNStringOffset FontCharactersOffset(0); // eg: "01234567", string or null terminated, cant find a count for this
             TNNStringOffset FontNameOffset(0); // eg: "font_count1"
             u32 Field4C; // 0, BB 19 99 9A, 2 half floats?
-            u32 Field50; // [0x10, 0x98] info_rings unaffected
-            u32 Field54; // [0x10, 0x1B] info_rings unaffected
+            u32 Width; // [0x10, 0x98] info_rings unaffected
+            u32 Height; // [0x10, 0x1B] info_rings unaffected
             u32 Field58; // [6], info_rings unaffected
             u32 Field5C; // [0, 3], info_rings unaffected
             TVector2 Offset; // X = left Y = top
@@ -785,11 +786,11 @@ typedef struct
             f32 Field6C; // -1, info_rings unaffected
             u32 Field70; // [0, 2], info_rings unaffected
 
-            Assert( Field00 == 3 );
+//            Assert( Field00 == 3 );
             //failed: Assert( Field04 == 1 );
-            Assert( Field08 == 1 );
+            //Assert( IsVisible == 1 );
         
-            Assert( Field30.absPosition - Field40.absPosition == 0x80 );
+//            Assert( Field30.absPosition - Field40.absPosition == 0x80 );
 
             FPush();
 
@@ -798,17 +799,17 @@ typedef struct
                 FSeek( Field30.absPosition );
                 struct
                 {
-                    f32 Field00; // info_rings doesnt show if not 0
-                    f32 Field04; // -0.3125, info_rings unaffected
-                    f32 YOffset; // higher value = lower position
-                    f32 Field0C; // 0, info_rings unaffected
+                    f32 Field00; // info_rings doesnt show if not 0 
+                    // -0.3125, info_rings unaffected
+                    TVector2 Offset; // higher value = lower position
+                    f32 Rotation; // 0, info_rings unaffected
                     TVector2 Scale;
-                    f32 Field18; // -1, info_rings unaffected
-                    s32 Field1C; // -1, info_rings doesnt show if not -1
-                    s32 Field20; // -1, info_rings doesnt show if not -1
-                    s32 Field24; // -1, info_rings doesnt show if not -1
-                    s32 Field28; // -1, info_rings doesnt show if not -1
-                    s32 Field2C; // -1, info_rings doesnt show if not -1
+                    f32 Field18;
+                    TColorInverted8 Color;
+                    TColorInverted8 GradientTopLeft;
+                    TColorInverted8 GradientBottomLeft;
+                    TColorInverted8 GradientTopRight;
+                    TColorInverted8 GradientBottomRight;
                     u32 Field30; // 0, info_rings unaffected
                     u32 Field34; // 0, info_rings unaffected
                     u32 Field38; // 0, info_rings unaffected
@@ -820,7 +821,38 @@ typedef struct
                 FSeek( Field40.absPosition );
                 struct
                 {
-                    s32 Fields[32]; // shape/texture index?
+                    s32 TextureIndex;
+                    s32 field_4;
+                    s32 field_8;
+                    s32 field_C;
+                    s32 field_10;
+                    s32 field_14;
+                    s32 field_18;
+                    s32 field_1C;
+                    s32 field_20;
+                    s32 field_24;
+                    s32 field_28;
+                    s32 field_2C;
+                    s32 field_30;
+                    s32 field_34;
+                    s32 field_38;
+                    s32 field_3C;
+                    s32 field_40;
+                    s32 field_44;
+                    s32 field_48;
+                    s32 field_4C;
+                    s32 field_50;
+                    s32 field_54;
+                    s32 field_58;
+                    s32 field_5C;
+                    s32 field_60;
+                    s32 field_64;
+                    s32 field_68;
+                    s32 field_6C;
+                    s32 field_70;
+                    s32 field_74;
+                    s32 field_78;
+                    s32 field_7C;
                 } Field40Data;
             }
 

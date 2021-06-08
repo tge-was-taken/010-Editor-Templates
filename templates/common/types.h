@@ -18,6 +18,36 @@ typedef double f64;
 
 typedef struct
 {
+	u8 A;
+	u8 R;
+	u8 G;
+	u8 B;
+}TColor8 <read=TColor8ToString>;
+
+typedef struct
+{
+	u8 A;
+	u8 B;
+	u8 G;
+	u8 R;
+}TColorInverted8 <read=TColorInverted8ToString>;
+
+string TColor8ToString(TColor8& color)
+{
+	local char buffer[255];
+	SPrintf(buffer, "[A: %d R: %d G: %d B: %d]", color.A, color.R, color.G, color.B);
+	return buffer;
+}
+
+string TColorInverted8ToString(TColorInverted8& color)
+{
+	local char buffer[255];
+	SPrintf(buffer, "[A: %d R: %d G: %d B: %d]", color.A, color.R, color.G, color.B);
+	return buffer;
+}
+
+typedef struct
+{
     f32 X;
     f32 Y;
 } TVector2 <read=TVector2ToString>;
