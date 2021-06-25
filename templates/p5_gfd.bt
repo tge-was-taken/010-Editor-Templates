@@ -259,6 +259,20 @@ typedef struct
  TBool32 TMaterialFlags_Flag1            : 1;
 } TMaterialFlags;
 
+typedef struct
+{ 
+    EMaterialMaps TMaterialMaps_Filler           : 5<hidden=true>;
+    EMaterialMaps TMaterialMaps_ShadowMap        : 3;
+    EMaterialMaps TMaterialMaps_DetailMap        : 3;
+    EMaterialMaps TMaterialMaps_NightMap         : 3;
+    EMaterialMaps TMaterialMaps_GlowMap          : 3;
+    EMaterialMaps TMaterialMaps_HighlightMap     : 3;
+    EMaterialMaps TMaterialMaps_ReflectionMap    : 3;
+    EMaterialMaps TMaterialMaps_SpecularMap      : 3;
+    EMaterialMaps TMaterialMaps_NormalMap        : 3;
+    EMaterialMaps TMaterialMaps_DiffuseMap       : 3;
+} TMaterialMaps;
+
 typedef struct(u32 version)
 {
     SetRandomBackColor();
@@ -318,8 +332,8 @@ typedef struct(u32 version)
     }
 
     s16 Field5C;
-    u32 Field6C<format=hex>;
-    u32 Field70<format=hex>;
+    TMaterialMaps Field6C<format=hex>;
+    TMaterialMaps Field70<format=hex>;
     s16 Field50;
     {
         u32 Field98<format=hex>;
@@ -896,11 +910,7 @@ typedef struct
     f32 ClipPlaneFar;
     f32 FieldOfView;
     f32 AspectRatio;
-
-    if ( Version > 0x1104060 )
-    {
-        f32 Field190;
-    }
+    f32 Field190;
 } TCamera;
 
 typedef struct( u32 version )

@@ -119,6 +119,12 @@ typedef enum<u32>
     EMaterialFlags_Flag80000000     = 1u << 31
 } EMaterialFlags;
 
+typedef enum<u32>
+{
+    EMaterialMaps_On = 0,
+    EMaterialMaps_Off = 7,
+} EMaterialMaps;
+
 typedef enum<u8>
 {
     EMaterialDrawMethod_Opaque = 0,
