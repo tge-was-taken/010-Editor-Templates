@@ -121,9 +121,8 @@ typedef enum<u32>
 
 typedef enum<u32>
 {
-    EMaterialMaps_On = 0,
-    EMaterialMaps_Off = 7,
-} EMaterialMaps;
+    EMaterialMapsTexcoord_None = 7,
+} EMaterialMapsTexcoord;
 
 typedef enum<u8>
 {

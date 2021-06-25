@@ -261,17 +261,17 @@ typedef struct
 
 typedef struct
 { 
-    EMaterialMaps TMaterialMaps_Filler           : 5<hidden=true>;
-    EMaterialMaps TMaterialMaps_ShadowMap        : 3;
-    EMaterialMaps TMaterialMaps_DetailMap        : 3;
-    EMaterialMaps TMaterialMaps_NightMap         : 3;
-    EMaterialMaps TMaterialMaps_GlowMap          : 3;
-    EMaterialMaps TMaterialMaps_HighlightMap     : 3;
-    EMaterialMaps TMaterialMaps_ReflectionMap    : 3;
-    EMaterialMaps TMaterialMaps_SpecularMap      : 3;
-    EMaterialMaps TMaterialMaps_NormalMap        : 3;
-    EMaterialMaps TMaterialMaps_DiffuseMap       : 3;
-} TMaterialMaps;
+    EMaterialMapsTexcoord TMaterialMaps_Filler           : 5<hidden=true>;
+    EMaterialMapsTexcoord TMaterialMaps_ShadowMap        : 3;
+    EMaterialMapsTexcoord TMaterialMaps_DetailMap        : 3;
+    EMaterialMapsTexcoord TMaterialMaps_NightMap         : 3;
+    EMaterialMapsTexcoord TMaterialMaps_GlowMap          : 3;
+    EMaterialMapsTexcoord TMaterialMaps_HighlightMap     : 3;
+    EMaterialMapsTexcoord TMaterialMaps_ReflectionMap    : 3;
+    EMaterialMapsTexcoord TMaterialMaps_SpecularMap      : 3;
+    EMaterialMapsTexcoord TMaterialMaps_NormalMap        : 3;
+    EMaterialMapsTexcoord TMaterialMaps_DiffuseMap       : 3;
+} TMaterialMapsTexcoord;
 
 typedef struct(u32 version)
 {
@@ -332,8 +332,8 @@ typedef struct(u32 version)
     }
 
     s16 Field5C;
-    TMaterialMaps Field6C<format=hex>;
-    TMaterialMaps Field70<format=hex>;
+    TMaterialMapsTexcoord Field6C;
+    TMaterialMapsTexcoord Field70;
     s16 Field50;
     {
         u32 Field98<format=hex>;
