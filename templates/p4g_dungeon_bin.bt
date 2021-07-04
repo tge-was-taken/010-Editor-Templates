@@ -8,14 +8,14 @@ typedef struct
 {
     SetBackColor(0xFF9999FF);
     u8 fieldMajorID <name="Major Field ID">;   
-    //Corresponds to files found in data_e/field/model/
+    //Corresponds to files found in data_e/field/pack/
     
     SetBackColor(0xFFFF9999);
     u8 unused1 <name="unused">;
 
     SetBackColor(0xFF999977);
     u8 fieldMinorID <name="Minor Field ID">;   
-    //Corresponds to files found in data_e/field/model/
+    //Corresponds to files found in data_e/field/pack/
     
     /*
         Model you'd be looking for would be f(fieldMajorID)_(fieldMinorID).arc.
