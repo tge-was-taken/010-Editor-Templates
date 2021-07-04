@@ -7,10 +7,14 @@
 typedef struct
 {
     SetBackColor(0xFF9999FF);
-    u16 fieldMajorID <name="Major Field ID">;   
+    u8 fieldMajorID <name="Major Field ID">;   
     //Corresponds to files found in data_e/field/model/
+    
+    SetBackColor(0xFFFF9999);
+    u8 unused1 <name="unused">;
+
     SetBackColor(0xFF999977);
-    u16 fieldMinorID <name="Minor Field ID">;   
+    u8 fieldMinorID <name="Minor Field ID">;   
     //Corresponds to files found in data_e/field/model/
     
     /*
@@ -18,12 +22,15 @@ typedef struct
         Randomly generated rooms cannot have a minor ID other than zero.
     */
 
+    SetBackColor(0xFFFF9999);
+    u8 unused2 <name="unused">;
+
     SetBackColor(0x99FFFF99);
     bool unknownFlag <name="Unknown Flag">;     
     //Only enabled for entrance to Heaven, purpose currently unknown
 
     SetBackColor(0xFFFF9999);
-    u8 unused[3] <name="unused">;               
+    u8 unused3[3] <name="unused">;               
     //Never accessed
 
     SetBackColor(0xFF99FF99);
@@ -38,7 +45,7 @@ typedef struct
     */
 
     SetBackColor(0xFFFF9999);
-    u16 unused <name="Used, but always 0">;               
+    u16 unused4 <name="Used, but always 0">;               
     //Accessed, but value is always 0, so unsure of the purpose or necessity
 
     SetBackColor(0x9999FFFF);   
@@ -57,7 +64,7 @@ typedef struct
     */
 
     SetBackColor(0xFFFF9999);
-    u16 unused <name="unused">;                 
+    u16 unused5 <name="unused">;                 
     //Never accessed
 
 } dungeonFloor <name=getFieldName>;
