@@ -1,0 +1,258 @@
+//  "I made this."
+//  -Somebody Else
+
+#include "common/include.h"
+
+
+typedef struct
+{
+    SetBackColor(0xFF9999FF);
+    u8 fieldMajorID <name="Major Field ID">;   
+    //Corresponds to files found in data_e/field/pack/
+    
+    SetBackColor(0xFFFF9999);
+    u8 unused1 <name="unused">;
+
+    SetBackColor(0xFF999977);
+    u8 fieldMinorID <name="Minor Field ID">;   
+    //Corresponds to files found in data_e/field/pack/
+    
+    /*
+        Model you'd be looking for would be f(fieldMajorID)_(fieldMinorID).arc.
+        Randomly generated rooms cannot have a minor ID other than zero.
+    */
+
+    SetBackColor(0xFFFF9999);
+    u8 unused2 <name="unused">;
+
+    SetBackColor(0x99FFFF99);
+    bool unknownFlag <name="Unknown Flag">;     
+    //Only enabled for entrance to Heaven, purpose currently unknown
+
+    SetBackColor(0xFFFF9999);
+    u8 unused3[3] <name="unused">;               
+    //Never accessed
+
+    SetBackColor(0xFF99FF99);
+    u8 dungeonMinSize <name="Minimum Dungeon Size (?)">;       //loaded in at 0xDCAC16
+    SetBackColor(0x99FF99FF);
+    u8 dungeonMaxSize <name="Maximum Dungeon Size (?)">;       //loaded in at 0xDCAC17
+    /*
+        Not quite sure about purpose, the variable names are just assumptions I have about them.
+        Value in comments is where these values are loaded into RAM while the game is running
+        If dungeonMinSize exceeds dungeonMaxSize, the game will crash.
+        There are values for both of these that will make the game hang on load, unsure of the cap or reason.
+    */
+
+    SetBackColor(0xFFFF9999);
+    u16 unused4 <name="Used, but always 0">;               
+    //Accessed, but value is always 0, so unsure of the purpose or necessity
+
+    SetBackColor(0x9999FFFF);   
+    u8 dungeonCounter <name="Dungeon Counter (?)">;  
+    /*
+        It increments as you go further down the list, increasing by one each time
+        you get to the next dungeon entrance. Unsure of purpose, does not change enemy lineup
+        nor does it appear to affect which scripts are called (Less sure on this one).
+    */
+
+    SetBackColor(0xFF998899);    
+    u8 envFileUsed <name=".ENV File ID">;
+    /* 
+        Corresponds to the .ENV files found in fd(fieldMajorID)_(fieldMinorID).arc
+        Only used on randomly-generated floors.
+    */
+
+    SetBackColor(0xFFFF9999);
+    u16 unused5 <name="unused">;                 
+    //Never accessed
+
+} dungeonFloor <name=getFieldName>;
+
+string getFieldName(dungeonFloor &df)
+{   
+    local string fieldMjrName = "";
+    local string fieldMnrName = "";
+    local int counter = 0;
+    switch (df.fieldMajorID)
+    {     
+        case 0x14:
+            fieldMjrName = "TV Hub";
+            break;
+        case 0x15:
+            fieldMjrName = "Desolate Bedroom";
+            if (df.dungeonCounter == 0)
+            {
+                fieldMnrName = " without Entrance";
+            }
+            else
+            {
+                fieldMnrName = " with Entrance";
+                
+            }
+            break;
+        case 0x16:
+            fieldMjrName = "Twisted Shopping District";
+            if (df.fieldMinorID == 2)
+            {
+                fieldMjrName = "Konishi Liquor Store";
+            }
+            break;
+
+        case 0x17:
+            if (df.fieldMinorID == 1)
+            {
+                fieldMnrName = " Entrance";
+            }
+            else if (df.fieldMinorID == 2)
+            {
+                fieldMnrName = " Final Floor";
+			}
+        case 0x28:
+        case 0x3C:
+            fieldMjrName = "Yukiko's Castle";
+            break;
+
+        case 0x18:
+            if (df.fieldMinorID == 1)
+            {
+                fieldMnrName = " Entrance";
+            }
+            else if (df.fieldMinorID == 2)
+            {
+                fieldMnrName = " Final Floor";
+            }
+        case 0x29:
+        case 0x3D:
+            fieldMjrName = "Steamy Bathhouse";
+            break;
+
+        case 0x19:
+            if (df.fieldMinorID == 1)
+            {
+                fieldMnrName = " Entrance";
+            }
+            else if (df.fieldMinorID == 2)
+            {
+                fieldMnrName = " Final Floor";
+            }
+        case 0x2A:
+        case 0x3E:
+            fieldMjrName = "Makyura Striptease";
+            break;
+
+        case 0x1A:
+            if (df.fieldMinorID == 1)
+            {
+                fieldMnrName = " Entrance";
+            }
+            else if (df.fieldMinorID == 2)
+            {
+                fieldMnrName = " Final Floor";
+            }
+        case 0x3F:
+        case 0x2B:
+            fieldMjrName = "Void Quest";
+            break;
+
+        case 0x1B:
+            if (df.fieldMinorID == 1)
+            {
+                fieldMnrName = " Entrance";
+            }
+            else if (df.fieldMinorID == 2)
+            {
+                fieldMnrName = " Final Floor";
+            }
+        case 0x2D:
+        case 0x41:
+            fieldMjrName = "Secret Laboratory";
+            break;
+
+        case 0x1C:
+            if (df.fieldMinorID == 1)
+            {
+                fieldMnrName = " Entrance";
+            }
+            else if (df.fieldMinorID == 2)
+            {
+                fieldMnrName = " Final Floor";
+            }
+        case 0x2C:
+        case 0x40:
+            fieldMjrName = "Heaven";
+
+            break;
+
+        case 0x1D:
+            if (df.fieldMinorID == 2)
+            {
+                fieldMnrName = " Final Floor";
+            }
+        case 0x2E:
+        case 0x42:    
+            fieldMjrName = "Magatsu Mandala/Inaba";
+            break;
+
+        case 0x1E:
+            if (df.fieldMinorID == 2)
+            {
+                fieldMnrName = " Entrance";
+                
+            }
+            else if (df.fieldMinorID == 1)
+            {
+                fieldMnrName = " Final Floor";
+            }
+        case 0x2F:
+        case 0x43:
+            fieldMjrName = "Yomotsu  Hirasaka";
+            break;
+
+        case 0x44:
+            fieldMjrName = "Tutorial?";
+            break;
+
+        case 0x1F:
+            if (df.fieldMinorID == 1)
+            {
+                fieldMnrName = " Entrance";
+                
+            }
+            else if (df.fieldMinorID == 2)
+            {
+                fieldMnrName = " Final Floor";
+            }
+        case 0x31:
+        case 0x45:
+            fieldMjrName = "Hollow Forest";
+            break;
+
+        default:
+            fieldMjrName = "NULL";
+            break;
+    }
+    return fieldMjrName + fieldMnrName;
+    
+}
+
+/*
+    Note that entries after a dungeon's exit that still belong to that dungeon
+    are never accessed, they are unused entries. If the dungeon exit is moved above
+    these rooms, you'll still be able to access them, but expect strange behavior.
+*/
+
+typedef struct(u16 binSize) {
+    if (binSize % 16 != 0)
+    {
+        Printf("Error! Bin file is not 16-byte aligned!\n");
+        return;
+    }
+    while (FTell() < binSize)
+    {
+        dungeonFloor newFloor;
+    }
+
+} dungeonBin <name="dungeon.bin">;
+
+dungeonBin newBin(FileSize());
