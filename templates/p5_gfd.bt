@@ -261,16 +261,16 @@ typedef struct
 
 typedef struct
 { 
-    EMaterialMapsTexcoord TMaterialMaps_Filler           : 5<hidden=true>;
-    EMaterialMapsTexcoord TMaterialMaps_ShadowMap        : 3;
-    EMaterialMapsTexcoord TMaterialMaps_DetailMap        : 3;
-    EMaterialMapsTexcoord TMaterialMaps_NightMap         : 3;
-    EMaterialMapsTexcoord TMaterialMaps_GlowMap          : 3;
-    EMaterialMapsTexcoord TMaterialMaps_HighlightMap     : 3;
-    EMaterialMapsTexcoord TMaterialMaps_ReflectionMap    : 3;
-    EMaterialMapsTexcoord TMaterialMaps_SpecularMap      : 3;
-    EMaterialMapsTexcoord TMaterialMaps_NormalMap        : 3;
-    EMaterialMapsTexcoord TMaterialMaps_DiffuseMap       : 3;
+    EMaterialMapsTexcoord Filler           : 5<hidden=true>;
+    EMaterialMapsTexcoord ShadowMap        : 3;
+    EMaterialMapsTexcoord DetailMap        : 3;
+    EMaterialMapsTexcoord NightMap         : 3;
+    EMaterialMapsTexcoord GlowMap          : 3;
+    EMaterialMapsTexcoord HighlightMap     : 3;
+    EMaterialMapsTexcoord ReflectionMap    : 3;
+    EMaterialMapsTexcoord SpecularMap      : 3;
+    EMaterialMapsTexcoord NormalMap        : 3;
+    EMaterialMapsTexcoord DiffuseMap       : 3;
 } TMaterialMapsTexcoord;
 
 typedef struct(u32 version)
@@ -332,8 +332,8 @@ typedef struct(u32 version)
     }
 
     s16 Field5C;
-    TMaterialMapsTexcoord Field6C;
-    TMaterialMapsTexcoord Field70;
+    TMaterialMapsTexcoord TexcoordFlags;
+    TMaterialMapsTexcoord TexcoordFlags;
     s16 Field50;
     {
         u32 Field98<format=hex>;
@@ -364,7 +364,7 @@ typedef struct(u32 version)
             
             switch ( ( enum EMaterialAttributeType )( attributeHeader & 0xFFFF ) )
             {
-                case EMaterialAttributeType_RimLight: struct TMaterialAttributeRimLight Attribute( version ); break;
+                case EMaterialAttributeType_ToonShading: struct TMaterialAttributeToonShading Attribute( version ); break;
                 case EMaterialAttributeType_Type1: struct TMaterialAttributeType1 Attribute( version ); break;
                 case EMaterialAttributeType_Outline: struct TMaterialAttributeOutline Attribute( version ); break;
                 case EMaterialAttributeType_Type3: struct TMaterialAttributeType3 Attribute( version ); break;
@@ -433,44 +433,44 @@ typedef struct
 
 typedef struct
 {
-    u32 TMaterialAttributeRimLightFlags_Bit0 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit1 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit2 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit3 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit4 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit5 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit6 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit7 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit8 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit9 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit10 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit11 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit12 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit13 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit14 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit15 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit16 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit17 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit18 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit19 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit20 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit21 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit22 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit23 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit24 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit25 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit26 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit27 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit28 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit29 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit30 : 1;
-    u32 TMaterialAttributeRimLightFlags_Bit31 : 1;
-} TMaterialAttributeRimLightFlags;
+    u32 TMaterialAttributeToonShadingFlags_Bit0 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit1 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit2 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit3 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit4 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit5 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit6 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit7 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit8 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit9 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit10 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit11 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit12 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit13 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit14 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit15 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit16 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit17 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit18 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit19 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit20 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit21 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit22 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit23 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit24 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit25 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit26 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit27 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit28 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit29 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit30 : 1;
+    u32 TMaterialAttributeToonShadingFlags_Bit31 : 1;
+} TMaterialAttributeToonShadingFlags;
 
 typedef struct(u32 version)
 {
     TMaterialAttributeHeader Header;
-    Assert( Header.Type == EMaterialAttributeType_RimLight );
+    Assert( Header.Type == EMaterialAttributeType_ToonShading );
 
     if ( version > 0x1104500 )
     {
@@ -480,8 +480,8 @@ typedef struct(u32 version)
         f32 Field24;
         f32 Field28;
         f32 Field2C;
-        local EMaterialAttributeRimLightFlags Flags;
-        TMaterialAttributeRimLightFlags MaterialFlags;
+        local EMaterialAttributeToonShadingFlags Flags;
+        TMaterialAttributeToonShadingFlags MaterialFlags;
     }
     else if ( version > 0x1104220 )
     {
@@ -492,7 +492,7 @@ typedef struct(u32 version)
         f32 Field28;
         f32 Field2C;
 
-        local EMaterialAttributeRimLightFlags Flags;
+        local EMaterialAttributeToonShadingFlags Flags;
         bool Flag1;
         bool Flag2;
         bool Flag4;
@@ -503,18 +503,18 @@ typedef struct(u32 version)
         }
 
         if ( Flag1 )
-            Flags |= EMaterialAttributeRimLightFlags_Bit0;
+            Flags |= EMaterialAttributeToonShadingFlags_Bit0;
 
         if ( Flag2 )
-            Flags |= EMaterialAttributeRimLightFlags_Bit1;
+            Flags |= EMaterialAttributeToonShadingFlags_Bit1;
 
         if ( Flag4 )
-            Flags |= EMaterialAttributeRimLightFlags_Bit2;
+            Flags |= EMaterialAttributeToonShadingFlags_Bit2;
 
         if ( Version > 0x1104260 )
         {
             if ( Flag8 )
-                Flags |= EMaterialAttributeRimLightFlags_Bit3;
+                Flags |= EMaterialAttributeToonShadingFlags_Bit3;
         }
     }
     else
@@ -526,7 +526,7 @@ typedef struct(u32 version)
         f32 Field28;
         f32 Field2C;
     }
-} TMaterialAttributeRimLight <optimize=false>;
+} TMaterialAttributeToonShading <optimize=false>;
 
 typedef struct(u32 version)
 {
@@ -790,7 +790,7 @@ typedef struct( u32 version )
         case ENodeAttachmentType_Mesh: struct TModelPack Value; break;
         case ENodeAttachmentType_Node: struct TNode Value; break;
         case ENodeAttachmentType_Geometry: struct TMesh Value( version ); break;
-        case ENodeAttachmentType_Camera: struct TCamera Value; break;
+        case ENodeAttachmentType_Camera: struct TCamera Value( version ); break;
         case ENodeAttachmentType_Light: struct TLight Value( version ); break;
         case ENodeAttachmentType_Epl: struct TEpl Value( version ); break;
         case ENodeAttachmentType_EplLeaf: struct TEplLeaf Value( version ); break;
@@ -903,14 +903,17 @@ typedef struct
     TVector3 Vertices[VertexCount];
 } TMorphTarget <optimize=false>;
 
-typedef struct
+typedef struct ( u32 version )
 {
     TMatrix4x4 ViewMatrix;
     f32 ClipPlaneNear;
     f32 ClipPlaneFar;
     f32 FieldOfView;
     f32 AspectRatio;
-    f32 Field190;
+    if ( version > 0x1104060 )
+    {
+        f32 Field190;
+    }
 } TCamera;
 
 typedef struct( u32 version )
