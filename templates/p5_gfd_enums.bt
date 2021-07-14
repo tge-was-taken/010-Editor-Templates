@@ -119,6 +119,11 @@ typedef enum<u32>
     EMaterialFlags_Flag80000000     = 1u << 31
 } EMaterialFlags;
 
+typedef enum<u32>
+{
+    EMaterialMapsTexcoord_None = 7,
+} EMaterialMapsTexcoord;
+
 typedef enum<u8>
 {
     EMaterialDrawMethod_Opaque = 0,
@@ -128,7 +133,7 @@ typedef enum<u8>
 
 typedef enum<u32>
 {
-    EMaterialAttributeType_RimLight = 0,
+    EMaterialAttributeType_ToonShading = 0,
     EMaterialAttributeType_Type1 = 1,
     EMaterialAttributeType_Outline = 2,
     EMaterialAttributeType_Type3 = 3,
@@ -146,11 +151,11 @@ typedef enum<u32>
 
 typedef enum<u32>
 {
-    EMaterialAttributeRimLightFlags_Bit0 = 1 << 0,
-    EMaterialAttributeRimLightFlags_Bit1 = 1 << 1,
-    EMaterialAttributeRimLightFlags_Bit2 = 1 << 2,
-    EMaterialAttributeRimLightFlags_Bit3 = 1 << 3,
-} EMaterialAttributeRimLightFlags;
+    EMaterialAttributeToonShadingFlags_Bit0 = 1 << 0,
+    EMaterialAttributeToonShadingFlags_Bit1 = 1 << 1,
+    EMaterialAttributeToonShadingFlags_Bit2 = 1 << 2,
+    EMaterialAttributeToonShadingFlags_Bit3 = 1 << 3,
+} EMaterialAttributeToonShadingFlags;
 
 typedef enum<u32>
 {
