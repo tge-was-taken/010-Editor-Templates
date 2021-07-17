@@ -33,6 +33,7 @@ enum<short> AffinityStatus
     Resist2 = 15,
     Resist3 = 8192,
     Resist4 = 4096,
+    Resist6 = 4098,
     Resist5 = 12288,
     Block = 256,
     Repel = 512,

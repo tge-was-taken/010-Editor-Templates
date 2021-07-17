@@ -27,16 +27,20 @@ enum<byte> ArcanaID
 enum<short> AffinityStatus
 {
     Neutral = 20,
+    Minor_Weakness = 30,
     Weak = 2048,
-    Resist = 8192,
-    Resist2 = 4096,
-    Resist3 = 12288,
+    Resist = 10,
+    Resist2 = 15,
+    Resist3 = 8192,
+    Resist4 = 4096,
+    Resist6 = 4098,
+    Resist5 = 12288,
     Block = 256,
-    Block2 = 10,
     Repel = 512,
     Drain = 1024,
-    Drain2 = 9216,
-    WeakResist = 10240,
+    Drain2 = 1104,
+    Drain3 = 9216,
+    WeakResist = 102
 };
 
 enum<ubyte>PersonaInherit
