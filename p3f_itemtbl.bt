@@ -1,0 +1,152 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: 
+//   Authors: Tekka, Phoenix
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: *.bin
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+LittleEndian();
+
+enum<byte> Element
+{
+    Slash = 0,
+    Strike = 1,
+    Pierce = 2
+};
+
+enum<byte> Icon
+{
+    Nihil = 0,
+    TwoHSword = 1,
+    OneHSword = 2,
+    Bow = 4,
+    Spear = 8,
+    Axe = 16,
+    Fists = 32,
+    Gun = 64,
+    Kunai = 128
+};
+
+enum<byte> Skill
+{
+    None = 0,
+    TwoHSwRandom = 1,
+    TwoHSwRandom2 = 2,
+    TwoHSwRandom3 = 3,
+    OneHSwRandom = 4,
+    OneHSwRandom2 = 5,
+    OneHSwRandom3 = 6,
+    BowRandom = 7,
+    BowRandom2 = 8,
+    BowRandom3 = 9,
+    FistRandom = 10,
+    FistRandom2 = 11,
+    FistRandom3 = 12,
+    AxeRandom = 14,
+    AxeRandom2 = 15,
+    SpearRandom = 17,
+    SpearRandom2 = 18,
+    KnifeRandom = 20,
+    KnifeRandom2 = 21,
+    GunRandom = 23,
+    GunRandom2 = 24,
+    PanicChanceLow = 31,
+    CritUpLow = 32,
+    FearChanceMed = 33,
+    Plus3Magic = 34,
+    RageChanceLow = 35,
+    CharmChanceMed = 37,
+    PoisonChanceHigh = 38,
+    DistressChanceHigh = 39,
+    CritUpHigh = 40,
+    CharmChanceMed2 = 41,
+    FearChanceMed2 = 42,
+    _20HP = 43,
+    _20HP2 = 44,
+    _30HP = 45,
+    _40HP = 46,
+    UnknownMuramasa = 47,
+    _30SP = 48,
+    UnknownSolBlade = 49,
+    Plus3AllStats = 50,
+    Plus4Magic = 51,
+    _50HP = 52,
+    Plus3Agi = 53,
+    PoisonChanceHigh2 = 54,
+    Plus3Str = 55,
+    UnknownGoldenGloves = 56,
+    _50SP = 57,
+    Plus5Endur = 58,
+    UnknownFriuli = 59,
+    UnknownNihon = 60,
+    Plus3AllStats2 = 61,
+    CritUpMed = 62,
+    FearChanceMed3 = 63,
+    CritUpHigh2 = 64,
+    UnknownStaffWrath = 65,
+    _50HP2 = 66,
+    Plus5Magic = 67,
+    _40SP = 69,
+    Plus3AllStats3 = 70,
+    WindBoost = 71,
+    _100HP = 72,
+    FireBoost = 73,
+    Plus10Magic = 74,
+    Plus10AllStats = 75,
+    ElecBoost = 76,
+    WindBoost2 = 77,
+    Plus10AllStats2 = 78,
+    ElecBoost2 = 79,
+    Plus10AllStats3 = 80,
+    Plus10AllStats4 = 81,
+    IceBoost = 82,
+    Plus10AllStats5 = 83,
+    Plus10AllStats6 = 84,
+    Plus10AllStats7 = 85,
+    Plus10AllStats8 = 86,
+    _50SP2 = 87
+};
+
+enum<byte> Equip
+{
+    TwoHSword_ = 0,
+    OneHSword_ = 1,
+    Fists_ = 2,
+    Axe_ = 3,
+    Spear_ = 4,
+    Bow_ = 5,
+    Gun_ = 6,
+    Knife_ = 7
+    
+};
+
+typedef struct
+{
+    byte Unk0[6];
+    Element Elem <comment = "doesn't seem to apply to all weapons, see Omega Spear, Evil Gloves, Crescent Rod">;
+    byte Unk1[13];
+    Icon WeaponIcon;
+    byte Unk2[3];
+    ushort Attack;
+    byte Unk3[2];
+    ushort Hit; 
+    byte Unk4[2];
+    Equip WeaponType;
+    byte Unk5[3];
+    Skill Passive;
+    byte Unk6[3];
+} TItemTblEntry;
+
+typedef struct
+{
+  TItemTblEntry Entries[256];
+} TItemTbl;
+
+LittleEndian();
+TItemTbl File;
