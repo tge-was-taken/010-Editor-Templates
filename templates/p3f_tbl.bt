@@ -398,22 +398,22 @@ typedef struct
     u8 Unknown <name = "Unknown">;
 
 	struct
-    {
-        bool Charm : 1 <name = "Charm">;
-        bool Distress : 1 <name = "Distress">;
-        bool Panic : 1 <name = "Panic">;
-        bool Fear : 1 <name = "Fear">;
-        bool Rage : 1 <name = "Rage	">;
-        bool Freeze : 1 <name = "Freeze">;
-        bool Shock : 1 <name = "Shock">;
-        bool Poison : 1 <name = "Poison">;
-    } Effect2 <name = "Ailments">;
+        {
+            bool Charm : 1 <name = "Charm">;
+            bool Distress : 1 <name = "Distress">;
+            bool Panic : 1 <name = "Panic">;
+            bool Fear : 1 <name = "Fear">;
+            bool Rage : 1 <name = "Rage	">;
+            bool Freeze : 1 <name = "Freeze">;
+            bool Shock : 1 <name = "Shock">;
+            bool Poison : 1 <name = "Poison">;
+        } Effect2 <name = "Ailments">;
 
     struct
-    {
-         bool Unconscious : 1 <name = "Unconscious">;
-         bool KnockDown : 1 <name = "Knocked Down">;
-    } Effect4 <name = "Member Status", comment = "I think this is unused but idk keeping just in case -Phoenix">;
+        {
+             bool Unconscious : 1 <name = "Unconscious">;
+             bool KnockDown : 1 <name = "Knocked Down">;
+        } Effect4 <name = "Member Status", comment = "I think this is unused but idk keeping just in case -Phoenix">;
 	 
     Skill_SpecialAilments SpecialAil <name = "Special Ailments">;
     u8 Unknown <name = "Unknown">;
@@ -445,7 +445,7 @@ typedef struct
         } BuffDebuff2 <name = "Support Skills 2">;
     Skill_Bonus Bonus <name = "Damage Bonuses">;
     u8 CritChance <name = "Crit Chance (%)">;
-    u8 PreventUse <name = "Prevent Use", comment = "0 = prevent, 5 = no limit, Healing spells won't be used if full HP/ no status, buffs/ debuffs can't be used if already on">;
+    u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
