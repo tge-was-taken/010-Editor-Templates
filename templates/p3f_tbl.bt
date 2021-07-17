@@ -314,14 +314,14 @@ typedef struct
     PersonaStats Stats;
     byte : 1;
     BattleSkill SkillID[ 8 ] <name = "Battle Skills">;
-    u16 Unknown1 <comment = "88 for bosses, related to Fuuka's scan">;
+    u16 FuukaScan <comment = "Determines the effectiveness of Fuukas scan">;
     u16 ExpReward <name = "Exp Reward">;
     u16 Unknown2;
     u16 Unknown3;
     u8 Unknown4[ 18 ];
     b16 Unknown5;
     b16 Unknown6;
-    u16 Unknown7;
+    u16 AttackDamage;
 } TEnemyUnitStats <name = "Enemy Unit Stats">;
 
 //UNIT_F.TBL
@@ -336,14 +336,14 @@ typedef struct
     PersonaStats Stats;
     byte : 1;
     BattleSkill SkillID[ 8 ] <name = "Battle Skills">;
-    u16 Unknown1 <comment = "88 for bosses, likely related to boss fights">;
+    u16 FuukaScan <comment = "Determines the effectiveness of Fuuka's scan">;
     u16 ExpReward <name = "Exp Reward">;
     u16 Unknown2;
     u16 Unknown3;
     u8 Unknown4[ 18 ];
     b16 Unknown5;
     b16 Unknown6;
-    u16 Unknown7;
+    u16 AttackDamage;
 } TEnemyUnitStatsF <name = "Enemy Unit Stats">;
 
 // SKILL.TBL
@@ -397,23 +397,23 @@ typedef struct
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
 
-				   struct
-        {
-            bool Charm : 1 <name = "Charm">;
-            bool Distress : 1 <name = "Distress">;
-            bool Panic : 1 <name = "Panic">;
-            bool Fear : 1 <name = "Fear">;
-            bool Rage : 1 <name = "Rage	">;
-            bool Freeze : 1 <name = "Freeze">;
-            bool Shock : 1 <name = "Shock">;
-            bool Poison : 1 <name = "Poison">;
-        } Effect2 <name = "Ailments">;
-
 	struct
-     {
+    {
+        bool Charm : 1 <name = "Charm">;
+        bool Distress : 1 <name = "Distress">;
+        bool Panic : 1 <name = "Panic">;
+        bool Fear : 1 <name = "Fear">;
+        bool Rage : 1 <name = "Rage	">;
+        bool Freeze : 1 <name = "Freeze">;
+        bool Shock : 1 <name = "Shock">;
+        bool Poison : 1 <name = "Poison">;
+    } Effect2 <name = "Ailments">;
+
+    struct
+    {
          bool Unconscious : 1 <name = "Unconscious">;
          bool KnockDown : 1 <name = "Knocked Down">;
-     } Effect4 <name = "Member Status", comment = "I think this is unused but idk keeping just in case -Phoenix">;
+    } Effect4 <name = "Member Status", comment = "I think this is unused but idk keeping just in case -Phoenix">;
 	 
     Skill_SpecialAilments SpecialAil <name = "Special Ailments">;
     u8 Unknown <name = "Unknown">;

@@ -31,16 +31,19 @@ enum<short> AffinityStatus
     Weak = 2048,
     Resist = 10,
     Resist2 = 15,
-    Resist3 = 8192,
     Resist4 = 4096,
-    Resist6 = 4098,
-    Resist5 = 12288,
+    Resist5 = 4098,
+    Resist3 = 8192,
+    Resist6 = 12288,
+    NeutralNullShockFreeze = 8212,
+    ResistNullShockFreeze = 8202,
+    MinorWeaknessNullShockFreeze = 8222,
     Block = 256,
     Repel = 512,
     Drain = 1024,
     Drain2 = 1104,
     Drain3 = 9216,
-    WeakResist = 102
+    WeakResist = 10240,
 };
 
 enum<ubyte>PersonaInherit
