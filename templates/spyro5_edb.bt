@@ -1,0 +1,246 @@
+//------------------------------------------------
+//--- 010 Editor v11.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef char s8;
+typedef uchar u8;
+typedef int16 s16;
+typedef uint16 u16;
+typedef uint32 u32;
+typedef uint64 u64;
+typedef float f32;
+
+typedef enum
+{
+    GC,
+    XBOX,
+    PS2
+} Platform;
+
+local Platform gPlatform = XBOX;
+
+u32 FixOffset(u32 pos, u32 offset)
+{
+    if (pos == 0) return 0;
+    return pos + offset;
+}
+
+typedef struct
+{
+    s16 Count;
+    s16 Count2;
+    u32 Offset;
+    local u32 FixedOffset = FixOffset((FTell()), Offset);
+} EDBResTable <bgcolor=0x82f0d0, optimize=false>;
+
+typedef struct
+{
+    u32 Field00;
+    u16 Field04;
+    u16 Field06;
+    u32 Field08;
+    u32 Field0C;
+} EDBResSection <bgcolor=0x5d0d54>;
+
+typedef struct
+{
+    f32 PX, PY, PZ;
+    s8 NX, NY, NZ;
+    s8 Field0F;
+} GXVertex;
+
+typedef struct
+{
+    u16 VertexCount;
+    u16 Field9E;
+    u16 Field100;
+    u16 MaterialIndex;
+    u32 DisplayListSize;
+    u32 Field108;
+    u32 Field10C;
+    u32 Field110;
+    u32 Field114;
+    u32 FIeld118;
+    u8 DisplayList[DisplayListSize];
+} EDBMeshGC <bgcolor=0x5ef03b, optimize=false>;
+
+typedef struct
+{
+    u32 Field00;
+    u32 Field04; // c
+    u32 Field08;
+    f32 Field0C[18];
+    u32 Field50;
+    u32 Field54; // o
+    u32 Field58; // c
+    u32 Field5C; // o
+    u32 Field60; // o
+    u32 Field64; // o
+    u32 Field68; // o
+    u32 Field6C; 
+    u32 Field70;
+    u32 Field74;
+    u32 MeshCount;
+    u32 VertexCount;
+    u32 Field80;
+    u32 Field84;
+    u32 Field88;
+    u32 Field8C;
+    u32 Field90;
+    u32 Field94;
+    u32 Field98;
+    EDBMeshGC Meshes[MeshCount];
+
+    GXVertex Vertices[VertexCount];
+    u32 Unk1[Field54];
+} EDBResEntityDataGC;
+
+typedef struct
+{
+    u16 VertexCount;
+    u16 Field9E;
+    u16 Field100;
+    u16 MaterialIndex;
+    u32 DisplayListSize;
+    u32 Field108;
+    u32 Field10C;
+    u32 Field110;
+    u32 Field114;
+    u32 Field118;
+} EDBMeshXBOX;
+
+typedef struct
+{
+    u32 Field00;
+    u32 Field04; // c
+    u32 Field08;
+    f32 Field0C[18];
+    u32 Field50;
+    u32 Field54; // o
+    u32 Field58; // c
+    u32 Field5C; // o
+    u32 Field60; // o
+    u32 Field64; // o
+    u32 Field68; // o
+    u32 Field6C; 
+    u32 MeshCount;
+    u32 VertexCount;
+    u32 FaceCount;
+    u32 IndexCount;
+    u32 Field80;
+    u32 Field84;
+    u32 Field88;
+    u32 Field8C;
+    u32 Field90;
+    u32 Field94;
+    u32 Field98;
+    EDBMeshXBOX Meshes[MeshCount];
+
+    //GXVertex Vertices[VertexCount];
+    //u32 Unk1[Field54];
+} EDBResEntityDataXBOX;
+
+typedef struct
+{
+    u16 Field00;
+    u16 Field02;
+    u32 Offset;
+    u32 Field08;
+    u32 Field0C;
+    u16 Field10;
+    u16 Field12;
+
+    local u64 temp = FTell();
+    FSeek( Offset );
+    switch ( gPlatform )
+    {
+        case GC: EDBResEntityDataGC Data; break;
+        case XBOX: EDBResEntityDataXBOX Data; break;
+        default: break;
+    }
+    FSeek( temp );
+} EDBResEntity <optimize=false>;
+
+typedef struct
+{
+    /*00*/ u32 Id;
+    /*04*/ u32 Offset;
+    /*08*/ u32 Field08;
+    /*0C*/ u16 Width;
+    /*0E*/ u16 Height;
+    /*10*/ u32 Field10;
+    /*14*/ u32 Field14;
+    /*18*/ u32 Field18;
+    
+    local u64 temp = FTell();
+    FSeek( Offset );
+    u8 Data[ (Width * Height) / 2 ]; // TODO
+    FSeek( temp );
+} EDBResTexture <bgcolor=0x21a8ce, optimize=false>;
+
+typedef struct
+{
+    LittleEndian();
+    /* 00 */ u32 Signature;
+    if ( Signature == 0x4D4F4547 )
+    {
+        BigEndian();
+    }
+
+    /* 04 */ u32 HashCode;
+    /* 08 */ u32 Version;
+    /* 0C */ u32 Field0C;
+    /* 10 */ u32 FileTime;
+    /* 14 */ u32 FileSize;
+    /* 18 */ u32 Field18;
+    /* 1C */ u32 Field1C;
+    /* 20 */ u32 Field20;
+    /* 24 */ u32 Field24;
+    /* 28 */ u32 Field28;
+    /* 2C */ u32 Field2C;
+    /* 30 */ u32 Field30;
+    /* 34 */ u32 Field34;
+    /* 38 */ u32 Field38;
+    /* 3C */ u32 Field3C;
+    /* 40 */ u32 Field40;
+    /* 44 */ u32 Field44;
+    /* 48 */ u32 Field48;
+    /* 4C */ u32 Field4C;
+    /* 50 */ u32 Field50;
+    /* 54 */ EDBResTable SectionsTable;
+    /* 5C */ EDBResTable Field5C;
+    /* 64 */ EDBResTable EntitiesTable;
+    /* 6C */ EDBResTable AnimationsTable;
+    /* 74 */ EDBResTable AnimSkinsTable;
+    /* 7C */ EDBResTable ScriptsTable;
+    /* 84 */ EDBResTable MapsTable;
+    /* 8C */ EDBResTable AnimModesTable;
+    /* 94 */ EDBResTable AnimSetsTable;
+    /* 9C */ EDBResTable ParticlesTable;
+    /* A4 */ EDBResTable SwooshTable;
+    /* AC */ EDBResTable SpreadStTable;
+    /* B4 */ EDBResTable FontsTable;
+    /* BC */ EDBResTable FieldBC;
+    /* C4 */ EDBResTable TexturesTable;
+
+    FSeek(SectionsTable.FixedOffset);
+    EDBResSection Sections[SectionsTable.Count];
+
+    FSeek(EntitiesTable.FixedOffset);
+    EDBResEntity Entities[EntitiesTable.Count];
+
+    FSeek(TexturesTable.FixedOffset);
+    EDBResTexture Textures[TexturesTable.Count];
+} EDB <bgcolor=0x922569>;
+
+BigEndian();
+EDB File;

@@ -4112,27 +4112,78 @@ enum<byte> ArcanaID
     Moon = 19,
     Sun = 20,
     Judgement = 21,
-    Aeon = 22,
-    BlankArcana = 23,
+    Faith = 22,
+    Councillor = 23,
     World = 24,
+	DarkSeries = 25,
 };
 
 // This enum represents elemental affinity status (i.e. weak, resist, etc.)
 enum<short> AffinityStatus
 {
+    Neutral95percentdamagereduced = 1,
+	Neutral90percentdamagereduced = 2,
+	Neutral85percentdamagereduced = 3,
+	Neutral80percentdamagereduced = 4,
+	Neutral75percentdamagereduced = 5,
+	Neutral70percentdamagereduced = 6,
+	Neutral65percentdamagereduced = 7,
+	Neutral60percentdamagereduced = 8,
+	Neutral55percentdamagereduced = 9,
+	Neutral50percentdamagereduced = 10,
+	Neutral45percentdamagereduced = 11,
+	Neutral40percentdamagereduced = 12,
+	Neutral35percentdamagereduced = 13,
+	Neutral30percentdamagereduced = 14,
+	Neutral25percentdamagereduced = 15,
+	Neutral20percentdamagereduced = 16,
+	Neutral15percentdamagereduced = 17,
+	Neutral10percentdamagereduced = 18,
+	Neutral5percentdamagereduced = 19,
     Neutral = 20,
+	Neutral150percentExtradamage = 30,
+	Neutral200percentExtradamage = 40,
+	Neutral250percentExtradamage = 50,
+	Neutral300percentExtradamage = 60,
+	Neutral350percentExtradamage = 70,
+	Neutral400percentExtradamage = 80,
+	Neutral450percentExtradamage = 90,
+	Neutral500percentExtradamage = 100,
+	Neutral550percentExtradamage = 110,
+	Neutral600percentExtradamage = 120,
+	Neutral650percentExtradamage = 130,
+	Neutral700percentExtradamage = 140,
+	Neutral750percentExtradamage = 150,
+	Neutral800percentExtradamage = 160,
+	Neutral850percentExtradamage = 170,
+	Neutral900percentExtradamage = 180,
+	Neutral950percentExtradamage = 190,
+	Neutral1000percentExtradamage = 200,
     Weak = 2048,
-    Resist = 8192,
-    Resist2 = 4096,
-    Resist3 = 12288,
+    BLOCKNeutral = 8192,
+    Resist = 4096,
+    BLOCKStrong = 12288,
     Block = 256,
     Repel = 512,
     Drain = 1024,
-    TooFarAwayToHit = 8272, // used in Cognitive Wakaba battle; needs more testing
-    DrainResist = 9216, // used in Shadow Madarame battle; needs more testing
-    WeakResist = 10240,
+    Drain2 = 9216,
+    BLOCKWeak = 10240,
+	Weak99percentdamagereduced = 2049,
+	Weak75percentdamagereduced = 2055,
+	Weak50percentdamagereduced = 2060,
+	Weak25percentdamagereduced = 2065,
+	Weak15percentdamagereduced = 2070,
+	Weak110percentExtradamage = 2075,
+	Weak155percentExtradamage = 2088,
+	Weak400percentExtradamage = 2148,
+	Weak1000percentExtradamage = 2303,
+	Resist99percentdamagereduced = 4097,
+	Resist75percentdamagereduced = 4101,
+	Resist25percentdamagereduced = 4110,
+	Resist750percentExtradamage = 4196,
+	TooFarAwayToHitUNTESTED = 8272, // used in Cognitive Wakaba battle; needs more testing
+    DrainResistUNTESTED = 9216, // used in Shadow Madarame battle; needs more testing
 };
-
 
 enum<ushort>PersonaInherit
 {
@@ -4183,8 +4234,9 @@ enum<ubyte> ElementalType
 enum<ubyte>Skill_ApplyOrCureEffect
 {
     NoEffect = 0,
-    ApplyEffect = 1,
+    ApplySingleEffect = 1,
     CureEffect = 2,
+	Applyrandomeffect = 3,
 };
 
 enum<ubyte>Skill_ExtraEffect
@@ -4192,14 +4244,24 @@ enum<ubyte>Skill_ExtraEffect
     NoEffect6 = 0,
     OnlyHitTargetsInflictedWithFear = 1, // used by Ghastly Wail
     EscapeBattle = 2,
+	BonusDamageFoeKnockdown = 3,
     ThrowAwayMoney = 6,
-    AlwaysKills = 13, // used for 9999 damage Megidolaon (603)
-    BigBangBurgerDocumentVisual = 15, // used by Shadow Okumura's Sacrifice Order
-    BatonPassDamageUp = 17, 
-    TargetedChanceUp = 19, // increases chance of being targeted by enemies
-    TargetedChanceWayUp = 20, // greatly increases chance of being targeted by enemies
-    IfAilmentExistsHealAndCureInstead = 21, // used for Big Bang Challenge; needs testing with other ailments
-    CasterAttackWayDownNonNegatable = 22, // used for Beast Weaver
+	AffectMaleAlliesonlyUNTESTED = 7,
+	AffectFemaleAlliesonlyUNTESTED = 8,
+	BLOCKskillifguardbutkillifdizzyUNTESTED = 9,
+	DizzyDown1moreGuaranteedUNTESTED = 10,
+	randomresistancechangesUNTESTED = 11,
+	Allfoesweaklightanddarkto1UNTESTED = 12,
+	AlwaysKills = 13, // used for 9999 damage Megidolaon (603)
+	killallfoeswithailments = 14,
+	BigBangBurgerDocumentVisualUNTESTED = 15, // used by Shadow Okumura's Sacrifice Order
+	BatonPassDamageupUNTESTED = 16,
+    BatonPassDamageUpUNTESTED2 = 17,
+	ignoreresistance = 18,
+    TargetedChanceUpUNTESTED = 19, // increases chance of being targeted by enemies
+    TargetedChanceWayUpUNTESTED = 20, // greatly increases chance of being targeted by enemies
+    IfAilmentExistsHealAndCureInsteadUNTESTED = 21, // used for Big Bang Challenge; needs testing with other ailments
+    CasterAttackWayDownNonNegatableUNTESTED = 22, // used for Beast Weaver
 };
 
 enum<ubyte>Skill_HPEffect
@@ -4219,21 +4281,23 @@ enum<ubyte>Skill_HPEffect
     DrainDamage = 12, // deals damage, affected by damage stat, and restores equal HP to the user
     DrainExactDamage = 13, // deals EXACTLY the amount of damage specified and restores equal HP to the user
     Unknown_Damage14 = 14, // seems to be the same as DealDamage? Needs more testing
-    RestoreHealthChanceToWhiff = 15, // Has a chance to whiff, healing for minimal HP instead
+    RestoreHealthWhiffChance = 15, // Has a chance to whiff, healing for minimal HP instead
     DamageBasedOnHealthyPartyMembers = 16, // used for All-Out Attacks
 };
 
 enum<ubyte>Skill_SPEffect
 {
     NoSPEffect = 0,
+	DepleteFixedSP = 4,
     RestoreSP = 5,
-//  DepleteSP = 8,
+	DepleteSP = 8,
+	RestorePercentMaxSP1 = 9,
     DepletePercentMaxSP = 10,
-    RestorePercentMaxSP = 11,
-    DrainSP = 13,
+    RestorePercentMaxSP2 = 11,
+    DrainFixedSP = 13,
 };
 
-enum<ubyte>Skill_ValidTargets // definitely a bitfield
+enum<ubyte>Skill_ValidTargets
 {
     TargetAlly = 1,
     TargetEnemy = 2,
@@ -4248,7 +4312,7 @@ enum<ubyte>Skill_NumberOfTargets
     Unknown_PlumeOfDuskRelated = 3, // used by the unused Plume of Dusk item ability - description reads "When MC is KO'd, fully recover to all allies"
 };
 
-enum<ubyte>Skill_TargetRestrictions // definitely a bitfield
+enum<ubyte>Skill_TargetRestrictions
 {
     NoAdditionalRestrictions = 0,
     RandomTwoFromSelection = 1, // used by Diffraction Arrow, Distortion Wave
@@ -4259,7 +4323,7 @@ enum<ubyte>Skill_TargetRestrictions // definitely a bitfield
     UnconsciousOnly = 64, // used for revival skills
 };
 
-enum<ubyte>Skill_CasterEffect1 // definitely a bitfield
+enum<ubyte>Skill_CasterEffect1
 {
     NoCasterEffect1 = 0,
     UnknownCasterEffect_SpecialMoveRelated = 1, // used by All-Out Attacks, Navigator skills, and other unique skills. Sometimes plays a mini-cutscene?
@@ -4268,13 +4332,14 @@ enum<ubyte>Skill_CasterEffect1 // definitely a bitfield
     UnknownCasterEffect1_StealInfoRelated = 32, // used by Steal Info
 };
 
-enum<ubyte>Skill_CasterEffect2 // definitely a bitfield
+enum<ubyte>Skill_CasterEffect2
 {
     NoCasterEffect2 = 0,
     KOSelf = 1,
     MeleeContact = 2, // needs to be tested
     SummonAlly_CRASHES_ON_USE = 4, // summons an ally in enemy encounters - DO NOT USE LIKE A NORMAL SKILL, THE GAME WILL CRASH
-    UnknownCasterEffect_SupportRelated = 8, // used by healing and support skills
+    SkillRestrictionRequirement = 8, // used by healing and support skills
+	UsePercentageSPCost = 16, // used to make the sp cost by percentage usage
     UnknownCasterEffect_RecarmdraRelated = 24, // used by Recarmdra
     UnknownCasterEffect_TrafuriRelated = 40, // used by Trafuri
     UnknownCasterEffect_FollowUpRelated = 66, // used by Follow-Up Attacks
@@ -4284,14 +4349,14 @@ enum<ubyte>Skill_CasterEffect2 // definitely a bitfield
 };
 
 
-enum<ubyte>Skill_DamageStat // rewrite as bools
+enum<ubyte>Skill_DamageStat
 {
     NoApplicableStat = 0,
     StrengthStat = 1,
     MagicStat = 2,
 };
 
-enum<ubyte>Skill_CostType // rewrite as bools
+enum<ubyte>Skill_CostType
 {
     NoCost = 0,
     HPCost = 1,
@@ -4311,7 +4376,7 @@ enum<ubyte>Skill_PassiveOrActive
     NULL_Skill = 255
 };
 
-enum<int>GearEquippable // DEFINITELY a bitfield
+enum<int>GearEquippable
 {
     NotEquippable = 0,
     AnyoneEquippable = -1,
@@ -4550,6 +4615,7 @@ enum<ubyte>VoicePack
     VoicePackA = 0,
     VoicePackB = 1,
     VoicePackC = 2,
+};
 
 enum<ubyte>Skill_AreaType
 {
@@ -4557,4 +4623,356 @@ enum<ubyte>Skill_AreaType
     UsableInField = 1,
     UsableInBattle = 2,
     UsableInFieldAndBattle = 3
+};
+
+enum<ubyte> ItemCategory
+{
+	MeleeWeapon = 0,
+	MeleeWeapon2ndDigit = 1,
+	Armor = 16,
+	Armor2ndDigit = 17,
+	Accessory = 32,
+	Consumables = 48,
+	Consumables2ndDigit = 49,
+	SkillCard = 96,
+	SkillCard2ndDigit = 97,
+	RangedWeapon = 128,
+	RangedWeapon2ndDigit = 129,
+};
+
+enum<short> Usability
+{
+	NotUsable = 0,
+	UsableinBattle = 1,
+	UsableinField = 2,
+	UsableinBattleandField = 3,
+};
+
+enum<ubyte> ItemID
+{
+	Blank999 = 0,
+	FigSeed1 = 1,
+	Medicine1 = 2,
+	Ointment1 = 3,
+	AntibioticGel1 = 4,
+	Lifestone1 = 5,
+	Bead1 = 6,
+	ValueMedicine1 = 7,
+	MedicalKit1 = 8,
+	MaccaLeaf1 = 9,
+	BeadChain1 = 10,
+	SoulDrop1 = 11,
+	SnuffSoul1 = 12,
+	ChewingSoul1 = 13,
+	SoulFood1 = 14,
+	FlameVial1 = 15,
+	HumanVial1 = 16,
+	RottenEgg1 = 17,
+	NoharM1 = 18,
+	RelaxGel1 = 19,
+	AlertCapsule1 = 20,
+	VirusVial1 = 21,
+	PoisonJug1 = 22,
+	VanishBall1 = 23,
+	Soma1 = 24,	
+	AmritaSoda1 = 25,
+	Hiranya1 = 26,
+	MuscleDrink1 = 27,
+	OddMorsel1 = 28,
+	RancidGravy1 = 29,
+	RottenSocks1 = 30,
+	MagicOintment1 = 31,
+	PhysicalOintment1 = 32,
+	RasetsuOfuda1 = 33,
+	IdatenOfuda1 = 34,
+	KongouOfuda1 = 35,
+	PurifyingWater1 = 36,
+	PurifyingSalt1 = 37,
+	MolotovCocktail1 = 38,
+	Blowtorch1= 39,
+	FreezeSpray1 = 40,
+	Snowstorm1 = 41,
+	AirCannon1 = 42,
+	VacuumCutter1 = 43,
+	StunGun1 = 44,
+	TeslaCoil1 = 45,
+	MegidolaonBomb1 = 46,
+	StethoscopeBlast1 = 47,
+	DodgeballBlast1 = 48,
+	FelixFelicis1 = 49,
+	Ebola1 = 50,
+	HorseHorn1 = 51,
+	KatanaStab1 = 52,
+	Hallucinogen1= 53,
+	ZenerCards1 = 54,
+	AtomMarch1 = 55,
+	KagutsuchiOrb1 = 56,
+	HappyBomb1 = 57,
+	SegakiRice1 = 58,
+	CurseBomb1 = 59,
+	FiveInchNail1 = 60,
+	Revivadrin11 = 61,
+	Insuline1 = 62,
+	LifeOintment1 = 63,
+	Homunculus1 = 64,
+	ThrowStone1 = 65,
+	RevivAll1 = 66,
+	RenewAll11 = 67,
+	GhostCharm1 = 68,
+	Pandemic1 = 69,
+	VampireTeeth1 = 74,
+	MedicalLeech1 = 75,
+	HandofaGod1 = 76,
+	Bremelanotide1 = 77,
+	PoisonSwamp1 = 78,
+	IceCrystal1 = 79,
+	FirePillar1 = 81,
+	Spotlight1 = 100,
+	Gohom1 = 101,
+	WindCutter1 = 102,
+	Smokescreen1 = 103,
+	Electrostatic1 = 104,
+	HypnoMist1 = 105,
+	Stealthanol1 = 106,
+	Covertizer1 = 107,
+	Vertigo1 = 108,
+	LiquidMercury1 = 119,
+	ContagiousNuke1 = 120,
+	OrpheusBlessing1 = 125,
+	SunRune1 = 126,
+	Starvicks1 = 128,
+	UdagawaWater1 = 129,
+	DarkBall1 = 131,
+	KopiLuwak1 = 142,
+	LaserCannon1 = 143,
+	WhereAmI1 = 144,
+	AmnesiaPunch1 = 145,
+	OrganicHerb1 = 146,
+	Jagariko1 = 147,
+	BrokenRockSalt1 = 148,
+	Firecracker1 = 153,
+	SanzunTama1 = 154,
+	AutumnBread1 = 156,
+	ElementSet1 = 157,
+	ForcesSet1 = 158,
+	IceCube1 = 169,
+	DrizzledNatto1 = 170,
+	SquidSplurge1 = 171,
+	DryIce1 = 175,
+	MagicalWater1 = 187,
+	AmateurCoffee1 = 188,
+	HarshCoffee1 = 189,
+	BaptismalWater1 = 190,
+	ExorcismWater1 = 191,
+	SacramentalWine1 = 192,
+	RepentanceAshes1 = 193,
+	MoistKatsuBun1 = 194,
+	Pinwheel1 = 198,
+	Yashichi1 = 199,
+	TetraHammer1 = 200,
+	MakaraHammer1 = 201,
+	MacadamiaChoco1 = 202,
+	MacadamiaNuts1 = 203,
+	HawaiianCookie1 = 204,
+	TaiyakiCaramel1 = 205,
+	YakisobaCandy1 = 206,
+	SuperCandyBar1 = 207,
+	BallLightning1 = 208,
+	TeslaCoil2 = 209,
+	Arginade1 = 213,
+	Joylent1 = 215,
+	MRERation1 = 216,
+	OatmealRation1 = 217,
+	TorimeshiRation1 = 218,
+	FruitRation1 = 219,
+	SeafoodAojiru1 = 220,
+	BeautyAojiru1 = 221,
+	VitalityAojiru1 = 222,
+	NastyAojiru1 = 223,
+	OnsenAojiru1 = 224,
+	SmartBomb1 = 225,
+	Fulfiller1 = 226,
+	HappyPop1 = 228,
+	ThawStone1 = 229,
+	ExtinguishOrb1 = 230,
+	DischargeCrystal = 231,
+	SecondMaid1 = 232,
+	SegakiRice2 = 233,
+	Sandwich1 = 234,
+	FruitDanish1 = 235,
+	ChewyAnpan1 = 236,
+	YakisobaPan1 = 237,
+	Creature1 = 238,
+	EarlGreen1 = 239,
+	MadBull1 = 240,
+	MuscleTea1 = 241,
+	Manta1 = 242,
+	Nastea1 = 243,
+	OneUp1 = 244,
+	RefreshAroma1 = 248,
+	Protein1 = 249,
+	MoistProtein1 = 250,
+	FriedBread1 = 251,
+	CursePaper1 = 252,
+	FlameMagatama1 = 253,
+	FreezeMagatama1 = 254,
+	BoltMagatama1 = 255,
+	WindMagatama1 = 256,
+	KouhaBall1 = 257,
+	MakouhaBall1 = 258,
+	EihaBall1 = 259,
+	MaeihaBall1 = 260,
+	PsiBall1 = 261,
+	MapsiBall1 = 262,
+	FreiBall1 = 263,
+	MafreiBall1 = 264,
+	NukeMagatama1 = 265,
+	PsyMagatama1 = 266,
+	LightMagatama1 = 267,
+	DarkMagatama1 = 288,
+	FireDown1 = 289,
+	IceDown1 = 290,
+	ElecDown1 = 291,
+	WindDown1 = 292,
+	PsychicDown1 = 293,
+	NukeDown1 = 294,
+	DecoyBall1 = 295,
+	SuperDecoyBall1 = 296,
+	AllHeal1 = 297,
+	EnhancedMuscle1 = 298,
+	SteelBody1 = 299,
+	AthleticLeg1 = 300,
+	EnhancedEyesight1 = 301,
+	Superman1 = 302,
+	WeakMuscle1 = 303,
+	WeakBody1 = 304,
+	WeakLeg1 = 305,
+	WeakEyeSight1 = 306,
+	BigBangBurger1 = 312,
+	MarsBurger1 = 313,
+	EarthBurger1 = 314,
+	LifespanCrisis1 = 315,
+	MoonBurger1 = 316,
+	SaturnBurger1 = 317,
+	KaraageKing1 = 318,
+	SpringFruitPack1 = 319,
+	ForeignNikuman1 = 320,
+	PhantomWafers1 = 321,
+	SoothingSoba1 = 322,
+	AgodashiOden1 = 323,
+	PartyinaCan1 = 324,
+	Focus1 = 328,
+	Lockpick1 = 336,
+	EternalLockPick1 = 337,
+	ReserveAmmo1 = 338,
+	FireWall1 = 339,
+	TreasureTrap1 = 340,
+	IceWall1 = 341,
+	RedFish1 = 342,
+	RoughCarp1 = 343,
+	TokyoBitterling1 = 344,
+	SevenColorTrout1 = 345,
+	WhiteCarp1 = 346,
+	TreasureTrout1 = 347,
+	DelishBitterling1 = 348,
+	PeerlessCarp1 = 349,
+	IchigayaGuardian1 = 350,
+	AdhesiveBandage1 = 351,
+	ElecWall1 = 352,
+	RejuvenatingIV = 353,
+	LeblancCoffee1 = 354,
+	SoulCoffee1 = 355,
+	AwakeningCoffee1 = 356,
+	MasterCoffee1 = 357,
+	DecentCurry1 = 358,
+	LeblancCurry1 = 359,
+	MasterCurry1 = 360,
+	WindWall1 = 361,
+	HospitalityProtection1 = 363,
+	NukeWall1 = 366,
+	PsychicWall1 = 404,
+	FireAbsorbtion1 = 405,
+	IceAbsorbtion1 = 406,
+	ElecAbsorbtion1 = 407,
+	WindAbsorbtion1 = 408,
+	NukeAbsorbtion1 = 409,
+	PsychicAbsorbtion1 = 410,
+	LightAbsorbtion1 = 411,
+	CoolifierPad1 = 414,
+	HandWarmalizer1 = 415,
+	VenusSalad1 = 416,
+	Sikkenine1 = 417,
+	SikkenineA1 = 418,
+	SikkenineEX1= 419,
+	WideEyeDrops1 = 420,
+	DonutWorry1 = 421,
+	MentalFloss1 = 422,
+	HotandSourTea1 = 423,
+	Kmmissbrot1 = 425,
+	BeefPattyRation1 = 426,
+	Dration1 = 427,
+	VegStewRation = 428,
+	DarkAbsorbtion1 = 429,
+	PhysicalAbsorbtion1 = 430,
+	DurianauLait1 = 431,
+	OhShiruko = 432,
+	ChunkyPotage = 433,
+	UltimateAmazake = 434,
+	UdagawaSoda1 = 435,
+	WaterofRebirth = 436,
+	AntiShadow = 437,
+	AcidSpray = 438,
+	Scopolamine = 439,
+	Rabies = 440,
+	StrawberryCurry = 441,
+	MayoLocust = 442,
+	MisoStarfist = 443,
+	MysteryStew = 444,
+	SpeedCurry = 445,
+	SuperCurry = 446,
+	FireCurry = 447,
+	BlazeCurry = 448,
+	InfernoCurry = 449,
+	NonStaticGum = 462,
+	Adamsite = 463,
+	Fentanyl = 464,
+	TimoxelineBarbebutenol = 465,
+	SadayoChocolate = 466,
+	TakemiChocolate = 467,
+	ChihayaChocolate = 468,
+	OhyaChocolate = 469,
+	HifumiChocolate = 470,
+	MakotoChocolate = 471,
+	HaruChocolate = 472,
+	AnnChocolate = 473,
+	FutabaChocolate = 474,
+	RyujiChocolate = 475,
+	SojiroChocolate = 476,
+	Cocaine = 482,
+	HypnotistClock = 483,
+	ToxicBarrel = 484,
+	ToxicWaste = 486,
+	JamBread = 488,
+	MelonPan = 489,
+	AngelTart = 490,
+	MoonDango = 491,
+	MixedNutes = 492,
+	BeniAzuma = 493,
+	LegendaryYakiImo = 494,
+	FireExtingusiher = 495,
+	IglooHouse = 496,
+	RubberSuit = 497,
+	MetalSuit = 498,
+	MoonlightCarrot = 499,
+	SunTomato = 500,
+	UndergroundBunker = 501,
+	SpiritualStrength = 502,
+	PepperSpray = 503,
+	AnnCreamPuff = 504,
+	MakotoDonuts = 505,
+	SakuraAmezaiku = 506,
+	SadayoTaiyaki = 507,
+	RyujiDog = 508,
+	AmateurCurry = 509,
+	Tonfa = 510,
 };

@@ -1,0 +1,165 @@
+//------------------------------------------------
+//--- 010 Editor v11.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef struct
+{
+	byte fileType; // 0x10
+	byte compression; // 0x11
+	short userId; // 0x12
+	int fileSize; // 0x14
+	uint formatId; // 0x18
+	int realSize; // 0x1C
+	byte numOfCLUT; // 0x20
+	byte CLUTFormat; // 0x21
+	short width; // 0x22
+	short height; // 0x24
+	byte pixelFormat; // 0x26
+	byte numOfMipmap; // 0x27
+	ushort mipmapParam; // 0x28
+	byte flags; // 0x2A
+	byte texWrapMode; // 0x2B
+	byte userArea[8]; // 0x30
+	byte comment[28]; // 0x38
+} TMX_HEADER_t <bgcolor=0xc946fd>;
+
+typedef struct
+{
+    TMX_HEADER_t header;
+    byte data[header.fileSize - sizeof(TMX_HEADER_t)];
+} sdfTmx <bgcolor=0x3154f4, optimize=false>;
+
+typedef struct
+{
+    float X, Y, Z, W;
+} Vector4;
+
+typedef struct(ushort type)
+{
+    byte data[24];
+} dds3Particle_EffItem_t;
+
+typedef struct
+{
+    ushort type;
+    dds3Particle_EffItem_t item(type);
+} dds3Particle_Effect_t;
+
+typedef struct
+{
+    uint type;
+    uint color[3];
+    uint alpha; 
+    uint alpha_s;
+    uint alpha_e;
+    uint frame_end;
+    uint frame_h;
+    float r_add[2];
+    float g_add[2];
+    float b_add[2];
+    uint alpha_s_add;
+    uint alpha_e_sub;
+} dds3ParticleColorAnim_t;
+
+typedef struct
+{
+    float scl;
+    float rot_s;
+    float scl_r;
+    float rot_r;
+    byte rot_type;
+    byte pad[3];
+} dds3Particle_Expansion_t;
+
+typedef struct
+{
+    Vector4 pos;
+    Vector4 scale;
+    uint number;
+    uint frame;
+    uint billno;
+    ushort billmode;
+    dds3Particle_Effect_t effect;
+    dds3ParticleColorAnim_t color;
+    dds3Particle_Expansion_t exp;
+    uint struct_size;
+    uint d_frame;
+    byte pad[8];
+    float rot[4*4];
+    uint unk;
+    byte pad2[12];
+    byte pad3[80];
+} dds3Particle_Basic_t;
+
+typedef struct
+{
+    byte type;
+    byte loop;
+    byte pad[2];
+    uint timing;
+    float radius;
+    uint simu_num;
+    float up_s;
+    float roll_s;
+    float radius_e;
+    float accele;
+    float radius_s_r;
+    float radius_e_r;
+} dds3Particle_Spiral_t3;
+
+typedef struct
+{
+    dds3Particle_Basic_t basic;
+
+	byte loop; // 0x18
+    byte pad[3];
+	int timing; // 0x1C
+	float radius; // 0x20
+	float up_s; // 0x24
+	float angle_s; // 0x28
+	float amplitude; // 0x2C
+	float amplitude_s; // 0x30
+	float accele; // 0x34
+	float up_s_r; // 0x38
+	float ampli_r; // 0x3C
+} dds3Particle_Smoke_t3;
+
+typedef struct
+{
+	uint type; // 0x10
+	uint size; // 0x14
+	uint reserve1; // 0x18
+	uint reserve2; // 0x1C
+
+    FSeek( FTell() + size );
+    switch ( type )
+    {
+        case 0: dds3Particle_Spiral_t3 particle_exp; break;
+        case 1: dds3Particle_Smoke_t3 particle_exp; break;
+    }
+} dds3Particle_Exp_t;
+
+typedef struct
+{
+    uint major;
+    uint minor;
+    uint pwork;
+    float version;
+
+    switch ( major )
+    {
+        case 1: dds3Particle_Exp_t particle; break;
+    }
+
+} dds3Effect_t;
+
+dds3Effect_t file;

@@ -63,12 +63,12 @@ typedef struct
 
 typedef struct
 {
-    u8 bit0 : 1;
-    u8 bit1 : 1;
+    u8 nonbegging : 1 <name = "No Begging Shadows", comment = "Enemies will never beg regardless of their personality (Meaning, it is as if it's always irritable)">;
+    u8 hidingstatus : 1 <name = "Hiding the status", comment = "Enemies status can be hidden similar to boss">;
     u8 bit2 : 1;
     u8 bit3 : 1;
-    u8 bit4 : 1;
-    u8 bit5 : 1;
+    u8 ContinuebattleandGuaranteePersonaMask : 1 <name = "Continue Battle and Guarantee Persona Mask", comment = "Even after obtaining Persona, you will still return the battle">;
+    u8 nonnegotiable : 1 <name = "Not negotiable", comment = "Enemies will never be able to negotiate">;
     u8 bit6 : 1;
     u8 bit7 : 1;
     u8 bit8 : 1;
@@ -76,9 +76,9 @@ typedef struct
     u8 bit10 : 1;
     u8 bit11 : 1;
     u8 bit12 : 1;
-    u8 bit13 : 1;
+    u8 hidingstatus2 : 1 <name = "Hiding the status", comment = "Enemies status can be hidden similar to boss">;
     u8 bit14 : 1;
-    u8 bit15 : 1;
+    u8 NoCritical : 1 <name = "No Critical", comment = "Even if you have a skill with 100% Critical, it will never trigger critical if this is ON">;
 } b16;
 
 typedef struct
@@ -95,26 +95,26 @@ typedef struct
     u8 bit9 : 1;
     u8 bit10 : 1;
     u8 bit11 : 1;
-    u8 bit12 : 1;
+    u8 NonNegotiable : 1 <name = "No Negotiation", comment = "If this turns on, every enemy in that battle can't be negotiated">;
     u8 bit13 : 1;
     u8 bit14 : 1;
     u8 bit15 : 1;
     u8 bit16 : 1;
-    u8 bit17 : 1;
+    u8 PositionHack : 1 <name = "Position Hack", comment = "Triggers Position Hack when you enter the battle">;
     u8 bit18 : 1;
-    u8 bit19 : 1;
-    u8 bit20 : 1;
+    u8 shadownotdisappearinbattle : 1 <name = "Not Disappear in Battle", comment = "When the shadow HP reaches 0, it will not disperse if this is turned ON in ENCOUNT.TBL Flag">;
+    u8 BulletHailonstart : 1 <name = "Bullet Hail on Start", comment = "When you start the battle, you will always start with Bullet Hail">;
     u8 bit21 : 1;
     u8 bit22 : 1;
-    u8 bit23 : 1;
+    u8 loadbattlescript : 1 <name = "Battle script load", comment = "This will load the battle script for this particular battle (CAUTION: Will cause freeze if the battle script file is not exist)">;
     u8 bit24 : 1;
     u8 bit25 : 1;
-    u8 bit26 : 1;
+    u8 loadbattlescript2 : 1 <name = "Battle script load", comment = "This will load the battle script for this particular battle (CAUTION: Will cause freeze if the battle script file is not exist)">;
     u8 bit27 : 1;
-    u8 bit28 : 1;
+    u8 NoCritical : 1 <name = "No Critical", comment = "Even if you have a skill with 100% Critical, it will never trigger critical if this is ON">;
     u8 bit29 : 1;
     u8 bit30 : 1;
-    u8 bit31 : 1;
+    u8 TreasureSkimmer : 1 <name = "Treasure Skimmer", comment = "This will always trigger Treasure Skimmer if it is ON except if Position Hack is ON">;
 } b32;
 
 
@@ -378,13 +378,16 @@ typedef struct
     u8 Unknown2[ 2 ];
     u32 Hp <name = "HP">;
     u32 Sp <name = "SP">;
-    PersonaStats Stats;
+    PersonaStats Stats <name = "Persona Status">;
     byte : 1;
     BattleSkill SkillIds[ 8 ] <name = "Battle Skills">;
     u16 ExpReward <name = "EXP Reward">;
     u16 MoneyReward <name = "Money Reward">;
-    u16 Unknown4;
-    u16 Unknown5;
+	struct {
+	ItemCategory ItemCategory2 <name = "Item Category", comment = "Decide whether you want shadows to drop Skillcard, weapon, armor, consumables, etc">;
+	ItemID ItemID2 <name = "Item ID", comment = "The item ID (Decimal) for Shadows to drop">;
+	} ItemType <name = "Item Type", comment = "Decide the item category and it's ID"> ;
+    u16 DropChance;
     u8 Unknown6[ 18 ];
     b16 Unknown7;
     u16 AttackDamage <name = "Attack Damage">;
@@ -400,7 +403,7 @@ typedef struct
 
 typedef struct
 {
-    u16 PersonaIndex <name = "Persona Index", comment = "Persona ID when captured">;
+    u16 PersonaIndex <name = "Persona Index", comment = "Persona ID when captured, also it only changes the name but not persona picture if it is below 170 ID">;
     u16 ModelIndex <name = "Model Index", comment = "Model ID">;
 } TUnitVisualIndex <name = "Visual Index">;
 
@@ -408,7 +411,7 @@ typedef struct
 // Skill
 typedef struct
 {
-    ElementalType Element <name = "Elemental Type">;
+    ElementalType Element <name = "Elemental Type", comment = "Magic can also critical if Damage status is set to Strength regardless of Element" >;
     Skill_PassiveOrActive PassiveOrActive <name = "Passive or Active?", comment = "Must be set correctly for the element icon to appear properly, even though it's otherwise redundant">;
     b8 RedundantBitfield_ThanksATLUS <name = "Redundant Bitfield", comment = "Rightmost 4 bits of the bitfield don't do anything. Probably leftovers from early P5 coding.">;
 } TSkill_Elements <name = "Skill Elements">;
@@ -420,9 +423,9 @@ typedef struct
     Skill_AreaType AreaType;
     Skill_DamageStat DamageStat <name = "Damage Stat", comment = "Determines which stat is used to determine damage">;
     Skill_CostType CostType <name = "Cost Type">;
-    u16 Unknown <name = "Unknown">;
-    u8 SkillCost <name = "Skill Cost", comment = "% of max HP or fixed amount of SP">;
-    u8 Unknown <name = "Unknown">;
+    u8 add256skillcost <name = "Add 256 Cost for each 1 value">;
+    u16 SkillCost <name = "Skill Cost", comment = "% of max HP or fixed amount of SP">;
+    u8 add256skillcost <name = "Add 256 Cost for each 1 value">;
     Skill_PhysicalOrMagicSkill PhysicalOrMagic <name = "Physical or Magic?", comment = "determines what's affected by either Charge or Concentrate, but doesn't seem to change what's reflected by Tetrakarn or Makarakarn. Needs more testing">;
     Skill_NumberOfTargets NumberOfTargets <name = "Number of Targets">;
     byte : 6;
@@ -443,9 +446,8 @@ typedef struct
     u16 BaseDamage <name = "Base Damage">;
     Skill_SPEffect SPEffect <name = "Deplete or Restore SP?">;
     u8 Unknown <name = "Unknown">;
-    u8 Unknown <name = "Unknown">;
-    u8 SPAmount <name = "SP Amount">;
-    Skill_ApplyOrCureEffect ApplyOrCureEffect <name = "Apply or Cure Effect?">;
+    u16 SPAmount <name = "SP Amount">;
+    Skill_ApplyOrCureEffect ApplyOrCureEffect <name = "Apply or Cure Effect?", comment ="This doesn't apply Effect List 4, 5 and 6">;
     u8 SecondaryEffectChance <name = "Effect Chance">;
     u8 Unknown <name = "Unknown">;
 
@@ -454,35 +456,35 @@ typedef struct
             bool Unknown : 1 <name = "Unknown">;
             bool Mouse : 1 <name = "Mouse", comment = "Only affects the Phantom Thieves">;
             bool Unknown : 1 <name = "Unknown">;
-            bool KnockDown : 1 <name = "Knock Down">;
+            bool KnockDown : 1 <name = "Knock Down", comment = "Shock, Weakness and Knockdown can be combined into 1 single ailment. Also gives 1 more if succeed">;
             bool Unconscious : 1 <name = "Unconscious">;
-            bool WeakToAllElements : 1 <name = "Weak to all Elements">;
+            bool WeakToAllElements : 1 <name = "Weak to all Elements", comment = "Shock,Knockdown,Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
             bool Jealousy : 1 <name = "Jealousy">;
             bool Wrath : 1 <name = "Wrath">;
         } Effect1 <name = "Effect List 1">;
 
     struct
         {
-            bool Lust : 1 <name = "Lust">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Berserk : 1 <name = "Berserk", comment = "Visual effect only">;
+            bool Lust : 1 <name = "Lust", comment = "Lust, Rage, Berserk can be combined into 1 single ailment">;
+            bool Panic : 1 <name = "Panic", comment = "Will cause Shadows to run away">;
+            bool Berserk : 1 <name = "Berserk", comment = "Visual effect only. Also, Lust, Rage, Berserk can be combined into 1 single ailment">;
             bool Desparation : 1 <name = "Desparation", comment = "Attack up, Defense down; not affected by other buffs/debuffs">;
             bool Brainwash : 1 <name = "Brainwash">;
-            bool Despair : 1 <name = "Despair">;
-            bool Rage : 1 <name = "Rage">;
-            bool Sleep : 1 <name = "Sleep">;
+            bool Despair : 1 <name = "Despair", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            bool Rage : 1 <name = "Rage", comment = "Lust, Rage, Berserk can be combined into 1 single ailment">;
+            bool Sleep : 1 <name = "Sleep", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
         } Effect2 <name = "Effect List 2">;
 
    struct
         {
-            bool Hunger : 1 <name = "Hunger", comment = "Only affects the Phantom Thieves">;
-            bool Forget : 1 <name = "Forget">;
-            bool Fear : 1 <name = "Fear">;
-            bool Confuse : 1 <name = "Confuse">;
-            bool Dizzy : 1 <name = "Dizzy">;
-            bool Shock : 1 <name = "Shock">;
-            bool Freeze : 1 <name = "Freeze">;
-            bool Burn : 1 <name = "Burn">;
+            bool Hunger : 1 <name = "Hunger", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            bool Forget : 1 <name = "Forget", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            bool Fear : 1 <name = "Fear", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            bool Confuse : 1 <name = "Confuse", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            bool Dizzy : 1 <name = "Dizzy", comment = "Dizzy, Weakness and Knockdown can be combined into 1 single ailment">;
+            bool Shock : 1 <name = "Shock", comment = "Shock, Weakness and Knockdown can be combined into 1 single ailment">;
+            bool Freeze : 1 <name = "Freeze", comment = "Burn and Freeze can be combined into 1 single ailment">;
+            bool Burn : 1 <name = "Burn", comment = "Burn and Freeze can be combined into 1 single ailment">;
         } Effect3 <name = "Effect List 3">;
 
    struct
@@ -533,8 +535,8 @@ typedef struct
             bool AttackUp : 1 <name = "Attack Up">;
         } BuffDebuff <name = "Buffs and Debuffs">;
 
-    Skill_ExtraEffect ExtraEffect <name = "Extra Effects">;
-    u8 CritChance <name = "Crit Chance", comment = "Only works for Physical or Gun skills">;
+    Skill_ExtraEffect ExtraEffect <name = "Extra Effects", comment = "Ignore resistance works 100% for Physical. Magic including Light, Dark, Almighty can only Semi Pierce (NULL, DRAIN, REPEL can't be pierced).">;
+    u8 CritChance <name = "Crit Chance", comment = "Only works for Physical and Gun">;
     u8 Unknown <name = "Unknown">;
     byte : 1;
 } TSkill_ActiveSkillData <name="Active Skill Data: ">;
@@ -599,8 +601,7 @@ typedef struct
     u16 Unknown;
     u16 Unknown;
     u32 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
@@ -675,10 +676,8 @@ typedef struct
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
@@ -726,13 +725,11 @@ typedef struct
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
+    Usability Availability <name = "Availability", comment = "Set if it is able to use in battle or field or none">;
+    BattleSkill Skill <name = "Battle Skill", comment = "Set the item to use the skill">;
     u16 Unknown;
-    BattleSkill Skill;
-    u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
@@ -836,10 +833,8 @@ struct
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
@@ -913,10 +908,8 @@ typedef struct
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
@@ -1022,10 +1015,8 @@ typedef struct
     BattleSkill Skill;
     u16 Unknown;
     u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    u32 PurchasePrice;
+    u32 SellPrice;
 } TItem_SkillCards <name ="Skill Cards">;
 
 typedef struct
@@ -1088,10 +1079,8 @@ typedef struct
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;

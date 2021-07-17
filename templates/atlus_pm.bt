@@ -1,10 +1,10 @@
 //------------------------------------------------
 //--- 010 Editor v11.0 Binary Template
 //
-//      File:
-//   Authors:
-//   Version:
-//   Purpose:
+//      File: atlus_pm.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse PM1, PM2, PM3 files
 //  Category:
 // File Mask:
 //  ID Bytes:
