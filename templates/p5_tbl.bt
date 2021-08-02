@@ -561,7 +561,7 @@ typedef struct
             bool Accessory : 1 <name = "Accessory">;
             bool Armor : 1 <name = "Armor">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool Revolver2 : 1 <name = "Revolver (Yoshizawa)">;
             bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
             bool GL : 1 <name = "Grenade Launcher (Haru)">;
             bool Revolver : 1 <name = "Revolver (Makoto)">;
@@ -571,7 +571,7 @@ typedef struct
             bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
             bool Handgun : 1 <name = "Handgun (Joker)">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool Saber : 1 <name = "Saber (Yoshizawa)">;
             bool BeamSword : 1 <name = "Beam Sword (Goro)">;
             bool Axe : 1 <name = "Axe (Haru)">;
             bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
@@ -583,38 +583,26 @@ typedef struct
         } Icon <name = "Icon">;
 
 
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    u32 Field04;
+    u16 RESERVE_EquippableUsersBitFlags;
     EquippableUsers Users;
-    u16 Unknown;
+    u16 Field0C;
     u8 Strength <name = "Strength Boost">;
     u8 Magic <name = "Magic Boost">;
     u8 Endurance <name = "Endurance Boost">;
     u8 Agility <name = "Agility Boost">;
     u8 Luck <name = "Luck Boost">;
-    u8 Unknown;
-    GearEffect Effect <name = "Effect">;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    u8 RESERVE_Stat;
+    GearEffect Effect[3] <name = "Effect">;
+    u16 Field1A;
+    u16 Field1C;
+    u16 RESERVE;
     u32 PurchasePrice <name = "Purchase Price">;
     u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    u32 Field2A[5];
+    u16 Field3E;
 } TItem_Accessories <name ="Accessories">;
 
 
