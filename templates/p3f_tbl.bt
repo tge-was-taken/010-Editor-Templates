@@ -314,14 +314,14 @@ typedef struct
     PersonaStats Stats;
     byte : 1;
     BattleSkill SkillID[ 8 ] <name = "Battle Skills">;
-    u16 ExpReward <name = "EXP Reward">;
-    u16 MoneyReward <name = "Money Reward">;
-    u16 Unknown4;
-    u16 Unknown5;
-    u8 Unknown6[ 18 ];
-    b16 Unknown7;
-    b16 Unknown8;
-    u16 AttackDamage <name = "Attack Damage">;
+    u16 FuukaScan <comment = "Determines the effectiveness of Fuukas scan">;
+    u16 ExpReward <name = "Exp Reward">;
+    u16 Unknown2;
+    u16 Unknown3;
+    u8 Unknown4[ 18 ];
+    b16 Unknown5;
+    b16 Unknown6;
+    u16 AttackDamage;
 } TEnemyUnitStats <name = "Enemy Unit Stats">;
 
 //UNIT_F.TBL
@@ -336,14 +336,14 @@ typedef struct
     PersonaStats Stats;
     byte : 1;
     BattleSkill SkillID[ 8 ] <name = "Battle Skills">;
-    u16 ExpReward <name = "EXP Reward">;
-    u16 MoneyReward <name = "Money Reward">;
-    u16 Unknown4;
-    u16 Unknown5;
-    u8 Unknown6[ 18 ];
-    b16 Unknown7;
-    b16 Unknown8;
-    u16 AttackDamage <name = "Attack Damage">;
+    u16 FuukaScan <comment = "Determines the effectiveness of Fuuka's scan">;
+    u16 ExpReward <name = "Exp Reward">;
+    u16 Unknown2;
+    u16 Unknown3;
+    u8 Unknown4[ 18 ];
+    b16 Unknown5;
+    b16 Unknown6;
+    u16 AttackDamage;
 } TEnemyUnitStatsF <name = "Enemy Unit Stats">;
 
 // SKILL.TBL
@@ -397,8 +397,8 @@ typedef struct
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
 
-    struct
-    {
+	struct
+        {
             bool Charm : 1 <name = "Charm">;
             bool Distress : 1 <name = "Distress">;
             bool Panic : 1 <name = "Panic">;
@@ -407,13 +407,13 @@ typedef struct
             bool Freeze : 1 <name = "Freeze">;
             bool Shock : 1 <name = "Shock">;
             bool Poison : 1 <name = "Poison">;
-    } Effect2 <name = "Ailments">;
+        } Effect2 <name = "Ailments">;
 
-	  struct
-    {
-         bool Unconscious : 1 <name = "Unconscious">;
-         bool KnockDown : 1 <name = "Knocked Down">;
-    } Effect4 <name = "Member Status", comment = "I think this is unused but idk keeping just in case -Phoenix">;
+    struct
+        {
+             bool Unconscious : 1 <name = "Unconscious">;
+             bool KnockDown : 1 <name = "Knocked Down">;
+        } Effect4 <name = "Member Status", comment = "I think this is unused but idk keeping just in case -Phoenix">;
 	 
     Skill_SpecialAilments SpecialAil <name = "Special Ailments">;
     u8 Unknown <name = "Unknown">;
@@ -435,7 +435,7 @@ typedef struct
    struct
         {
             bool RemoveDebuffs : 1 <name = "Block Damage But HP&SP=1", comment = "used by valhalla, makes hp and sp go to 1 after 1 turn">;
-            bool EvasionUp : 1 <name = "EvasionUp?", comment = "Used by Cadenza, idk the difference between this and sukukaja">;
+            bool EvasionUp : 1 <name = "EvasionUp">;
             bool PowerCharge : 1 <name = "Moonless Gown">;
             bool MindCharge : 1 <name = "Unknown">;
             bool MagicShield : 1 <name = "Unknown">;

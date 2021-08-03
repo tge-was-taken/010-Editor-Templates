@@ -20,12 +20,13 @@ typedef struct
     AffinityStatus AlmightyAffinity <name = "Almighty">;
     AffinityStatus LightAffinity <name = "Light">;
     AffinityStatus DarkAffinity <name = "Dark">;
-    AffinityStatus EnervationAffinity <name = "Enervation">;
+    AffinityStatus CharmAffinity <name = "Charm">;
     AffinityStatus PoisonAffinity <name = "Poison">;
-    AffinityStatus SpecialAffinity <name = "Dizzy">;
+    AffinityStatus DistressAffinity <name = "Distress">;
     AffinityStatus PanicAffinity <name = "Panic">;
     AffinityStatus FearAffinity <name = "Fear">;
-    AffinityStatus SilenceAffinity <name = "Silence">;
+    AffinityStatus RageAffinity <name = "Rage">;
+    AffinityStatus DizzyAffinity <name = "Dizzy">;
 } ElementalAffinities <name = "Elemental Affinities">;
 
 typedef struct
@@ -40,10 +41,11 @@ typedef struct
     AffinityStatus AlmightyAffinity <name = "Almighty">;
     AffinityStatus LightAffinity <name = "Light">;
     AffinityStatus DarkAffinity <name = "Dark">;
-    AffinityStatus EnervationAffinity <name = "Enervation">;
+    AffinityStatus CharmAffinity <name = "Charm">;
     AffinityStatus PoisonAffinity <name = "Poison">;
-    AffinityStatus SpecialAffinity <name = "Dizzy">;
+    AffinityStatus DistressAffinity <name = "Distress">;
     AffinityStatus PanicAffinity <name = "Panic">;
     AffinityStatus FearAffinity <name = "Fear">;
-    AffinityStatus SilenceAffinity <name = "Silence">;
+    AffinityStatus RageAffinity <name = "Rage">;
+    AffinityStatus DizzyAffinity <name = "Dizzy">;
 } ElementalAffinitiesF <name = "Elemental Affinities">;
