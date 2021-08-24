@@ -1,0 +1,75 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+// Warning this template will work only on bed files that don't have embeded particles
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "common/include.h"
+
+local int end = 0;
+local int count = 0;
+local int oldPos = FTell();
+
+LittleEndian();
+
+typedef struct
+{
+    u16 Declaration[72];
+    int Value  <bgcolor=cLtGreen>;
+    u16 Declaration2[4];
+    u8 DeclarationType[8] <bgcolor=cLtGreen>;
+    u16 Declaration3[14];
+} FileDeclaration ;
+
+
+typedef struct
+{
+    u16 Declaration[72];
+    int Value  <bgcolor=cLtGreen>;
+    u16 Declaration2[4];
+    string DeclarationType <bgcolor=cLtGreen>;
+    u16 Declaration3[14];
+} AnotherFileDeclaration <optimize=false>;
+
+typedef struct
+{
+    u16 Declaration[72];
+    int Value  <bgcolor=cLtGreen>;
+    u16 Declaration2[4];
+    string DeclarationType <bgcolor=cLtGreen>;
+    u16 Declaration3[14];
+} YetAnotherFileDeclaration <optimize=false>;
+
+typedef struct
+{
+    u32 nonImportant[9];
+    int ModelSize  <name = "Model Size",bgcolor=cBlue>;
+    u32 nonImportant2[30];
+    u8 ModelFile[ModelSize] <name = "Model File",bgcolor=cRed>;
+} weirdshit <optimize=false, name = "File">;
+
+
+typedef struct
+{
+    SetRandomBackColor();
+
+    u64 version <name = "BedVersion">;
+    u16 same[788] <name = "Always mostly the same",bgcolor=cBlack>;
+    u16 MainHeader[64] <name = "Main Header",bgcolor=cBlue>;
+    int FileCount <name = "File Count",bgcolor=cPurple>;
+    u16 MainHeader2[6] <name = "Main Header",bgcolor=cBlue>;
+    FileDeclaration FileDec[FileCount];
+    weirdshit man[FileCount];
+} BEDmain <optimize=false>;
+
+
+LittleEndian();
+BEDmain File <optimize=false>;

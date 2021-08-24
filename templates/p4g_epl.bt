@@ -1,0 +1,79 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: EPL
+//   Authors: Pioziomgames
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "common/include.h"
+
+
+
+typedef struct
+{
+
+    u16 GMO[96] <name="GMO declaration",bgcolor=cRed>;
+
+}dunno <optimize=false>;
+
+typedef struct
+{
+    if (!FEof())
+    {   
+        local int hmm = 0;
+        while(hmm == 0 )
+        {
+            if(FEof())
+            {
+                hmm = 1;
+            }
+            if (hmm == 0 && ReadByte(FTell()) == 0)
+            {
+                u8 padding <bgcolor=cBlack>;
+                
+
+            }
+            else
+            {
+
+                hmm =1;
+            }
+
+
+
+        }
+       
+       
+    }
+
+
+} pads <optimize=false>;
+
+
+
+typedef struct
+{
+    u16 cos[18] <bgcolor=cPurple, name="EPL Header">;
+    u32 FileSize <bgcolor=cBlue, name="File Size">;
+    u16 cos3[84] <bgcolor=cPurple, name="EPL Header">;
+    u8 lol[FileSize] <name="Model File",bgcolor=cGreen>;
+    pads Padding <bgcolor=cBlack, name = "Padding">;
+    
+
+}lmao <optimize=false>;
+
+typedef struct
+{
+    u32 Header[32] <name="Main EPL header",bgcolor=cGreen>;
+    int32 numberoffiles <name="Number of embeded files",bgcolor=cBlue>;
+    u16 Header2[6] <name="Main EPL header",bgcolor=cGreen>;
+    dunno Chunks[numberoffiles] <name="File declaration">;
+    lmao GMOFile[numberoffiles] <name="File">;
+} EPLMain <optimize=false>;
+
+EPLMain File;
