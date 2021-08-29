@@ -152,16 +152,17 @@ typedef struct( u32 type )
 
     switch ( type )
     {
-        case 1: struct FbnBlock1Entry Entry[ EntryCount ]; break;
-        case 4: struct FbnBlock4Entry Entry[ EntryCount ]; break;
+        case 1: struct FbnTriggerVolume Entry[ EntryCount ]; break;
+        case 4: struct FbnEntrance Entry[ EntryCount ]; break;
+        case 5: struct FbnHitDefinition Entry[ EntryCount ]; break;
         case 8: struct FbnBlock8Entry Entry[ EntryCount ]; break;
         case 9: struct FbnBlock9Entry Entry[ EntryCount ]; break;
         case 10: struct FbnBlock10Entry Entry[ EntryCount ]; break;
         case 11: struct FbnBlock11Entry Entry[ EntryCount ]; break;
-        case 14: struct FbnBlock14Entry Entry[ EntryCount ]; break;
+        case 14: struct FbnMessageTrigger Entry[ EntryCount ]; break;
         case 18: struct FbnBlock18Entry Entry[ EntryCount ]; break;
-        case 19: struct FbnBlock1Entry Entry[ EntryCount ]; break;
-        case 22: struct FbnBlock1Entry Entry[ EntryCount ]; break;
+        case 19: struct FbnTriggerVolume Entry[ EntryCount ]; break;
+        case 22: struct FbnTriggerVolume Entry[ EntryCount ]; break;
 
         default:
             Printf( "[FbnList] Unhandled block entry type: %d\n", type );
@@ -173,34 +174,25 @@ typedef struct
 {
     SetRandomBackColor();
 
-    s32 Field00;
+    s16 Field00;
+    s16 Field02;
     s16 Field04;
     s16 Field06;
-    f32 Field08;
-    f32 Field0C;
-    f32 Field10;
+    Vector3 Center;
     f32 Field14;
     f32 Field18;
     f32 Field1C;
     f32 Field20;
     f32 Field24; // was 0, might be s32
     f32 Field28; // was 0, might be s32
-    f32 Field2C;
-    f32 Field30;
-    f32 Field34;
-    f32 Field38;
-    f32 Field3C;
-    f32 Field40;
-    f32 Field44;
-    f32 Field48;
-    f32 Field4C;
-    f32 Field50;
-    f32 Field54;
-    f32 Field58;
+    Vector3 BottomRight;
+    Vector3 TopRight;
+    Vector3 BottomLeft;
+    Vector3 TopLeft;
     f32 Field5C; // was 0, might be s32
     f32 Field60; // was 0, might be s32
 
-} FbnBlock1Entry <optimize=false>;
+} FbnTriggerVolume <optimize=false>;
 
 typedef struct
 {
@@ -208,11 +200,22 @@ typedef struct
     
     u32 Field00;
     u32 Field04;
-    f32 Field08[6];
-    u16 Field20;
+    Vector3 Position;
+    Vector3 Rotation;
+    u16 Id;
     u16 Field22;
 
-} FbnBlock4Entry <optimize=false>;
+} FbnEntrance <optimize=false>;
+
+typedef struct
+{
+    u8 Field00[24];
+    u16 Field18;
+    u8 Field1A;
+    u16 ProcedureId;
+    u16 Type;
+    u8 Field1F[29];
+} FbnHitDefinition;
 
 typedef struct
 {
@@ -285,18 +288,17 @@ typedef struct
     SetRandomBackColor();
 
 	u32 Field00;        // always 1?
-	f32 Field04[3];     // 3F 80 00 00 BF 7F FF FF 00 00 00 00
-	f32 Field10[3];     // B2 59 FA A4 00 00 00 00 00 00 00 00
+	Vector3 Field04;     // 3F 80 00 00 BF 7F FF FF 00 00 00 00
+	Vector3 Field10;     // B2 59 FA A4 00 00 00 00 00 00 00 00
 	u16 Field1C;        // 0x6E, 0x2BE, 0x2BF, 0x2C0, 0x2C1, maybe object type?
 	u16 Field1E;        // always 0?
 	u32 Field20;        // always 1?
     u32 Field24;
 	u32 Field28;        // 0xFFFFFFFF, 0
-	u16 Field2C;        // always 1?
+	u16 PositionCount;  
 	u16 Field2E;        // always 0?
-	Vector3 Position;     // 41 B9 03 F0 C3 95 FF FC 45 5E 66 3E -- big floats, might be position
-
-} FbnBlock14Entry <optimize=false>;
+	Vector3 Positions[ PositionCount ]; 
+} FbnMessageTrigger <optimize=false>;
 
 typedef struct
 {
