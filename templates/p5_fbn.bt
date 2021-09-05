@@ -16,12 +16,12 @@
 //---------------------------------------------
 typedef char bool;
 typedef char s8;
-typedef uchar s8;
+typedef uchar u8;
 typedef int16 s16;
-typedef uint16 s16;
+typedef uint16 u16;
 typedef int16 s16;
 typedef int32 s32;
-typedef uint32 s32;
+typedef uint32 u32;
 typedef int64 s64;
 typedef uint64 u64;
 typedef float f32;
@@ -120,7 +120,7 @@ typedef struct
     local s32 startOffset = FTell();
 
 	FbnListType Type;   // 'FBN0', 4, 1
-	s32 Field04;        // Version or flags? not sure
+	s32 Version;       
 	s32 Size;           // Size of the block including this header
 	s32 ListOffset;     // Always 0x10 if not main header block
 
@@ -145,7 +145,7 @@ typedef struct
 string FbnBlockRead( FbnBlock& block )
 {
     char buffer[32];
-    SPrintf( buffer, "Type %02d, Field04 0x%08X", block.Type, block.Field04 );
+    SPrintf( buffer, "Type %02d, Version 0x%08X", block.Type, block.Version );
     return buffer;
 }
 
@@ -219,13 +219,23 @@ typedef struct
 
 typedef struct
 {
-    s8 Field00[24];
-    s16 Field18;
-    s8 Field1A;
+    s32 Field00;
+    LittleEndian();
+    s32 Field04;
+    s32 Field08;
+    s32 Field0C;
+    s32 Field10;
+    s32 Field14;
+    s8 Field18;
+    s8 Field19;
+    s16 Field1A;
     s16 ProcedureId;
-    s16 Type;
-    s8 Field1F[29];
-} FbnHitDefinition;
+    BigEndian();
+    s8 Field1E;
+    s8 Unused[29];
+
+    Printf( "ProcedureId=%d\n", ProcedureId );
+} FbnHitDefinition <optimize=false>;
 
 typedef struct
 {
