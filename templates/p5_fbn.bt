@@ -219,8 +219,8 @@ typedef struct
 
 typedef struct
 {
-    s32 Field00;
     LittleEndian();
+    s32 Field00;
     s32 Field04;
     s32 Field08;
     s32 Field0C;
@@ -233,8 +233,6 @@ typedef struct
     BigEndian();
     s8 Field1E;
     s8 Unused[29];
-
-    Printf( "ProcedureId=%d\n", ProcedureId );
 } FbnHitDefinition <optimize=false>;
 
 typedef struct
