@@ -67,16 +67,16 @@ string TStringToString( TString& value )
 typedef struct(u32 version)
 {
     u16 Length;
+
     if ( Length )
     {
-        char Str[Length];  
+        char Str[Length]; 
     
         if ( version >= 0x01105100 )
             FSeek( FTell() + 1 ); // padding byte
         
         if ( version > 0x1080000 )
         {
-            // hash
             u32 Hash;
         }   
     }  
@@ -1058,7 +1058,7 @@ typedef struct( u32 version )
     {
         struct TEpl Epl( version );
         THashString Field04( version );
-    } Entries( version )[ Count ];
+    } Entries( version )[ Count ] <optimize=false>;
 } TAnimationFlagsFlag10000000Data <optimize=false>;
 
 typedef struct( u32 version )
@@ -2913,5 +2913,5 @@ else if ( Stricmp( fileExt, ".BFL" ) == 0 )
 //}
 else
 {
-    TModelPackFile File;
+    TModelPackFile File <optimize=false>;
 }
