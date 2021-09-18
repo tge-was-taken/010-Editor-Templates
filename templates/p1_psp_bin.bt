@@ -1,0 +1,82 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: bin
+//   Authors: Pioziomgames
+//   Version: 1.0
+//   Purpose: parsing persona 1 psp lowercase bin files
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+LittleEndian();
+
+typedef struct
+{
+    if (!FEof())
+    {   
+        local int hmm = 0;
+        while(hmm == 0 )
+        {
+            if(FEof())
+            {
+                hmm = 1;
+            }
+            if (hmm == 0 && ReadByte(FTell()) == 0)
+            {
+                byte padding <bgcolor=cBlack>;
+                
+
+            }
+            else
+            {
+
+                hmm =1;
+            }
+
+
+
+        }
+       
+       
+    }
+
+
+} pads <optimize=false>;
+
+
+
+typedef struct
+{
+    byte File[FileSize[i]];
+    pads Padding;
+    i++;
+}filu <optimize=false, name="File">;
+
+
+typedef struct()
+{
+    local int i = 0;
+    filu file[FileCount];
+    
+}files <optimize=false, name="Files">;
+
+
+
+
+
+typedef struct
+{
+    
+    uint32 FileCount <bgcolor=cPurple>;
+    
+    uint32 FileSize[FileCount] <bgcolor=cLtGreen>;
+    pads Padding;
+    files file();
+    
+    
+} BINMain <optimize=false>;
+
+BINMain File;
