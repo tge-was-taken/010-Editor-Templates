@@ -1877,7 +1877,7 @@ typedef struct( u32 version )
 
     struct TEplLeafCommonData6 Field10;
     struct TEplLeafCommonData6 Field74;
-    struct TEplLeafCommonData6 FieldD8;
+    struct TEplLeafCommonData5 FieldD8;
     struct TEplParticleEmitter Field140(version, Type);
     bool HasEmbeddedFile;
 
