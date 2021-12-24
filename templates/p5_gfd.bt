@@ -71,8 +71,8 @@ typedef struct(u32 version)
     {
         char Str[Length];  
     
-        if ( version >= 0x01105100 )
-            FSeek( FTell() + 1 ); // padding byte
+        //if ( version >= 0x01105100 )
+            //FSeek( FTell() + 1 ); // padding byte
         
         if ( version > 0x1080000 )
         {
@@ -1058,7 +1058,7 @@ typedef struct( u32 version )
     {
         struct TEpl Epl( version );
         THashString Field04( version );
-    } Entries( version )[ Count ];
+    } Entries( version )[ Count ] <optimize=false>;
 } TAnimationFlagsFlag10000000Data <optimize=false>;
 
 typedef struct( u32 version )
@@ -1843,7 +1843,7 @@ typedef struct( u32 version )
 // verified
 typedef struct( u32 version )
 {
-    struct TEplLeafSharedData5 Field64;
+    struct TEplLeafCommonData5 Field64;
     TVector2 FieldB8;
     TVector2 FieldC0;
     f32 FieldC8;
@@ -1875,10 +1875,10 @@ typedef struct( u32 version )
     if ( version > 0x1104170 )
         f32 Field138;
 
-    struct TEplLeafSharedData6 Field10;
-    struct TEplLeafSharedData6 Field74;
-    struct TEplLeafSharedData6 FieldD8;
-    struct TEplParticleEmitter Field140;
+    struct TEplLeafCommonData6 Field10;
+    struct TEplLeafCommonData6 Field74;
+    struct TEplLeafCommonData6 FieldD8;
+    struct TEplParticleEmitter Field140(version, Type);
     bool HasEmbeddedFile;
 
     if ( HasEmbeddedFile )
@@ -2913,5 +2913,5 @@ else if ( Stricmp( fileExt, ".BFL" ) == 0 )
 //}
 else
 {
-    TModelPackFile File;
+    TModelPackFile File <optimize=false>;
 }
