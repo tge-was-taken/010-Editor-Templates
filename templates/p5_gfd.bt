@@ -2103,8 +2103,8 @@ typedef struct( u32 version )
     TVector2 Field14;
     struct TEplLeafCommonData5 FieldEC;
     f32 Field1C;
-    struct TEplLeafCommonData5 Field24;
-    struct TEplLeafCommonData5 Field88;
+    struct TEplLeafCommonData6 Field24;
+    struct TEplLeafCommonData6 Field88;
     f32 Field140;
     f32 Field144;
     f32 Field148;
