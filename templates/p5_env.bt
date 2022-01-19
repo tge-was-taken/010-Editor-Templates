@@ -2,7 +2,7 @@
 //--- 010 Editor v8.0 Binary Template
 //
 //      File: p5_env.bt
-//   Authors: TGE, Cherry, Sierra
+//   Authors: TGE, Cherry, Sierra, SecreC
 //   Version: 1.0
 //   Purpose: Parse Persona 5 ENV files
 //  Category: 
@@ -174,19 +174,98 @@ typedef struct
     Printf("Display Bloom: %d\n", Field1CA);
     Boolean Field1CB<name = "Enable Glare">;
     Printf("Glare Enabled: %d\n", Field1CB);
-    Boolean Field1CC;
-    SetBackColor( MyRandom( 0xFFFFFFFF ) );
-	f32 Field1CD<name = "Bloom Amount?">;
-    f32 Field1D1<name = "Bloom Detail?">;
-	f32 Field1D5<name = "Bloom White Level?">;
-	f32 Field1D9<name = "Bloom Dark Level?">;
-    f32 Field1DD<name = "Glare Sensitivity">;
-    if (header.Version > 0x1104250)
+    if (header.Version >= 0x1105090)
     {
-        f32 Field1E1<name = "Glare Length">;
-        f32 Field1E5<name = "Glare Chromatic Abberation">;
-        f32 Field1E9<name = "Glare Direction">;
-        u32 Field1ED<name = "Glare Mode">;
+        if (header.Version == 0x1105090)
+        {
+            Boolean Field1CC;
+            u32 Field1CD;
+            u16 Field1D1;
+        }
+        else
+        {
+        u32 Field1CC;
+        u32 Field1D0;
+        }
+        SetBackColor( MyRandom( 0xFFFFFFFF ) );
+	    f32 Field1D4<name = "Bloom Amount?">;
+        f32 Field1D8<name = "Bloom Detail?">;
+	    f32 Field1DC<name = "Bloom White Level?">;
+	    f32 Field1E0<name = "Bloom Dark Level?">;
+        f32 Field1E4<name = "Glare Sensitivity">;
+        if (header.Version == 0x1105090)
+        {
+            f32 Field1E7;
+            f32 Field1EB;
+            f32 Field1EF;
+            f32 Field1F3;
+            f32 Field1F7;
+            u32 Field1FB;
+            u32 Field1FF;
+            u32 Field203;
+            f32 Field207;
+            f32 Field20B;
+            f32 Field20F;
+            f32 Field213;
+            f32 Field217;
+            f32 Field21B;
+            f32 Field21F;
+            f32 Field223;
+            f32 Field227;
+            f32 Field22B;
+            f32 Field22F;
+            f32 Field233;
+            f32 Field237<name = "Glare Length">;
+            f32 Field23B<name = "Glare Chromatic Abberation">;
+            f32 Field23F<name = "Glare Direction">;
+            u32 Field243<name = "Glare Mode">;
+        }
+		else
+		{
+        f32 Field1E8;
+	    f32 Field1EC;
+	    f32 Field1F0;
+	    f32 Field1F4;
+	    f32 Field1F8;
+	    u32 Field1FC;
+	    f32 Field200;
+	    f32 Field204;
+	    u32 Field208;
+	    u32 Field20C;
+	    f32 Field210;
+	    f32 Field214;
+	    f32 Field218;
+	    f32 Field21C;
+	    f32 Field220;
+	    f32 Field224;
+	    f32 Field228;
+	    f32 Field22C;
+	    f32 Field230;
+	    f32 Field234; 
+	    f32 Field238; 
+	    f32 Field23C;
+        f32 Field240<name = "Glare Length">;
+        f32 Field244<name = "Glare Chromatic Abberation">;
+        f32 Field248<name = "Glare Direction">;
+        u32 Field24C<name = "Glare Mode">;
+		}
+    }
+    else
+    {
+        Boolean Field1CC;
+        SetBackColor( MyRandom( 0xFFFFFFFF ) );
+	    f32 Field1CD<name = "Bloom Amount?">;
+        f32 Field1D1<name = "Bloom Detail?">;
+	    f32 Field1D5<name = "Bloom White Level?">;
+	    f32 Field1D9<name = "Bloom Dark Level?">;
+        f32 Field1DD<name = "Glare Sensitivity">;
+        if (header.Version > 0x1104250)
+        {
+            f32 Field1E1<name = "Glare Length">;
+            f32 Field1E5<name = "Glare Chromatic Abberation">;
+            f32 Field1E9<name = "Glare Direction">;
+            u32 Field1ED<name = "Glare Mode">;
+        }
     }
 
 } LightingParams;
@@ -194,17 +273,17 @@ typedef struct
 typedef struct
 {
     SetBackColor( MyRandom( 0xFFFFFFFF ) );    
-	f32 Field22C<name = "Field Shadow Far Clip">;
-	f32 Field230;
-	f32 Field234;
-	f32 Field238;
-	u32 Field23C;
-	f32 Field240<name = "Field Shadow Near Clip">;
-	f32 Field244<name = "Field Shadow Darkness">;
-	Boolean Field248;
-	Boolean Field248;
-	Boolean Field248;
-	Boolean Field248;
+	f32 Field290<name = "Field Shadow Far Clip">;
+	f32 Field294;
+	f32 Field298;
+	f32 Field29C;
+	u32 Field2A0;
+	f32 Field2A4<name = "Field Shadow Near Clip">;
+	f32 Field2A8<name = "Field Shadow Darkness">;
+	Boolean Field2AC;
+	Boolean Field2AC;
+	Boolean Field2AC;
+	Boolean Field2AC;
 } ShadowParams;
 
 typedef struct
@@ -257,6 +336,33 @@ typedef struct
 
 typedef struct
 {
+    if (header.Version >= 0x1105090)
+    {
+        SetBackColor( MyRandom( 0xFFFFFFFF ) );
+	    Boolean Field250;
+	    u32 Field251;
+	    f32 Field255;
+	    f32 Field259;
+	    f32 Field25D;
+	    Boolean Field261;
+        f32 Field262;
+        f32 Field266;
+        f32 Field26A;
+        f32 Field26E;
+        f32 Field272;
+        SetBackColor( MyRandom( 0xFFFFFFFF ) );
+        u32 Field276;
+        Boolean Field27A;
+        f32 Field27B;
+        f32 Field27F;
+        f32 Field283;
+        f32 Field287;
+        f32 Field28B;
+        SetBackColor( MyRandom( 0xFFFFFFFF ) );
+        Boolean Field283<name = "Disable Unknown Flagged Section">;
+    }
+    else
+    {
     SetBackColor( MyRandom( 0xFFFFFFFF ) );
 	Boolean Field1F1;
 	f32 Field1F2;
@@ -283,7 +389,7 @@ typedef struct
     f32 Field202;
     if (header.Version > 0x01105000)
     {
-        f32 Field206;
+        u32 Field206;
     }
     SetBackColor( MyRandom( 0xFFFFFFFF ) );
     Boolean Field207;
@@ -299,7 +405,17 @@ typedef struct
         Printf("Hide Flagged Section: %d\n", Field216);
         struct FlaggedSection1 flagged1<name="Unknown Flagged Section">;
     }
+    }
 } UnknownParams;
+
+typedef struct
+{
+	SetBackColor( MyRandom( 0xFFFFFFFF ) );
+	f32 Field2B0;
+	f32 Field2B4;
+	f32 Field2B8;
+	f32 Field2BC;
+} UnknownRoyalParams;
 
 typedef struct
 {   
@@ -335,97 +451,6 @@ typedef struct
     }
 } UnknownParams2;
 
-typedef struct
-{
-    SetBackColor( MyRandom( 0xFFFFFFFF ) );
-    Boolean Temp1; 
-	Boolean Temp2; 
-	Boolean Temp3; 
-    u32 Temp4; 
-    f32 Temp5; 
-    f32 Temp6; 
-    f32 Temp7; 
-    f32 Temp8; 
-    f32 Temp9; 
-    f32 Temp10; 
-    f32 Temp11; 
-    f32 Temp12; 
-    f32 Temp13; 
-    f32 Temp14; 
-    f32 Temp15; 
-    f32 Temp16; 
-    f32 Temp17; 
-    u32 Temp18; 
-    u32 Temp19; 
-    f32 Temp20; 
-    f32 Temp21; 
-    f32 Temp22; 
-    f32 Temp23; 
-    f32 Temp24; 
-    f32 Temp25; 
-    f32 Temp26; 
-    f32 Temp27; 
-    f32 Temp28; 
-    f32 Temp29; 
-    f32 Temp30; 
-    f32 Temp31; 
-    f32 Temp32; 
-    f32 Temp33; 
-    f32 Temp34; 
-    u32 Temp35; 
-	Boolean Temp36;
-    u32 Temp37; 
-    f32 Temp38;
-    f32 Temp39;
-	//Replace vanilla values because fuck Atlus
-	f32 Replace1;
-	u8 Replace2;
-	f32 Replace3;
-	f32 Replace4;
-	f32 Replace5;
-	f32 Replace6;
-	f32 Replace7;
-	u32 Replace8;
-	u8 Replace9;
-	f32 Replace10;
-	f32 Replace11;
-	f32 Replace12;
-	f32 Replace13;
-	f32 Replace14;
-	u8 Replace15;
-	f32 Replace16;
-	f32 Replace17;
-	f32 Replace18;
-	f32 Replace19;
-	u32 Replace20;
-	f32 Replace21;
-	f32 Replace22;
-	u32 Replace23;
-	f32 Replace24;
-	f32 Replace25;
-	f32 Replace26;
-	f32 Replace27;
-	u8 Replace28;
-	f32 Replace29;
-	u8 Replace30;
-	u8 Replace31;
-	u8 Replace32;
-} P5R_1105100_1;
-
-typedef struct
-{
-    SetBackColor( MyRandom( 0xFFFFFFFF ) );
-	//Replace vanilla values because fuck Atlus
-	f32 Replace1;
-	f32 Replace2;
-	u8 Replace3;
-	f32 Replace4;
-	f32 Replace5;
-	f32 Replace6;
-	f32 Replace7;
-	f32 Replace8;
-	f32 Replace9;
-} P5R_1105100_2;
 
 
 
@@ -463,32 +488,31 @@ typedef struct
     struct FogParams fogparams<name="Fog Section">;
 //=======================================================================        
 //ENV Fix for 01005100
-	if ( header.Version == 0x1105100 )
-	{
-    	struct P5R_1105100_1 p5r5100<name="ENV Version 5100 Section">;
-	}
+
 //Mostly a Stop-Gap solution for now until it's fully redone
 //=======================================================================
-	else
-	{
+		if (header.Version >= 0x1105090)
+		{
+        struct LightingParams lightingparams<name="Lighting Section">;        
+        struct UnknownParams unknownparams<name="Unknown Section">;  
+        struct ShadowParams shadowparams<name="Field Shadow Section">;
+		struct UnknownRoyalParams unknownroyalparams<name="Unknown Royal Params">;
+		}	
+		else
+		{
         struct LightingParams lightingparams<name="Lighting Section">;        
         struct UnknownParams unknownparams<name="Unknown Section">;
         struct ShadowParams shadowparams<name="Field Shadow Section">;
-	}
+		}
     
-    struct ColorParams colorparams<name="Color Grading Section">;
+		struct ColorParams colorparams<name="Color Grading Section">;
 //=======================================================================        
 //ENV Fix for 01005100
-	if ( header.Version == 0x1105100)
-	{
-    	struct P5R_1105100_2 p5r5100<name="ENV Version 5100 Section">;
-	}
+
 //Another Stop-Gap solution for only this version
 //=======================================================================        
-	else
-	{
-        struct UnknownParams2 unknownparams2<name="Second Unknown Section">;
-	}
+
+    struct UnknownParams2 unknownparams2<name="Second Unknown Section">;
     struct PhysicsParams physicsparams<name="Physics Section">;
     struct SkyParams skyparams<name="Sky Coloring">;
     
