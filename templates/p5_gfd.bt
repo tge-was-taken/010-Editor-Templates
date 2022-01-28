@@ -71,14 +71,20 @@ typedef struct(u32 version)
     {
         char Str[Length];  
     
-        //if ( version >= 0x01105100 )
-            //FSeek( FTell() + 1 ); // padding byte
+        if ( version >= 0x01105100 )
+        {
+            u8 CFBOnlyPaddingByte;
+            if (CFBOnlyPaddingByte != 0)
+            {
+                FSeek(FTell() - 1);
+            }
+        }
         
         if ( version > 0x1080000 )
         {
             // hash
             u32 Hash;
-        }   
+        }
     }  
 } THashString <optimize=false, read=THashStringToString>;
 
@@ -334,10 +340,12 @@ typedef struct(u32 version)
     s16 Field5C;
     TMaterialMapsTexcoord TexcoordFlags;
     TMaterialMapsTexcoord TexcoordFlags;
+	if ( version <= 0x01104800 )
+	{
+		u16 Field74;
+	}
     TBool16 DisableBackfaceCulling;
-    {
-        u32 Field98<format=hex>;
-    }
+    u32 Field98<format=hex>;
 
     if (MaterialFlags.TMaterialFlags_HasDiffuseMap    ) struct TTextureMap DiffuseMap( version );
     if (MaterialFlags.TMaterialFlags_HasNormalMap     ) struct TTextureMap NormalMap( version );
@@ -997,10 +1005,12 @@ typedef struct
     u32 BlendAnimationCount;
     if ( BlendAnimationCount > 0 )
         struct TAnimation BlendAnimation( Header.Version )[ BlendAnimationCount ];
-    
-    if ( Flags & EAnimationPackFlags_Flag4 )
+    if ( Header.Version > 0x1104950 )
     {
-        struct TAnimationExtraData ExtraData( Header.Version );
+        if ( Flags & EAnimationPackFlags_Flag4 )
+        {
+            struct TAnimationExtraData ExtraData( Header.Version );
+        }
     }
 } TAnimationPack <optimize=false>;
 
@@ -2180,8 +2190,8 @@ typedef struct( u32 version )
         u32 Field00;
     }
 
-    struct TEplParticleEmitter ParticleEmittter;
-    struct TEplEmbeddedFile EmbeddedFile;
+    struct TEplParticleEmitter ParticleEmittter(version, Type);
+    struct TEplEmbeddedFile EmbeddedFile(version);
 } TEplDirectionalParticles;
 
 typedef struct( u32 version )
