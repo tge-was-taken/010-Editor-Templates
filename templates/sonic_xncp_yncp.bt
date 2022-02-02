@@ -57,6 +57,7 @@ typedef struct
     if ( isBigEndian ) BigEndian();
 } TNNChunkHeader;
 
+
 typedef struct
 {
     SetRandomBackColor();
@@ -248,31 +249,31 @@ typedef struct
 typedef struct
 {
     SetRandomBackColor();
-    /* 00 */ u32 UIControlCount;
-    /* 04 */ TNNOffset UIControlTableOffset(0);
-    /* 08 */ TNNOffset UIControlIDTableOffset(0);
+    /* 00 */ u32 SceneCount;
+    /* 04 */ TNNOffset SceneTableOffset(0);
+    /* 08 */ TNNOffset SceneIDTableOffset(0);
     /* 0C */ u32 NodeCount;
     /* 10 */ TNNOffset NodeListOffset(0);
     /* 14 */ TNNOffset NodeDictionaryOffset(0);
 
-    if ( UIControlTableOffset.isValid )
+    if ( SceneTableOffset.isValid )
     {
         SetRandomBackColor();
-        FSeek( UIControlTableOffset.absPosition );
+        FSeek( SceneTableOffset.absPosition );
         struct
         {
-            struct TUIControlOffset UIControl[ UIControlCount ];
-        } UIControls;
+            struct TSceneOffset Scene[ SceneCount ];
+        } Scenes;
     }
 
-    if ( UIControlIDTableOffset.isValid )
+    if ( SceneIDTableOffset.isValid )
     {   
         SetRandomBackColor();
-        FSeek( UIControlIDTableOffset.absPosition );
+        FSeek( SceneIDTableOffset.absPosition );
         struct
         {
-            struct TUIControlID UIControlID[ UIControlCount ];
-        } UIControlIDTable;
+            struct TSceneID SceneID[ SceneCount ];
+        } SceneIDTable;
     }
 
 
@@ -300,8 +301,8 @@ typedef struct
 typedef struct
 {
     /* 00 */ TNNStringOffset NameOffset(0);
-    /* 04 */ u32 Index; // Index into the UIControl data array
-} TUIControlID <optimize=false>;
+    /* 04 */ u32 Index; // Index into the Scene data array
+} TSceneID <optimize=false>;
 
 typedef struct
 {
@@ -312,10 +313,10 @@ typedef struct
     {
         FPush();
         FSeek( Offset.absPosition );
-        struct TUIControl Data;
+        struct TScene Data;
         FPop();
     }
-} TUIControlOffset <optimize=false>;
+} TSceneOffset <optimize=false>;
 
 u32 CountSetBits( u32 value )
 {
@@ -335,7 +336,7 @@ typedef struct
     SetRandomBackColor();
     /* 00 */ u32 Field00; // if this is below 3, the element doesn't show up
     /* 04 */ f32 ZIndex; // no change (info_time)
-    /* 08 */ f32 Field08; // no change (info_time)
+    /* 08 */ f32 AnimationFramerate; // no change (info_time)
     /* 0C */ u32 Field0C; // no change (info_time)
     /* 10 */ f32 Field10; // no change (info_time)
     /* 14 */ u32 Data1Count; // no change (info_time)
@@ -620,8 +621,8 @@ typedef struct
                                                                             if ( DataOffset.isValid )
                                                                             {
                                                                                 FPush();
-                                                                                FSeek( DataOffset.absPosition );
-                                                                        
+                                                                                FSeek( DataOffset.absPosition );                                                                                                       
+
                                                                                 local u32 flags = 
                                                                                     AnimationKeyFrameDataList.AnimationKeyFrameData[animationIndex].GroupAnimationDataList.
                                                                                     GroupAnimationData[groupIndex].CastAnimationDataList.CastAnimationData[groupCastIndex].Flags;
@@ -698,7 +699,7 @@ typedef struct
     }
 
     FPop();
-} TUIControl <optimize=false>;
+} TScene <optimize=false>;
 
 /*
     TUICastGroup
