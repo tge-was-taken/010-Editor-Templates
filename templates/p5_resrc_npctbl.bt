@@ -1,0 +1,62 @@
+#include "common/include.h"
+
+BigEndian();
+
+enum<u16> CharacterID
+{
+    None,
+    Joker,
+    Ryuji,
+    Mona,
+    Ann,
+    Yusuke,
+    Makoto,
+    Haru,
+    Futaba,
+    Akechi,
+	Kasumi,
+	Justine = 1001,
+	Caroline,
+	Sojiro,
+	Iwai,
+	Sae,
+	Hifumi,
+	Ohya,
+	Takemi,
+	Kawakami,
+	Shinya,
+	Mishima,
+	Yoshida,
+	Chihaya,
+	Maruki,
+};
+
+typedef struct
+{
+	u16 NPC_ID;
+	u8 Field01;
+	u8 Field02;
+	CharacterID ModelMajorID;
+	u8 ModelMinorID;
+	u8 Field07;
+	u16 Field08;
+	u8 Field0A;
+	u8 Field0B;
+	u16 Field0C;
+	u8 Field0E;
+	u8 Field0F;
+	u16 Field10;
+	u8 Field12;
+	u8 Field13;
+	u16 GapID;
+	u16 Field16;
+	u16 GapID;
+	u16 Field1A;
+} resrcNPCTblEntry <optimize=false>;
+
+typedef struct
+{
+  resrcNPCTblEntry Data[ FileSize() /  0x1C ];
+} resrcNPCTblFile <optimize=false>;
+
+resrcNPCTblFile file;

@@ -355,6 +355,11 @@ typedef struct
     u32 Unknown;
 } TAICalc_Segment7;
 
+typedef struct
+{
+    u16 Unknown;
+    u16 Unknown;
+} TEncounterUnknown;
 
 // Encounter
 typedef struct
@@ -368,6 +373,18 @@ typedef struct
     MusicID MusicId <name = "Music">;
 } TEncounter <name = "Enemy Encounters">;
 
+typedef struct
+{
+    b32 Flags <name = "Flags">;
+    u16 Field04;
+    u16 Field06;
+    BattleUnit Units[ 5 ] <name = "Battle Units">;
+    u16 FieldId <name = "Field ID">;
+    u16 RoomId <name = "Room ID">;
+    MusicID MusicId <name = "Music">;
+	TEncounterUnknown Unknown [ 5 ] <name = "Unknown P5R Only fields">;
+} TEncounterP5R <name = "Enemy Encounters">;
+
 // Unit table
 typedef struct
 {
@@ -378,7 +395,7 @@ typedef struct
     u8 Unknown2[ 2 ];
     u32 Hp <name = "HP">;
     u32 Sp <name = "SP">;
-    PersonaStats Stats <name = "Persona Status">;
+    PersonaStats Stats;
     byte : 1;
     BattleSkill SkillIds[ 8 ] <name = "Battle Skills">;
     u16 ExpReward <name = "EXP Reward">;
@@ -407,6 +424,13 @@ typedef struct
     u16 ModelIndex <name = "Model Index", comment = "Model ID">;
 } TUnitVisualIndex <name = "Visual Index">;
 
+typedef struct
+{
+    u16 PersonaIndex <name = "Persona Index", comment = "Persona ID when captured">;
+    u16 ModelIndex <name = "Model Index", comment = "Model ID">;
+    u16 Unknown <name = "P5R Unk", comment = "New P5R Field">;
+} TUnitVisualIndexP5R <name = "Visual Index">;
+
 
 // Skill
 typedef struct
@@ -428,6 +452,7 @@ typedef struct
     u8 add256skillcost <name = "Add 256 Cost for each 1 value">;
     Skill_PhysicalOrMagicSkill PhysicalOrMagic <name = "Physical or Magic?", comment = "determines what's affected by either Charge or Concentrate, but doesn't seem to change what's reflected by Tetrakarn or Makarakarn. Needs more testing">;
     Skill_NumberOfTargets NumberOfTargets <name = "Number of Targets">;
+
     byte : 6;
     bool UsableOnEnemies : 1 <name = "Usable on Enemies">;
     bool UsableOnAllies : 1 <name = "Usable on Allies">;
@@ -561,7 +586,7 @@ typedef struct
             bool Accessory : 1 <name = "Accessory">;
             bool Armor : 1 <name = "Armor">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool Revolver2 : 1 <name = "Revolver (Yoshizawa)">;
             bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
             bool GL : 1 <name = "Grenade Launcher (Haru)">;
             bool Revolver : 1 <name = "Revolver (Makoto)">;
@@ -571,7 +596,7 @@ typedef struct
             bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
             bool Handgun : 1 <name = "Handgun (Joker)">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool Saber : 1 <name = "Saber (Yoshizawa)">;
             bool BeamSword : 1 <name = "Beam Sword (Goro)">;
             bool Axe : 1 <name = "Axe (Haru)">;
             bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
@@ -583,38 +608,26 @@ typedef struct
         } Icon <name = "Icon">;
 
 
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    u32 Field04;
+    u16 RESERVE_EquippableUsersBitFlags;
     EquippableUsers Users;
-    u16 Unknown;
+    u16 Field0C;
     u8 Strength <name = "Strength Boost">;
     u8 Magic <name = "Magic Boost">;
     u8 Endurance <name = "Endurance Boost">;
     u8 Agility <name = "Agility Boost">;
     u8 Luck <name = "Luck Boost">;
-    u8 Unknown;
-    GearEffect Effect <name = "Effect">;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    u8 RESERVE_Stat;
+    GearEffect Effect[3] <name = "Effect">;
+    u16 Field1A;
+    u16 Field1C;
+    u16 RESERVE;
     u32 PurchasePrice <name = "Purchase Price">;
     u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    u32 Field2A[5];
+    u16 Field3E;
 } TItem_Accessories <name ="Accessories">;
 
 
@@ -659,7 +672,7 @@ typedef struct
 
     u16 Unknown;
     u16 Unknown;
-    u16 Unknown;
+    u16 RESERVE_EquippableUsersBitFlags;
     EquippableUsers Users;
     u16 Unknown;
     u16 ArmorDefense <name = "Defense">;
@@ -854,160 +867,147 @@ typedef struct
 {
 
     struct
-        {
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Gift : 1 <name = "Gift">;
-            bool CraftingMaterial : 1 <name = "Crafting Material">;
-            bool DungeonItem : 1 <name = "Dungeon Item">;
-            bool Outfit : 1 <name = "Outfit">;
-            bool SkillCard : 1 <name = "Skill Card">;
-            bool Treasure : 1 <name = "Treasure">;
-            bool KeyItem : 1 <name = "Key Item">;
-            bool Consumable : 1 <name = "Consumable">;
-            bool Accessory : 1 <name = "Accessory">;
-            bool Armor : 1 <name = "Armor">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
-            bool GL : 1 <name = "Grenade Launcher (Haru)">;
-            bool Revolver : 1 <name = "Revolver (Makoto)">;
-            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
-            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
-            bool SMG : 1 <name = "SMG (Ann)">;
-            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
-            bool Handgun : 1 <name = "Handgun (Joker)">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
-            bool Axe : 1 <name = "Axe (Haru)">;
-            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
-            bool Katana : 1 <name = "Katana (Yusuke)">;
-            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
-            bool Whip : 1 <name = "Whip (Ann)">;
-            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
-            bool Dagger : 1 <name = "Dagger (Joker)">;
-        } Icon <name = "Icon">;
+	{
+		bool Unknown : 1 <name = "Unknown">;
+		bool Unknown : 1 <name = "Unknown">;
+		bool Gift : 1 <name = "Gift">;
+		bool CraftingMaterial : 1 <name = "Crafting Material">;
+		bool DungeonItem : 1 <name = "Dungeon Item">;
+		bool Outfit : 1 <name = "Outfit">;
+		bool SkillCard : 1 <name = "Skill Card">;
+		bool Treasure : 1 <name = "Treasure">;
+		bool KeyItem : 1 <name = "Key Item">;
+		bool Consumable : 1 <name = "Consumable">;
+		bool Accessory : 1 <name = "Accessory">;
+		bool Armor : 1 <name = "Armor">;
+		bool Unknown : 1 <name = "Unknown">;
+		bool Unknown : 1 <name = "Unknown">;
+		bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
+		bool GL : 1 <name = "Grenade Launcher (Haru)">;
+		bool Revolver : 1 <name = "Revolver (Makoto)">;
+		bool AR : 1 <name = "Assault Rifle (Yusuke)">;
+		bool Slingshot : 1 <name = "Slingshot (Morgana)">;
+		bool SMG : 1 <name = "SMG (Ann)">;
+		bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
+		bool Handgun : 1 <name = "Handgun (Joker)">;
+		bool Unknown : 1 <name = "Unknown">;
+		bool Unknown : 1 <name = "Unknown">;
+		bool BeamSword : 1 <name = "Beam Sword (Goro)">;
+		bool Axe : 1 <name = "Axe (Haru)">;
+		bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
+		bool Katana : 1 <name = "Katana (Yusuke)">;
+		bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
+		bool Whip : 1 <name = "Whip (Ann)">;
+		bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
+		bool Dagger : 1 <name = "Dagger (Joker)">;
+	} Icon <name = "Icon">;
 
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    u32 field_0x4;
+    u16 RESERVE_EquippableUsersBitFlags;
     EquippableUsers Users;
-    u16 Unknown;
-    u16 Unknown;
+    u16 field_0xc;
+    u16 field_0xe;
     u16 Attack <name = "Attack">;
     u16 Accuracy <name = "Accuracy">;
-    u8 Strength <name = "Strength Boost">;
-    u8 Magic <name = "Magic Boost">;
-    u8 Endurance <name = "Endurance Boost">;
-    u8 Agility <name = "Agility Boost">;
-    u8 Luck <name = "Luck Boost">;
-    u8 Unknown;
-    GearEffect Effect <name = "Effect">;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    PersonaStats BonusStats;
+    u8 DummyStat;
+    GearEffect Effect[3] <name = "Effect">;
+    u16 field_0x20;
+    u16 field_0x22;
     u32 PurchasePrice <name = "Purchase Price">;
     u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
-    u16 Unknown;
+    u16 field_0x2e;
 } TItem_MeleeWeapons <name ="Melee Weapons">;
 
 typedef struct
 {
-
     struct
-        {
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Gift : 1 <name = "Gift">;
-            bool CraftingMaterial : 1 <name = "Crafting Material">;
-            bool DungeonItem : 1 <name = "Dungeon Item">;
-            bool Outfit : 1 <name = "Outfit">;
-            bool SkillCard : 1 <name = "Skill Card">;
-            bool Treasure : 1 <name = "Treasure">;
-            bool KeyItem : 1 <name = "Key Item">;
-            bool Consumable : 1 <name = "Consumable">;
-            bool Accessory : 1 <name = "Accessory">;
-            bool Armor : 1 <name = "Armor">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
-            bool GL : 1 <name = "Grenade Launcher (Haru)">;
-            bool Revolver : 1 <name = "Revolver (Makoto)">;
-            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
-            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
-            bool SMG : 1 <name = "SMG (Ann)">;
-            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
-            bool Handgun : 1 <name = "Handgun (Joker)">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
-            bool Axe : 1 <name = "Axe (Haru)">;
-            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
-            bool Katana : 1 <name = "Katana (Yusuke)">;
-            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
-            bool Whip : 1 <name = "Whip (Ann)">;
-            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
-            bool Dagger : 1 <name = "Dagger (Joker)">;
-        } Icon <name = "Icon">;
+    {
+        bool Unknown : 1 <name = "Unknown">;
+        bool Unknown : 1 <name = "Unknown">;
+        bool Gift : 1 <name = "Gift">;
+        bool CraftingMaterial : 1 <name = "Crafting Material">;
+        bool DungeonItem : 1 <name = "Dungeon Item">;
+        bool Outfit : 1 <name = "Outfit">;
+        bool SkillCard : 1 <name = "Skill Card">;
+        bool Treasure : 1 <name = "Treasure">;
+        bool KeyItem : 1 <name = "Key Item">;
+        bool Consumable : 1 <name = "Consumable">;
+        bool Accessory : 1 <name = "Accessory">;
+        bool Armor : 1 <name = "Armor">;
+        bool Unknown : 1 <name = "Unknown">;
+        bool Unknown : 1 <name = "Unknown">;
+        bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
+        bool GL : 1 <name = "Grenade Launcher (Haru)">;
+        bool Revolver : 1 <name = "Revolver (Makoto)">;
+        bool AR : 1 <name = "Assault Rifle (Yusuke)">;
+        bool Slingshot : 1 <name = "Slingshot (Morgana)">;
+        bool SMG : 1 <name = "SMG (Ann)">;
+        bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
+        bool Handgun : 1 <name = "Handgun (Joker)">;
+        bool Unknown : 1 <name = "Unknown">;
+        bool Unknown : 1 <name = "Unknown">;
+        bool BeamSword : 1 <name = "Beam Sword (Goro)">;
+        bool Axe : 1 <name = "Axe (Haru)">;
+        bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
+        bool Katana : 1 <name = "Katana (Yusuke)">;
+        bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
+        bool Whip : 1 <name = "Whip (Ann)">;
+        bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
+        bool Dagger : 1 <name = "Dagger (Joker)">;
+    } Icon <name = "Icon">;
 
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    u32 Field04;
+    u16 RESERVE_EquippableUsersBitFlags;
     EquippableUsers Users;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    u16 Field0C;
+    GearEffect Effect[3] <name = "Effect">;
+    u32 Field14;
+    u32 Field18;
+    u8 DateAvailable[2];
+    u16 padding;
 } TItem_Outfits <name ="Outfits">;
 
 typedef struct
 {
 
     struct
-        {
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Gift : 1 <name = "Gift">;
-            bool CraftingMaterial : 1 <name = "Crafting Material">;
-            bool DungeonItem : 1 <name = "Dungeon Item">;
-            bool Outfit : 1 <name = "Outfit">;
-            bool SkillCard : 1 <name = "Skill Card">;
-            bool Treasure : 1 <name = "Treasure">;
-            bool KeyItem : 1 <name = "Key Item">;
-            bool Consumable : 1 <name = "Consumable">;
-            bool Accessory : 1 <name = "Accessory">;
-            bool Armor : 1 <name = "Armor">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
-            bool GL : 1 <name = "Grenade Launcher (Haru)">;
-            bool Revolver : 1 <name = "Revolver (Makoto)">;
-            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
-            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
-            bool SMG : 1 <name = "SMG (Ann)">;
-            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
-            bool Handgun : 1 <name = "Handgun (Joker)">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
-            bool Axe : 1 <name = "Axe (Haru)">;
-            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
-            bool Katana : 1 <name = "Katana (Yusuke)">;
-            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
-            bool Whip : 1 <name = "Whip (Ann)">;
-            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
-            bool Dagger : 1 <name = "Dagger (Joker)">;
-        } Icon <name = "Icon">;
+	{
+		bool Unknown : 1 <name = "Unknown">;
+		bool Unknown : 1 <name = "Unknown">;
+		bool Gift : 1 <name = "Gift">;
+		bool CraftingMaterial : 1 <name = "Crafting Material">;
+		bool DungeonItem : 1 <name = "Dungeon Item">;
+		bool Outfit : 1 <name = "Outfit">;
+		bool SkillCard : 1 <name = "Skill Card">;
+		bool Treasure : 1 <name = "Treasure">;
+		bool KeyItem : 1 <name = "Key Item">;
+		bool Consumable : 1 <name = "Consumable">;
+		bool Accessory : 1 <name = "Accessory">;
+		bool Armor : 1 <name = "Armor">;
+		bool Unknown : 1 <name = "Unknown">;
+		bool Unknown : 1 <name = "Unknown">;
+		bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
+		bool GL : 1 <name = "Grenade Launcher (Haru)">;
+		bool Revolver : 1 <name = "Revolver (Makoto)">;
+		bool AR : 1 <name = "Assault Rifle (Yusuke)">;
+		bool Slingshot : 1 <name = "Slingshot (Morgana)">;
+		bool SMG : 1 <name = "SMG (Ann)">;
+		bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
+		bool Handgun : 1 <name = "Handgun (Joker)">;
+		bool Unknown : 1 <name = "Unknown">;
+		bool Unknown : 1 <name = "Unknown">;
+		bool BeamSword : 1 <name = "Beam Sword (Goro)">;
+		bool Axe : 1 <name = "Axe (Haru)">;
+		bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
+		bool Katana : 1 <name = "Katana (Yusuke)">;
+		bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
+		bool Whip : 1 <name = "Whip (Ann)">;
+		bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
+		bool Dagger : 1 <name = "Dagger (Joker)">;
+	} Icon <name = "Icon">;
 
     u16 Unknown;
     u16 Unknown;
@@ -1023,67 +1023,61 @@ typedef struct
 {
 
     struct
-        {
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Gift : 1 <name = "Gift">;
-            bool CraftingMaterial : 1 <name = "Crafting Material">;
-            bool DungeonItem : 1 <name = "Dungeon Item">;
-            bool Outfit : 1 <name = "Outfit">;
-            bool SkillCard : 1 <name = "Skill Card">;
-            bool Treasure : 1 <name = "Treasure">;
-            bool KeyItem : 1 <name = "Key Item">;
-            bool Consumable : 1 <name = "Consumable">;
-            bool Accessory : 1 <name = "Accessory">;
-            bool Armor : 1 <name = "Armor">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
-            bool GL : 1 <name = "Grenade Launcher (Haru)">;
-            bool Revolver : 1 <name = "Revolver (Makoto)">;
-            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
-            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
-            bool SMG : 1 <name = "SMG (Ann)">;
-            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
-            bool Handgun : 1 <name = "Handgun (Joker)">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
-            bool Axe : 1 <name = "Axe (Haru)">;
-            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
-            bool Katana : 1 <name = "Katana (Yusuke)">;
-            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
-            bool Whip : 1 <name = "Whip (Ann)">;
-            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
-            bool Dagger : 1 <name = "Dagger (Joker)">;
-        } Icon <name = "Icon">;
+	{
+		bool Unknown : 1 <name = "Unknown">;
+		bool Unknown : 1 <name = "Unknown">;
+		bool Gift : 1 <name = "Gift">;
+		bool CraftingMaterial : 1 <name = "Crafting Material">;
+		bool DungeonItem : 1 <name = "Dungeon Item">;
+		bool Outfit : 1 <name = "Outfit">;
+		bool SkillCard : 1 <name = "Skill Card">;
+		bool Treasure : 1 <name = "Treasure">;
+		bool KeyItem : 1 <name = "Key Item">;
+		bool Consumable : 1 <name = "Consumable">;
+		bool Accessory : 1 <name = "Accessory">;
+		bool Armor : 1 <name = "Armor">;
+		bool Unknown : 1 <name = "Unknown">;
+		bool Unknown : 1 <name = "Unknown">;
+		bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
+		bool GL : 1 <name = "Grenade Launcher (Haru)">;
+		bool Revolver : 1 <name = "Revolver (Makoto)">;
+		bool AR : 1 <name = "Assault Rifle (Yusuke)">;
+		bool Slingshot : 1 <name = "Slingshot (Morgana)">;
+		bool SMG : 1 <name = "SMG (Ann)">;
+		bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
+		bool Handgun : 1 <name = "Handgun (Joker)">;
+		bool Unknown : 1 <name = "Unknown">;
+		bool Unknown : 1 <name = "Unknown">;
+		bool BeamSword : 1 <name = "Beam Sword (Goro)">;
+		bool Axe : 1 <name = "Axe (Haru)">;
+		bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
+		bool Katana : 1 <name = "Katana (Yusuke)">;
+		bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
+		bool Whip : 1 <name = "Whip (Ann)">;
+		bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
+		bool Dagger : 1 <name = "Dagger (Joker)">;
+	} Icon <name = "Icon">;
 
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    u32 field_0x4;
+    u16 RESERVE_EquippableUsersBitFlags;
     EquippableUsers Users;
-    u16 Unknown;
-    u16 Unknown;
+    u16 field_0xc;
+    u8 field_0xe;
+    u8 Unused;
     u16 Attack <name = "Attack">;
     u16 Accuracy <name = "Accuracy">;
     u16 Rounds <name = "Rounds">;
-    u8 Strength <name = "Strength Boost">;
-    u8 Magic <name = "Magic Boost">;
-    u8 Endurance <name = "Endurance Boost">;
-    u8 Agility <name = "Agility Boost">;
-    u8 Luck <name = "Luck Boost">;
-    u8 Unknown;
-    GearEffect Effect <name = "Effect">;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    PersonaStats BonusStats;
+    u8 DummyStat;
+    GearEffect Effect[3] <name = "Effect">;
+    u16 field_0x22;
+    u16 field_0x24;
+    u16 RESERVE;
     u32 PurchasePrice <name = "Purchase Price">;
     u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
-    u16 Unknown;
+    u16 field_0x32;
 } TItem_RangedWeapons <name ="Ranged Weapons">;
 
 typedef struct
@@ -1421,6 +1415,11 @@ typedef struct( TableSegmentType _type )
             break;
 
         case TableSegmentType_Encounter:
+		    if (Size == 44000)
+			{
+				TEncounterP5R TEncounters[ 1000 ];
+			}
+			else
             TEncounter TEncounters[ Size / sizeof( TEncounter ) ];
             break;
 
@@ -1495,7 +1494,11 @@ typedef struct( TableSegmentType _type )
             break;
 
         case TableSegmentType_Unit_VisualIndex:
-            TUnitVisualIndex VisualIndices[ Size / sizeof( TUnitVisualIndex ) ];
+            if (Size == 4698) // P5R
+			{
+				TUnitVisualIndexP5R VisualIndices[ 783 ];
+			}
+			else TUnitVisualIndex VisualIndices[ Size / sizeof( TUnitVisualIndex ) ];
             break;
 
         case TableSegmentType_Visual_EnemyVisualVariablesA:
@@ -1656,7 +1659,7 @@ typedef struct( string tableName, u32 endOffset )
 typedef struct
 {
     LittleEndian();
-    char FileName[ 252 ] <hidden = true>;
+    char FileName[ 252 ]<hidden=true>;
     u32 FileSize;
 
     if ( Stricmp( FileNameGetExtension( FileName ), ".tbl" ) == 0 )

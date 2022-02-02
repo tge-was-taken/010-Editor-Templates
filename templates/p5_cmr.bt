@@ -1,0 +1,64 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: p5_cmr.bt
+//   Authors: TGE
+//   Version: 1.0
+//   Purpose: Parse Persona 5 CMR files
+//  Category: 
+// File Mask: *.fbn
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//---------------------------------------------
+// Primitive types
+//---------------------------------------------
+typedef char bool;
+typedef char s8;
+typedef uchar u8;
+typedef int16 s16;
+typedef uint16 u16;
+typedef int16 s16;
+typedef int32 s32;
+typedef uint32 u32;
+typedef int64 s64;
+typedef uint64 u64;
+typedef float f32;
+typedef double f64;
+
+typedef struct
+{
+    u32 Magic;
+    u32 Version;
+    u32 Field08;
+    u32 FileSize;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    u32 Field1C;
+    f32 Field20;
+    u32 Field24;
+    f32 Field28;
+    f32 Field2C;
+    f32 Field30;
+    f32 Field34;
+    u32 Field38;
+    f32 Field3C;
+    f32 Field40;
+    f32 Field44;
+    f32 Field48;
+    f32 Field4C;
+    f32 Field50;
+    f32 Field54;
+    f32 Field58;
+    f32 Field5C;
+    f32 Field60;
+    f32 Field64;
+    u32 Field68;
+} CmrBinary;
+
+BigEndian();
+CmrBinary File;
+
+

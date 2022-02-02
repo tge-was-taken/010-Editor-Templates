@@ -107,21 +107,21 @@ typedef struct
     SetRandomBackColor();
 
 	u32 Id;                 // starts at 1
-	u32 Field04;            // 1?
+	u32 Texture_Id;            // 1?
 	u32 Field08;            // 4?
 	u32 Field0C;            // 0
 	u32 Field10;            // 0
 	u32 Field14;            // 0
 	u32 Field18;            // 0
 	u32 Field1C;            // 0
-	u32 Field20;            // 1
-	u32 Field24;            // 1
-	u32 Field28;            // 119
-	u32 Field2C;            // 44
+	u32 X1_Position;            // 1
+	u32 Y1_Position;            // 1
+	u32 X2_Position;            // 119
+	u32 Y2_Position;            // 44
 	u32 Field30;            // 0
 	u32 Field34;            // 0
-	u32 Field38;            // 119
-	u32 Field3C;            // 44
+	u32 X_Scale;            // 119
+	u32 Y_Scale;            // 44
 	u32 Field40;            // 0
 	u32 Field44;            // 0
 	u32 Field48;            // 0
