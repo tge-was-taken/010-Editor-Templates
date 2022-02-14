@@ -72,13 +72,19 @@ typedef struct(u32 version)
         char Str[Length];  
     
         if ( version >= 0x01105100 )
-            FSeek( FTell() + 1 ); // padding byte
+        {
+            u8 CFBOnlyPaddingByte;
+            if (CFBOnlyPaddingByte != 0)
+            {
+                FSeek(FTell() - 1);
+            }
+        }
         
         if ( version > 0x1080000 )
         {
             // hash
             u32 Hash;
-        }   
+        }
     }  
 } THashString <optimize=false, read=THashStringToString>;
 
@@ -225,38 +231,38 @@ typedef struct
 
 typedef struct
 {
- TBool32 TMaterialFlags_Flag80000000     : 1;
- TBool32 TMaterialFlags_Flag40000000     : 1;
- TBool32 TMaterialFlags_Flag20000000Crash: 1;
- TBool32 TMaterialFlags_HasShadowMap     : 1;
- TBool32 TMaterialFlags_HasDetailMap     : 1;
- TBool32 TMaterialFlags_HasNightMap      : 1;
- TBool32 TMaterialFlags_HasGlowMap       : 1;
- TBool32 TMaterialFlags_HasHighlightMap  : 1;
- TBool32 TMaterialFlags_HasReflectionMap : 1;
- TBool32 TMaterialFlags_HasSpecularMap   : 1;
- TBool32 TMaterialFlags_HasNormalMap     : 1;
- TBool32 TMaterialFlags_HasDiffuseMap    : 1;
- TBool32 TMaterialFlags_DisableBloom     : 1;
- TBool32 TMaterialFlags_Flag40000Crash   : 1;
- TBool32 TMaterialFlags_HasOutline       : 1;
- TBool32 TMaterialFlags_HasAttributes    : 1;
- TBool32 TMaterialFlags_CastShadow       : 1;
- TBool32 TMaterialFlags_ReceiveShadow    : 1;
- TBool32 TMaterialFlags_Flag2000         : 1;
- TBool32 TMaterialFlags_PurpleWireframe  : 1;
- TBool32 TMaterialFlags_EnableLight2     : 1;
- TBool32 TMaterialFlags_Flag400          : 1;
- TBool32 TMaterialFlags_Flag200          : 1;
- TBool32 TMaterialFlags_Flag100          : 1;
- TBool32 TMaterialFlags_EnableLight      : 1;
- TBool32 TMaterialFlags_Flag40           : 1;
- TBool32 TMaterialFlags_Flag20           : 1;
- TBool32 TMaterialFlags_Flag10Crash      : 1;
- TBool32 TMaterialFlags_Flag8            : 1;
- TBool32 TMaterialFlags_Flag4            : 1;
- TBool32 TMaterialFlags_Flag2            : 1;
- TBool32 TMaterialFlags_Flag1            : 1;
+    TBool32 TMaterialFlags_Bit31            : 1;
+    TBool32 TMaterialFlags_Bit30            : 1;
+    TBool32 TMaterialFlags_Bit29            : 1;
+    TBool32 TMaterialFlags_HasShadowMap     : 1;
+    TBool32 TMaterialFlags_HasDetailMap     : 1;
+    TBool32 TMaterialFlags_HasNightMap      : 1;
+    TBool32 TMaterialFlags_HasGlowMap       : 1;
+    TBool32 TMaterialFlags_HasHighlightMap  : 1;
+    TBool32 TMaterialFlags_HasReflectionMap : 1;
+    TBool32 TMaterialFlags_HasSpecularMap   : 1;
+    TBool32 TMaterialFlags_HasNormalMap     : 1;
+    TBool32 TMaterialFlags_HasDiffuseMap    : 1;
+    TBool32 TMaterialFlags_DisableBloom     : 1;
+    TBool32 TMaterialFlags_Bit18            : 1;
+    TBool32 TMaterialFlags_HasOutline       : 1;
+    TBool32 TMaterialFlags_HasAttributes    : 1;
+    TBool32 TMaterialFlags_CastShadow       : 1;
+    TBool32 TMaterialFlags_ReceiveShadow    : 1;
+    TBool32 TMaterialFlags_Bit13            : 1;
+    TBool32 TMaterialFlags_PurpleWireframe  : 1;
+    TBool32 TMaterialFlags_EnableLight2     : 1;
+    TBool32 TMaterialFlags_Bit10            : 1;
+    TBool32 TMaterialFlags_Bit9             : 1;
+    TBool32 TMaterialFlags_Bit8             : 1;
+    TBool32 TMaterialFlags_EnableLight      : 1;
+    TBool32 TMaterialFlags_Bit6             : 1;
+    TBool32 TMaterialFlags_Bit5             : 1;
+    TBool32 TMaterialFlags_HasVertexColors  : 1;
+    TBool32 TMaterialFlags_Bit3             : 1;
+    TBool32 TMaterialFlags_Bit2             : 1;
+    TBool32 TMaterialFlags_Bit1             : 1;
+    TBool32 TMaterialFlags_Bit0             : 1;
 } TMaterialFlags;
 
 typedef struct
@@ -334,10 +340,12 @@ typedef struct(u32 version)
     s16 Field5C;
     TMaterialMapsTexcoord TexcoordFlags;
     TMaterialMapsTexcoord TexcoordFlags;
-    s16 Field50;
-    {
-        u32 Field98<format=hex>;
-    }
+	if ( version <= 0x01104800 )
+	{
+		u16 Field74;
+	}
+    TBool16 DisableBackfaceCulling;
+    u32 Field98<format=hex>;
 
     if (MaterialFlags.TMaterialFlags_HasDiffuseMap    ) struct TTextureMap DiffuseMap( version );
     if (MaterialFlags.TMaterialFlags_HasNormalMap     ) struct TTextureMap NormalMap( version );
@@ -365,10 +373,10 @@ typedef struct(u32 version)
             switch ( ( enum EMaterialAttributeType )( attributeHeader & 0xFFFF ) )
             {
                 case EMaterialAttributeType_ToonShading: struct TMaterialAttributeToonShading Attribute( version ); break;
-                case EMaterialAttributeType_Type1: struct TMaterialAttributeType1 Attribute( version ); break;
+                case EMaterialAttributeType_InnerGlow: struct TMaterialAttributeInnerGlow Attribute( version ); break;
                 case EMaterialAttributeType_Outline: struct TMaterialAttributeOutline Attribute( version ); break;
                 case EMaterialAttributeType_Type3: struct TMaterialAttributeType3 Attribute( version ); break;
-                case EMaterialAttributeType_Type4: struct TMaterialAttributeType4 Attribute( version ); break;
+                case EMaterialAttributeType_Type4: struct TMaterialAttributeScrollingTexture Attribute( version ); break;
                 case EMaterialAttributeType_Type5: struct TMaterialAttributeType5 Attribute( version ); break;
                 case EMaterialAttributeType_Type6: struct TMaterialAttributeType6 Attribute( version ); break;
                 case EMaterialAttributeType_Type7: struct TMaterialAttributeType7 Attribute( version ); break;
@@ -533,7 +541,7 @@ typedef struct(u32 version)
     SetBackColorToShadeOfLastColor( 0x10 );
 
     TMaterialAttributeHeader Header;
-    Assert( Header.Type == EMaterialAttributeType_Type1 );
+    Assert( Header.Type == EMaterialAttributeType_InnerGlow );
 
     TVector4 Field0C;
     f32 Field1C;
@@ -544,38 +552,38 @@ typedef struct(u32 version)
 
     if ( version <= 0x1104500 )
     {
-        local EMaterialAttributeType1Flags Flags;
+        local EMaterialAttributeInnerGlowFlags Flags;
 
         bool Flag1;
         if ( Flag1 )
-            Flags |= EMaterialAttributeType1Flags_Bit0;
+            Flags |= EMaterialAttributeInnerGlowFlags_Bit0;
 
         if ( version > 0x1104180 )
         {
             bool Flag2;
             if ( Flag2 )
-                Flags |= EMaterialAttributeType1Flags_Bit1;
+                Flags |= EMaterialAttributeInnerGlowFlags_Bit1;
         }
 
         if ( version > 0x1104210 )
         {
             bool Flag4;
             if ( Flag4 )
-                Flags |= EMaterialAttributeType1Flags_Bit2;
+                Flags |= EMaterialAttributeInnerGlowFlags_Bit2;
         }
 
         if ( Version > 0x1104400 )
         {
             bool Flag8;
             if ( Flag8 )
-                Flags |= EMaterialAttributeType1Flags_Bit3;
+                Flags |= EMaterialAttributeInnerGlowFlags_Bit3;
         }
     }
     else
     {
-        EMaterialAttributeType1Flags Flags;
+        EMaterialAttributeInnerGlowFlags Flags;
     }
-} TMaterialAttributeType1 <optimize=false>;
+} TMaterialAttributeInnerGlow <optimize=false>;
 
 typedef struct(u32 version)
 {
@@ -584,7 +592,7 @@ typedef struct(u32 version)
     TMaterialAttributeHeader Header;
     Assert( Header.Type == EMaterialAttributeType_Outline );
 
-    s32 Type;
+    s32 Category;
     s32 Color;
 } TMaterialAttributeOutline;
 
@@ -632,7 +640,7 @@ typedef struct(u32 version)
     f32 Field54;
     f32 Field58;
     s32 Field5C;
-} TMaterialAttributeType4;
+} TMaterialAttributeScrollingTexture;
 
 typedef struct(u32 version)
 {
@@ -997,10 +1005,12 @@ typedef struct
     u32 BlendAnimationCount;
     if ( BlendAnimationCount > 0 )
         struct TAnimation BlendAnimation( Header.Version )[ BlendAnimationCount ];
-    
-    if ( Flags & EAnimationPackFlags_Flag4 )
+    if ( Header.Version > 0x1104950 )
     {
-        struct TAnimationExtraData ExtraData( Header.Version );
+        if ( Flags & EAnimationPackFlags_Flag4 )
+        {
+            struct TAnimationExtraData ExtraData( Header.Version );
+        }
     }
 } TAnimationPack <optimize=false>;
 
@@ -1058,7 +1068,7 @@ typedef struct( u32 version )
     {
         struct TEpl Epl( version );
         THashString Field04( version );
-    } Entries( version )[ Count ];
+    } Entries( version )[ Count ] <optimize=false>;
 } TAnimationFlagsFlag10000000Data <optimize=false>;
 
 typedef struct( u32 version )
@@ -1843,7 +1853,7 @@ typedef struct( u32 version )
 // verified
 typedef struct( u32 version )
 {
-    struct TEplLeafSharedData5 Field64;
+    struct TEplLeafCommonData5 Field64;
     TVector2 FieldB8;
     TVector2 FieldC0;
     f32 FieldC8;
@@ -1875,10 +1885,10 @@ typedef struct( u32 version )
     if ( version > 0x1104170 )
         f32 Field138;
 
-    struct TEplLeafSharedData6 Field10;
-    struct TEplLeafSharedData6 Field74;
-    struct TEplLeafSharedData6 FieldD8;
-    struct TEplParticleEmitter Field140;
+    struct TEplLeafCommonData6 Field10;
+    struct TEplLeafCommonData6 Field74;
+    struct TEplLeafCommonData5 FieldD8;
+    struct TEplParticleEmitter Field140(version, Type);
     bool HasEmbeddedFile;
 
     if ( HasEmbeddedFile )
@@ -2103,8 +2113,8 @@ typedef struct( u32 version )
     TVector2 Field14;
     struct TEplLeafCommonData5 FieldEC;
     f32 Field1C;
-    struct TEplLeafCommonData5 Field24;
-    struct TEplLeafCommonData5 Field88;
+    struct TEplLeafCommonData6 Field24;
+    struct TEplLeafCommonData6 Field88;
     f32 Field140;
     f32 Field144;
     f32 Field148;
@@ -2180,8 +2190,8 @@ typedef struct( u32 version )
         u32 Field00;
     }
 
-    struct TEplParticleEmitter ParticleEmittter;
-    struct TEplEmbeddedFile EmbeddedFile;
+    struct TEplParticleEmitter ParticleEmittter(version, Type);
+    struct TEplEmbeddedFile EmbeddedFile(version);
 } TEplDirectionalParticles;
 
 typedef struct( u32 version )
@@ -2508,10 +2518,10 @@ typedef struct
 
 typedef struct( u32 version )
 {
-	f32 Field34;
+	f32 MotionScale;
 	f32 Field38;
 	f32 Field3C;
-	f32 Field40;
+	f32 SpringRate;
 	TBool8 hasName;
 	if (hasName > 0)
 	{
@@ -2523,15 +2533,15 @@ typedef struct( u32 version )
 		f32 Field10;
 	}
 	
-}TEntryType1<name = "Type 1 Entry">;
+}TEntryType1<name = "Bone Dictionary">;
 
 typedef struct( u32 version )
 {
-	u16 Field94;
-	f32 field84;
-	if (Field94 == 1)
+	u16 CapsuleType;
+	f32 CapsuleRadius;
+	if (CapsuleType == 1)
 	{
-		f32 Field88;
+		f32 CapsuleHeight;
 	}
 	TMatrix4x4 Field8C;
 	TBool8 hasName;
@@ -2539,16 +2549,16 @@ typedef struct( u32 version )
 	{
 		THashString Name( version );
 	}
-}TEntryType2<name = "Type 2 Entry">;
+}TEntryType2<name = "Collision Capsules">;
 
 typedef struct{
-	f32 Field00;
+	f32 Gravity;
 	f32 Field04;
 	
-	f32 field08;
+	f32 BoneThickness;
 	u16 parentBone;
 	u16 childBone;
-}TEntryType3<name = "Type 3 Entry">;
+}TEntryType3<name = "Bone Collections">;
 
 typedef struct(u32 count, u32 version) {
 	local u32 i<hidden=true>;
@@ -2606,9 +2616,9 @@ typedef struct
 
     TChunkHeader ChunkHeader;
     TChunkTypePhysicsDictionaryHeader Header;
-    TEntryType1Wrapper Type1Entries(Header.Entry1Count, ChunkHeader.Version)<name = "Entry Type 1 List">;
-    TEntryType2Wrapper Type2Entries(Header.Entry2Count, ChunkHeader.Version)<name = "Entry Type 2 List">;
-    TEntryType3Wrapper Type3Entries(Header.Entry3Count)<name = "Entry Type 3 List">;
+    TEntryType1Wrapper Type1Entries(Header.Entry1Count, ChunkHeader.Version)<name = "Bone Dictionary List">;
+    TEntryType2Wrapper Type2Entries(Header.Entry2Count, ChunkHeader.Version)<name = "Collision Capsules List">;
+    TEntryType3Wrapper Type3Entries(Header.Entry3Count)<name = "Bone Collections List">;
 } TPhysicsDictionary <optimize=false>;
 //
 // -- Physics Data Chunk End --
@@ -2913,5 +2923,5 @@ else if ( Stricmp( fileExt, ".BFL" ) == 0 )
 //}
 else
 {
-    TModelPackFile File;
+    TModelPackFile File <optimize=false>;
 }

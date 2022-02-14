@@ -1,0 +1,33 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: kf_event.bin
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+typedef struct
+{
+  int flags;
+  short kfe_major;
+  short kfe_minor;
+  int field_8; // always 0
+  short fld_major;
+  byte fld_minor;
+  byte fld_div;
+  int field_10; // always 0
+} kf_entry <optimize=false, read=Str(
+  "0x%X kfe%03d_%03d %d f%03d_%03d %d %d",
+  flags,
+  kfe_major, kfe_minor,
+  field_8,
+  fld_major, fld_minor, fld_div,
+  field_10
+)>;
+
+LittleEndian();
+kf_entry data[ FileSize() / 20 ];

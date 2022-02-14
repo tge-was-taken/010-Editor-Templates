@@ -4,6 +4,12 @@ typedef enum<byte>
     EBool8_True = 1,
 } TBool8;
 
+typedef enum<u16>
+{
+    EBool16_False = 0,
+    EBool16_True = 1,
+} TBool16;
+
 typedef enum<u32>
 {
     EBool32_False = 0,
@@ -85,25 +91,25 @@ typedef enum<u32>
 
 typedef enum<u32>
 {
-    EMaterialFlags_Flag1            = 1 << 0,
-    EMaterialFlags_Flag2            = 1 << 1,
-    EMaterialFlags_Flag4            = 1 << 2,
-    EMaterialFlags_Flag8            = 1 << 3,
-    EMaterialFlags_Flag10Crash      = 1 << 4,
-    EMaterialFlags_Flag20           = 1 << 5,
-    EMaterialFlags_Flag40           = 1 << 6,
+    EMaterialFlags_Bit0             = 1 << 0,
+    EMaterialFlags_Bit1             = 1 << 1,
+    EMaterialFlags_Bit2             = 1 << 2,
+    EMaterialFlags_Bit3             = 1 << 3,
+    EMaterialFlags_HasVertexColors  = 1 << 4,
+    EMaterialFlags_Bit5             = 1 << 5,
+    EMaterialFlags_Bit6             = 1 << 6,
     EMaterialFlags_EnableLight      = 1 << 7,
-    EMaterialFlags_Flag100          = 1 << 8,
-    EMaterialFlags_Flag200          = 1 << 9,
-    EMaterialFlags_Flag400          = 1 << 10,
+    EMaterialFlags_Bit8             = 1 << 8,
+    EMaterialFlags_Bit9             = 1 << 9,
+    EMaterialFlags_Bit10            = 1 << 10,
     EMaterialFlags_EnableLight2     = 1 << 11,
     EMaterialFlags_PurpleWireframe  = 1 << 12,
-    EMaterialFlags_Flag2000         = 1 << 13,
+    EMaterialFlags_Bit13            = 1 << 13,
     EMaterialFlags_ReceiveShadow    = 1 << 14,
     EMaterialFlags_CastShadow       = 1 << 15,
     EMaterialFlags_HasAttributes    = 1 << 16,
-    TMaterialFlags_HasOutline       = 1 << 17,
-    EMaterialFlags_Flag40000Crash   = 1 << 18,
+    EMaterialFlags_HasOutline       = 1 << 17,
+    EMaterialFlags_Bit18            = 1 << 18,
     EMaterialFlags_DisableBloom     = 1 << 19,
     EMaterialFlags_HasDiffuseMap    = 1 << 20,
     EMaterialFlags_HasNormalMap     = 1 << 21,
@@ -114,9 +120,9 @@ typedef enum<u32>
     EMaterialFlags_HasNightMap      = 1 << 26,
     EMaterialFlags_HasDetailMap     = 1 << 27,
     EMaterialFlags_HasShadowMap     = 1 << 28,
-    EMaterialFlags_Flag20000000Crash= 1 << 29,
-    EMaterialFlags_Flag40000000     = 1 << 30,
-    EMaterialFlags_Flag80000000     = 1u << 31
+    EMaterialFlags_Bit29            = 1 << 29,
+    EMaterialFlags_Bit30            = 1 << 30,
+    EMaterialFlags_Bit31            = 1 << 31
 } EMaterialFlags;
 
 typedef enum<u32>
@@ -134,7 +140,7 @@ typedef enum<u8>
 typedef enum<u32>
 {
     EMaterialAttributeType_ToonShading = 0,
-    EMaterialAttributeType_Type1 = 1,
+    EMaterialAttributeType_InnerGlow = 1,
     EMaterialAttributeType_Outline = 2,
     EMaterialAttributeType_Type3 = 3,
     EMaterialAttributeType_Type4 = 4,
@@ -159,11 +165,11 @@ typedef enum<u32>
 
 typedef enum<u32>
 {
-    EMaterialAttributeType1Flags_Bit0 = 1 << 0,
-    EMaterialAttributeType1Flags_Bit1 = 1 << 1,
-    EMaterialAttributeType1Flags_Bit2 = 1 << 2,
-    EMaterialAttributeType1Flags_Bit3 = 1 << 3,
-} EMaterialAttributeType1Flags;
+    EMaterialAttributeInnerGlowFlags_Bit0 = 1 << 0,
+    EMaterialAttributeInnerGlowFlags_Bit1 = 1 << 1,
+    EMaterialAttributeInnerGlowFlags_Bit2 = 1 << 2,
+    EMaterialAttributeInnerGlowFlags_Bit3 = 1 << 3,
+} EMaterialAttributeInnerGlowFlags;
 
 typedef enum<u32>
 {
