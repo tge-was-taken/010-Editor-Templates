@@ -554,7 +554,7 @@ typedef struct
     if ( AnimationCastTableOffset.isValid )
     {
         // We apologise for the fault in the subtitles. 
-        // Those responsible have been sacked. Mynd you, møøse bites Kan be pretti nasti... 
+        // Those responsible have been sacked. Mynd you, mÃ¸Ã¸se bites Kan be pretti nasti... 
         // We apologise again for the fault in the subtitles. 
         // Those responsible for sacking the people who have just been sacked have been sacked.
 
@@ -781,11 +781,11 @@ typedef struct
             u32 Width; // [0x10, 0x98] info_rings unaffected
             u32 Height; // [0x10, 0x1B] info_rings unaffected
             u32 Field58; // [6], info_rings unaffected
-            u32 Field5C; // [0, 3], info_rings unaffected
+            u32 ScaleType; // [0, 3], info_rings unaffected, 00 for resolution based scaling, 01 for vertical, 02 for horizontal, and 03 for stretched HUD
             TVector2 Offset; // X = left Y = top
             f32 Field68; // -400, info_rings unaffected
             f32 Field6C; // -1, info_rings unaffected
-            u32 Field70; // [0, 2], info_rings unaffected
+            u32 ScaleType2; // same as offset 0x5C.
 
 //            Assert( Field00 == 3 );
             //failed: Assert( Field04 == 1 );
