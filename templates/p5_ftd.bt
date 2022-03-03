@@ -206,6 +206,10 @@ typedef struct( u32 entrySize, string fileName )
 			fldMapTable data;
             break;
 			
+		case "fldWholeMapTableDng":
+			fldMapTable data;
+            break;
+			
         default:
             u8 Data[ entrySize ];
             break;
