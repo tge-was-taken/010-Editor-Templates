@@ -126,6 +126,52 @@ typedef struct( string fileName )
     }
 } FtdList <name = "List">;
 
+enum<short> travelType
+{
+	Go_To_Field = 26,
+	Go_To_Hideout = 31,
+	Go_To_Safe_Room = 10,
+	Open_Map = 32,
+};
+
+typedef struct
+{
+	char fldName[32] <name = "Field Name">;
+	u16 fldMajor <name = "Field Major ID">;
+	u16 fldMinor <name = "Field Minor ID">;
+	u16 fldEntrance <name = "FBN Entrance ID">;
+	u16 fldSub <name = "Field Sub ID">; 
+	u16 Field28;
+	travelType Travel_Type <name = "Travel Type">;
+	u16 Field2C;
+	u16 Field2E;
+}fldMapEntry <read = mapTableRead, name = "Field Entry">;
+
+typedef struct
+{
+	fldMapEntry entry[964 / 48] <optimize = false>;
+	u16 Field3C0;
+	u16 Field3C2;
+}fldMapTable;
+
+typedef struct
+{
+	u32 Field20;
+	u32 DataSize;
+	u32 EntryCount;
+	u16 EntryType;
+	u16 Field2E;
+	fldMapTable data[EntryCount];
+}fldWholeMapList;
+
+string mapTableRead( fldMapEntry &o )
+{
+	local int i;
+	local string s;
+	SPrintf( s, "%s", o.fldName );
+	return s;
+}
+
 typedef struct( u32 entrySize, string fileName )
 {
     SetRandomBackColor();
@@ -155,7 +201,11 @@ typedef struct( u32 entrySize, string fileName )
         case "fclCombElectItemTable":
             Table_fclCombElectItem Itemization;
             break;
-
+			
+		case "fldWholeMapTable":
+			fldMapTable data;
+            break;
+			
         default:
             u8 Data[ entrySize ];
             break;
