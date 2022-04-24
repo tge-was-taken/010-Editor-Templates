@@ -181,7 +181,7 @@ typedef struct
     Assert( Field0C == 0 );
     Assert( RootNodeOffset.Offset == 0x20 );
     Assert( ProjectName.Offset == 0x38 );
-    Assert( DXLSignature == 0x2E44584C );
+//    Assert( DXLSignature == 0x2E44584C );
     Assert( FontListOffset.Offset == 0x40 );
 
     if ( RootNodeOffset.isValid )
@@ -761,23 +761,21 @@ typedef struct
         struct
         {
             u32 Field00; // info_rings doesnt show if not 2 or 3
-            u32 Field04; // 0 in info_rings, but if 1 a white box shows in the center of the screen
+            u32 DrawType; // None (0), Sprite (1), Font (2)
             u32 IsEnabled; // info_rings doesnt show if not 1
-            TVector2 Field0C; // [-0.00625,-0.01111111], doesnt affect info_rings
-            TVector2 Field14; // [-0.00625,-0.01111111], doesnt affect info_rings
-            TVector2 Field1C; // [-0.00625,-0.01111111], doesnt affect info_rings
-            TVector2 Field24; // [-0.00625,-0.01111111], doesnt affect info_rings
-            u16 Field2C; // 7FFFh, doesnt affect info_rings
-            u16 Field2E; // 0
-            TNNOffset Field30(0);
-            u16 Field34; // 7FFFh, doesnt affect info_rings
-            u16 Field36; // 0
+            TVector2 TopLeft; // [-0.00625,-0.01111111], doesnt affect info_rings
+            TVector2 BottomLeft; // [-0.00625,-0.01111111], doesnt affect info_rings
+            TVector2 TopRight; // [-0.00625,-0.01111111], doesnt affect info_rings
+            TVector2 BottomRight; // [-0.00625,-0.01111111], doesnt affect info_rings
+            u32 Field2C; // 7FFFh, doesnt affect info_rings
+            TNNOffset CastInfoOffset(0);
+            u32 Field34; // 7FFFh, doesnt affect info_rings
             u32 Field38; // 51000h, Bitfield, doesnt affect info_rings
             u32 Field3C; // 0x20, info_rings unaffected
-            TNNOffset Field40(0);
+            TNNOffset CastMaterialInfoOffset(0);
             TNNStringOffset FontCharactersOffset(0); // eg: "01234567", string or null terminated, cant find a count for this
             TNNStringOffset FontNameOffset(0); // eg: "font_count1"
-            u32 Field4C; // 0, BB 19 99 9A, 2 half floats?
+            u32 FontSpacingCorrection; // 0, BB 19 99 9A, 2 half floats?
             u32 Width; // [0x10, 0x98] info_rings unaffected
             u32 Height; // [0x10, 0x1B] info_rings unaffected
             u32 Field58; // [6], info_rings unaffected
@@ -791,18 +789,18 @@ typedef struct
             //failed: Assert( Field04 == 1 );
             //Assert( IsVisible == 1 );
         
-//            Assert( Field30.absPosition - Field40.absPosition == 0x80 );
+//            Assert( CastInfoOffset.absPosition - CastMaterialInfoOffset.absPosition == 0x80 );
 
             FPush();
 
-            if ( Field30.isValid )
+            if ( CastInfoOffset.isValid )
             {
-                FSeek( Field30.absPosition );
+                FSeek( CastInfoOffset.absPosition );
                 struct
                 {
                     f32 Field00; // info_rings doesnt show if not 0 
                     // -0.3125, info_rings unaffected
-                    TVector2 Offset; // higher value = lower position
+                    TVector2 Translation; // higher value = lower position
                     f32 Rotation; // 0, info_rings unaffected
                     TVector2 Scale;
                     f32 Field18;
@@ -814,12 +812,12 @@ typedef struct
                     u32 Field30; // 0, info_rings unaffected
                     u32 Field34; // 0, info_rings unaffected
                     u32 Field38; // 0, info_rings unaffected
-                } Field30Data;
+                } CastInfo;
             }
 
-            if ( Field40.isValid )
+            if ( CastMaterialInfoOffset.isValid )
             {
-                FSeek( Field40.absPosition );
+                FSeek( CastMaterialInfoOffset.absPosition );
                 struct
                 {
                     s32 TextureIndex;
@@ -854,7 +852,7 @@ typedef struct
                     s32 field_74;
                     s32 field_78;
                     s32 field_7C;
-                } Field40Data;
+                } CastMaterialInfo;
             }
 
             FPop();
