@@ -4,6 +4,27 @@ enum<u16> FtdListType
     FtdListType_EmbeddedFtd,
 };
 
+enum<ubyte> ItemType
+{
+	Melee_Weapons = 0,
+	Armor = 0x10,
+	Accessories = 0x20,
+	Consumables = 0x30,
+	Key_Items = 0x40,
+	Materials = 0x50,
+	Skill_Cards = 0x60,
+	Outfits = 0x70,
+	Ranged_Weapons = 0x80,
+};
+enum<short> travelType
+{
+	Go_To_Field = 26,
+	Go_To_Hideout = 31,
+	Go_To_Safe_Room = 10,
+    Mementos_Overview = 9,
+	Open_Map = 32,
+};
+
 enum<short> ConfidantFunction_Type
 {
     Battle_ConfidantFunction = 0,

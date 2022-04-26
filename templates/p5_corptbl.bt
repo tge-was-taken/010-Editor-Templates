@@ -1,0 +1,109 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: p5_corptbl.tbl
+//   Authors: SecreC.
+//   Version: 1.0
+//   Purpose: 
+//  Category: Persona 5
+// File Mask: corptbl.tbl
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "common/include.h"
+
+typedef struct
+{
+  s32 Disable_Turn_To_Joker : 1;
+  s32 NPC_Interaction_Type_Bit01 : 1;
+  s32 NPC_Interaction_Type_Bit02 : 1;
+  s32 NPC_Interaction_Type_Bit03 : 1;
+  s32 NPC_Interaction_Type_Bit04 : 1;
+  s32 Disable_Name_Tag : 1;
+  s32 NPC_Interaction_Type_Bit06 : 1;
+  s32 NPC_Interaction_Type_Bit07 : 1;
+  s32 Listen_Type_Prompt : 1;
+  s32 NPC_Interaction_Type_Bit09 : 1;
+  s32 NPC_Interaction_Type_Bit10 : 1;
+  s32 NPC_Interaction_Type_Bit11 : 1;
+  s32 NPC_Interaction_Type_Bit12 : 1;
+  s32 NPC_Interaction_Type_Bit13 : 1;
+  s32 NPC_Interaction_Type_Bit14 : 1;
+  s32 NPC_Interaction_Type_Bit15 : 1;
+  s32 NPC_Interaction_Type_Bit16 : 1;
+  s32 NPC_Interaction_Type_Bit17 : 1;
+  s32 NPC_Interaction_Type_Bit18 : 1;
+  s32 NPC_Interaction_Type_Bit19 : 1;
+  s32 NPC_Interaction_Type_Bit20 : 1;
+  s32 NPC_Interaction_Type_Bit21 : 1;
+  s32 NPC_Interaction_Type_Bit22 : 1;
+  s32 NPC_Interaction_Type_Bit23 : 1;
+  s32 NPC_Interaction_Type_Bit24 : 1;
+  s32 NPC_Interaction_Type_Bit25 : 1;
+  s32 NPC_Interaction_Type_Bit26 : 1;
+  s32 NPC_Interaction_Type_Bit27 : 1;
+  s32 NPC_Interaction_Type_Bit28 : 1;
+  s32 NPC_Interaction_Type_Bit29 : 1;
+  s32 NPC_Interaction_Type_Bit30 : 1;
+  s32 NPC_Interaction_Type_Bit31 : 1;
+} NPC_Hit_Flags;
+
+typedef struct
+{
+	LittleEndian();
+	u16 FBN_NPC_ID;
+	u16 Field02;
+	u16 Field04;
+	u16 Field06;
+	u32 Field08;
+	s32 Field0C[22] <name = "Bitflags">;
+	u16 Field_MajorId <name = "Field Major Id">;
+	u8 Field_MinorId <name = "Field Minor Id">;
+	u8 Field_SubId <name = "Field Sub Id">;
+	u16 Resource_NPC_ID <name = "NPC Resource TBL Id">;
+	s32 Field6A;
+	u16 Field6E <name = "Animation ID">;
+	u32 Field70;
+	s32 Field74 <name = "BF Init Procedure Index?">;
+	s16 Field78;
+	s16 Field7A;
+	f32 Field7C;
+	f32 Field80;
+	f32 Field84;
+	f32 Field88;
+	f32 Field8C;
+	f32 Field90;
+	s32 Field94;
+	NPC_Hit_Flags Interaction_Flags;  
+	f32 Field9C;
+	f32 FieldA0;
+	s32 FieldA4 <name = "Interact Name ID">;
+	s32 ExtraBitFlag1;
+	s32 ExtraBitFlag2;
+	s32 MainProcedureID;
+	BigEndian();
+}table <read=table_read, name = "Corp Table Entry">;
+
+typedef struct
+{
+	SetBackColor( MyRandom( 0xFFFFFFFF ) );
+	char corptblname[14] <name = "Entry Name">;
+	u8 padding[20]<hidden = true>;
+	u16 segSize <name = "Segment Size">;
+	Printf("Segment Size: %d\n", segSize );
+	table data[segSize / 180] <optimize=false>;
+	s8 extra[segSize % 180];
+	Printf("Extra Bytes: %d\n", segSize % 180 );
+}main <name = "Corpfile Struct">;
+
+BigEndian();
+SetBackColor( MyRandom( 0xFFFFFFFF ) );
+int Total_Entries <name = "Total Entries">;
+main data[Total_Entries] <optimize=false>;
+
+string table_read( table &o )
+{
+  local string s;
+  SPrintf( s, "FBN ID %05d; Resource ID %05d", o.FBN_NPC_ID, o.Resource_NPC_ID );
+  return s;
+}

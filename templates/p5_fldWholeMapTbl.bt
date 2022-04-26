@@ -1,0 +1,74 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "common/include.h"
+
+enum<short> travelType
+{
+	Go_To_Field = 26,
+	Go_To_Hideout = 31,
+	Go_To_Safe_Room = 10,
+	Open_Map = 32,
+};
+typedef struct
+{
+	char fldName[32] <name = "Field Name">;
+	u16 fldMajor <name = "Field Major ID">;
+	u16 fldMinor <name = "Field Minor ID">;
+	u16 fldEntrance <name = "Field Entrance ID">;
+	u16 fldSub <name = "Field Sub ID">; 
+	u16 Field28 <name = "bf Procedure ID">;
+	travelType Travel_Type <name = "Travel Type">;
+	u16 Field2C;
+	u16 Field2E;
+}fldEntry <read =tableRead, name = "Field Entry">;
+
+typedef struct
+{
+	u32 Field00;
+	u32 Magic;
+	u32 FileSize;
+	u16 DataType;
+	u16 DataCount;
+	u32 DataOffsets;
+	u8 padding[12] <hidden = true>;
+	
+}header;
+
+typedef struct
+{
+	fldEntry entry[964 / 48] <optimize = false>;
+	u16 Something1;
+	u16 Something2;
+}table;
+
+typedef struct
+{
+	u32 Field20;
+	u32 DataSize;
+	u32 EntryCount;
+	u16 EntryType;
+	u16 Field2E;
+	table data[EntryCount];
+}fldWholeMapList;
+
+BigEndian();
+header data;
+fldWholeMapList data;
+
+string tableRead( fldEntry &o )
+{
+	local int i;
+	local string s;
+	SPrintf( s, "%s", o.fldName );
+	return s;
+}
