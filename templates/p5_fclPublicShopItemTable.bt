@@ -25,7 +25,7 @@ typedef struct
     u16 DataCount <name = "Data Count">;
     u32 DataOffsets[ DataCount ] <name = "Data Offsets">;
 	u8 zerobyte[12]<hidden = true>;
-	u32 Field00 <name = "Field 00">;        Assert( Field00 == 0 );
+	u32 Field00 <name = "Field 00">;
     u32 DataSize <name = "Data Size">;
     u32 EntryCount <name = "Entry Count">;
     FtdListType EntryType <name = "Entry Type">;
