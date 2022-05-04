@@ -62,7 +62,7 @@ struct SpriteEntry;
 typedef struct
 {
     SetRandomBackColor();
-
+    LittleEndian();
 	char Magic[4];      // 'SPR0'
 	u32 Field04;        // always 2, maybe version
 	u32 FileSize;

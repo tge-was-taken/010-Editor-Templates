@@ -1,0 +1,103 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+// File Mask: fnt.bin
+// Authors: DeathChaos, Lipsum, Cherry, Sierra
+//------------------------------------------------
+
+#include "common/include.h"
+
+LittleEndian();
+
+typedef struct
+{
+    s32 Static_Rotation : 1; //NPC's won't face joker on interaction
+    s32 NPC_Interaction_Type_Bit01 : 1; //idk
+    s32 NPC_Interaction_Type_Bit02 : 1; //idk
+    s32 NPC_Interaction_Type_Bit03 : 1; //idk
+    s32 NPC_Interaction_Type_Bit04 : 1; //idk
+    s32 No_Name_Tag_Prompt : 1; //Disables nametag prompt (but not the hit event) 
+    s32 NPC_Interaction_Type_Bit06 : 1; //idk
+    s32 NPC_Interaction_Type_Bit07 : 1; //idk
+    s32 Mark_NPC_As_Listenable : 1; //Replaces "Talk" with "Listen", turns joker sideways, plays "Hmm?" when nearby.
+    s32 NPC_Interaction_Type_Bit09 : 1;
+    s32 NPC_Interaction_Type_Bit10 : 1;
+    s32 NPC_Interaction_Type_Bit11 : 1;
+    s32 NPC_Interaction_Type_Bit12 : 1;
+    s32 NPC_Interaction_Type_Bit13 : 1;
+    s32 NPC_Interaction_Type_Bit14 : 1;
+    s32 NPC_Interaction_Type_Bit15 : 1;
+    s32 NPC_Interaction_Type_Bit16 : 1;
+    s32 NPC_Interaction_Type_Bit17 : 1;
+    s32 NPC_Interaction_Type_Bit18 : 1;
+    s32 NPC_Interaction_Type_Bit19 : 1;
+    s32 NPC_Interaction_Type_Bit20 : 1;
+    s32 NPC_Interaction_Type_Bit21 : 1;
+    s32 NPC_Interaction_Type_Bit22 : 1;
+    s32 NPC_Interaction_Type_Bit23 : 1;
+    s32 NPC_Interaction_Type_Bit24 : 1;
+    s32 NPC_Interaction_Type_Bit25 : 1;
+    s32 NPC_Interaction_Type_Bit26 : 1;
+    s32 NPC_Interaction_Type_Bit27 : 1;
+    s32 NPC_Interaction_Type_Bit28 : 1;
+    s32 NPC_Interaction_Type_Bit29 : 1;
+    s32 NPC_Interaction_Type_Bit30 : 1;
+    s32 NPC_Interaction_Type_Bit31 : 1;
+} NPC_Hit_Flags;
+
+typedef struct
+{
+    SetBackColor( ( sus=sus+16 ) + 0xB00B69 );
+	s16 FBN_NPC_ID;                         // Points to numbered FBN Block 14 Entry (NPC Block)
+	s16 Resource_NPC_ID;                    // Points to numbered NPC Resource Table Entry
+	s16 ModelID_Override;                   // Ignores Resource_NPC_ID and directly specifies Model ID
+	s16 NPC_Exist_Group;                    // Links current FNT Entry to data in the NPC Exist Table
+	s16 Field_GAP_MinorID;                  // Specifies Field "A" .GAP 
+	s16 Animation_Index;                    // Specifies .GAP Animation Offset
+	s32 Hit_Procedure_Index;                // Points to a numbered procedure in the .BF on Hit
+	s32 Disabling_Bitflag;                  // Specifies a BitFlag that disables the FNT Entry if TRUE
+	s32 Disabling_Bitflag2;                 // Specifies a BitFlag that disables the FNT Entry if TRUE
+	f32 Hit_Procedure_Radius;               // Specifies the radius of the invisible Hit Prompt Trigger
+	f32 AutoHit_Procedure_Radius;           // Specifies the radius of the Invincible Rainbow Arrow ( Bit! Get! A-Set! )
+	s32 AutoHit_Procedure_Index;            // Points to a numbered procedure in the .BF when in Radius
+	
+    s16 Field_0x24<hidden=true>;
+	s16 Field_0x26<hidden=true>;
+	//s32 P5RNew;                           // IDK WTF this does & at this point, I'm too scared to ask
+	
+    NPC_Hit_Flags Interaction_Flags;        // Specifies Hit Params like facing Joker or Hit prompt
+	f32 Model_Scale;                        // Specifies the scale of the current .GMD
+	f32 Collision_Capsule_Size;             // Specifies the size of the NPC Collis Capsule
+	
+    f32 Field_0x34<hidden=true>;
+	f32 Field_0x38<hidden=true>;
+	s32 Field_0x3C<hidden=true>;
+	s32 Field_0x40<hidden=true>;
+	f32 Field_0x44<hidden=true>;
+	s32 Field_0x48<hidden=true>;
+	s32 Field_0x4C<hidden=true>;
+	
+    s32 PossiblyProcedureIndex2;            // Related in some way to Hit and AutoHit
+	
+    s16 Field_0x54<hidden=true>;
+	s16 Field_0x56<hidden=true>;
+	
+    s32 EnablingBitFlag;                    // Specifies a BitFlag that enables the FNT Entry if TRUE
+	
+    s16 Field_0x5C<hidden=true>;
+	
+    s16 Prompt_Name_Type;                   // Points to small list of potential prompt types
+	s32 NPC_Prompt_Name;                    // Links current NPC to numbered entry in fldNPCName.ftd
+	f32 Interact_Direction_Range;           // Specifies the angles that are valid for Hit
+	
+    s32 Field_0x68<hidden=true>;
+	s32 Field_0x6C<hidden=true>;
+} FNT_NpcTable <optimize=false>;
+
+typedef struct
+{
+  local uint sus = 0;
+  FNT_NpcTable Data[ FileSize() /  0x70 ]; 
+  //change to 0x74 if P5R
+} NpcTable <optimize=false>;
+
+NpcTable Bin;

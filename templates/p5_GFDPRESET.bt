@@ -1,0 +1,158 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h"
+
+typedef struct
+{
+    char magic[4] <name = "Magic">;
+    u32 version <format = hex, name = "Version">;
+    u32 Field08;
+    u32 Field0C;    
+    char magic2[4] <name = "Magic 2">;
+    u32 version2 <format = hex, name = "Version 2">;
+    u32 Field18;
+    u32 Field1C;
+}header;
+
+typedef struct
+{
+    u32 Field20;
+    u16 Field24;
+    u16 Field26;
+    u32 Field28;
+    u32 Field2C;
+    //
+    u32 Field30;
+    f32 Field34;
+    f32 Field38;
+    f32 Field3C;
+	//
+	u32 Field40;
+	u16 Field44;
+	u16 Field46;
+	u16 Field48;
+	u16 Field4a;
+	u32 Field4c;
+    //
+	u32 Field50;
+	u32 Field54;
+	u32 Field58;
+	u32 Field5c;
+    //
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+    //
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+    //
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+    //
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+    //
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+    //
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+    //
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+    //
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+    //
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+    //
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+    //
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	u16 Field60;
+	//
+	byte Field110[3];
+	char Field113[6];
+}struct1;
+
+BigEndian();
+header data;
+struct1 data;

@@ -61,7 +61,7 @@ typedef struct
 	u8 Field_MinorId <name = "Field Minor Id">;
 	u8 Field_SubId <name = "Field Sub Id">;
 	u16 Resource_NPC_ID <name = "NPC Resource TBL Id">;
-	s32 Field6A;
+	s32 Field6A <name = "NPC Resource Override">;
 	u16 Field6E <name = "Animation ID">;
 	u32 Field70;
 	s32 Field74 <name = "BF Init Procedure Index?">;

@@ -1,0 +1,108 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "common/include.h"
+
+typedef struct
+{
+	u16 fldMajor <name = "Field Major ID">;
+	u8 fldMinor <name = "Field Minor ID">;
+	u8 fldSub <name = "Field Sub ID">;
+	u16 Field04;
+	u16 Field06;
+	u16 Field08 <name = "texlist ID?">;
+	u16 Field0a;
+	u16 Field0c;
+	u16 Field0e;
+}roadmap <read=roadmap_table_read, name="roadmap entry">;
+
+typedef struct
+{
+	u16 Field00;
+	u16 Field02;
+	u16 Field04;
+	u16 Field06;
+	u8 Field08;
+	u8 Field09;
+	u8 Field0a;
+	u8 Field0b;
+	u8 Field0c;
+	u8 Field0d;
+	u8 Field0e;
+	u8 Field0f;
+}texelem;
+
+typedef struct
+{
+	u16 fldMajor <name = "Field Major ID">;
+	u8 fldMinor <name = "Field Minor ID">;
+	u8 fldSub <name = "Field Sub ID">;
+	u32 Field38<name = "Amount of Map Layers">;
+	f32 Field3c;
+	u32 Something;
+	f32 Field00;
+	f32 Field04;
+	f32 Field08;
+	f32 Field0c;
+	f32 Field10;
+	f32 Field14;
+	f32 Field18;
+	f32 Field1c;
+	f32 Field20;
+	f32 Field24;
+	f32 Field28;
+	f32 Field2c;
+	f32 Field30;
+}texpack<read=texpack_table_read, name="texpack entry">;
+
+string texpack_table_read( texpack &o )
+{
+  local string s;
+  SPrintf( s, "Field %03d_%03d_%d", o.fldMajor, o.fldMinor, o.fldSub );
+  return s;
+}
+
+string roadmap_table_read( roadmap &o )
+{
+  local string s;
+  SPrintf( s, "Field %03d_%03d_%d", o.fldMajor, o.fldMinor, o.fldSub );
+  return s;
+}
+local int64 fileSize = FileSize();
+local string filePath = GetFileName();
+local string fileName = FileNameGetBase( filePath, false );
+local string fileExt = FileNameGetExtension( filePath );
+
+LittleEndian();
+typedef struct( string fileName, int64 fileSize )
+{
+		switch ( fileName )
+		{
+			case "roadmap":
+			roadmap data[fileSize / 16] <optimize = false>;
+			break;
+			
+			case "texelem":
+			texelem data[fileSize / 16] <optimize = false>;
+			break;
+			
+			case "texlist":
+			u16 Field00[fileSize / 2] <optimize = false, name = "Something ID">;
+			break;
+			
+			case "texpack":
+			texpack data[fileSize / 68] <optimize = false>;
+			break;
+		}
+}roadmapstruct;
+
+roadmapstruct data ( fileName, fileSize );

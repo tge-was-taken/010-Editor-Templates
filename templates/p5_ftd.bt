@@ -178,6 +178,29 @@ typedef struct
 
 typedef struct
 {
+	s32 Field00<name = "Confidant List Placement">;
+	s32 Field04;
+	ConfidantId Field08<name = "CardTex ID plus 1">;
+	u8 Field09;
+	u16 Field0a;
+	s32 Field0c;
+	u16 Field10<name = "Point requirement to Rank 1">;
+	u16 Field12<name = "Point requirement to Rank 2">;
+	u16 Field14<name = "Point requirement to Rank 3">;
+	u16 Field16<name = "Point requirement to Rank 4">;
+	u16 Field18<name = "Point requirement to Rank 5">;
+	u16 Field1a<name = "Point requirement to Rank 6">;
+	u16 Field1c<name = "Point requirement to Rank 7">;
+	u16 Field1e<name = "Point requirement to Rank 8">;
+	u16 Field20<name = "Point requirement to Rank 9">;
+	u16 Field22<name = "Point requirement to Rank 10">;
+	s32 Field24;
+	s32 Field28<name = "Confidant Name Table ID">;
+	u8 Field2c[144];
+}cmmFormat;
+
+typedef struct
+{
 	s32 Field00 <name = "Price Percentage">;
 	s32 Field04;
 	s32 Field08;
@@ -243,6 +266,10 @@ typedef struct( u32 entrySize, string fileName )
 		
 		case "fclPublicShopDataTable":
 			fclPublicShopDataTable Data;
+			break;
+			
+		case "cmmFormat":
+			cmmFormat Data;
 			break;
 			
         default:

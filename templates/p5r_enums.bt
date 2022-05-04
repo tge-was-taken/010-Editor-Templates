@@ -1,500 +1,4 @@
-enum<u16> FtdListType
-{
-    FtdListType_DataEntries,
-    FtdListType_EmbeddedFtd,
-};
-
-enum<ubyte> ItemType
-{
-	Melee_Weapons = 0,
-	Armor = 0x10,
-	Accessories = 0x20,
-	Consumables = 0x30,
-	Key_Items = 0x40,
-	Materials = 0x50,
-	Skill_Cards = 0x60,
-	Outfits = 0x70,
-	Ranged_Weapons = 0x80,
-};
-
-enum<byte> ConfidantId
-{
-	Fool = 1,
-	Magician = 2,
-	Priestess = 3,
-	Empress = 4,
-	Emperor = 5,
-	Hierophant = 6,
-	Lovers = 7,
-	Chariot = 8,
-	Justice = 9,
-	Hermit = 10,
-	Fortune = 11,
-	Strength = 12,
-	Hanged = 13,
-	Death = 14,
-	Temperence = 15,
-	Devil = 16,
-	Tower = 17,
-	Star = 18,
-	Moon = 19,
-	Sun = 20,
-	Judgement = 21,
-};
-
-enum<short> travelType
-{
-	Go_To_Field = 26,
-	Go_To_Hideout = 31,
-	Go_To_Safe_Room = 10,
-    Mementos_Overview = 9,
-	Open_Map = 32,
-};
-
-enum<short> ConfidantFunction_Type
-{
-    Battle_ConfidantFunction = 0,
-    Persona_ConfidantFunction = 1,
-    Party_ConfidantFunction = 2,
-    Shop_ConfidantFunction = 3,
-    SocialLife_ConfidantFunction = 5,
-};
-
-enum<short> ConfidantFunction
-{
-    BLANKFUNC0 = 0,
-    WildTalk_Function = 1,
-    ThirdEye = 2,
-    ArcanaBurst = 3,
-    PowerStock = 4,
-    SuperStock = 5,
-    HighArcanaBurst = 6,
-    BLANKFUNC7 = 7,
-    UltraStock = 8,
-    BLANKFUNC9 = 9,
-    MaxArcanaBurst = 10,
-    InfiltrationTools = 11,
-    FollowUp_Morgana = 12,
-    BatonPass_Morgana = 13,
-    AceTools = 14,
-    KittyTalk_Function = 15,
-    ExpertTools = 16,
-    Endure_Morgana = 17,
-    HarisenRecovery_Morgana = 18,
-    Protect_Morgana = 19,
-    ForbiddenTools = 20,
-    ShadowCalculus = 21,
-    FollowUp_Makoto = 22,
-    BrainiacTalk_Function = 23,
-    ShadowIntegral = 24,
-    BatonPass_Makoto = 25,
-    HarisenRecovery_Makoto = 26,
-    Endure_Makoto = 27,
-    BLANKFUNC28 = 28,
-    Protect_Makoto = 29,
-    ShadowFactorization = 30,
-    HarisenRecovery_Haru = 31,
-    FollowUp_Haru = 32,
-    CelebTalk_Function = 33,
-    BumperCrop = 34,
-    BatonPass_Haru = 35,
-    MishimasDesperation = 36,
-    SoilImprovement = 37,
-    Endure_Haru = 38,
-    Protect_Haru = 39,
-    SalvationWish = 40,
-    NoviceDuplication = 41,
-    FollowUp_Yusuke = 42,
-    ArtistTalk_Function = 43,
-    AdeptDuplication = 44,
-    BatonPass_Yusuke = 45,
-    HarisenRecovery_Yusuke = 46,
-    Endure_Yusuke = 47,
-    MasterDuplication = 48,
-    Protect_Yusuke = 49,
-    BLANKFUNC50 = 50,
-    BLANKFUNC51 = 51,
-    CoffeeBasics = 52,
-    BLANKFUNC53 = 53,
-    CoffeeMastery = 54,
-    LeblancCurry = 55,
-    BLANKFUNC56 = 56,
-    CurryTips = 57,
-    BLANKFUNC58 = 58,
-    CurryMastery = 59,
-    BLANKFUNC60 = 60,
-    HarisenRecovery_Ann = 61,
-    GirlTalk_Function = 62,
-    FollowUp_Ann = 63,
-    CrocodileTears_Function = 64,
-    BatonPass_Ann = 65,
-    SexyTechnique_Function = 66,
-    Endure_Ann = 67,
-    BigAct = 68,
-    Protect_Ann = 69,
-    BLANKFUNC70 = 70,
-    BLANKFUNC71 = 71,
-    BatonPass_Ryuji = 72,
-    FollowUp_Ryuji = 73,
-    HarisenRecovery_Ryuji = 74,
-    PunkTalk_Function = 75,
-    BLANKFUNC76 = 76,
-    Endure_Ryuji = 77,
-    Pickpocket_Function = 78,
-    Protect_Ryuji = 79,
-    InstaKill = 80,
-    BLANKFUNC81 = 81,
-    BLANKFUNC82 = 82,
-    BLANKFUNC83 = 83,
-    BLANKFUNC84 = 84,
-    HarisenRecovery_Akechi = 85,
-    FollowUp_Akechi = 86,
-    DetectiveTalk_Function = 87,
-    BatonPass_Akechi = 88,
-    BLANKFUNC89 = 89,
-    BLANKFUNC90 = 90,
-    MoralSupport_Function = 91,
-    MementosScan_Function = 92,
-    BLANKFUNC93 = 93,
-    PositionHack_Function = 94,
-    BLANKFUNC95 = 95,
-    ActiveSupport_Function = 96,
-    TreasureReboot = 97,
-    BLANKFUNC98 = 98,
-    EmergencyShift_Function = 99,
-    FinalGuard_Function = 100,
-    FortuneTelling = 101,
-    BLANKFUNC102 = 102,
-    BLANKFUNC103 = 103,
-    BLANKFUNC104 = 104,
-    LuckReading = 105,
-    MoneyReading = 106,
-    LifeAdvice = 107,
-    AffinityReading = 108,
-    FateReading = 109,
-    SpecialFateReading = 110,
-    Lockdown = 111,
-    BLANKFUNC112 = 112,
-    GroupGuillotine = 113,
-    BLANKFUNC114 = 114,
-    Isolation = 115,
-    BLANKFUNC116 = 116,
-    BLANKFUNC117 = 117,
-    GuillotineBooster = 118,
-    BLANKFUNC119 = 119,
-    SpecialTreatment = 120,
-    StarterCustomization = 121,
-    BLANKFUNC122 = 122,
-    MediumCustomization = 123,
-    BLANKFUNC124 = 124,
-    Discount_GunCustomization = 125,
-    BLANKFUNC126 = 126,
-    ExpertCustomization = 127,
-    BLANKFUNC128 = 128,
-    BLANKFUNC129 = 129,
-    AceCustomization = 130,
-    Rejuvenation = 131,
-    BLANKFUNC132 = 132,
-    Sterilization = 133,
-    BLANKFUNC134 = 134,
-    Discount_Clinic = 135,
-    BLANKFUNC136 = 136,
-    Immunization = 137,
-    BLANKFUNC138 = 138,
-    Resuscitation = 139,
-    BLANKFUNC140 = 140,
-    SlackOff = 141,
-    BLANKFUNC142 = 142,
-    Housekeeping = 143,
-    BLANKFUNC144 = 144,
-    FreeTime = 145,
-    BLANKFUNC146 = 146,
-    SuperHousekeeping = 147,
-    BLANKFUNC148 = 148,
-    BLANKFUNC149 = 149,
-    SpecialMassage = 150,
-    RumorFilledScoop = 151,
-    BLANKFUNC152 = 152,
-    ShockingScoop = 153,
-    BLANKFUNC154 = 154,
-    OutrageousScoop = 155,
-    BLANKFUNC156 = 156,
-    LegendaryScoop = 157,
-    BLANKFUNC158 = 158,
-    BLANKFUNC159 = 159,
-    BLANKFUNC160 = 160,
-    DownShot_Function = 161,
-    BulletHail_Function = 162,
-    WarningShot_Function = 163,
-    BLANKFUNC164 = 164,
-    AmmoPouch_Function = 165,
-    CheapShot_Function = 166,
-    BLANKFUNC167 = 167,
-    ElectricSlug_Function = 168,
-    BLANKFUNC169 = 169,
-    OdaSpecial_Function = 170,
-    KomaSabaki_Function = 171,
-    BLANKFUNC172 = 172,
-    Uchikomi_Function = 173,
-    BLANKFUNC174 = 174,
-    KakoiKuzushi_Function = 175,
-    BLANKFUNC176 = 176,
-    Narikin_Function = 177,
-    BLANKFUNC178 = 178,
-    Touryou_Function = 179,
-    TogoSystem_Function = 180,
-    MishimasEnthusiasm = 181,
-    BLANKFUNC182 = 182,
-    Phanboy = 183,
-    BLANKFUNC184 = 184,
-    BLANKFUNC185 = 185,
-    BLANKFUNC186 = 186,
-    BLANKFUNC187 = 187,
-    BLANKFUNC188 = 188,
-    BLANKFUNC189 = 189,
-    MishimasSupport = 190,
-    BLANKFUNC191 = 191,
-    Diplomacy_Function = 192,
-    Fundraising_Function = 193,
-    BLANKFUNC194 = 194,
-    Manipulation_Function = 195,
-    BLANKFUNC196 = 196,
-    BLANKFUNC197 = 197,
-    MindControl_Function = 198,
-    BLANKFUNC199 = 199,
-    CharismaticSpeech_Function = 200,
-    BLANKFUNC201 = 201,
-    BLANKFUNC202 = 202,
-    BLANKFUNC203 = 203,
-    BLANKFUNC204 = 204,
-    BLANKFUNC205 = 205,
-    BLANKFUNC206 = 206,
-    BLANKFUNC207 = 207,
-    BLANKFUNC208 = 208,
-    BLANKFUNC209 = 209,
-    TrueJustice = 210,
-    BLANKFUNC211 = 211,
-    BLANKFUNC212 = 212,
-    BLANKFUNC213 = 213,
-    BLANKFUNC214 = 214,
-    BLANKFUNC215 = 215,
-    BLANKFUNC216 = 216,
-    BLANKFUNC217 = 217,
-    BLANKFUNC218 = 218,
-    BLANKFUNC219 = 219,
-    BLANKFUNC220 = 220,
-    Cultivation = 221,
-    BLANKFUNC222 = 222,
-    BLANKFUNC223 = 223,
-    BLANKFUNC224 = 224,
-    BLANKFUNC225 = 225,
-    BLANKFUNC226 = 226,
-    BLANKFUNC227 = 227,
-    BLANKFUNC228 = 228,
-    BLANKFUNC229 = 229,
-    BLANKFUNC230 = 230,
-    SecondAwakening_Morgana = 231,
-    SecondAwakening_Makoto = 232,
-    SecondAwakening_Haru = 233,
-    SecondAwakening_Yusuke = 234,
-    BLANKFUNC235 = 235,
-    SecondAwakening_Ann = 236,
-    SecondAwakening_Ryuji = 237,
-    BLANKFUNC238 = 238,
-    SecondAwakening_Futaba = 239,
-    };
-
-enum<short> ConfidantFunction_OrganizedByArcana
-{
-    NULL_ConfidantFunction = -1,
-    Fool_WildTalk = 1,
-    Fool_ArcanaBurst = 2,
-    Fool_ThirdEye = 3,
-    Fool_PowerStock = 4,
-    Fool_SuperStock = 5,
-    Fool_HighArcanaBurst = 6,
-    Fool_UltraStock = 7,
-    Fool_MaxArcanaBurst = 8,
-    Magician_InfiltrationTools = 9,
-    Magician_BatonPass_Morgana = 10,
-    Magician_FollowUp_Morgana = 11,
-    Magician_KittyTalk_Morgana = 12,
-    Magician_Pickpocket = 13,
-    Magician_AceTools = 14,
-    Magician_HarisenRecovery_Morgana = 15,
-    Magician_Endure_Morgana = 16,
-    Magician_Protect_Morgana = 17,
-    Magician_SecondAwakening_Morgana = 18,
-    Priestess_ShadowCalculus = 19,
-    Priestess_BatonPass_Makoto = 20,
-    Priestess_BraniacTalk_Makoto = 21,
-    Priestess_FollowUp_Makoto = 22,
-    Priestess_HarisenRecovery_Makoto = 23,
-    Priestess_ShadowFactorization = 24,
-    Priestess_Endure_Makoto = 25,
-    Priestess_Protect_Makoto = 26,
-    Priestess_SecondAwakening_Makoto = 27,
-    Empress_Cultivation = 28,
-    Empress_BatonPass_Haru = 29,
-    Empress_FollowUp_Haru = 30,
-    Empress_CelebTalk_Haru = 31,
-    Empress_BumperCrop = 32,
-    Empress_HarisenRecovery = 33,
-    Empress_SoilImprovement = 34,
-    Empress_Endure_Haru = 35,
-    Empress_Protect_Haru = 36,
-    Empress_SecondAwakening_Haru = 37,
-    Emperor_NoviceDuplication = 38,
-    Emperor_BatonPass_Yusuke = 39,
-    Emperor_FollowUp_Yusuke = 40,
-    Emperor_ArtistTalk_Yusuke = 41,
-    Emperor_AdeptDuplication = 42,
-    Emperor_HarisenRecovery_Yusuke = 43,
-    Emperor_MasterDuplication_Yusuke = 44,
-    Emperor_Endure_Yusuke = 45,
-    Emperor_Protect_Yusuke = 46,
-    Emperor_SecondAwakening_Yusuke = 47,
-    Hierophant_CoffeeBasics = 48,
-    Hierophant_CoffeeMastery = 49,
-    Hierophant_LeblancCurry = 50,
-    Hierophant_CurryTips = 51,
-    Hierophant_CurryMastery = 52,
-    Lovers_BatonPass_Ann = 53,
-    Lovers_GirlTalk_Ann = 54,
-    Lovers_FollowUp_Ann = 55,
-    Lovers_CrocodileTears = 56,
-    Lovers_HarisenRecovery_Ann = 57,
-    Lovers_SexyTechnique = 58,
-    Lovers_Endure_Ann = 59,
-    Lovers_Protect_Ann = 60,
-    Lovers_SecondAwakening_Ann = 61,
-    Chariot_BatonPass_Ryuji = 62,
-    Chariot_FollowUp_Ryuji = 63,
-    Chariot_PunkTalk_Ryuji = 64,
-    Chariot_HarisenRecovery_Ryuji = 65,
-    Chariot_InstaKill = 66,
-    Chariot_Endure_Ryuji = 67,
-    Chariot_Protect_Ryuji = 68,
-    Chariot_SecondAwakening_Ryuji = 69,
-    Justice_HarisenRecovery_Akechi = 70,
-    Justice_FollowUp_Akechi = 71,
-    Justice_DetectiveTalk_Akechi = 72,
-    Justice_BatonPass_Akechi = 73,
-    Hermit_MoralSupport = 74,
-    Hermit_MementosScan = 75,
-    Hermit_PositionHack = 76,
-    Hermit_ActiveSupport = 77,
-    Hermit_TreasureReboot = 78,
-    Hermit_EmergencyShift = 79,
-    Hermit_FinalGuard = 80,
-    Hermit_SecondAwakening_Futaba = 81,
-    Fortune_LuckReading = 82,
-    Fortune_MoneyReading = 83,
-    Fortune_FateReading = 84,
-    Fortune_AffinityReading = 85,
-    Fortune_SpecialFateReading = 86,
-    Strength_GroupGuillotine = 87,
-    Strength_Lockdown = 88,
-    Strength_GuillotineBooster = 89,
-    Strength_Isolation = 90,
-    Strength_SpecialTreatment = 91,
-    HangedMan_StarterCustomization = 92,
-    HangedMan_MediumCustomization = 93,
-    HangedMan_Discount_GunCustomization = 94,
-    HangedMan_ExpertCustomization = 95,
-    HangedMan_AceCustomization = 96,
-    Death_Rejuvenation = 97,
-    Death_Sterilization = 98,
-    Death_Immunization = 99,
-    Death_Discount = 100,
-    Death_Resuscitation = 101,
-    Temperance_SlackOff = 102,
-    Temperance_Housekeeping = 103,
-    Temperance_FreeTime = 104,
-    Temperance_SuperHousekeeping = 105,
-    Temperance_SpecialMassage = 106,
-    Devil_RumorFilledScoop = 107,
-    Devil_ShockingScoop = 108,
-    Devil_OutrageousScoop = 109,
-    Devil_LegendaryScoop = 110,
-    Tower_DownShot = 111,
-    Tower_BulletHail = 112,
-    Tower_WarningShot = 113,
-    Tower_AmmoPouch = 114,
-    Tower_CheapShot = 115,
-    Tower_ElectricSlug = 116,
-    Tower_OdaSpecial = 117,
-    Star_KomaSabaki = 118,
-    Star_Uchikomi = 119,
-    Star_KakoiKuzushi = 120,
-    Star_Narikin = 121,
-    Star_Touryou = 122,
-    Star_TogoSystem = 123,
-    Moon_MishimasSupport = 124,
-    Moon_MishimasEnthusiasm = 125,
-    Moon_MishimasDesperation = 126,
-    Moon_Phanboy = 127,
-    Moon_SalvationWish = 128,
-    Sun_Diplomacy = 129,
-    Sun_Fundraising = 130,
-    Sun_Manipulation = 131,
-    Sun_MindControl = 132,
-    Sun_CharismaticSpeech = 133,
-    Judgement_TrueJustice = 134,
-};
-
-enum<ubyte> Confidant_Member
-{
-    COMMUNITY_RESERVE = 0,
-    Igor_Confidant = 1,
-    Morgana_Confidant = 2,
-    Makoto_Confidant = 3,
-    Haru_Confidant = 4,
-    Yusuke_Confidant = 5,
-    Sojiro_Confidant = 6,
-    Ann_Confidant = 7,
-    Ryuji_Confidant = 8,
-    Akechi_Confidant = 9,
-    Futaba_Confidant = 10,
-    Chihaya_Confidant = 11,
-    TwinWardens_Confidant = 12,
-    Iwai_Confidant = 13,
-    Takemi_Confidant = 14,
-    Kawakami_Confidant = 15,
-    Ohya_Confidant = 16,
-    Shinya_Confidant = 17,
-    Hifumi_Confidant = 18,
-    Mishima_Confidant = 19,
-    Yoshida_Confidant = 20,
-    Sae_Confidant = 21,
-    World_Confidant_UNUSED = 22,
-    MakotoRomance_Confidant = 23,
-    HaruRomance_Confidant = 24,
-    AnnRomance_Confidant = 25,
-    FutabaRomance_Confidant = 26,
-    ChihayaRomance_Confidant = 27,
-    TakemiRomance_Confidant = 28,
-    KawakamiRomance_Confidant = 29,
-    OhyaRomance_Confidant = 30,
-    HifumiRomance_Confidant = 31,
-    SaeRomance_Confidant_UNUSED = 32,
-    DUMMY33_Confidant = 33,
-    DUMMY34_Confidant = 34,
-};
-
-// This enum represents the different party members available.
-enum<short> PartyMember
-{
-	Protagonist = 1,
-    Ryuji = 2,
-    Morgana = 3,
-    Ann = 4,
-    Yusuke = 5,
-    Makoto = 6,
-    Haru = 7,
-    Futaba = 8,
-    Goro = 9,
-};
+// Generated by AtlusScriptDocGen 1.0.0.0
 
 // This enum represents the available skills in battle
 enum<short> BattleSkill
@@ -1715,7 +1219,7 @@ enum<short> BattleSkill
     Attack2 = 404,
 
     // Generated from skill name table entry: Down Shot
-    DownShot_Skill = 405,
+    DownShot = 405,
 
     // Generated from skill name table entry: Summon
     Summon = 406,
@@ -2420,7 +1924,7 @@ enum<short> BattleSkill
     RaysofControl5 = 639,
 
     // Generated from skill name table entry: Moral Support
-    MoralSupport_Skill = 640,
+    MoralSupport = 640,
 
     // Generated from skill name table entry: Active Support
     ActiveSupport = 641,
@@ -2474,13 +1978,13 @@ enum<short> BattleSkill
     LustSphere = 657,
 
     // Generated from skill name table entry: Down Shot 2
-    DownShot2_Skill = 658,
+    DownShot2 = 658,
 
     // Generated from skill name table entry: Down Shot 3
-    DownShot3_Skill = 659,
+    DownShot3 = 659,
 
     // Generated from skill name table entry: Down Shot 4
-    DownShot4_Skill = 660,
+    DownShot4 = 660,
 
     // Generated from skill name table entry: Electro Attack
     ElectroAttack = 661,
@@ -3501,11 +3005,1548 @@ enum<short> BattleSkill
 
 };
 
-enum<short> ItemizationType
+// This enum represents the available units in battle.
+enum<short> BattleUnit
 {
-    MeleeWeapon_ItemizationType = 0,
-    Armor_ItemizationType = 1,
-    Accessory_ItemizationType = 2,
-    SkillCard_ItemizationType = 6,
-    RangedWeapon_ItemizationType = 8,
+    // Generated from enemy name table entry: Not Used
+    NotUsed = 0,
+
+    // Generated from enemy name table entry: Shadow of God
+    ShadowofGod = 1,
+
+    // Generated from enemy name table entry: Fly of the Dead
+    FlyoftheDead = 2,
+
+    // Generated from enemy name table entry: Brave Spear-bearer
+    BraveSpearbearer = 3,
+
+    // Generated from enemy name table entry: Crypt-dwelling Pyromaniac
+    CryptdwellingPyromaniac = 4,
+
+    // Generated from enemy name table entry: Mocking Snowman
+    MockingSnowman = 5,
+
+    // Generated from enemy name table entry: Beguiling Girl
+    BeguilingGirl = 6,
+
+    // Generated from enemy name table entry: Guard Dog of Hades
+    GuardDogofHades = 7,
+
+    // Generated from enemy name table entry: Woman Who Brings Ruin
+    WomanWhoBringsRuin = 8,
+
+    // Generated from enemy name table entry: War-hungry Horseman
+    WarhungryHorseman = 9,
+
+    // Generated from enemy name table entry: Hero-gathering Tyrant
+    HerogatheringTyrant = 10,
+
+    // Generated from enemy name table entry: Girl of the Hanging Tree
+    GirloftheHangingTree = 11,
+
+    // Generated from enemy name table entry: Vicious Pentagram
+    ViciousPentagram = 12,
+
+    // Generated from enemy name table entry: Throbbing King of Desire
+    ThrobbingKingofDesire = 13,
+
+    // Generated from enemy name table entry: Cruel Leopard
+    CruelLeopard = 14,
+
+    // Generated from enemy name table entry: Thunder Emperor
+    ThunderEmperor = 15,
+
+    // Generated from enemy name table entry: Expressionless Beast
+    ExpressionlessBeast = 16,
+
+    // Generated from enemy name table entry: Herald of Death
+    HeraldofDeath = 17,
+
+    // Generated from enemy name table entry: Strumming Veena Player
+    StrummingVeenaPlayer = 18,
+
+    // Generated from enemy name table entry: Funerary Warrior
+    FuneraryWarrior = 19,
+
+    // Generated from enemy name table entry: Human-eating Lady
+    HumaneatingLady = 20,
+
+    // Generated from enemy name table entry: Auspicious Pachyderm
+    AuspiciousPachyderm = 21,
+
+    // Generated from enemy name table entry: Bearer of the Scales
+    BeareroftheScales = 22,
+
+    // Generated from enemy name table entry: Coffin-borne God
+    CoffinborneGod = 23,
+
+    // Generated from enemy name table entry: Cleanser of Heaven
+    CleanserofHeaven = 24,
+
+    // Generated from enemy name table entry: The Shadowed One
+    TheShadowedOne = 25,
+
+    // Generated from enemy name table entry: Prankster Leader
+    PranksterLeader = 26,
+
+    // Generated from enemy name table entry: Dancing Lion
+    DancingLion = 27,
+
+    // Generated from enemy name table entry: Rebellious Elephant
+    RebelliousElephant = 28,
+
+    // Generated from enemy name table entry: Monarch of Snow
+    MonarchofSnow = 29,
+
+    // Generated from enemy name table entry: Self-infatuated Star
+    SelfinfatuatedStar = 30,
+
+    // Generated from enemy name table entry: She of Life and Death
+    SheofLifeandDeath = 31,
+
+    // Generated from enemy name table entry: Slithering Snakewoman
+    SlitheringSnakewoman = 32,
+
+    // Generated from enemy name table entry: Fused Ghost
+    FusedGhost = 33,
+
+    // Generated from enemy name table entry: Battle Fiend
+    BattleFiend = 34,
+
+    // Generated from enemy name table entry: Night-walking Warrior
+    NightwalkingWarrior = 35,
+
+    // Generated from enemy name table entry: Rhetorician of the Sea
+    RhetoricianoftheSea = 36,
+
+    // Generated from enemy name table entry: Vicious Young Warrior
+    ViciousYoungWarrior = 37,
+
+    // Generated from enemy name table entry: Scandalous Queen
+    ScandalousQueen = 38,
+
+    // Generated from enemy name table entry: Bedside Brute
+    BedsideBrute = 39,
+
+    // Generated from enemy name table entry: Chivalrous Fiend
+    ChivalrousFiend = 40,
+
+    // Generated from enemy name table entry: Harlot of Desire
+    HarlotofDesire = 41,
+
+    // Generated from enemy name table entry: Dancing Witch
+    DancingWitch = 42,
+
+    // Generated from enemy name table entry: Hunting Wolf Spirit
+    HuntingWolfSpirit = 43,
+
+    // Generated from enemy name table entry: Destructive Beauty
+    DestructiveBeauty = 44,
+
+    // Generated from enemy name table entry: Declarer of Anguish
+    DeclarerofAnguish = 45,
+
+    // Generated from enemy name table entry: Angry Warrior
+    AngryWarrior = 46,
+
+    // Generated from enemy name table entry: Mysterious Little Girl
+    MysteriousLittleGirl = 47,
+
+    // Generated from enemy name table entry: The Blackened Fury
+    TheBlackenedFury = 48,
+
+    // Generated from enemy name table entry: Monk of the Valley
+    MonkoftheValley = 49,
+
+    // Generated from enemy name table entry: Unfaithful Dream-King
+    UnfaithfulDreamKing = 50,
+
+    // Generated from enemy name table entry: Bringer of Misfortune
+    BringerofMisfortune = 51,
+
+    // Generated from enemy name table entry: Drunken Serpents
+    DrunkenSerpents = 52,
+
+    // Generated from enemy name table entry: Equine Sage
+    EquineSage = 53,
+
+    // Generated from enemy name table entry: Nimble Monkey King
+    NimbleMonkeyKing = 54,
+
+    // Generated from enemy name table entry: Heavenly Punisher
+    HeavenlyPunisher = 55,
+
+    // Generated from enemy name table entry: Piggyback Demon
+    PiggybackDemon = 56,
+
+    // Generated from enemy name table entry: Midnight Queen
+    MidnightQueen = 57,
+
+    // Generated from enemy name table entry: Prison Master
+    PrisonMaster = 58,
+
+    // Generated from enemy name table entry: Abyssal King of Avarice
+    AbyssalKingofAvarice = 59,
+
+    // Generated from enemy name table entry: Rooftop Lion
+    RooftopLion = 60,
+
+    // Generated from enemy name table entry: Envoy of Slumber
+    EnvoyofSlumber = 61,
+
+    // Generated from enemy name table entry: Missionary of Depravity
+    MissionaryofDepravity = 62,
+
+    // Generated from enemy name table entry: Jealous Lover
+    JealousLover = 63,
+
+    // Generated from enemy name table entry: Bloody Goddess
+    BloodyGoddess = 64,
+
+    // Generated from enemy name table entry: The Black Avenger
+    TheBlackAvenger = 65,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE9 = 66,
+
+    // Generated from enemy name table entry: Embittered Blacksmith
+    EmbitteredBlacksmith = 67,
+
+    // Generated from enemy name table entry: Twin-headed Guardian
+    TwinheadedGuardian = 68,
+
+    // Generated from enemy name table entry: Twilight Prostitute
+    TwilightProstitute = 69,
+
+    // Generated from enemy name table entry: Vampire Moth
+    VampireMoth = 70,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE10 = 71,
+
+    // Generated from enemy name table entry: Merciless Inquisitor
+    MercilessInquisitor = 72,
+
+    // Generated from enemy name table entry: Ascended Feline
+    AscendedFeline = 73,
+
+    // Generated from enemy name table entry: Evil Snowman
+    EvilSnowman = 74,
+
+    // Generated from enemy name table entry: Awakened God
+    AwakenedGod = 75,
+
+    // Generated from enemy name table entry: Zealous Messenger
+    ZealousMessenger = 76,
+
+    // Generated from enemy name table entry: Quaking Lady of Shadow
+    QuakingLadyofShadow = 77,
+
+    // Generated from enemy name table entry: Mountain Girl
+    MountainGirl = 78,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE11 = 79,
+
+    // Generated from enemy name table entry: Divine Warrior
+    DivineWarrior = 80,
+
+    // Generated from enemy name table entry: Possessing Dog Ghost
+    PossessingDogGhost = 81,
+
+    // Generated from enemy name table entry: Wandering Reviver
+    WanderingReviver = 82,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE12 = 83,
+
+    // Generated from enemy name table entry: Viscid Rotting Meat
+    ViscidRottingMeat = 84,
+
+    // Generated from enemy name table entry: Thief of Tablets
+    ThiefofTablets = 85,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE13 = 86,
+
+    // Generated from enemy name table entry: Grudging Warrior Arisen
+    GrudgingWarriorArisen = 87,
+
+    // Generated from enemy name table entry: Defeated Avenger
+    DefeatedAvenger = 88,
+
+    // Generated from enemy name table entry: Captivating Dancer
+    CaptivatingDancer = 89,
+
+    // Generated from enemy name table entry: Lamenting Sacrifice
+    LamentingSacrifice = 90,
+
+    // Generated from enemy name table entry: Life-draining Spirit
+    LifedrainingSpirit = 91,
+
+    // Generated from enemy name table entry: Shadowy Ninja
+    ShadowyNinja = 92,
+
+    // Generated from enemy name table entry: Samurai Killer
+    SamuraiKiller = 93,
+
+    // Generated from enemy name table entry: Raging Water Demon
+    RagingWaterDemon = 94,
+
+    // Generated from enemy name table entry: Tornado Devil
+    TornadoDevil = 95,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE55 = 96,
+
+    // Generated from enemy name table entry: Wishless Star
+    WishlessStar = 97,
+
+    // Generated from enemy name table entry: Mad Marsh Horse
+    MadMarshHorse = 98,
+
+    // Generated from enemy name table entry: Chanting Baboon
+    ChantingBaboon = 99,
+
+    // Generated from enemy name table entry: Hedonistic Braggart
+    HedonisticBraggart = 100,
+
+    // Generated from enemy name table entry: Waterside Nymph
+    WatersideNymph = 101,
+
+    // Generated from enemy name table entry: Menacing Owlman
+    MenacingOwlman = 102,
+
+    // Generated from enemy name table entry: Torn King of Desire
+    TornKingofDesire = 103,
+
+    // Generated from enemy name table entry: Leafy Old Man
+    LeafyOldMan = 104,
+
+    // Generated from enemy name table entry: Foolish Monk
+    FoolishMonk = 105,
+
+    // Generated from enemy name table entry: Regent
+    Regent = 106,
+
+    // Generated from enemy name table entry: Queen's Necklace
+    QueensNecklace = 107,
+
+    // Generated from enemy name table entry: Stone of Scone
+    StoneofScone = 108,
+
+    // Generated from enemy name table entry: Koh-i-Noor
+    KohiNoor = 109,
+
+    // Generated from enemy name table entry: Orlov
+    Orlov = 110,
+
+    // Generated from enemy name table entry: Emperor's Talisman
+    EmperorsTalisman = 111,
+
+    // Generated from enemy name table entry: Hope Diamond
+    HopeDiamond = 112,
+
+    // Generated from enemy name table entry: Crystal Skull
+    CrystalSkull = 113,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE14 = 114,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE15 = 115,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE16 = 116,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE17 = 117,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE18 = 118,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE19 = 119,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE20 = 120,
+
+    // Generated from enemy name table entry: Gallows-Flower
+    GallowsFlower = 121,
+
+    // Generated from enemy name table entry: Reviled Dictator
+    ReviledDictator = 122,
+
+    // Generated from enemy name table entry: Bloodthirsty Demoness
+    BloodthirstyDemoness = 123,
+
+    // Generated from enemy name table entry: Troublesome Housemaid
+    TroublesomeHousemaid = 124,
+
+    // Generated from enemy name table entry: Killer Teddy Bear
+    KillerTeddyBear = 125,
+
+    // Generated from enemy name table entry: Pulsing Mud
+    PulsingMud = 126,
+
+    // Generated from enemy name table entry: Dirty Two-horned Beast
+    DirtyTwohornedBeast = 127,
+
+    // Generated from enemy name table entry: Dark Sun
+    DarkSun = 128,
+
+    // Generated from enemy name table entry: Noisy Mountain Spirit
+    NoisyMountainSpirit = 129,
+
+    // Generated from enemy name table entry: Wavering Tree Spirit
+    WaveringTreeSpirit = 130,
+
+    // Generated from enemy name table entry: Apprentice in a Jug
+    ApprenticeinaJug = 131,
+
+    // Generated from enemy name table entry: Corpse Bird
+    CorpseBird = 132,
+
+    // Generated from enemy name table entry: Night Chimera
+    NightChimera = 133,
+
+    // Generated from enemy name table entry: Corpse-eating Corpse
+    CorpseeatingCorpse = 134,
+
+    // Generated from enemy name table entry: Pagan Savior
+    PaganSavior = 135,
+
+    // Generated from enemy name table entry: Heretic Goat
+    HereticGoat = 136,
+
+    // Generated from enemy name table entry: Snake King
+    SnakeKing = 137,
+
+    // Generated from enemy name table entry: Cavern Snakeman
+    CavernSnakeman = 138,
+
+    // Generated from enemy name table entry: Raging Bird God
+    RagingBirdGod = 139,
+
+    // Generated from enemy name table entry: Sacrificial Pyrekeeper
+    SacrificialPyrekeeper = 140,
+
+    // Generated from enemy name table entry: Final Assessor
+    FinalAssessor = 141,
+
+    // Generated from enemy name table entry: Ambassador of Filth
+    AmbassadorofFilth = 142,
+
+    // Generated from enemy name table entry: Brutal Cavalryman
+    BrutalCavalryman = 143,
+
+    // Generated from enemy name table entry: Gathering Devil
+    GatheringDevil = 144,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE21 = 145,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE22 = 146,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE23 = 147,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE24 = 148,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE25 = 149,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE26 = 150,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE27 = 151,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE28 = 152,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE29 = 153,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE30 = 154,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE31 = 155,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE32 = 156,
+
+    // Generated from enemy name table entry: Apocalyptic Guide
+    ApocalypticGuide = 157,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE33 = 158,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE34 = 159,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE35 = 160,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE36 = 161,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE37 = 162,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE38 = 163,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE39 = 164,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE40 = 165,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE41 = 166,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE42 = 167,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE43 = 168,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE44 = 169,
+
+    // Generated from enemy name table entry: Execurobo MDL-ED
+    ExecuroboMDLED = 170,
+
+    // Generated from enemy name table entry: Corporobo MDL-
+    CorporoboMDL = 171,
+
+    // Generated from enemy name table entry: Corporobo MDL-
+    CorporoboMDL1 = 172,
+
+    // Generated from enemy name table entry: Corporobo MDL-
+    CorporoboMDL2 = 173,
+
+    // Generated from enemy name table entry: Corporobo MDL-CH
+    CorporoboMDLCH = 174,
+
+    // Generated from enemy name table entry: Corporobo MDL-WKR
+    CorporoboMDLWKR = 175,
+
+    // Generated from enemy name table entry: Demonic Warlord
+    DemonicWarlord = 176,
+
+    // Generated from enemy name table entry: Floodbringer Demon
+    FloodbringerDemon = 177,
+
+    // Generated from enemy name table entry: Tornado Devil
+    TornadoDevil1 = 178,
+
+    // Generated from enemy name table entry: Raging Bird God
+    RagingBirdGod1 = 179,
+
+    // Generated from enemy name table entry: Viscid Rotting Meat
+    ViscidRottingMeat1 = 180,
+
+    // Generated from enemy name table entry: Troublesome Housemaid
+    TroublesomeHousemaid1 = 181,
+
+    // Generated from enemy name table entry: Dancing Witch
+    DancingWitch1 = 182,
+
+    // Generated from enemy name table entry: Shadow Takanashi
+    ShadowTakanashi = 183,
+
+    // Generated from enemy name table entry: Shadow Nakanohara
+    ShadowNakanohara = 184,
+
+    // Generated from enemy name table entry: Defeated Avenger
+    DefeatedAvenger1 = 185,
+
+    // Generated from enemy name table entry: Raging Bird God
+    RagingBirdGod2 = 186,
+
+    // Generated from enemy name table entry: Torn King of Desire
+    TornKingofDesire1 = 187,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE45 = 188,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE46 = 189,
+
+    // Generated from enemy name table entry: The Reaper
+    TheReaper = 190,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE47 = 191,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE48 = 192,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE49 = 193,
+
+    // Generated from enemy name table entry: Incubus
+    Incubus = 194,
+
+    // Generated from enemy name table entry: Justine
+    Justine = 195,
+
+    // Generated from enemy name table entry: Caroline
+    Caroline = 196,
+
+    // Generated from enemy name table entry: Holy Grail Tentacle A
+    HolyGrailTentacleA = 197,
+
+    // Generated from enemy name table entry: Holy Grail Tentacle B
+    HolyGrailTentacleB = 198,
+
+    // Generated from enemy name table entry: Holy Grail Tentacle C
+    HolyGrailTentacleC = 199,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE50 = 200,
+
+    // Generated from enemy name table entry: Suguru Asmodeus Kamoshida
+    SuguruAsmodeusKamoshida = 201,
+
+    // Generated from enemy name table entry: Trophy of Obsession
+    TrophyofObsession = 202,
+
+    // Generated from enemy name table entry: Teacher Boss Post Aff Change
+    TeacherBossPostAffChange = 203,
+
+    // Generated from enemy name table entry: Weak Tomb of Human Sacrifice
+    WeakTombofHumanSacrifice = 204,
+
+    // Generated from enemy name table entry: Holy Grail
+    HolyGrail = 205,
+
+    // Generated from enemy name table entry: Painter's Right Eye
+    PaintersRightEye = 206,
+
+    // Generated from enemy name table entry: Painter's Left Eye
+    PaintersLeftEye = 207,
+
+    // Generated from enemy name table entry: Painter's Nose
+    PaintersNose = 208,
+
+    // Generated from enemy name table entry: Painter's Mouth
+    PaintersMouth = 209,
+
+    // Generated from enemy name table entry: Ichiryusai Azazel Madarame
+    IchiryusaiAzazelMadarame = 210,
+
+    // Generated from enemy name table entry: Museum Boss All Weakness
+    MuseumBossAllWeakness = 211,
+
+    // Generated from enemy name table entry: Treasure of Mementos
+    TreasureofMementos = 212,
+
+    // Generated from enemy name table entry: Junya Bael Kaneshiro
+    JunyaBaelKaneshiro = 213,
+
+    // Generated from enemy name table entry: Piggytron
+    Piggytron = 214,
+
+    // Generated from enemy name table entry: Beast That Rules the Palace
+    BeastThatRulesthePalace = 215,
+
+    // Generated from enemy name table entry: Piggytron
+    Piggytron1 = 216,
+
+    // Generated from enemy name table entry: Goro Akechi
+    GoroAkechi = 217,
+
+    // Generated from enemy name table entry: Cognitive Wakaba Isshiki
+    CognitiveWakabaIsshiki = 218,
+
+    // Generated from enemy name table entry: Guard Dog of Hades
+    GuardDogofHades1 = 219,
+
+    // Generated from enemy name table entry: Spear-wielding General
+    SpearwieldingGeneral = 220,
+
+    // Generated from enemy name table entry: Kunikazu Mammon Okumura
+    KunikazuMammonOkumura = 221,
+
+    // Generated from enemy name table entry: Execurobo MDL-ED
+    ExecuroboMDLED1 = 222,
+
+    // Generated from enemy name table entry: Corporobo MDL-GM
+    CorporoboMDLGM = 223,
+
+    // Generated from enemy name table entry: Corporobo MDL-DM
+    CorporoboMDLDM = 224,
+
+    // Generated from enemy name table entry: Corporobo MDL-AM
+    CorporoboMDLAM = 225,
+
+    // Generated from enemy name table entry: Corporobo MDL-CH
+    CorporoboMDLCH1 = 226,
+
+    // Generated from enemy name table entry: Corporobo MDL-WKR
+    CorporoboMDLWKR1 = 227,
+
+    // Generated from enemy name table entry: Shadow Sae
+    ShadowSae = 228,
+
+    // Generated from enemy name table entry: Sae Leviathan Niijima
+    SaeLeviathanNiijima = 229,
+
+    // Generated from enemy name table entry: Holy Grail
+    HolyGrail1 = 230,
+
+    // Generated from enemy name table entry: Goro Akechi
+    GoroAkechi1 = 231,
+
+    // Generated from enemy name table entry: Goro Akechi
+    GoroAkechi2 = 232,
+
+    // Generated from enemy name table entry: Beast of Human Sacrifice
+    BeastofHumanSacrifice = 233,
+
+    // Generated from enemy name table entry: Wings of Human Sacrifice
+    WingsofHumanSacrifice = 234,
+
+    // Generated from enemy name table entry: Tomb of Human Sacrifice
+    TombofHumanSacrifice = 235,
+
+    // Generated from enemy name table entry: Masayoshi Samael Shido
+    MasayoshiSamaelShido = 236,
+
+    // Generated from enemy name table entry: True Masayoshi Samael Shido
+    TrueMasayoshiSamaelShido = 237,
+
+    // Generated from enemy name table entry: Holy Grail
+    HolyGrail2 = 238,
+
+    // Generated from enemy name table entry: God of Control, Yaldabaoth
+    GodofControlYaldabaoth = 239,
+
+    // Generated from enemy name table entry: Sword of Conviction
+    SwordofConviction = 240,
+
+    // Generated from enemy name table entry: Gun of Execution
+    GunofExecution = 241,
+
+    // Generated from enemy name table entry: Bell of Declaration
+    BellofDeclaration = 242,
+
+    // Generated from enemy name table entry: Book of Commandments
+    BookofCommandments = 243,
+
+    // Generated from enemy name table entry: Justine
+    Justine1 = 244,
+
+    // Generated from enemy name table entry: Caroline
+    Caroline1 = 245,
+
+    // Generated from enemy name table entry: Haru's Fiance
+    HarusFiance = 246,
+
+    // Generated from enemy name table entry: Museum Boss, Right Eye
+    MuseumBossRightEye = 247,
+
+    // Generated from enemy name table entry: Museum Boss, Left Eye
+    MuseumBossLeftEye = 248,
+
+    // Generated from enemy name table entry: Museum Boss, Nose
+    MuseumBossNose = 249,
+
+    // Generated from enemy name table entry: Museum Boss, Mouth
+    MuseumBossMouth = 250,
+
+    // Generated from enemy name table entry: Shadow TV President
+    ShadowTVPresident = 251,
+
+    // Generated from enemy name table entry: Shadow Cleaner
+    ShadowCleaner = 252,
+
+    // Generated from enemy name table entry: Crypt-dwelling Pyromaniac
+    CryptdwellingPyromaniac1 = 253,
+
+    // Generated from enemy name table entry: Final Measurer
+    FinalMeasurer = 254,
+
+    // Generated from enemy name table entry: Snake King
+    SnakeKing1 = 255,
+
+    // Generated from enemy name table entry: Guard Captain
+    GuardCaptain = 256,
+
+    // Generated from enemy name table entry: Guard Captain
+    GuardCaptain1 = 257,
+
+    // Generated from enemy name table entry: Sacrificial Pyrekeeper
+    SacrificialPyrekeeper1 = 258,
+
+    // Generated from enemy name table entry: Gallows-Flower
+    GallowsFlower1 = 259,
+
+    // Generated from enemy name table entry: Cruel Leopard
+    CruelLeopard1 = 260,
+
+    // Generated from enemy name table entry: Dirty Two-horned Beast
+    DirtyTwohornedBeast1 = 261,
+
+    // Generated from enemy name table entry: Shadow Mr. Takase
+    ShadowMrTakase = 262,
+
+    // Generated from enemy name table entry: Viscid Rotting Meat
+    ViscidRottingMeat2 = 263,
+
+    // Generated from enemy name table entry: Shadow Mrs. Magario
+    ShadowMrsMagario = 264,
+
+    // Generated from enemy name table entry: Beguiling Girl
+    BeguilingGirl1 = 265,
+
+    // Generated from enemy name table entry: Shadow Oyamada
+    ShadowOyamada = 266,
+
+    // Generated from enemy name table entry: Rhetorician of the Sea
+    RhetoricianoftheSea1 = 267,
+
+    // Generated from enemy name table entry: Shadow Mr. Magario
+    ShadowMrMagario = 268,
+
+    // Generated from enemy name table entry: Shadow Nejima
+    ShadowNejima = 269,
+
+    // Generated from enemy name table entry: Funerary Warrior
+    FuneraryWarrior1 = 270,
+
+    // Generated from enemy name table entry: The Black Avenger
+    TheBlackAvenger1 = 271,
+
+    // Generated from enemy name table entry: Auspicious Pachyderm
+    AuspiciousPachyderm1 = 272,
+
+    // Generated from enemy name table entry: Shadow Uchimura
+    ShadowUchimura = 273,
+
+    // Generated from enemy name table entry: Heretic Goat
+    HereticGoat1 = 274,
+
+    // Generated from enemy name table entry: Shadow Akitsu
+    ShadowAkitsu = 275,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE51 = 276,
+
+    // Generated from enemy name table entry: Security Shadow
+    SecurityShadow = 277,
+
+    // Generated from enemy name table entry: Shadow Wakasa
+    ShadowWakasa = 278,
+
+    // Generated from enemy name table entry: Life-draining Spirit
+    LifedrainingSpirit1 = 279,
+
+    // Generated from enemy name table entry: Guard Dog of Hades
+    GuardDogofHades2 = 280,
+
+    // Generated from enemy name table entry: Wandering Reviver
+    WanderingReviver1 = 281,
+
+    // Generated from enemy name table entry: Politician Ooe
+    PoliticianOoe = 282,
+
+    // Generated from enemy name table entry: Shadow Shimizu
+    ShadowShimizu = 283,
+
+    // Generated from enemy name table entry: Shadow IT President
+    ShadowITPresident = 284,
+
+    // Generated from enemy name table entry: Embittered Blacksmith
+    EmbitteredBlacksmith1 = 285,
+
+    // Generated from enemy name table entry: Shadow Honjo
+    ShadowHonjo = 286,
+
+    // Generated from enemy name table entry: Hunting Wolf Spirit
+    HuntingWolfSpirit1 = 287,
+
+    // Generated from enemy name table entry: Shadow Jochi
+    ShadowJochi = 288,
+
+    // Generated from enemy name table entry: Zealous Messenger
+    ZealousMessenger1 = 289,
+
+    // Generated from enemy name table entry: Sacrificial Pyrekeeper
+    SacrificialPyrekeeper2 = 290,
+
+    // Generated from enemy name table entry: Coffin-borne God
+    CoffinborneGod1 = 291,
+
+    // Generated from enemy name table entry: Shadow Fukurai
+    ShadowFukurai = 292,
+
+    // Generated from enemy name table entry: Shadow Takanashi
+    ShadowTakanashi1 = 293,
+
+    // Generated from enemy name table entry: Tornado Devil
+    TornadoDevil2 = 294,
+
+    // Generated from enemy name table entry: Shadow Oda
+    ShadowOda = 295,
+
+    // Generated from enemy name table entry: Shadow Nakanohara
+    ShadowNakanohara1 = 296,
+
+    // Generated from enemy name table entry: Shadow Sakoda
+    ShadowSakoda = 297,
+
+    // Generated from enemy name table entry: Shadow Mrs. Takase
+    ShadowMrsTakase = 298,
+
+    // Generated from enemy name table entry: Shadow Mogami
+    ShadowMogami = 299,
+
+    // Generated from enemy name table entry: Shadow Togo
+    ShadowTogo = 300,
+
+    // Generated from enemy name table entry: Chivalrous Guard
+    ChivalrousGuard = 301,
+
+    // Generated from enemy name table entry: Cavern Snakeman
+    CavernSnakeman1 = 302,
+
+    // Generated from enemy name table entry: Heretic Goat
+    HereticGoat2 = 303,
+
+    // Generated from enemy name table entry: Shadow Tsuda
+    ShadowTsuda = 304,
+
+    // Generated from enemy name table entry: Shadow Isazuka
+    ShadowIsazuka = 305,
+
+    // Generated from enemy name table entry: Midnight Queen
+    MidnightQueen1 = 306,
+
+    // Generated from enemy name table entry: Shadow Hashisato
+    ShadowHashisato = 307,
+
+    // Generated from enemy name table entry: Shadow Isshiki
+    ShadowIsshiki = 308,
+
+    // Generated from enemy name table entry: Shadow Asakura
+    ShadowAsakura = 309,
+
+    // Generated from enemy name table entry: Shadow Arita
+    ShadowArita = 310,
+
+    // Generated from enemy name table entry: Shadow Shimomi
+    ShadowShimomi = 311,
+
+    // Generated from enemy name table entry: Shadow Kishi
+    ShadowKishi = 312,
+
+    // Generated from enemy name table entry: Shadow Odo
+    ShadowOdo = 313,
+
+    // Generated from enemy name table entry: Shadow Takena
+    ShadowTakena = 314,
+
+    // Generated from enemy name table entry: Shadow Naguri
+    ShadowNaguri = 315,
+
+    // Generated from enemy name table entry: Shadow Akitsu
+    ShadowAkitsu1 = 316,
+
+    // Generated from enemy name table entry: Shadow Oda
+    ShadowOda1 = 317,
+
+    // Generated from enemy name table entry: Shadow Yoshioka
+    ShadowYoshioka = 318,
+
+    // Generated from enemy name table entry: Wandering Reviver
+    WanderingReviver2 = 319,
+
+    // Generated from enemy name table entry: Shadow Odo
+    ShadowOdo1 = 320,
+
+    // Generated from enemy name table entry: Shadow Asakura
+    ShadowAsakura1 = 321,
+
+    // Generated from enemy name table entry: Bearer of the Scales
+    BeareroftheScales1 = 322,
+
+    // Generated from enemy name table entry: Shadow Mrs. Togo
+    ShadowMrsTogo = 323,
+
+    // Generated from enemy name table entry: Shadow Tsuboi
+    ShadowTsuboi = 324,
+
+    // Generated from enemy name table entry: Former Noble
+    FormerNoble = 325,
+
+    // Generated from enemy name table entry: Thief of Tablets
+    ThiefofTablets1 = 326,
+
+    // Generated from enemy name table entry: Shadow Kiritani
+    ShadowKiritani = 327,
+
+    // Generated from enemy name table entry: Thunder Emperor
+    ThunderEmperor1 = 328,
+
+    // Generated from enemy name table entry: Missionary of Depravity
+    MissionaryofDepravity1 = 329,
+
+    // Generated from enemy name table entry: Heavenly Punisher
+    HeavenlyPunisher1 = 330,
+
+    // Generated from enemy name table entry: Dark Sun
+    DarkSun1 = 331,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE52 = 332,
+
+    // Generated from enemy name table entry: Goddess of Life and Death
+    GoddessofLifeandDeath = 333,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE53 = 334,
+
+    // Generated from enemy name table entry: Scandalous Queen
+    ScandalousQueen1 = 335,
+
+    // Generated from enemy name table entry: Spear-wielding General
+    SpearwieldingGeneral1 = 336,
+
+    // Generated from enemy name table entry: Pagan Savior
+    PaganSavior1 = 337,
+
+    // Generated from enemy name table entry: Bringer of Misfortune
+    BringerofMisfortune1 = 338,
+
+    // Generated from enemy name table entry: Raging Bird God
+    RagingBirdGod3 = 339,
+
+    // Generated from enemy name table entry: Thunder Emperor
+    ThunderEmperor2 = 340,
+
+    // Generated from enemy name table entry: Spear-wielding General
+    SpearwieldingGeneral2 = 341,
+
+    // Generated from enemy name table entry: Harlot of Desire
+    HarlotofDesire1 = 342,
+
+    // Generated from enemy name table entry: Bedside Brute
+    BedsideBrute1 = 343,
+
+    // Generated from enemy name table entry: Monk of the Valley
+    MonkoftheValley1 = 344,
+
+    // Generated from enemy name table entry: Battle Fiend
+    BattleFiend1 = 345,
+
+    // Generated from enemy name table entry: Awakened God
+    AwakenedGod1 = 346,
+
+    // Generated from enemy name table entry: Shadow Makigami
+    ShadowMakigami = 347,
+
+    // Generated from enemy name table entry: Chivalrous Guard
+    ChivalrousGuard1 = 348,
+
+    // Generated from enemy name table entry: Corpse Bird
+    CorpseBird1 = 349,
+
+    // Generated from enemy name table entry: RESERVE
+    RESERVE54 = 350,
+
+};
+
+// This enum represents the different party members available.
+enum<ushort> PartyMember
+{
+	Protagonist = 1,
+    Ryuji = 2,
+    Morgana = 3,
+    Ann = 4,
+    Yusuke = 5,
+    Makoto = 6,
+    Haru = 7,
+    Futaba = 8,
+    Goro = 9,
+};
+
+enum<ushort> MusicID
+{
+    LastSurprise = 0,
+    KeeperOfLust = 4,
+    BloomingVillain = 5,
+    RiversInTheDesert_Instrumental = 6,
+    WillPower = 7,
+    RiversInTheDesert = 8,
+    Yaldabaoth = 12,
+    OurBeginning = 14,
+};
+
+enum<byte> ArcanaID
+{
+    Fool = 1,
+    Magician = 2,
+    HighPriestess = 3,
+    Empress = 4,
+    Emperor = 5,
+    Hierophant = 6,
+    Lovers = 7,
+    Chariot = 8,
+    Justice = 9,
+    Hermit = 10,
+    Fortune = 11,
+    Strength = 12,
+    HangedMan = 13,
+    Death = 14,
+    Temperance = 15,
+    Devil = 16,
+    Tower = 17,
+    Star = 18,
+    Moon = 19,
+    Sun = 20,
+    Judgement = 21,
+    Aeon = 22,
+    BlankArcana = 23,
+    World = 24,
+};
+
+// This enum represents elemental affinity status (i.e. weak, resist, etc.)
+enum<short> AffinityStatus
+{
+    Neutral = 20,
+    Weak = 2048,
+    Resist = 8192,
+    Resist2 = 4096,
+    Resist3 = 12288,
+    Block = 256,
+    Repel = 512,
+    Drain = 1024,
+    TooFarAwayToHit = 8272, // used in Cognitive Wakaba battle; needs more testing
+    Drain2 = 9216, // used in Shadow Madarame battle; needs more testing
+    WeakResist = 10240,
+};
+
+enum<ushort>PersonaInherit
+{
+    InheritNone = 0,
+    InheritPhysical = 1,
+    InheritFire = 2,
+    InheritIce = 3,
+    InheritElec = 4,
+    InheritWind = 5,
+    InheritBless = 6,
+    InheritCurse = 7,
+    InheritHealing = 8,
+    InheritAilment = 10,
+    InheritAlmighty = 12,
+    InheritRESERVE = 13,
+    InheritNuke = 14,
+    InheritPsy = 15,
+};
+
+enum<ubyte> ElementalType
+{
+    Passive = 255,
+    Physical = 0,
+    Gun = 1,
+    Fire = 2,
+    Ice = 3,
+    Electric = 4,
+    Wind = 5,
+    Psy = 6,
+    Nuke = 7,
+    Bless = 8,
+    Curse = 9,
+    Almighty = 10,
+    Dizzy = 11,
+    Confuse = 12,
+    Fear = 13,
+    Forget = 14,
+    Hunger = 15,
+    Sleep = 16,
+    Rage = 17,
+    Despair = 18,
+    Brainwash = 19,
+    Healing = 20,
+    Support = 21,
+};
+
+
+enum<ubyte>Skill_ApplyOrCureEffect
+{
+    NoEffect = 0,
+    ApplyEffect = 1,
+    CureEffect = 2,
+};
+
+enum<ubyte>Skill_ExtraEffect
+{
+    NoEffect6 = 0,
+    OnlyHitTargetsInflictedWithFear = 1, // used by Ghastly Wail
+    EscapeBattle = 2,
+    ThrowAwayMoney = 6,
+    AlwaysKills = 13, // used for 9999 damage Megidolaon (603)
+    BigBangBurgerDocumentVisual = 15, // used by Shadow Okumura's Sacrifice Order
+    BatonPassDamageUp = 17,
+    TargetedChanceUp = 19, // increases chance of being targeted by enemies
+    TargetedChanceWayUp = 20, // greatly increases chance of being targeted by enemies
+    IfAilmentExistsHealAndCureInstead = 21, // used for Big Bang Challenge; needs testing with other ailments
+    CasterAttackWayDownNonNegatable = 22, // used for Beast Weaver
+};
+
+enum<ubyte>Skill_HPEffect
+{
+    NoDamageOrHealing = 0,
+    DealDamage = 1, // deal damage, affected by damage stat
+    RestoreHealth = 2, // restore health, varies based on stats
+    SetHP = 3, // set HP to a specified value
+    DealExactDamage = 4, // deals EXACTLY the amount of damage specified, regardless of stats
+    RestoreExactHealth = 5, // restores EXACTLY the amount of health specified, regardless of stats
+    Unknown_Damage6 = 6, // seems to be the same as DealDamage? Needs more testing
+    Unknown_Healing7 = 7, // seems to be the same as RestoreHealth? Needs more testing
+    DamagePercentCurrentHP = 8, // deal a percent of current HP as damage
+    RestorePercentCurrentHP = 9, // restore a percent of current HP as health
+    DamagePercentMaxHP = 10, // deal a percent of max HP as damage
+    RestorePercentMaxHP = 11, // restore a percent of max HP as health
+    DrainDamage = 12, // deals damage, affected by damage stat, and restores equal HP to the user
+    DrainExactDamage = 13, // deals EXACTLY the amount of damage specified and restores equal HP to the user
+    Unknown_Damage14 = 14, // seems to be the same as DealDamage? Needs more testing
+    RestoreHealthWhiffChance = 15, // Has a chance to whiff, healing for minimal HP instead
+    DamageBasedOnHealthyPartyMembers = 16, // used for All-Out Attacks
+};
+
+enum<ubyte>Skill_SPEffect
+{
+    NoSPEffect = 0,
+    RestoreSP = 5,
+    DepletePercentMaxSP = 10,
+    RestorePercentMaxSP = 11,
+    DrainSP = 13,
+};
+
+enum<ubyte>Skill_ValidTargets
+{
+    TargetAlly = 1,
+    TargetEnemy = 2,
+    TargetAny = 3,
+};
+
+enum<ubyte>Skill_NumberOfTargets
+{
+    SingleTarget = 0,
+    MultiTarget = 1,
+    MultiTargetExceptSelf = 2, // might be redundant with Multi + SelfNotAllowed
+    Unknown_PlumeOfDuskRelated = 3, // used by the unused Plume of Dusk item ability - description reads "When MC is KO'd, fully recover to all allies"
+};
+
+enum<ubyte>Skill_TargetRestrictions
+{
+    NoAdditionalRestrictions = 0,
+    RandomTwoFromSelection = 1, // used by Diffraction Arrow, Distortion Wave
+    Unknown_DreadfulScreamRelated = 2, // used by Cognitive Wakaba's Dreadful Scream
+    Unknown_WingBlastRelated = 4, // used by Cognitive Wakaba's Wing Blast
+    SelfOnly = 16,
+    SelfNotAllowed = 32,
+    UnconsciousOnly = 64, // used for revival skills
+};
+
+enum<ubyte>Skill_CasterEffect1
+{
+    NoCasterEffect1 = 0,
+    UnknownCasterEffect_SpecialMoveRelated = 1, // used by All-Out Attacks, Navigator skills, and other unique skills. Sometimes plays a mini-cutscene?
+    ModifiedByEquippedGun = 2,
+    ReduceOwnHPTo1 = 4,
+    UnknownCasterEffect1_StealInfoRelated = 32, // used by Steal Info
+};
+
+enum<ubyte>Skill_CasterEffect2
+{
+    NoCasterEffect2 = 0,
+    KOSelf = 1,
+    MeleeContact = 2, // needs to be tested
+    SummonAlly_CRASHES_ON_USE = 4, // summons an ally in enemy encounters - DO NOT USE LIKE A NORMAL SKILL, THE GAME WILL CRASH
+    UnknownCasterEffect_SupportRelated = 8, // used by healing and support skills
+    UnknownCasterEffect_RecarmdraRelated = 24, // used by Recarmdra
+    UnknownCasterEffect_TrafuriRelated = 40, // used by Trafuri
+    UnknownCasterEffect_FollowUpRelated = 66, // used by Follow-Up Attacks
+    UnknownCasterEffect_RouletteRelated1 = 128, // used by Roulette: HP and Roulette: SP. Suspect it has to do with being able to be reversed.
+    UnknownCasterEffect_RouletteRelated2 = 136, // used by Roulette: Aid.
+    CRASHES_OFTEN_UnknownCasterEffect2_160 = 160, // used by Barrage and Dispose Item - DO NOT USE WITHOUT APPLYING THE "ThrowAwayMoney" EXTRA EFFECT, THE GAME WILL CRASH
+};
+
+
+enum<ubyte>Skill_DamageStat
+{
+    NoApplicableStat = 0,
+    StrengthStat = 1,
+    MagicStat = 2,
+};
+
+enum<ubyte>Skill_CostType
+{
+    NoCost = 0,
+    HPCost = 1,
+    SPCost = 2,
+};
+
+enum<ubyte>Skill_PhysicalOrMagicSkill
+{
+    MagicSkill = 0,
+    PhysicalSkill = 1,
+};
+
+enum<ubyte>Skill_PassiveOrActive
+{
+    ActiveSkill = 0,
+    PassiveSkill = 1, // MUST be enabled for passive skills to function properly
+    NULL_Skill = 255
+};
+
+enum<int>GearEquippable
+{
+    NotEquippable = 0,
+    AnyoneEquippable = -1,
+    JokerEquippable = 2,
+    RyujiEquippable = 4,
+    MorganaEquippable = 8,
+    AnnEquippable = 16,
+    YusukeEquippable = 32,
+    MakotoEquippable = 64,
+    HaruEquippable = 128,
+    FutabaEquippable = 256,
+    GoroEquippable = 512,
+    FemaleCharacterEquippable = 464,
+    MaleCharacterEquippable = 550,
+    AnyoneExceptMorganaEquippable = 1014,
+};
+
+enum<ushort>GearEffect
+{
+    NoGearEffect = 0,
+    Plus10HP = 1,
+    Plus20HP = 2,
+    Plus30HP = 3,
+    Plus40HP = 4,
+    Plus50HP = 5,
+    Plus100HP = 6,
+    Plus10SP = 7,
+    Plus20SP = 8,
+    Plus30SP = 9,
+    Plus40SP = 10,
+    Plus50SP = 11,
+    Plus100SP = 12,
+    BurnLow = 13,
+    BurnMedium = 14,
+    BurnHigh = 15,
+    FreezeLow = 16,
+    FreezeMedium = 17,
+    FreezeHigh = 18,
+    ShockLow = 19,
+    ShockMedium = 20,
+    ShockHigh = 21,
+    DizzyLow = 22,
+    DizzyMedium = 23,
+    DizzyHigh = 24,
+    ConfuseLow = 25,
+    ConfuseMedium = 26,
+    ConfuseHigh = 27,
+    FearLow = 28,
+    FearMedium = 29,
+    FearHigh = 30,
+    ForgetLow = 31,
+    ForgetMedium = 32,
+    ForgetHigh = 33,
+    BrainwashLow = 34,
+    BrainwashMedium = 35,
+    BrainwashHigh = 36,
+    SleepLow = 37,
+    SleepMedium = 38,
+    SleepHigh = 39,
+    RageLow = 40,
+    RageMedium = 41,
+    RageHigh = 42,
+    DespairLow = 43,
+    DespairMedium = 44,
+    DespairHigh = 45,
+    RandomAilmentLow = 46,
+    RandomAilmentMedium = 47,
+    RandomAilmentHigh = 48,
+    CritRateUpLow = 49,
+    CritRateUpMedium = 50,
+    CritRateUpHigh = 51,
+    FireAttacksUp = 52,
+    IceAttacksUp = 53,
+    ElectricAttacksUp = 54,
+    WindAttacksUp = 55,
+    NukeAttacksUp = 56,
+    PsyAttacksUp = 57,
+    BlessAttacksUp = 58,
+    CurseAttacksUp = 59,
+    RepelPhysicalLow = 60,
+    RepelPhysicalMedium = 61,
+    RepelPhysicalHigh = 62,
+    ResistBurn_Gear = 63,
+    ResistFreeze_Gear = 64,
+    ResistShock_Gear = 65,
+    ResistDizzy_Gear = 66,
+    ResistConfuse_Gear = 67,
+    ResistFear_Gear = 68,
+    ResistForget_Gear = 69,
+    ResistHunger_Gear = 70,
+    ResistSleep_Gear = 71,
+    ResistRage_Gear = 72,
+    ResistDespair_Gear = 73,
+    ResistMouse_Gear = 74,
+    ResistBrainwash_Gear = 75,
+    AutoTarukaja = 76,
+    AutoRakukaja = 77,
+    AutoSukukaja = 78,
+    ReducePhysicalDamageLow = 79,
+    ReducePhysicalDamageMedium = 80,
+    ReducePhysicalDamageHigh = 81,
+    ReduceFireDamageLow = 82,
+    ReduceFireDamageMedium = 83,
+    ReduceFireDamageHigh = 84,
+    ReduceIceDamageLow = 85,
+    ReduceIceDamageMedium = 86,
+    ReduceIceDamageHigh = 87,
+    ReduceElectricDamageLow = 88,
+    ReduceElectricDamageMedium = 89,
+    ReduceElectricDamageHigh = 90,
+    ReduceWindDamageLow = 91,
+    ReduceWindDamageMedium = 92,
+    ReduceWindDamageHigh = 93,
+    ReduceNukeDamageLow = 94,
+    ReduceNukeDamageMedium = 95,
+    ReduceNukeDamageHigh = 96,
+    ReducePsyDamageLow = 97,
+    ReducePsyDamageMedium = 98,
+    ReducePsyDamageHigh = 99,
+    ReduceBlessDamageLow = 100,
+    ReduceBlessDamageMedium = 101,
+    ReduceBlessDamageHigh = 102,
+    ReduceCurseDamageLow = 103,
+    ReduceCurseDamageMedium = 104,
+    ReduceCurseDamageHigh = 105,
+    ReduceMagicDamageLow = 106,
+    ReduceMagicDamageMedium = 107,
+    ReduceMagicDamageHigh = 108,
+    EvadePhysicalLow = 109,
+    EvadePhysicalMedium = 110,
+    EvadePhysicalHigh = 111,
+    EvadeFireLow = 112,
+    EvadeFireMedium = 113,
+    EvadeFireHigh = 114,
+    EvadeIceLow = 115,
+    EvadeIceMedium = 116,
+    EvadeIceHigh = 117,
+    EvadeElectricLow = 118,
+    EvadeElectricMedium = 119,
+    EvadeElectricHigh = 120,
+    EvadeWindLow = 121,
+    EvadeWindMedium = 122,
+    EvadeWindHigh = 123,
+    EvadeNukeLow = 124,
+    EvadeNukeMedium = 125,
+    EvadeNukeHigh = 126,
+    EvadePsyLow = 127,
+    EvadePsyMedium = 128,
+    EvadePsyHigh = 129,
+    EvadeBlessLow = 130,
+    EvadeBlessMedium = 131,
+    EvadeBlessHigh = 132,
+    EvadeCurseLow = 133,
+    EvadeCurseMedium = 134,
+    EvadeCurseHigh = 135,
+    EvadeMagicLow = 136,
+    EvadeMagicMedium = 137,
+    EvadeMagicHigh = 138,
+    Plus50PercentEXP = 139,
+    FireAttacksUpStackable = 140,
+    IceAttacksUpStackable = 141,
+    WindAttacksUpStackable = 142,
+    ElectricAttacksUpStackable = 143,
+    ResistFire_Gear = 144,
+    ResistIce_Gear = 145,
+    ResistWind_Gear = 146,
+    ResistElectric_Gear = 147,  
+    NukeAttacksUpStackable = 148,
+    PsyAttacksUpStackable = 149,
+    BlessAttacksUpStackable = 150,
+    CurseAttacksUpStackable = 151,
+    ResistNuke_Gear = 152,
+    ResistPsy_Gear = 153,
+    ResistBless_Gear = 154,
+    ResistCurse_Gear = 155,
+    StrongerWhenEnraged = 156,
+    DecreaseEnemySightRange = 157,
+    IncreaseEnemyAlertTime = 158,
+    DecreaseEnemyAlertTime = 159,
+    Plus1Clip = 160,
+    Plus2Clips = 161,
+    Plus3Clips = 162,
+    NullBurn_Gear = 163,
+    NullFreeze_Gear = 164,
+    NullShock_Gear = 165,
+    NullDizzy_Gear = 166,
+    NullConfuse_Gear = 167,
+    NullFear_Gear = 168,
+    NullForget_Gear = 169,
+    NullHunger_Gear = 170,
+    NullSleep_Gear = 171,
+    NullRage_Gear = 172,
+    NullDespair_Gear = 173,
+    NullMouse_Gear = 174,
+    NullBrainwash_Gear = 175,
+    Regenerate1_Gear = 176,
+    Regenerate2_Gear = 177,
+    Regenerate3_Gear = 178,
+    Invigorate1_Gear = 179,
+    Invigorate2_Gear = 180,
+    Invigorate3_Gear = 181,
+    PreventBlessInstakill = 182,
+    PreventCurseInstakill = 183,
+    HalfEnemyAccuracy = 184,
+    NullAllExceptAlmighty = 185,
+    HalfDamageNoEvasion = 186,
+    PlusEXPFromBattles = 192,
+    PlusMoneyFromBattles = 193,
+    TargetedChanceDown = 194,
+    NullBlessCurse = 195,
+    AllOutAttackPowerUp = 197,
+    Plus1BulletAfterBattle = 198,
+    CritRateUpEvadeMagic = 199,
+    LowerSkillCost25Percent = 200,
+    ReduceStatusAilment50Percent = 201,
+};
+
+enum<ubyte>Month
+{
+    January = 1,
+    February = 2,
+    March = 3,
+    April = 4,
+    May = 5,
+    June = 6,
+    July = 7,
+    August = 8,
+    September = 9,
+    October = 10,
+    November = 11,
+    December = 12,
+};
+
+enum<ubyte>Skill_AreaType
+{
+    Unusable = 0,
+    UsableInField = 1,
+    UsableInBattle = 2,
+    UsableInFieldAndBattle = 3
 };

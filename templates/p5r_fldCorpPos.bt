@@ -1,0 +1,47 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "common/include.h"
+
+typedef struct
+{
+	u32 Field00;
+	u32 Magic;
+	u32 File_Size;
+	u16 Data_Type;
+	u16 Data_Count;
+	u32 Data_Offsets;
+	u32 Field20;
+	u32 Data_Size;
+	u32 Entry_Count;
+	u16 Entry_type;
+	u16 Field2E;
+	byte padding[12];
+}table;
+
+typedef struct
+{
+    u16 Field_MajorID;
+    u16 Field_MinorID;
+    u8 Field04;
+	u8 Field05;
+	u16 npc_Resource_Id;
+	f32 X_position;
+	f32 Y_position;
+	f32 Z_position;
+	
+}fldCorpPos<optimize=false, read=Str(
+)>;
+
+BigEndian();
+table data;
+fldCorpPos data[ (FileSize() - 48) / 20 ];
