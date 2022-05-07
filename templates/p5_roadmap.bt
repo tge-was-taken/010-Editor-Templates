@@ -1,0 +1,250 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "common/include.h"
+
+local int index = -1;
+
+enum<u32> MinimapMode
+{
+	No_Minimap = 0,
+	R1_Menu_Only = 2,
+	R1_Menu_and_Overworld = 3,
+};
+
+enum<u32> MinimapIcon
+{
+	Minimap_reserved1 = 0,
+	Minimap_reserved2 = 1,
+	Nothing = 2,
+	White_Arrow_Down = 3,
+    Safe_Room = 4,
+    Persistent_Red_Exclamation_Mark = 5,
+	Big_Chest = 7,
+	Red_Exclamation_Mark = 8,
+    Green_Lock = 10,
+    Red_Lock = 11,
+    Red_X = 12,
+    Gray_Arrow_Up = 13,
+    Gray_Arrow_Right = 14,
+    Gray_Arrow_Down = 15,
+    Gray_Arrow_Left = 16,
+    Chest = 17,
+	Minimap_Reserved3 = 18,
+    Red_Destination_Marker = 19,
+    Velvet = 20,
+	Red_Butterfly = 21,
+	Opened_Chest = 22,
+	Big_Sparkle = 23,
+    Exit_Pointing_Up = 24,
+    Exit_Pointing_Down = 25,
+    Sparkling_Chest = 26,
+	Minimap_Reserved4 = 27,
+    Player_Indicator = 28,
+    Elevator_Arrow_Up = 29,
+    Elevator_Arrow_Down = 30,
+	White_Circle = 31,
+	Down_Indicator_Pointing_Up = 32,
+	Down_Indicator_Pointing_Down = 33,
+	Up_Indicator_Pointing_Up = 34,
+	Up_Indicator_Pointing_Down = 35,
+	Gray_Arrow_Up_Left = 36,
+	Gray_Arrow_Up_Right = 37,
+	Gray_Arrow_Down_Left = 38,
+	Gray_Arrow_Down_Right = 39,
+	Palace_Ruler_Treasure = 40,
+	Yellow_Check_Mark = 43,
+};
+typedef struct
+{
+	s16 fldMajor <name = "Field Major ID">;
+	s8 fldMinor <name = "Field Minor ID">;
+	s8 fldSub <name = "Field Sub ID">;
+	s16 Field04 <name = "Default Player Cursor X Position">;
+	s16 Field06 <name = "Default Player Cursor Y Position">;
+	s16 Field08 <name = "texpack entry minus index">;
+	s16 Field0a;
+	MinimapMode Field0c <name = "Minimap Mode">;
+}roadmap <read=roadmap_table_read, name="roadmap entry">;
+
+typedef struct
+{
+	s16 Field00;
+	s16 Field02;
+	s16 Field04;
+	s16 Field06;
+	s8 Field08;
+	s8 Field09;
+	s8 Field0a;
+	s8 Field0b;
+	s8 Field0c;
+	s8 Field0d;
+	s8 Field0e;
+	s8 Field0f;
+}texelem;
+
+typedef struct
+{
+	u32 Field00;
+	u32 Field04;
+	f32 Field08;
+}texpack_header;
+
+typedef struct
+{
+    s16 fldMajor <name = "Field Major ID">;
+	s8 fldMinor <name = "Field Minor ID">;
+	s8 fldSub <name = "Field Sub ID">;
+    if (fldMajor != -1)
+    {
+        local int myIndex = index + 1;
+        index = index + 1;
+    }
+    else
+    {
+        local int myIndex = -1;
+    }
+	s32 LayerCount;
+	f32 Field3c;
+	s32 a_Flag_Thing;
+	f32 Field00;
+	f32 Field04;
+	f32 Field08;
+	f32 Field0c;
+	f32 Field10;
+	f32 Field14;
+	f32 Field18;
+	f32 Field1c;
+	s32 Field20<name = "A flag that uhhh">;
+	s16 Name;
+    s16 Field26;
+	s16 Field28;
+	s16 Field2a;
+	s16 Field2c;
+	s16 Field2e;
+	s16 Field30;
+	s16 Field32;
+}texpack<read=texpack_table_read, name="texpack entry">;
+
+string texpack_table_read( texpack &o )
+{
+  local string s;
+  if (o.fldMajor != -1)
+  {
+    SPrintf( s, "Field %03d_%03d_%d - Index %03d", o.fldMajor, o.fldMinor, o.fldSub, o.myIndex );
+  }
+  else
+  {
+    SPrintf( s, "Null Entry" );
+  }
+  return s;
+}
+
+string roadmap_table_read( roadmap &o )
+{
+  local string s;
+  SPrintf( s, "Field %03d_%03d_%d", o.fldMajor, o.fldMinor, o.fldSub );
+  return s;
+}
+typedef struct
+{
+	local int myIndex = index + 1;
+    index = index + 1;
+	MinimapIcon Field00 <name = "Map/Icon ID">;
+	local string IconId = EnumToString( Field00 );
+	f32 Field04 <name = "Map X Offset from Right">;
+	f32 Field08 <name = "Map Y Offset from Top">;
+	if( myIndex == 0 )
+	{
+		f32 Field0C <name = "Map DDS Size X">;
+		f32 Field10 <name = "Map DDS Size Y">;
+	}
+	else
+	{
+		f32 Field0C <name = "R1 Menu Map Size X">; //Will Cause Issues if it exceeds dds size
+		f32 Field10 <name = "R1 Menu Map Size Y">; //Will Cause Issues if it exceeds dds size
+	}
+	local string EntryName = "Minimap Bin Entry";
+	
+	if (Field00 == 27 || Field00 == 18)
+	{
+		EntryName = "Parts Bin Entry";
+	}
+	else if ( Field00 == 2 )
+	{
+		EntryName = "Null Entry";
+	}
+	
+	if (Field00 > 2 && Field00 != 18 && Field00 != 27 )
+	{
+		f32 Field14 <name = "X Position on Map DDS (px)">;
+		f32 Field18 <name = "Y Position on Map DDS (px)">;
+		EntryName = "Icon Bin Entry";
+	}
+	else
+	{
+	f32 Field14 <name = "Map X Offset from Left">;
+	f32 Field18 <name = "Map Y Offset from Bottom">;
+	}
+	s32 Field1C <name = "Bitflag Requirement">;
+	s32 Field20;
+	f32 Field24;
+	f32 Field28;
+	f32 Field2C;
+	f32 Field30;
+	f32 Field34;
+	f32 Field38;
+	f32 Field3C;
+	f32 Field40;
+	f32 Field44;
+}partbin<name = EntryName, read = bin_table_read>;
+
+string bin_table_read( partbin &o )
+{
+	local string s;
+	SPrintf( s, "%s, Flag %04d", o.IconId, o.Field1C );
+	return s;
+}
+
+local int64 fileSize = FileSize();
+local string filePath = GetFileName();
+local string fileName = FileNameGetBase( filePath, false );
+local string fileExt = FileNameGetExtension( filePath );
+
+LittleEndian();
+typedef struct( string fileName, int64 fileSize )
+{
+		switch ( fileName )
+		{
+			case "roadmap":
+			roadmap data[fileSize / 16] <optimize = false>;
+			break;
+			
+			case "texelem":
+			texelem data[fileSize / 16] <optimize = false>;
+			break;
+			
+			case "texlist":
+			u16 Field00[fileSize / 2] <optimize = false>;
+			break;
+			
+			case "texpack":
+            texpack data[fileSize / 68] <optimize = false>;
+			break;
+			
+			default:
+			partbin data[fileSize / 72] <optimize = false>;
+			break;
+		}
+}roadmapstruct;
+
+roadmapstruct data ( fileName, fileSize );

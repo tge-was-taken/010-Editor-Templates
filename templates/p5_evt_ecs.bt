@@ -11,6 +11,11 @@
 //   History: 
 //------------------------------------------------
 
+//------------------------------------------------
+// Includes
+//------------------------------------------------
+#include "p5_evt_ecs_enums.bt"
+
 //---------------------------------------------
 // Primitive types
 //---------------------------------------------
@@ -109,8 +114,9 @@ typedef struct
 {
     SetRandomBackColor();
 
-    char Magic[4];                      // 'EVT\x01'
-    u32 Version;                        // always 0x0002722E, possibly a version as modifying it breaks things
+    char Magic[3];      
+    byte endianess;	// 'EVT\x01'
+    u32 Version<format=hex>;            // always 0x0002722E, possibly a version as modifying it breaks things
     u16 MajorId;                        // might be unused metadata
     u16 MinorId;                        // might be unused metadata
     u8 Field0C;                         // unknown, doesn't have an apparent effect
@@ -145,14 +151,57 @@ typedef struct
     u32 Field64;                        // 0?
     u32 Field68;                        // 0?
     u32 Field6C;                        // 0?
-    u32 Field70;                        // often 0xFFFFFFFF
-    u32 Field74;                        // often 0xFFFFFFFF
-    u32 Field78;                        // often 0xFFFFFFFF
-    u32 Field7C;                        // often 0xFFFFFFFF
-    u32 Field80;                        // often 0xFFFFFFFF
-    u32 Field84;                        // often 0xFFFFFFFF
-    u32 Field88;                        // often 0xFFFFFFFF
-    u32 Field8C;                        // often 0xFFFFFFFF
+    s32 Field70;                        // often 0xFFFFFFFF
+    s32 Field74;                        // often 0xFFFFFFFF
+    s32 Field78;                        // often 0xFFFFFFFF
+    s32 Field7C;                        // often 0xFFFFFFFF
+    s32 Field80;                        // often 0xFFFFFFFF
+    s32 Field84;                        // often 0xFFFFFFFF
+    s32 Field88;                        // often 0xFFFFFFFF
+    s32 Field8C;                        // often 0xFFFFFFFF
+	if ( Version == 0x29B9C ) // LE, used by Royal
+	{
+		s32 Field90;                        // often 0xFFFFFFFF
+		s32 Field94;                        // often 0xFFFFFFFF
+		s32 Field98;                        // often 0xFFFFFFFF
+		s32 Field9C;                        // often 0xFFFFFFFF
+		s32 FieldA0;                        // often 0xFFFFFFFF
+		s32 FieldA4;                        // often 0xFFFFFFFF
+		s32 FieldA8;                        // often 0xFFFFFFFF
+		s32 FieldAC;                        // often 0xFFFFFFFF
+		s32 FieldB0;                        // often 0xFFFFFFFF
+		s32 FieldB4;                        // often 0xFFFFFFFF
+		s32 FieldB8;                        // often 0xFFFFFFFF
+		s32 FieldBC;                        // often 0xFFFFFFFF
+		s32 FieldC0;                        // often 0xFFFFFFFF
+		s32 FieldC4;                        // often 0xFFFFFFFF
+		s32 FieldC8;                        // often 0xFFFFFFFF
+		s32 FieldCC;                        // often 0xFFFFFFFF
+		s32 FieldD0;                        // often 0xFFFFFFFF
+		s32 FieldD4;                        // often 0xFFFFFFFF
+		s32 FieldD8;                        // often 0xFFFFFFFF
+		s32 FieldDC;                        // often 0xFFFFFFFF
+		s32 FieldE0;                        // often 0xFFFFFFFF
+		s32 FieldE4;                        // often 0xFFFFFFFF
+		s32 FieldE8;                        // often 0xFFFFFFFF
+		s32 FieldEC;                        // often 0xFFFFFFFF
+		s32 FieldF0;                        // often 0xFFFFFFFF
+		s32 FieldF4;                        // often 0xFFFFFFFF
+		s32 FieldF8;                        // often 0xFFFFFFFF
+		s32 FieldFC;                        // often 0xFFFFFFFF
+		s32 Field100;                       // often 0xFFFFFFFF
+		s32 Field104;                       // often 0xFFFFFFFF
+		s32 Field108;                       // often 0xFFFFFFFF
+		s32 Field10C;                       // often 0xFFFFFFFF
+		s32 Field110;                       // often 0xFFFFFFFF
+		s32 Field114;                       // often 0xFFFFFFFF
+		s32 Field118;                       // often 0xFFFFFFFF
+		s32 Field11C;                       // often 0xFFFFFFFF
+		s32 Field120;                       // often 0xFFFFFFFF
+		s32 Field124;                       // often 0xFFFFFFFF
+		s32 Field128;                       // often 0xFFFFFFFF
+		s32 Field12C;                       // often 0xFFFFFFFF
+	} 
 
     FSeek( ObjectOffset );
     struct Object Objects[ ObjectCount ];
@@ -169,7 +218,7 @@ typedef struct
     u32 CommandCount;
     u32 CommandOffset;
     u32 CommandSize;
-    u32 Padding;
+    u32 Padding<hidden=true>;
 
     Assert( CommandOffset == 0x10, "CommandOffset != 0x10" );
     Assert( CommandSize == 0x30, "CommandSize != 0x30" );
@@ -179,16 +228,6 @@ typedef struct
     struct Command Commands[ CommandCount ];
 } EcsFile;
 
-enum<u32> ObjectType
-{
-    ObjectType_Field       = 0x00000003,
-    ObjectType_ParticlePak = 0x00000007, // data\effect\event\ee{MajorId:3}_{MinorId:3}.pak
-    ObjectType_Camera      = 0x00000009, // data\evtcmr\ecm{MajorId:3}_{MinorId:3}_{SubId:3}.bin
-    ObjectType_Prop        = 0x00000601,
-    ObjectType_Particle    = 0x01000002, // data\effect\event\ee{MajorId:3}_{MinorId:3}.EPL
-    ObjectType_Character   = 0x01000101, // data\model\character\{MajorId:4}\c{MajorId:4}_{MinorId:3}_{SubId:2}.GMD
-};
-
 typedef struct
 {
     SetRandomBackColor();
@@ -197,7 +236,16 @@ typedef struct
     ObjectType Type;        // object type.
     u32 Field08;            // always 1?
     u32 Field0C;            // 0, doesn't seem to be used
-    u32 ResourceMajorId;    // major id of the resource to be loaded
+
+    if ( Type == ObjectType_Enemy ) // If the Object type is an Enemy...  
+    {
+        u32 UnitTableIndex;         // ...This field uses the unit ID in UNIT.TBL (which chooses which model to load)
+    }    
+    else 
+    {
+        u32 ResourceMajorId;        // Else, it's the major id of the resource to be loaded
+    }
+
     u16 ResourceSubId;      // sub id of the resource to be loaded
     u16 ResourceMinorId;    // minor id of the resource to be loaded
     u32 Field1C;            // 
@@ -213,7 +261,9 @@ typedef struct
 {
     SetRandomBackColor();
 
-    u32 Type;           // 'Msg_', 'MSD_', 'MLA_', etc
+    CommandType RealType;
+	local CommandType Type = RealType; // LE fix
+
     u16 Field04;        // 0, 1, 2 usually
     u16 Field06;        // always 0?
     u32 ObjectId;       // reference to event object
@@ -224,12 +274,24 @@ typedef struct
     u32 DataSize;       // size of the data stored in the file
     u32 Field20;        // usually 0, otherwise a small number
     u32 Field24;        // usually 0, otherwise a small number
-    u32 Field28;        // usually 0, otherwise a small number
-    u32 Field2C;        // usually 0, otherwise a small number
 
+    // In Msg commands, Field28 controls as to which response this is to the preceding dialogue choice set, 0-based
+    if ( Type == Msg_ ) // If this is 0, this Msg is the response to the first choice
+    {                   // If this is 1, this Msg is the response to the second choice, etc.
+        u32 ResponseIndex;
+    } else 
+    {
+        u32 Field28;        // usually 0, otherwise a small number
+    }
+    
+    u32 Field2C;        // usually 0, otherwise a small number
     local u64 seekBack = FTell();
     local bool isKnownType = true;
     FSeek( DataOffset );
+	// LE Fix
+	if ( !IsBigEndian() )
+        Type = ReverseBytes(Type);
+	
     switch ( Type )
     {
         // EVT
@@ -305,7 +367,15 @@ typedef struct
         case FourCC( "MRot" ): struct CommandData_MRot Data; break;
         case FourCC( "MScl" ): struct CommandData_MScl Data; break;
         case FourCC( "MSD_" ): struct CommandData_MSD Data; break;
-        case FourCC( "Msg_" ): struct CommandData_Msg Data; break;
+        case FourCC( "Msg_" ): 
+		{
+			if( DataSize == 0xB0 ) // P5R fix
+			{
+				struct CommandData_Msg_Royal Data; 
+			}
+			else struct CommandData_Msg Data; 
+			break;
+		}
         case FourCC( "MsgR" ): struct CommandData_MsgR Data; break;
         case FourCC( "MSSs" ): struct CommandData_MSSs Data; break;
         case FourCC( "MvCt" ): struct CommandData_MvCt Data; break;
@@ -330,6 +400,8 @@ typedef struct
         case FourCC( "SBEA" ): struct CommandData_SBEA Data; break;
         case FourCC( "SFts" ): struct CommandData_SFts Data; break;
         case FourCC( "Snd_" ): struct CommandData_Snd Data; break;
+		
+		
 
         default:
             local char typeString[5];
@@ -344,12 +416,14 @@ typedef struct
 
     if ( isKnownType )
     {
-        Assert( DataSize == sizeof( Data ), "DataSize does not match size of command data struct");
+        local string ErrorMessage;
+		SPrintf( ErrorMessage, "DataSize of 0x%x does not match size of 0x%x for command data struct for %s", DataSize, sizeof( Data ), EnumToString(Type) );
+		Assert( DataSize == sizeof( Data ), ErrorMessage);
     }
 
     FSeek( seekBack );
 
-} Command <optimize=false>;
+} Command <optimize=false,read=SetCommandNameToBlock>;
 
 typedef struct
 {
@@ -448,11 +522,13 @@ typedef struct
     u32 Field1C;
 } CommandData_CQuk;
 
+// Camera Set Animation?
+//
 typedef struct
 {
     u32 Field00;
     u32 Field04;
-    u32 Field08;
+    u32 AnimationIndex;
     f32 Field0C;
     u32 Field10;
     f32 Field14;
@@ -928,15 +1004,6 @@ typedef struct
     u32 Field0C;
 } CommandData_FDFl;
 
-enum<u32> FadeType
-{
-    FadeType_None,
-    FadeType_BlackIn,
-    FadeType_BlackOut,
-    FadeType_WhiteIn,
-    FadeType_WhiteOut,
-}
-
 // Fade Scene
 typedef struct
 {
@@ -987,9 +1054,11 @@ typedef struct
     u32 Field0C;
 } CommandData_FOD;
 
+// Frame Jump (?)
+// Might handle dialogue choices????
 typedef struct
 {
-    u32 Field00;
+    u32 FrameJump; // Time to jump to
     u32 Field04;
     u32 Field08;
     u32 Field0C;
@@ -1056,10 +1125,12 @@ typedef struct
     u32 Field0C;
 } CommandData_LBX;
 
+// Model Animation 
+// Used for facial animations (blend anims), pulls animations from model/character/[model ID]/emt[model ID].GAP
 typedef struct
 {
     u32 Field00;
-    u32 Field04;
+    u32 BlendAnimationIndex;
     u32 Field08;
     f32 Field0C;
     u32 Field10;
@@ -1093,20 +1164,21 @@ typedef struct
     u32 Field4C;
 } CommandData_MAAB;
 
-// Model something?
+// Model Animation
+// Controls an object/model's body animations (absolute anims)
 typedef struct
 {
-    u32 Field00;
+    u32 Part1AnimationIndex; // Index of animation in pack
     u32 Field04;
     u32 Field08;
     f32 Field0C;
-    u32 Field10;
+    u32 Part2AnimationIndex; // Index of animation in pack
     u32 Field14;
     u32 Field18;
     f32 Field1C;
     u8 Field20;
     u8 Field21;
-    u16 Field22;
+    u16 AnimationPackType; // Bitflag(?) that determines which folders/animation pack types the animations will be from
     u32 Field24;
     u32 Field28;
     u32 Field2C;
@@ -1184,20 +1256,21 @@ typedef struct
     u32 FieldFC;
 } CommandData_MAI;
 
+// Model Alpha, controls transparency of object
 typedef struct
 {
     u32 Field00;
-    u32 Field04;
+    u32 Opacity; // Opacity value 0-255, 0 for invisible and 255 for fully visible
     u32 Field08;
     u32 Field0C;
 } CommandData_MAlp;
 
-// Model something?
+// Model Attach
 typedef struct
 {
-    u32 Field00;
-    u32 Field04;
-    u32 Field08;
+    u32 AttachAnimationFrame;   // Animation frame at which Object attaches to target
+    u32 AttachBoneHelperId;     // BoneHelperId of Object that is having something attach to it
+    u32 AttachObjectId;         // ID of the Object that is being attached
     u32 Field0C;
     u32 Field10;
     u32 Field14;
@@ -1209,16 +1282,14 @@ typedef struct
     u32 Field2C;
 } CommandData_MAt;
 
+// Model Attach Object 
+// Used to attach Objects to other Objects (e.g. Props to Characters)
 typedef struct
 {
     u32 Field00;
-    u32 Field04;
-    f32 Field08;
-    f32 Field0C;
-    f32 Field10;
-    f32 Field14;
-    f32 Field18;
-    f32 Field1C;
+    u32 AttachObjectId; // ID of the Object that is being attached
+    Vector3 AttachPosition; // relative to the bone helper ID that the Object is being attached to
+    Vector3 AttachRotation; // relative to the bone helper ID that the Object is being attached to, in degrees
     u32 Field20;
     u32 Field24;
     u32 Field28;
@@ -1237,18 +1308,16 @@ typedef struct
     u32 Field1C;
 } CommandData_MCSd;
 
+// Model Detach
+// Makes an Object detach from another Object.
 typedef struct
 {
     u32 Field00;
-    u32 Field04;
-    u32 Field08;
+    u32 DetachBoneHelperId; // Bone Helper Id that is having an Object detached from it
+    u32 DetachObjectId; // ID of Object being detached
     u32 Field0C;
-    f32 Field10;
-    f32 Field14;
-    f32 Field18;
-    f32 Field1C;
-    f32 Field20;
-    f32 Field24;
+    Vector3 DetachGlobalPosition; // global
+    Vector3 DetachGlobalRotation; // global, in degrees
     u32 Field28;
     u32 Field2C;
 } CommandData_MDt;
@@ -1261,10 +1330,12 @@ typedef struct
     u32 Field0C;
 } CommandData_MFts;
 
+// Model Icon
+// Make emote icons pop up on Objects (e.g. the ! icon on a Character)
 typedef struct
 {
     u32 Field00;
-    u32 Field04;
+    u32 IconIndex; // Index of the emote icon
     u32 Field08;
     u32 Field0C;
 } CommandData_MIc;
@@ -1284,14 +1355,6 @@ typedef struct
     u32 Field28;
     u32 Field2C;
 } CommandData_ML;
-
-enum<u32> LookAtInterpolationMode
-{
-    LookAtInterpolationMode_None,
-    LookAtInterpolationMode_Smooth1,
-    LookAtInterpolationMode_Smooth2,
-    LookAtInterpolationMode_Smooth3
-};
 
 // Model Look At
 // Makes the model look at a target position.
@@ -1400,7 +1463,7 @@ typedef struct
 {
     u32 Field00;
     u32 Field04;
-    f32 Field08;
+    f32 Scale; // Scale of the object, 1 is default
     u32 Field0C;
 } CommandData_MScl;
 
@@ -1410,7 +1473,7 @@ typedef struct
 {
     Vector3 Position; // relative
     Vector3 Rotation; // relative, in degrees
-    u32 Field18;
+    u32 InitialAnimationIndex; // Animation that model is initialized at (e.g. standing, sitting). Pulls from character/[model ID]/event/be[model ID]_[animation major ID].GAP
     f32 Field1C;
     u32 Field20;
     f32 Field24;
@@ -1427,11 +1490,11 @@ typedef struct
 typedef struct 
 {
     u32 Field00;
-    u16 MessageId;
-    u16 Field06;
-    u16 Field08;
-    u16 Field0A;
-    u32 Field0C;
+    u16 MessageId; // Message ID. Not index, but the actual number that follows "MSG_" in the labeling e.g. MSG_001_0_0 
+    u16 MessageMinorId; // Message minor ID.
+    u16 SelectionId; // Label ID of the dialogue selection set that follows this MSG. e.g. If this is 2, SEL_002_0_0 is the set that follows. Leave at 0 if it no dialogue choices follow
+    u16 Field0A; // ??? Changing this to 1 skips the following dialogue selection set completely, changing it to 2 has the choices still pop up but responses are skipped
+    u32 Field0C; // ??? Changing this to 1 or 2 skips the responses, though the choice set still pops up
     u32 Field10;
     f32 Field14;       
     f32 Field18;
@@ -1439,7 +1502,7 @@ typedef struct
     u16 Field20;        // 32
     u16 Field22;
     u32 Field24;
-    u32 Field28;
+    u32 Field28; 
     u32 Field2C;
 
     struct
@@ -1450,7 +1513,37 @@ typedef struct
     } Entries[14];
 
     Printf( "Message id: %d\n", MessageId );
+    //Printf( "Message Command P5\n" );
 } CommandData_Msg;
+
+typedef struct 
+{
+    u32 Field00;
+    u16 MessageId; // Message ID. Not index, but the actual number that follows "MSG_" in the labeling e.g. MSG_001_0_0 
+    u16 MessageMinorId; // Message minor ID.
+    u16 SelectionId; // Label ID of the dialogue selection set that follows this MSG. e.g. If this is 2, SEL_002_0_0 is the set that follows. Leave at 0 if it no dialogue choices follow
+    u16 Field0A; // ??? Changing this to 1 skips the following dialogue selection set completely, changing it to 2 has the choices still pop up but responses are skipped
+    u32 Field0C; // ??? Changing this to 1 or 2 skips the responses, though the choice set still pops up
+    u32 Field10;
+    f32 Field14;       
+    f32 Field18;
+    u32 Field1C;
+    u16 Field20;        // 32
+    u16 Field22;
+    u32 Field24;
+    u32 Field28; 
+    u32 Field2C;
+
+    struct
+    {
+        s16 Unknown1;
+        u16 Unknown2;
+        f32 Unknown3;
+    } Entries[16];
+
+    Printf( "Message id: %d\n", MessageId );
+    //Printf( "Message Command P5R\n" );
+} CommandData_Msg_Royal;
 
 typedef struct
 {
@@ -1723,13 +1816,20 @@ typedef struct
     u32 Field04;
     u32 Field08;
     u32 Field0C;
-    u32 Field10;
+    u32 CueId;
     u32 Field14;
     u32 Field18;
     u32 Field1C;
 } CommandData_Snd;
 
-BigEndian();
+//BigEndian();
+// Checks endianness so doesn't die from Royal EVTs (thanks Dniwe)
+LittleEndian();
+local uint sizeTest = ReadUInt( 0 );
+if ( sizeTest & 0xFF000000 )
+{
+    BigEndian();
+}
 
 local string fileName = GetFileName();
 local string extension = FileNameGetExtension( fileName );
@@ -1740,4 +1840,15 @@ if ( extension == ".EVT" )
 else if ( extension == ".ECS" )
 {
     EcsFile File;
+}
+
+u32 ReverseBytes(u32 value)
+{
+     return (value & 0x000000FFU) << 24 | (value & 0x0000FF00U) << 8 |
+         (value & 0x00FF0000U) >> 8 | (value & 0xFF000000U) >> 24;
+}
+
+string SetCommandNameToBlock(Command &p)
+{
+	return EnumToString(p.Type);
 }

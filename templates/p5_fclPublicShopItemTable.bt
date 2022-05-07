@@ -1,0 +1,102 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: SecreC.
+//   Version: 1.0
+//   Purpose: 
+//  Category: 
+// File Mask: fclPublicShopItemTable.ftd
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "common/include.h"
+#include "p5_enums_ftd.bt"
+
+local int index = -1;
+local int isShop;
+
+typedef struct
+{
+	u32 Field00 <name = "Field 00">;
+    u32 Magic <name = "Magic">;
+    u32 FileSize <name = "File Size">;
+    u16 DataType <name = "Data Type">;
+    u16 DataCount <name = "Data Count">;
+    u32 DataOffsets[ DataCount ] <name = "Data Offsets">;
+	u8 zerobyte[12]<hidden = true>;
+	u32 Field00 <name = "Field 00">;
+    u32 DataSize <name = "Data Size">;
+    u32 EntryCount <name = "Entry Count">;
+    FtdListType EntryType <name = "Entry Type">;
+    u16 Field0E <name = "Field 0E">;
+}FtdTable;
+
+typedef struct
+{	
+	local string myName;
+	u8 Field00;
+	if (Field00 == 157)
+    {
+		u8 reserve[39]<hidden = true>;
+		myName = "End of Shop";
+		isShop = 1;
+		return;
+    }
+    myName = "Item Entry";
+	u8 Field01;
+	ItemType Field02<format = hex, name = "Item Category">;
+	u8 Field03<name = "Item ID">;
+	u8 Field04<name = "Amount Acquired Per Unit Purchased">;
+	u8 Field05<name = "Availability Start Date Month">;
+	u8 Field06<name = "Availability Start Date Day">;
+	u8 Field07<name = "Availability End Date Month">;
+	u8 Field08<name = "Availability End Date Day">;
+	u8 Field09;
+	u8 Field0A<name = "Quantity Available">;
+	u8 Field0B;
+	u8 Field0C;
+	u8 Field0C;
+	u8 Field0C;
+	u8 Field0C;
+	u8 Field0C;
+	u8 Field0C;
+	u8 Field0C;
+	u8 Field0C;
+	u8 Field0C;
+	u8 Field0C;
+	u8 Field0C;
+	u8 Field0C;
+	s32 Bitflag<name = "Bitflag Requirement">;
+	u8 Field0C;
+	u8 Field0C;
+	u8 Field0C;
+	u8 Field0C;
+	u32 PricePercentage<name = "Price Percentage">;
+	u8 Field0C;
+	u8 Field0C;
+	u8 Field0C;
+	u8 Field0C;
+	isShop = 0;
+}fclPublicShopItemTableStruct<name = myName>;
+
+typedef struct
+{
+	isShop = 0;
+	while (isShop == 0)
+	{
+		fclPublicShopItemTableStruct Data;
+	}
+	local int myIndex = index + 1;
+    index = index + 1;
+}fclPublicShopItemTable<name = PublicShopTableRead>;
+
+string PublicShopTableRead (fclPublicShopItemTable &o )
+{
+	local string s;
+	SPrintf( s, "Shop ID %d", o.myIndex );
+	return s;
+}
+local int64 fileSize = FileSize();
+FtdTable Data;
+fclPublicShopItemTable Data[fileSize]<optimize = false>;

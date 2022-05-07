@@ -1,0 +1,45 @@
+FSeek( 0x10 );
+
+LittleEndian();
+DisplayFormatHex();
+
+typedef struct { float X; float Y; float Z; } Vec3f;
+typedef struct { float X; float Y; float Z; float W; } Vec4f;
+
+typedef struct {
+  ushort  Field00; // 0001 - enabled
+  ushort  Field02;
+  
+  BigEndian();
+  ushort  Field04;
+  LittleEndian();
+  ushort Field06;
+  ushort  Field08;
+  BigEndian();
+  ushort  Field0A;
+  LittleEndian();
+  
+  Vec3f View;
+  Vec3f Rot;
+
+  uint  Field24; // 0
+  uint  Field28; // 0
+
+  float Field2C;
+  float Field30;
+
+  float Scale;
+
+  Vec4f Light;
+
+  uint  LightRGBA;
+} PDD <size=0x4c,optimize=false>;
+
+SetBackColor( 0x880000 );
+
+local uint i = 0;
+for ( i = 0; i < ( FileSize() - 0x10 ) / 0x4c; i++ )
+{
+    SetBackColor( ( i % 2 ) * 0x440000 + 0x880000 );
+    PDD pdd;
+}

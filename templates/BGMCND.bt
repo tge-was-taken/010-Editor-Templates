@@ -1,0 +1,262 @@
+//------------------------------------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: *.ftd
+//   Authors: Sierra, DeathChaos
+//   Version: 1.02
+//   Purpose: Persona 5 Field BGM Data
+//   History
+//   1.00    2020-04-21  DeathChaos - started this
+//------------------------------------------------------------------------------
+
+BigEndian();
+
+enum<byte> MonthType
+{
+	January = 1,
+	February,
+	March,
+	April,
+	May,
+	June,
+	July,
+	August,
+	September,
+	October,
+	November,
+	December,
+};
+
+enum<byte> WeatherType
+{
+	Sunny = 0,
+	Rain,
+	Sunny2,
+	Snow,
+	Rainy_Season,
+	Typhoon,
+	Pollen,
+	Pollen2,
+	Downpour,
+	Heat_Wave,
+	Flu_Season,
+	Flu_Season2,
+};
+
+enum<short> MusicID
+{
+	NoMusic = -1,
+    MyHomie = 0,
+	TokyoEmergency = 1,
+	WickedPlanNoIntro = 2,
+	SunsetBridgeNoIntro = 3,
+	WhatsGoingOn = 4,
+	AlleycatNoIntro = 5,
+	NewBeginning = 6,
+	NewBeginningNoIntro = 7,
+	BreakItDown = 8,
+	BreakItDownElp = 9,
+	Tension = 10,
+	Awakening = 11,
+	RUNRUNRUN = 12,
+	BloomingVillain = 13,
+	Alright = 14,
+	AlrightElp = 15,
+	Sweet = 16,
+	KingQueenAndSlaveAnother = 17,
+	HighPressure = 18,
+	InterrogationRoom = 19,
+	Desire = 20,
+	ConfessionSecretNoIntro = 21,
+	Suspicion = 22,
+	BloodOfVillain = 23,
+	Regret = 24,
+	Tension2 = 25,
+	Awakening2 = 26,
+	Awakening3 = 27,
+	EverydayDays = 28,
+	Sweet2 = 29,
+	WickedPlan = 30,
+	SunsetBridge = 31,
+	ConfessionSecret = 32,
+	Alleycat = 33,
+	Alleycat2 = 34,
+	RestlessnessNoIntro = 35,
+	IsItBoring = 36,
+	LifeGoesOn = 37,
+	SwearToMyBones = 38,
+	DaysofSisters = 39,
+	NewBeginningNoIntro2 = 40,
+	NewBeginningNoIntro3 = 41,
+	BloomingVillainNoIntro = 42,
+	LifeWillChangeIntroOnly = 43,
+	Silence = 100,
+	Phantom = 101,
+	FreedomAndSecurity = 102,
+	Silence2 = 200,
+	Silence3 = 201,
+	Silence4 = 202,
+	Silence5 = 203,
+	Silence6 = 204,
+	Silence7 = 205,
+	Silence8 = 206,
+	DarkNet = 207,
+	ElectronicsStore = 208,
+	BarYUUComer = 209,
+	Planetarian = 210,
+	MeijiShrine = 211,
+	PenaltyTime = 212,
+	DestinyLand = 213,
+	WelcomeBackMaster = 214,
+	TRIPLESEVEN = 215,
+	BigBangBurgersMarch = 216,
+	CraneGame = 217,
+	LastSurprise = 300,
+	LastSurprise2 = 310,
+	LastSurprise3 = 320,
+	KeeperOfLust = 330,
+	BloomingVillain2 = 331,
+	RiversInTheDesertInstrumental = 332,
+	Yaldabaoth = 333,
+	OurBeginning = 334,
+	Willpower = 335,
+	RiversInTheDesert = 336,
+	RiversInTheDesertIntroOnly = 337,
+	Victory = 340,
+	Talk = 341,
+	KingQueenAndSlave = 400,
+	KingQueenAndSlave2 = 401,
+	KingQueenAndSlave3 = 402,
+	KingQueenAndSlaveAnother2 = 403,
+	AWoman = 410,
+	AWoman2 = 411,
+	Price = 420,
+	Price2 = 421,
+	PriceAnother = 422,
+	TheDaysWhenMyMotherWasThere = 430,
+	TheDaysWhenMyMotherWasThere2 = 431,
+	TheDaysWhenMyMotherWasThereAnother = 432,
+	TheDaysWhenMyMotherWasThereAnother2 = 433,
+	Sweatshop = 440,
+	SweatshopAnother = 441,
+	WhimsOfFate = 450,
+	WhimsOfFate2 = 451,
+	Ark = 460,
+	Ark2 = 461,
+	FreedomAndSecurity2 = 470,
+	LifeWillChange = 471,
+	Mementos = 480,
+	Silence9 = 490,
+	HaveAShortRest = 495,
+	PoemForEveryonesSouls = 500,
+	PoemForEveryonesSouls2 = 501,
+	ButterflyKiss = 502,
+	LayerCake = 503,
+	BeneathTheMaskInstrumental = 600,
+	TokyoDaylight = 610,
+	TokyoEmergency2 = 620,
+	LifeWillChangeInstrumental = 630,
+	BeneathTheMask = 640,
+	BeneathTheMaskRainInstrumental = 641,
+	BeneathTheMaskRain = 642,
+	TheSpirit = 700,
+	SwearToMyBonesNoIntro = 710,
+	WhatsGoingOn2 = 720,
+	WhatsGoingOn3 = 721,
+	WakeUpGetUpGetOutThereFull = 800,
+	WakeUpGetUpGetOutThere = 801,
+	WithTheStarsAndUs = 802,
+	ColorsFlyingHigh = 900,
+	RoyalDays = 901,
+	RoyalDaysAnother = 902,
+	IdealAndTheRealEnding = 903,
+	IBelieve = 904,
+	GentleMadman = 905,
+	OutOfKindness = 906,
+	TakeOver = 907,
+	KeepYourFaith = 908,
+	ThrowAwayYourMask = 909,
+	Silence10 = 910,
+	Silence11 = 911,
+	Silence12 = 912,
+	AnotherIdeology = 913,
+	AnotherIdeologyNoIntro = 914,
+	IdealAndTheReal = 915,
+	Silence13 = 916,
+	Silence14 = 917,
+	WishComeTrue = 920,
+	Silence15 = 921,
+	NoMoreWhatIfsBarVersion = 922,
+	NoMoreWhatIfs = 923,
+	Kichijoji199X = 924,
+	Silence16 = 925,
+	Silence17 = 926,
+	Silence18 = 927,
+	Silence19 = 928,
+	Silence20 = 929,
+	Silence21 = 930,
+	SoHappyWorld = 931,
+	Silence22 = 932,
+	MementosUpperLayer = 933,
+	MementosMiddleLayer = 934,
+	MementosLowerLayer = 935,
+	MementosNewLayer = 936,
+	Silence23 = 937,
+	Silence24 = 938,
+	NoMoreWhatIfsInstrumental = 939,
+	PrisonLabor = 940,
+	MassDestruction = 941,
+	ReachOutToTheTruth = 942,
+	ColorsFlyingHigh2 = 956,
+	OurLight = 957,
+	IdealAndTheRealEnding2 = 958,
+	HesATrickster = 959,
+	HesATricksterFull = 960,
+	OurLightInstrumental = 961,
+};
+
+struct FTDFile
+{
+	struct Header
+	{
+		uint32 unk_0x0<name="Unknown (0x0)">;
+		char magic[4]<name="FTD0">;
+		uint32 fileSize<name="File Size">;
+		uint32 unk_0xC<name="Unknown (0xC)">;
+		uint32 pointer<name="Pointer to Blocks start">;
+		ubyte padd[(0x10 - FTell() % 0x10) % 0x10]<name="padding">;
+	}header<name="File Header">;
+	struct BGMCondStruct
+	{
+		FSeek(header.pointer);
+		uint32 unk_0x0<name="Unknown (0x0)">;
+		uint32 fileSize<name="File Size">;
+		uint32 numOfEntries<name="Number of Entries">;
+		ubyte padd[(0x10 - FTell() % 0x10) % 0x10]<name="padding">;
+		struct BGMCondBlock
+		{
+			int16 fldMajorID;
+			int16 fldMinorID;
+			MonthType monthStart;
+			byte dayStart;
+			MonthType monthEnd;
+			byte dayEnd;
+			byte Unk1;
+			WeatherType Weather;
+			byte unk_Flag;
+			byte unk2;
+			int16 unk3;
+			MusicID musicID;
+			int16 unk4;
+			int16 flagCondition;
+		}bgmcondblock[numOfEntries]<name="BGM Condition Blocks", read=GetFieldName>;
+		ubyte padd2[(0x10 - FTell() % 0x10) % 0x10]<name="padding">;
+	}bgmcondstruct<name="File">;
+}ftdfile<name="BGM Condition FTD">;
+
+string GetFieldName(BGMCondBlock &block)
+{
+	string buffer;
+    SPrintf( buffer, "field: %03d_%03d,  Time period: %02d/%02d - %02d/%02d, Flag: %05d, Music ID: %04d", block.fldMajorID, block.fldMinorID, block.monthStart, block.dayStart, block.monthEnd, block.dayEnd, block.flagCondition, block.musicID );
+	return buffer;
+}

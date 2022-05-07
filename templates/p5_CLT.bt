@@ -1,0 +1,280 @@
+//------------------------------------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: *.ftd
+//   Authors: DeathChaos
+//   Version: 1.00
+//   Purpose: Persona 5 Field BGM Data
+//   History
+//   1.00    2020-04-21  DeathChaos - started this
+//------------------------------------------------------------------------------
+
+typedef char bool;
+typedef char s8;
+typedef uchar u8;
+typedef int16 s16;
+typedef uint16 u16;
+typedef int16 s16;
+typedef int32 s32;
+typedef uint32 u32;
+typedef int64 s64;
+typedef uint64 u64;
+typedef hfloat f16;
+typedef float f32;
+typedef double f64;
+
+typedef struct
+{
+		f32 Unknown3;
+		f32 Unknown4;
+		f32 Unknown5;
+} Type3SubStruct<name="Pathing Nodes", optimize=false>;
+
+typedef struct(u32 Version)
+{
+		f32 Unknown11;
+		u16 Unknown13;
+		u16 Unknown14;
+		f32 Unknown15;
+		u16 Unknown17;
+		u16 Unknown18;
+		u16 Unknown19;
+		u16 Unknown20;
+		u16 Unknown21;
+        u16 Unknown21;
+		f32 Unknown23;
+		u16 Unknown25;
+		u16 Unknown26;
+		s16 Unknown27;
+		s16 Unknown28;
+		if ( Version == 0x17020600 )
+		{
+			u16 Unknown5;
+			u16 Unknown6;
+		}
+		u16 Num_of_Sub_Struct;
+		u16 Unknown29;
+		Type3SubStruct Entry[ Num_of_Sub_Struct ];
+} Type3<name="Entry", optimize=false>;
+
+typedef struct(u32 Version)
+{
+		u16 Unknown5;
+		u16 Unknown6;
+		u16 Unknown7;
+		u16 Unknown8;
+		u16 Unknown9;
+		u16 Unknown10;
+		f32 Unknown11;
+		u16 Unknown13;
+		u16 Unknown14;
+		f32 Unknown15;
+		u16 Unknown17;
+		u16 Unknown18;
+		u16 Unknown19;
+		u16 Unknown20;
+		u16 Unknown21;
+        u16 Unknown21;
+		f32 Unknown23;
+		u16 Unknown25;
+		u16 Unknown26;
+		s16 Unknown27;
+		s16 Unknown28;
+		if ( Version == 0x17020600 )
+		{
+			u16 Unknown5;
+			u16 Unknown6;
+		}
+		u16 Num_of_Sub_Struct;
+		u16 Unknown29;
+		Type3SubStruct Entry[ Num_of_Sub_Struct ];
+} Type2<name="Entry", optimize=false>;
+
+typedef struct(u32 Version)
+{
+		f32 Quat_Rotation;
+		f32 Quat_Rotation;
+		f32 Quat_Rotation;
+		u16 Unk_Cnd1<name="Unknown Conditional">;
+		u16 Unknown18;
+        if ( Version == 0x17020600 )
+		{
+			u16 Unknown5;
+			u16 Unknown6;
+		}
+		u16 Unknown19;
+		u16 Spawn_Num;
+		f32 Unknown21;
+		u32 Unk_Cnd2<name="Unknown Conditional">;
+		u16 Unknown25;
+		u16 Unknown26;
+		s16 Unknown27;
+		s16 Unknown28;
+		u16 Num_of_Pathing_Nodes<comment="First node is spawn point.">;
+		u16 Unknown29;
+		Type3SubStruct Entry[ Num_of_Pathing_Nodes ];
+} Type1<name="Data", optimize=false>;
+
+typedef struct
+{
+		s16 Unknown1<name="Crowd Unit Entry to spawn", comment="Crowd Unit entries are in a separate file, and they determine what models to spawn, and the animations to use.  Check data.cpk/resource/resrcdata.pac/resrcCrowdUnit.bin to find the entries.">;
+		s16 Unknown2<comment="I think this is spawn chance, but am unsure.">;
+} CrowdUnitBlock<name="CrowdUnitEntry", optimize=false>;
+
+typedef struct(u32 Version)
+{
+		u16 Unknown1;
+		u16 Unknown2;
+		u16 Unknown3;
+		s16 Unknown4;
+        if ( Version == 0x15052600 )
+		{
+		s16 Unknown5;
+		s16 Unknown6;
+		s16 Unknown7;
+		s16 Unknown8;
+        }
+		if ( Version >= 0x15111200 )
+		{
+			s16 Unknown5;
+			s16 Unknown6;
+			s16 Unknown7;
+			s16 Unknown8;
+			s16 Unknown9;
+			s16 Unknown10;
+            s16 Unknown11;
+            s16 Unknown12;
+		}
+        u32 Block_Type<name="Crowd Unit Num">;
+		CrowdUnitBlock Block[Block_Type];
+		if ( Block_Type < 6 )
+		{
+			u16 Unknown13[(5 - Block_Type)*2]<name="Empty Entries">;
+		}
+		
+		Type1 Entry(Version);
+} Entry1<name="Entry", read=TypeRead, optimize=false>;
+
+
+
+typedef struct
+{
+        u16 Unknown1;
+		u16 Unknown2;
+		u16 Unknown3;
+		s16 Unknown4;
+		if ( Version >= 0x15111200 )
+		{
+			s16 Unknown5;
+			s16 Unknown6;
+			s16 Unknown7;
+			s16 Unknown8;
+			s16 Unknown9;
+			s16 Unknown10;
+            s16 Unknown11;
+            s16 Unknown12;
+		}	
+        u32 Block_Type<name="Crowd Unit Num">;
+		CrowdUnitBlock Block[Block_Type];
+		if ( Block_Type < 6 )
+		{
+			u16 Unknown30[(5 - Block_Type)*2];
+		}
+		Type1 Entry(Version);
+} Entry2<name="Last Entry", read=TypeRead2, optimize=false>;
+
+typedef struct(u32 Version)
+{
+		u32 Block_Type<name="Type">;
+		f32 Unknown1;
+        f32 unk1;
+        f32 unk2;
+        f32 unk3;
+        u16 unk4;
+        u16 unk5;
+        f32 unk6;
+        u16 unk7;
+        u16 unk8;
+        f32 unk9;
+        u16 unk10;
+        u16 unk11;
+        f32 unk12;
+        u16 unk13;
+        u16 unk14;
+        f32 unk15;
+        u16 unk16;
+        u16 unk17;
+
+} Entry3<name="First Entry", read=TypeRead3, optimize=false>;
+
+typedef struct
+{
+		f32 X_Coordinate;
+		f32 Y_Coordinate;
+		f32 Z_Coordinate;
+} Entry4<name="Cutout Coordinates", optimize=false>;
+
+typedef struct( int Version)
+{
+    if ( Version == 0x15052600 )
+	{
+        u32 Unk1;
+        u16 Entry_Num2;
+        u16 Unk2;
+    }
+    else
+    {
+        f32 Unk1;
+        f32 Unk2;
+        u32 Entry_Num2;
+        u32 Unk4;
+        u32 Unk5;
+        u32 Unk6;
+        u32 Unk7;
+        u32 Unk8;	
+    }	
+    Entry4 Unk_Section[Entry_Num2];
+} Unk_Sec<name="Fake NPC Section", comment="Cutouts that fade out when you approach.  Do not contain actual NPCs.", optimize=false>;
+
+typedef struct( int Version )
+{
+	u32 Entry_Num<name="Number of Entries">;	
+    Entry3 Entry(Version);
+    if (Entry_Num > 0)
+    {
+        f32 unk18;
+	    Entry1 Entry(Version)[ Entry_Num - 1 ];
+	    Entry2 Entry[ 1 ];
+    }
+} NPC_Sec<name="NPC Section", optimize=false>;
+
+string TypeRead( Entry1& block )
+{
+    char buffer[32];
+    SPrintf( buffer, "Num %02d", block.Block_Type );
+    return buffer;
+}
+
+string TypeRead2( Entry2& block )
+{
+    char buffer[32];
+    SPrintf( buffer, "Num %02d", block.Block_Type );
+    return buffer;
+}
+
+string TypeRead3( Entry3& block )
+{
+    char buffer[32];
+    SPrintf( buffer, "Type %02d", block.Block_Type );
+    return buffer;
+}
+
+typedef struct
+{
+	u32 Version<name="Version">;
+	NPC_Sec NPC_Section( Version );
+    Unk_Sec Unk_Section( Version );
+}CLT<optimize=false>;
+
+BigEndian();
+CLT Segment;
