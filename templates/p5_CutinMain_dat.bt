@@ -1,0 +1,63 @@
+//------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: CutinDataTable.dat
+//   Authors: Tekka, Century_
+//   Version: 1.0
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h"
+
+//---------------------------------------------
+// Data Table Type
+//---------------------------------------------
+enum<int>Frame_Type
+{
+    Null = 0,
+    Face_Frame = 1,
+    Eye_frame = 2,
+    Frame_Offset = 4
+};
+
+//---------------------------------------------
+// Entry Data
+//---------------------------------------------
+SetRandomBackColor();
+typedef struct
+{
+    SetRandomBackColor();
+    Frame_Type Type;
+    SetRandomBackColor();
+    char Name[28];
+    SetRandomBackColor();
+    long Field00;
+    long Field04;
+    long Field08;
+    long Field0C;
+    long Field10;
+    long Field14;
+    long Field18;
+    long Field1C;
+    long Visibility;
+    long X_Position;
+    long Y_Position;
+    long Field2C;
+    long Field30;
+    long Field34;
+    long Field38;
+    long Field3C;
+} CutinData <name = "Cutin Data">;
+
+BigEndian();
+
+char Magic[8];
+short Entries;
+short Array[19];
+CutinData Data[Entries];
+
+
