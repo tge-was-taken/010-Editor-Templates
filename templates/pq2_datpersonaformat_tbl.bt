@@ -1,0 +1,84 @@
+//------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: 
+//   Authors: Century_
+//   Version: 1.0
+//   Purpose: Parsing PQ2's datpersonaformat.tbl
+//  Category: Table
+// File Mask: *.tbl
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+
+// Includes pq2_enums.bt for arcana names.
+#include "pq2_enums.bt"
+
+typedef enum<short>
+{
+    Null = 0,
+    Resist = 50,
+    Neutral = 100,
+    Weak = 120,
+} Affinity;
+
+// First bitflag byte affinity values:
+// Null = 0
+// Resist = 32
+// Neutral = 64
+// Weak = 78
+
+// Elemental Affinity block structure.
+typedef struct
+{
+    Affinity Phys <name = "Physical">;
+    Affinity Fire <name = "Fire">;
+    Affinity Ice <name = "Ice">;
+    Affinity Electric <name = "Electric">;
+    Affinity Wind <name = "Wind">;
+    Affinity Psy <name = "Psy">;
+    Affinity Nuke <name = "Nuke">;
+    Affinity Bless <name = "Bless">;
+    Affinity Curse <name = "Curse">;
+}AffinityBitflags <name = "Elemental Affinities">;
+
+
+// Unknown Affinity block structure.
+typedef struct
+{
+    Affinity Unknown;
+    Affinity Unknown;
+    Affinity Unknown;
+    Affinity Unknown;
+    Affinity Unknown;
+    Affinity Unknown;
+    Affinity Unknown;
+    Affinity Unknown;
+    Affinity Unknown;
+    Affinity Unknown;
+    Affinity Unknown;
+    Affinity Unknown;
+    Affinity Unknown;
+    Affinity Unknown;
+    Affinity Unknown;
+    Affinity Unknown;
+}UnknownBitflags <name = "Unknown Affinities">;
+
+// Main table structure.
+struct
+{
+    short Field00;
+    Arcana ID <name = "Arcana ID">;
+    byte BaseLevel <name = "Base Level">;
+    short HP_Bonus <name = "HP Bonus">;
+    short SP_Bonus <name = "SP Bonus">;
+    short Field14;
+    short Field18;
+    short Field1C;
+    short Field20;
+    short Field24;
+    AffinityBitflags Elements;
+    UnknownBitflags Unknown;
+    short UnknownArray [42];
+} Entries [401] <name = "Persona Entries">;
