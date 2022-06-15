@@ -1,0 +1,44 @@
+//------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: 
+//   Authors: Century_
+//   Version: 1.0
+//   Purpose: Parsing PQ2's datmainpersonagrowth.tbl
+//  Category: Table
+// File Mask: *.tbl
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//---------------------------------------------
+// Includes
+//---------------------------------------------
+
+//Includes pq2_enums.bt for skill names.
+#include "pq2_enums.bt"
+
+typedef enum<byte>
+{
+    LearnableSkill = 1,
+    EvolutionSkill = 4,
+    UniqueSkill = 5,
+} SkillType;
+
+// Skill tree entry structure.
+typedef struct 
+{
+    byte Level <name = "Level Learned">;
+    SkillType Type <name = "Type">;
+    PQ2BattleSkill Skill <name = "Skill">;
+    short Unknown; 
+} SkillData;
+
+// Main table structure.
+struct 
+{
+    short Character <name = "Character">;
+    short Levels <name = "Levels Available">;
+    SkillData SkillBlock [32] <name = "Persona Skills">;
+    int UnknownBlock [693];
+} MainPersonaEntries[56] <name = "Main Persona">;
