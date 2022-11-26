@@ -1,0 +1,25 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.0 Binary Template
+// File Mask: fs***_***_***.bin,FS***_***_***.bin
+// Authors: CherryCreamSoda
+//------------------------------------------------
+#include "common/include.h"
+BigEndian();
+u32 EntryCount;
+
+typedef struct
+{
+    SetRandomBackColor();
+    float X;
+    float Y;
+    float Z;
+} PathEntry<optimize=false, read=PathRead>;
+
+string PathRead( PathEntry &h )
+{
+    local string output;
+    SPrintf( output, "X:%f    ||    Y:%f    ||    Z:%f", h.X, h.Y, h.Z);
+    return output; 
+}
+
+struct PathEntry Path[ EntryCount ];
