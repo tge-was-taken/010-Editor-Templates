@@ -12,6 +12,27 @@
 //------------------------------------------------
 #include "common/include.h"
 
+enum<short> weather
+{
+    All = 0,
+    Sunny = 1,
+    Rainy = 2,
+    Cloudy = 3,
+    Snowy = 4,
+};
+
+typedef struct
+{
+	s8 dummy : 1;
+    s8 AM_A : 1;
+    s8 AM_B : 1;
+    s8 PM_A : 1;
+    s8 PM_B : 1;
+    s8 PM_C : 1;
+    s8 PM_D : 1;
+    s8 PM_E : 1;
+}TimeOfDay;
+
 typedef struct
 {
   s32 Disable_Turn_To_Joker : 1;
@@ -56,7 +77,8 @@ typedef struct
 	u16 Field04;
 	u16 Field06;
 	u32 Field08;
-	s32 Field0C[22] <name = "Bitflags">;
+	Bitflag EnablingBitflags[11] <name = "Enabling Bitflags">;
+	Bitflag DisablingBitflags[11] <name = "Disabling Bitflags">;
 	u16 Field_MajorId <name = "Field Major Id">;
 	u8 Field_MinorId <name = "Field Minor Id">;
 	u8 Field_SubId <name = "Field Sub Id">;
@@ -65,8 +87,12 @@ typedef struct
 	u16 Field6E <name = "Animation ID">;
 	u32 Field70;
 	s32 Field74 <name = "BF Init Procedure Index?">;
-	s16 Field78;
-	s16 Field7A;
+    BigEndian();
+	weather Field78<name = "Weather Availability">;
+	LittleEndian();
+    TimeOfDay Field7A;
+	u8 TimeofDayOverride;
+	u32 P5RNew<hidden=true>;
 	f32 Field7C;
 	f32 Field80;
 	f32 Field84;
@@ -78,9 +104,10 @@ typedef struct
 	f32 Field9C;
 	f32 FieldA0;
 	s32 FieldA4 <name = "Interact Name ID">;
-	s32 ExtraBitFlag1;
-	s32 ExtraBitFlag2;
+	Bitflag ExtraBitFlag1;
+    Bitflag ExtraBitFlag2;
 	s32 MainProcedureID;
+	u32 P5RNew_2;
 	BigEndian();
 }table <read=table_read, name = "Corp Table Entry">;
 

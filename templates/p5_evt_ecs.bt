@@ -5,7 +5,7 @@
 //   Authors: TGE
 //   Version: 1.0
 //   Purpose: Parse Persona 5 evt & ecs files
-//  Category: 
+//  Category: Persona 5
 // File Mask: *.evt, *.ecs
 //  ID Bytes: 
 //   History: 
@@ -15,51 +15,11 @@
 // Includes
 //------------------------------------------------
 #include "p5_evt_ecs_enums.bt"
-
-//---------------------------------------------
-// Primitive types
-//---------------------------------------------
-typedef char bool;
-typedef char s8;
-typedef uchar u8;
-typedef int16 s16;
-typedef uint16 u16;
-typedef int16 s16;
-typedef int32 s32;
-typedef uint32 u32;
-typedef int64 s64;
-typedef uint64 u64;
-typedef float f32;
-typedef double f64;
+#include "common/include.h"
 
 //---------------------------------------------
 // Random color
 //---------------------------------------------
-local uint __RandomSeed = 0xDEADBABE;
-local uint __RandomBit = 0;
-local uint __RandomCount = 0;
- 
-uint MyRandom( uint to )
-{
-    ++__RandomCount;
-    __RandomBit  = ( (__RandomSeed >> 0 ) ^ ( __RandomSeed >> 2 ) ^ ( __RandomSeed >> 3 ) ^ ( __RandomSeed >> 5 ) ) & 1;
-    __RandomSeed = ( ( ( ( __RandomBit << 15 ) | ( __RandomSeed >> 1 ) ) + ( 0xBABE / __RandomCount ) ) % to );
-
-    while( __RandomSeed < 0 )
-        __RandomSeed += to;
-
-    return __RandomSeed;
-}
-
-uint RandomColor()
-{
-    return MyRandom( 0xFFFFFFFF );
-}
-
-void SetRandomBackColor()
-{
-    SetBackColor( RandomColor() );
-}
 
 // Math types
 typedef struct
@@ -101,12 +61,6 @@ string ReadQuaternion( Quaternion& value )
 void WriteQuaternion( Quaternion& value, string s )
 {
     SScanf( s, "[%f, %f, %f, %f]", value.X, value.Y, value.Z, value.W );
-}
-
-// Generate u32 from FourCC in string format
-u32 FourCC( string str )
-{
-    return (u32)str[0] << 24 | (u32)str[1] << 16 | (u32)str[2] << 8 | (u32)str[3];
 }
 
 // Evt file structure
@@ -255,7 +209,7 @@ typedef struct
     u32 Field28;            // 0
     u32 Field2C;            // 0
 
-} Object <optimize=false>;
+} Object <optimize=false, read=Str("Object: %s || ID: %02d || Major: %03d || Minor: %03d || Sub: %03d", EnumToString(Type), Id, ResourceMajorId, ResourceMinorId, ResourceSubId)>;
 
 typedef struct
 {
@@ -268,23 +222,31 @@ typedef struct
     u16 Field06;        // always 0?
     u32 ObjectId;       // reference to event object
     u32 Field0C;        // always 0?
-    u32 Time;
+    u32 Frame;
     u32 Duration;
     u32 DataOffset;     // offset to data in the file
     u32 DataSize;       // size of the data stored in the file
-    u32 Field20;        // usually 0, otherwise a small number
-    u32 Field24;        // usually 0, otherwise a small number
-
-    // In Msg commands, Field28 controls as to which response this is to the preceding dialogue choice set, 0-based
-    if ( Type == Msg_ ) // If this is 0, this Msg is the response to the first choice
-    {                   // If this is 1, this Msg is the response to the second choice, etc.
-        u32 ResponseIndex;
-    } else 
-    {
-        u32 Field28;        // usually 0, otherwise a small number
-    }
-    
-    u32 Field2C;        // usually 0, otherwise a small number
+	
+    enum<u32>{
+		None = 0,
+        Return_False = 1,
+        Evt_Local_Data = 2,
+        Flag = 3,
+        Count = 4
+	}FlagType;
+	
+    Bitflag FlagId; //flag ID, Count ID, or Evt Local Data ID
+	u32 FlagValue; //Value result stored in flagID
+	
+    enum<u32>{
+		FlagValue_Equals_FlagIdResult = 0,
+        FlagValue_DoesNotEqual_FlagIdResult = 1,
+        FlagValue_IsLessThan_FlagIdResult = 2,
+        FlagValue_IsMoreThan_FlagIdResult = 3,
+        FlagValue_IsLessThanEqualTo_FlagIdResult = 4,
+        FlagValue_IsMoreThanEqualTo_FlagIdResult = 5,
+	}FlagConditionalType;
+	
     local u64 seekBack = FTell();
     local bool isKnownType = true;
     FSeek( DataOffset );
@@ -423,7 +385,7 @@ typedef struct
 
     FSeek( seekBack );
 
-} Command <optimize=false,read=SetCommandNameToBlock>;
+} Command <optimize=false,read=Str("Command: %s || Frame: %04d || Duration: %03d || ObjectID: %02d", EnumToString(Type), Frame, Duration, ObjectId)>;
 
 typedef struct
 {
@@ -461,9 +423,9 @@ typedef struct
 {
     u32 Field00;
     u32 Field04;
-    f32 Field08;
-    f32 Field0C;
-} CommandData_CClp;
+    f32 NearClip;
+    f32 FarClip;
+} CommandData_CClp<read=Str("Near Clip: %d, Far clip: %d", NearClip, FarClip)>;
 
 // Camera haptic feedback..? chapter..???
 typedef struct
@@ -513,9 +475,9 @@ typedef struct
 typedef struct
 {
     u32 Field00;
-    f32 Field04;
-    f32 Field08;
-    u32 Field0C;
+    f32 QuakeIntensity;
+    f32 QuakeAngle;
+    u32 EaseDuration;
     u32 Field10;
     u32 Field14;
     u32 Field18;
@@ -991,10 +953,17 @@ typedef struct
 typedef struct
 {
     u32 Field00;
-    u32 Field04;
-    u32 Field08;
+	
+    enum<u8>{
+        FadeOut = 1,
+		FadeIn = 2,
+	}FadeMode;
+	
+    u8 FadeTypeId;
+	u16 Field06;
+	u32 Field08;
     u32 Field0C;
-} CommandData_Fd;
+} CommandData_Fd<read=Str("%s: %d", EnumToString(FadeMode), FadeTypeId)>;
 
 typedef struct
 {
@@ -1024,8 +993,9 @@ typedef struct
 typedef struct
 {
     u32 Field00;
-    u32 Field04;
-    u32 Field08;
+    u16 FlbkImageMajorId;
+    u16 FlbkImageMinorId;
+    u32 FlbkImageOpacity<format=hex>;
     u32 Field0C;
     f32 Field10;
     f32 Field14;
@@ -1034,7 +1004,7 @@ typedef struct
     f32 Field20;
     f32 Field24;
     f32 Field28;
-    u32 Field2C;
+    u32 ObjDrawOverImage; //Draw specified object over the flashback image
     u32 Field30;
     u32 Field34;
     u32 Field38;
@@ -1043,7 +1013,7 @@ typedef struct
     u32 Field44;
     u32 Field48;
     u32 Field4C;
-} CommandData_Flbk;
+} CommandData_Flbk<read=Str("Load EFB%03d_%03d.dds with 0x%X Opacity", FlbkImageMajorId, FlbkImageMinorId, FlbkImageOpacity)>;
 
 // Field object data..???
 typedef struct
@@ -1058,7 +1028,7 @@ typedef struct
 // Might handle dialogue choices????
 typedef struct
 {
-    u32 FrameJump; // Time to jump to
+    u32 FrameJump; // Frame to jump to
     u32 Field04;
     u32 Field08;
     u32 Field0C;
@@ -1111,11 +1081,19 @@ typedef struct
 
 typedef struct
 {
-    u32 Field00;
-    u32 Field04;
-    u32 Field08;
+	u32 Field00;
+	
+    enum<u8>{
+		Show = 1,
+        Hide = 2
+	}ImageShowMode;
+	
+    bool PlayFadeOutAnim; //seems to only affect image hide
+    u16 PictId;
+    u16 FrameId;
+    u16 Field0A;
     u32 Field0C;
-} CommandData_ImDp;
+} CommandData_ImDp<read=Str("%s Pict%02d.dds Using Frame%02d.gmd", EnumToString(ImageShowMode), PictId, FrameId)>;
 
 typedef struct
 {
@@ -1324,8 +1302,28 @@ typedef struct
 
 typedef struct
 {
-    u32 Field00;
-    f32 Field04;
+	if (IsBigEndian())
+	{
+		struct
+		{
+			u32 dummy : 29<hidden=true>;
+			u32 PuddleEffect : 1;
+			u32 AreaDistortion : 1;
+			u32 dummyBitMaybe : 1;
+		}FootstepDistortionBitfield;
+	}
+	else
+	{
+		struct
+		{
+			u32 dummyBitMaybe : 1;
+			u32 AreaDistortion : 1;
+			u32 PuddleEffect : 1;
+			u32 dummy : 29<hidden=true>;
+		}FootstepDistortionBitfield;	
+	}
+	
+    f32 FootstepDistortionStrength;
     u32 Field08;
     u32 Field0C;
 } CommandData_MFts;
@@ -1490,11 +1488,13 @@ typedef struct
 typedef struct 
 {
     u32 Field00;
-    u16 MessageId; // Message ID. Not index, but the actual number that follows "MSG_" in the labeling e.g. MSG_001_0_0 
-    u16 MessageMinorId; // Message minor ID.
-    u16 SelectionId; // Label ID of the dialogue selection set that follows this MSG. e.g. If this is 2, SEL_002_0_0 is the set that follows. Leave at 0 if it no dialogue choices follow
-    u16 Field0A; // ??? Changing this to 1 skips the following dialogue selection set completely, changing it to 2 has the choices still pop up but responses are skipped
-    u32 Field0C; // ??? Changing this to 1 or 2 skips the responses, though the choice set still pops up
+    u16 MessageMajorId; // Message ID. Not index, but the actual number that follows "MSG_" in the labeling e.g. MSG_001_0_0 
+    u8 MessageMinorId; // Message minor ID.
+    u8 MessageSubId; 	// Message sub ID
+    u16 SelectionMajorId; // Major ID of the dialogue selection set that follows this MSG. e.g. If this is 2, SEL_002_0_0 is the set that follows. Leave at 0 if it no dialogue choices follow
+    u8 SelectionMinorId; // Selection Minor ID
+    u8 SelectionSubId; // Selection Sub ID
+    u32 LocalDataSelStorage; //Evt Local Data ID where the player's dialogue choice is stored.
     u32 Field10;
     f32 Field14;       
     f32 Field18;
@@ -1512,18 +1512,18 @@ typedef struct
         f32 Unknown3;
     } Entries[14];
 
-    Printf( "Message id: %d\n", MessageId );
-    //Printf( "Message Command P5\n" );
-} CommandData_Msg;
+} CommandData_Msg<read=Str("MSG%03d_%d_%d", MessageMajorId, MessageMinorId, MessageSubId)>;
 
 typedef struct 
 {
     u32 Field00;
-    u16 MessageId; // Message ID. Not index, but the actual number that follows "MSG_" in the labeling e.g. MSG_001_0_0 
-    u16 MessageMinorId; // Message minor ID.
-    u16 SelectionId; // Label ID of the dialogue selection set that follows this MSG. e.g. If this is 2, SEL_002_0_0 is the set that follows. Leave at 0 if it no dialogue choices follow
-    u16 Field0A; // ??? Changing this to 1 skips the following dialogue selection set completely, changing it to 2 has the choices still pop up but responses are skipped
-    u32 Field0C; // ??? Changing this to 1 or 2 skips the responses, though the choice set still pops up
+    u16 MessageMajorId; // Message ID. Not index, but the actual number that follows "MSG_" in the labeling e.g. MSG_001_0_0 
+    u8 MessageMinorId; // Message minor ID.
+    u8 MessageSubId; 	// Message sub ID
+    u16 SelectionMajorId; // Major ID of the dialogue selection set that follows this MSG. e.g. If this is 2, SEL_002_0_0 is the set that follows. Leave at 0 if it no dialogue choices follow
+    u8 SelectionMinorId; // Selection Minor ID
+    u8 SelectionSubId; // Selection Sub ID
+    u32 LocalDataSelStorage; //Evt Local Data ID where the player's dialogue choice is stored.
     u32 Field10;
     f32 Field14;       
     f32 Field18;
@@ -1540,17 +1540,15 @@ typedef struct
         u16 Unknown2;
         f32 Unknown3;
     } Entries[16];
-
-    Printf( "Message id: %d\n", MessageId );
-    //Printf( "Message Command P5R\n" );
-} CommandData_Msg_Royal;
+	
+} CommandData_Msg_Royal<read=Str("MSG%03d_%d_%d", MessageMajorId, MessageMinorId, MessageSubId)>;
 
 typedef struct
 {
     u32 Field00;
-    u32 Field04;
-    u32 Field08;
-    u32 Field0C;
+    u32 MessageIndex;
+    u32 SelectIndex;
+    u32 LocalDataIdSelStorage;
     u32 Field10;
     f32 Field14;
     f32 Field18;
@@ -1724,7 +1722,7 @@ typedef struct
 typedef struct
 {
     u32 Field00;
-    u32 Field04;
+    u32 ScreenshotDisplayDuration;
     u32 Field08;
     u32 Field0C;
 } CommandData_SsCp;
@@ -1804,23 +1802,36 @@ typedef struct
 
 typedef struct
 {
-    u32 Field00;
-    u32 Field04;
+    enum<u32>{
+		Disable = 0,
+		Enable = 1
+	}EnableFootsteps;
+    u32 ObjectId; //Character Object ID to enable/disable footsteps for
     u32 Field08;
     u32 Field0C;
-} CommandData_SFts;
+} CommandData_SFts<read=Str("%s Footsteps for Object ID: %02d", EnumToString(EnableFootsteps), ObjectId)>;
 
 typedef struct
 {
     u32 Field00;
-    u32 Field04;
-    u32 Field08;
-    u32 Field0C;
+	
+    enum<u32>{
+		Bgm = 1,
+        System = 2,
+        Event = 3,
+	}SoundType;
+	
+    enum<u32>{
+		Play = 1,
+        Stop = 2,
+	}Action;
+	
+    u32 Channel;
     u32 CueId;
     u32 Field14;
     u32 Field18;
     u32 Field1C;
-} CommandData_Snd;
+} CommandData_Snd<read=Str("%s %s Cue: %d, on Channel: %d", EnumToString(Action), EnumToString(SoundType), CueId, Channel)>;
 
 //BigEndian();
 // Checks endianness so doesn't die from Royal EVTs (thanks Dniwe)

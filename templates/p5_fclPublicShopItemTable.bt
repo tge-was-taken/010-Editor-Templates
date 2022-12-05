@@ -13,7 +13,7 @@
 #include "common/include.h"
 #include "p5_enums_ftd.bt"
 
-local int index = -1;
+local int index = 0;
 local int isShop;
 
 typedef struct
@@ -30,73 +30,59 @@ typedef struct
     u32 EntryCount <name = "Entry Count">;
     FtdListType EntryType <name = "Entry Type">;
     u16 Field0E <name = "Field 0E">;
-}FtdTable;
-
-typedef struct
-{	
-	local string myName;
-	u8 Field00;
-	if (Field00 == 157)
-    {
-		u8 reserve[39]<hidden = true>;
-		myName = "End of Shop";
-		isShop = 1;
-		return;
-    }
-    myName = "Item Entry";
-	u8 Field01;
-	ItemType Field02<format = hex, name = "Item Category">;
-	u8 Field03<name = "Item ID">;
-	u8 Field04<name = "Amount Acquired Per Unit Purchased">;
-	u8 Field05<name = "Availability Start Date Month">;
-	u8 Field06<name = "Availability Start Date Day">;
-	u8 Field07<name = "Availability End Date Month">;
-	u8 Field08<name = "Availability End Date Day">;
-	u8 Field09;
-	u8 Field0A<name = "Quantity Available">;
-	u8 Field0B;
-	u8 Field0C;
-	u8 Field0C;
-	u8 Field0C;
-	u8 Field0C;
-	u8 Field0C;
-	u8 Field0C;
-	u8 Field0C;
-	u8 Field0C;
-	u8 Field0C;
-	u8 Field0C;
-	u8 Field0C;
-	u8 Field0C;
-	s32 Bitflag<name = "Bitflag Requirement">;
-	u8 Field0C;
-	u8 Field0C;
-	u8 Field0C;
-	u8 Field0C;
-	u32 PricePercentage<name = "Price Percentage">;
-	u8 Field0C;
-	u8 Field0C;
-	u8 Field0C;
-	u8 Field0C;
-	isShop = 0;
-}fclPublicShopItemTableStruct<name = myName>;
-
-typedef struct
-{
-	isShop = 0;
-	while (isShop == 0)
+	
+	local int entryNum = 0;
+	local int myIndex = 0;
+	while (entryNum < EntryCount)
 	{
-		fclPublicShopItemTableStruct Data;
+		isShop = 0;
+		struct
+		{
+			local int myIndex = index;
+			while (isShop == 0)
+			{
+				struct
+				{	
+					local string myName;
+					local string myRead;
+					u8 Field00;
+					if (Field00 == 157)
+					{
+						u8 reserve[39]<hidden = true>;
+						myName = "End of Shop";
+						myRead = "Shop End Indicator";
+						isShop = 1;
+						return;
+					}
+					myName = "Item Entry";
+					u8 Field01;
+					ItemType itemCategory : 4<name = "Item Category">;
+					u16 itemId : 12<name = "Item ID">;
+					u8 amountPerUnit<name = "Amount Acquired Per Unit Purchased">;
+					u8 startMonth<name = "Availability Start Date Month">;
+					u8 startDay<name = "Availability Start Date Day">;
+					u8 endMonth<name = "Availability End Date Month">;
+					u8 endDay<name = "Availability End Date Day">;
+					u8 Field09;
+					u8 Quantity<name = "Quantity Available">;
+					u8 Field0B;
+					u8 unk0[12];
+					Bitflag enablingFlag<name = "Bitflag Requirement">;
+					u8 unk1[4];
+					u32 PricePercentage<name = "Price Percentage">;
+					u8 unk2[4];
+					isShop = 0;
+					myRead = Str("%s: %03d || Enabling Bitflag %05d || Available %d/%d - %d/%d", EnumToString(itemCategory), itemId, enablingFlag, startMonth, startDay, endMonth, endDay);
+				}fclPublicShopItemTableStruct<name = myName, read=myRead>;
+				entryNum++;
+			}
+		}Shop<read=Str("Shop ID: %d", myIndex)>;
+		myIndex = index + 1;
+		index = index + 1;
 	}
-	local int myIndex = index + 1;
-    index = index + 1;
-}fclPublicShopItemTable<name = PublicShopTableRead>;
+	
+}fclPublicShopItemTable<name = "PublicShopTableRead">;
 
-string PublicShopTableRead (fclPublicShopItemTable &o )
-{
-	local string s;
-	SPrintf( s, "Shop ID %d", o.myIndex );
-	return s;
-}
+BigEndian();
 local int64 fileSize = FileSize();
-FtdTable Data;
-fclPublicShopItemTable Data[fileSize]<optimize = false>;
+fclPublicShopItemTable Data<optimize = false>;
