@@ -775,6 +775,10 @@ typedef struct
     f32 Field34;
     f32 Field38;
     f32 Field3C;
+    f32 Field40;
+    f32 Field44;
+    f32 Field48;
+    f32 Field4C;
 } CommandData_EnHd;
 
 typedef struct
