@@ -193,7 +193,7 @@ typedef struct
 
     if ( Type == ObjectType_Enemy ) // If the Object type is an Enemy...  
     {
-        u32 UnitTableIndex;         // ...This field uses the unit ID in UNIT.TBL (which chooses which model to load)
+        u32 ResourceMajorId<name="Unit Table Index">;         // ...This field uses the unit ID in UNIT.TBL (which chooses which model to load)
     }    
     else 
     {
