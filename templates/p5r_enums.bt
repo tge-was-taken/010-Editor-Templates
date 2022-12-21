@@ -3003,6 +3003,177 @@ enum<short> BattleSkill
     // Generated from skill name table entry: BLANK
     BLANK28 = 999,
 
+    // Generated from skill name table entry: Ailment Effect Up
+    AilmentEffectUp = 1000,
+
+    // Generated from skill name table entry: Ailment Effect Up +
+    AilmentEffectUpPlus = 1001,
+
+    // Generated from skill name table entry: Instakill SP Heal Low
+    InstakillSPHealLow = 1002,
+
+    // Generated from skill name table entry: Instakill SP Heal Mid
+    InstakillSPHealMid = 1003,
+
+    // Generated from skill name table entry: Instakill SP Heal High
+    InstakillSPHealHigh = 1004,
+
+    // Generated from skill name table entry: Technical Effect Up
+    TechnicalEffectUp = 1005,
+
+    // Generated from skill name table entry: Technical Effect Up +
+    TechnicalEffectUpPlus = 1006,
+
+    // Generated from skill name table entry: Low HP Attack Up
+    LowHPAttackUp = 1007,
+
+    // Generated from skill name table entry: Low HP Attack Up +
+    LowHPAttackUpPlus = 1008,
+
+    // Generated from skill name table entry: WEAK Hit Effect Up
+    WeakHitEffectUp = 1009,
+
+    // Generated from skill name table entry: WEAK Hit Effect Up +
+    WeakHitEffectUpPlus = 1010,
+
+    // Generated from skill name table entry: Null Insta Kill
+    NullInstaKill = 1011,
+
+    // Generated from skill name table entry: HP Cost Down 10%
+    HPCostDown10 = 1012,
+
+    // Generated from skill name table entry: HP Cost Down 25%
+    HPCostDown25 = 1013,
+
+    // Generated from skill name table entry: SP Cost Down 10%
+    SPCostDown10 = 1014,
+
+    // Generated from skill name table entry: SP Cost Down 25%
+    SPCostDown25 = 1015,
+
+    // Generated from skill name table entry: Heal Magic Up 10%
+    HealMagicUp10 = 1016,
+
+    // Generated from skill name table entry: Heal Magic Up 25%
+    HealMagicUp25 = 1017,
+
+    // Generated from skill name table entry: Chance of 0 HP Cost
+    ChanceOf0HPCost = 1018,
+
+    // Generated from skill name table entry: Chance of 0 SP Cost
+    ChanceOf0SPCost = 1019,
+
+    // Generated from skill name table entry: Target ATK Up
+    TargetATKUp = 1020,
+
+    // Generated from skill name table entry: Target ATK Up +
+    TargetATKUpPlus = 1021,
+
+    // Generated from skill name table entry: All Crits, No Evasion
+    AllCritsNoEvasion = 1022,
+
+    // Generated from skill name table entry: Heal Cost Down 25%
+    HealCostDown25 = 1023,
+
+    // Generated from skill name table entry: Heal Cost Down 10%
+    HealCostDown10 = 1024,
+
+    // Generated from skill name table entry: ATK Up, Aim Down
+    ATKUpAimDown = 1025,
+
+    // Generated from skill name table entry: Ailment Success Up
+    AilmentSuccessUp = 1026,
+
+    // Generated from skill name table entry: BLANK
+    BLANK29 = 1027,
+
+    // Generated from skill name table entry: 4-Affinity Boost
+    FourAffinityBoost = 1028,
+
+    // Generated from skill name table entry: 3-Affinity Light Boost
+    ThreeAffinityLightBoost = 1029,
+
+    // Generated from skill name table entry: Support Turn Extend
+    SupportTurnExtend = 1030,
+
+    // Generated from skill name table entry: Insta Kill Up
+    InstaKillUp = 1031,
+
+    // Generated from skill name table entry: Insta Kill Up +
+    InstaKillUpPlus = 1032,
+
+    // Generated from skill name table entry: Life Bonus
+    LifeBonus = 1033,
+
+    // Generated from skill name table entry: Life Gain
+    LifeGain = 1034,
+
+    // Generated from skill name table entry: Life Surge
+    LifeSurge = 1035,
+
+    // Generated from skill name table entry: Mana Bonus
+    ManaBonus = 1036,
+
+    // Generated from skill name table entry: Mana Gain
+    ManaGain = 1037,
+
+    // Generated from skill name table entry: Mana Surge
+    ManaSurge = 1038,
+
+    // Generated from skill name table entry: Critical Effect Up
+    CriticalEffectUp = 1039,
+
+    // Generated from skill name table entry: Critical Effect Up +
+    CriticalEffectUpPlus = 1040,
+
+    // Generated from skill name table entry: Hit Damage Doubled
+    HitDamageDoubled = 1041,
+
+    // Generated from skill name table entry: All Target ATK Up
+    AllTargetATKUp = 1042,
+
+    // Generated from skill name table entry: All Target ATK Up +
+    AllTargetATKUpPlus = 1043,
+
+    // Generated from skill name table entry: Auto Barrier
+    AutoBarrier = 1044,
+
+    // Generated from skill name table entry: Backup Support
+    BackupSupport = 1045,
+
+    // Generated from skill name table entry: Absolute Escape
+    AbsoluteEscape = 1046,
+
+    // Generated from skill name table entry: Shield of Loyalty
+    ShieldOfLoyalty = 1047,
+
+    // Generated from skill name table entry: All Amp
+    AllAmp = 1048,
+
+    // Generated from skill name table entry: BLANK
+    BLANK30 = 1049,
+
+    // Generated from skill name table entry: BLANK
+    BLANK31 = 1050,
+
+    // Generated from skill name table entry: BLANK
+    BLANK32 = 1051,
+
+    // Generated from skill name table entry: BLANK
+    BLANK33 = 1052,
+
+    // Generated from skill name table entry: BLANK
+    BLANK34 = 1053,
+
+    // Generated from skill name table entry: BLANK
+    BLANK35 = 1054,
+
+    // Generated from skill name table entry: BLANK
+    BLANK36 = 1055,
+
+    // Generated from skill name table entry: BLANK
+    BLANK37 = 1056
+
 };
 
 // This enum represents the available units in battle.
