@@ -436,6 +436,11 @@ typedef struct
 {
     ElementalType Element <name = "Elemental Type">;
     Skill_PassiveOrActive PassiveOrActive <name = "Passive or Active?", comment = "Must be set correctly for the element icon to appear properly, even though it's otherwise redundant">;
+    u8 UnknownR;
+    u8 UnknownR;
+    u8 UnknownR;
+    u8 UnknownR;
+    u8 UnknownR;
     b8 RedundantBitfield_ThanksATLUS <name = "Redundant Bitfield", comment = "Rightmost 4 bits of the bitfield don't do anything. Probably leftovers from early P5 coding.">;
 } TSkill_Elements <name = "Skill Elements">;
 
@@ -589,25 +594,31 @@ typedef struct
     u32 UnknownR;
 } TSkill_Skill_UnknownR <name = "Unknown Skill Segment">;
 
+typedef int s32;
+
 typedef struct
 {
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u16 UnknownR;
-    u8 UnknownR;
-} TSkill_Traits <name = "Traits">;
+  u16 ord; // trait command
+  u16 field_2;
+  s32 effect_rate;
+  
+  union {
+    s32 trait; // sub trait
+    s32 trait_effects; // bitfield
+  } effect;
+
+  f32 effect_size;
+  s32 trait_ex[ 10 ]; // extra inheritable traits in fusion
+
+  struct
+  {
+    s32 IsUnique : 1;
+    s32 IsTreasure : 1;
+    s32 HasSubTrait : 1; // see effect union
+    s32 _ : 29;
+  } trait_flags;
+} TSkill_TraitData;
+
 
 // Item
 
@@ -1423,7 +1434,7 @@ enum TableSegmentType
     TableSegmentType_Skill_Elements,
     TableSegmentType_Skill_ActiveSkillData,
     TableSegmentType_Skill_Skill_UnknownR,
-    TableSegmentType_Skill_Traits,
+    TableSegmentType_Skill_TraitData,
     TableSegmentType_Item_Accessories,
     TableSegmentType_Item_Armor,
     TableSegmentType_Item_Consumables,
@@ -1554,8 +1565,8 @@ typedef struct( TableSegmentType _type )
             TSkill_Skill_UnknownR Skill[ Size / sizeof( TSkill_Skill_UnknownR ) ];
             break;
 
-        case TableSegmentType_Skill_Traits:
-            TSkill_Traits Skill[ Size / sizeof( TSkill_Traits ) ];
+        case TableSegmentType_Skill_TraitData:
+            TSkill_TraitData Trait[ Size / 0x3C ];
             break;
 
         case TableSegmentType_Item_Accessories:
@@ -1733,7 +1744,7 @@ typedef struct( string tableName, u32 endOffset )
                 case 0: segmentType = TableSegmentType_Skill_Elements; break;
                 case 1: segmentType = TableSegmentType_Skill_ActiveSkillData; break;
                 case 2: segmentType = TableSegmentType_Skill_Skill_UnknownR; break;
-                case 3: segmentType = TableSegmentType_Skill_Traits; break;
+                case 3: segmentType = TableSegmentType_Skill_TraitData; break;
             }
         }
         else if ( !Stricmp( tableName, "item" ) )
