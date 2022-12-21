@@ -4,17 +4,17 @@ enum<u16> FtdListType
     FtdListType_EmbeddedFtd,
 };
 
-enum<ubyte> ItemType
+enum<u16> ItemType
 {
 	Melee_Weapons = 0,
-	Armor = 0x10,
-	Accessories = 0x20,
-	Consumables = 0x30,
-	Key_Items = 0x40,
-	Materials = 0x50,
-	Skill_Cards = 0x60,
-	Outfits = 0x70,
-	Ranged_Weapons = 0x80,
+	Armor = 1,
+	Accessories = 2,
+	Consumables = 3,
+	Key_Items = 4,
+	Materials = 5,
+	Skill_Cards = 6,
+	Outfits = 7,
+	Ranged_Weapons = 8,
 };
 
 enum<byte> ConfidantId

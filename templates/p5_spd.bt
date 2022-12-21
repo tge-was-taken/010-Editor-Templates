@@ -100,7 +100,7 @@ typedef struct
     u8 Data[ Size ];
     FSeek( seekBack );
 
-} SpriteTexture <optimize=false>;
+} SpriteTexture <optimize=false, read=Str("Texture Id: %d, %s", Id, Description)>;
 
 typedef struct 
 {
@@ -114,10 +114,10 @@ typedef struct
 	u32 Field14;            // 0
 	u32 Field18;            // 0
 	u32 Field1C;            // 0
-	u32 X1_Position;            // 1
-	u32 Y1_Position;            // 1
-	u32 X2_Position;            // 119
-	u32 Y2_Position;            // 44
+	u32 X_Position;            // 1
+	u32 Y_Position;            // 1
+	u32 X_Length;            // 119
+	u32 Y_Length;            // 44
 	u32 Field30;            // 0
 	u32 Field34;            // 0
 	u32 X_Scale;            // 119
@@ -136,6 +136,6 @@ typedef struct
 	u32 Field6C;            // 0
 	char Description[48];
 
-} SpriteEntry <optimize=false>;
+} SpriteEntry <optimize=false, read=Str("Sprite Id: %d, Texture Id: %d", Id, Texture_Id)>;
 
 SprFile File;

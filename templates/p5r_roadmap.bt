@@ -70,6 +70,7 @@ typedef struct
 	s16 Field2e;
 	s16 Field30;
 	s16 Field32;
+	int unk0;
 	
 	local string s;
 	if (fldMajor != -1)
@@ -295,7 +296,7 @@ struct
 			break;
 			
 			case "texpack":
-            texpack data[fileSize / 68] <optimize = false>;
+            texpack data[fileSize / 72] <optimize = false>;
 			break;
 			
 			default:
