@@ -91,7 +91,7 @@ enum<short> BattleSkill
     SnowBall = 28,
 
     // Generated from skill name table entry: Megidolaon
-    Megidolaon29 = 29,
+    Megidolaon = 29,
 
     // Generated from skill name table entry: Garu
     Garu = 30,
@@ -220,7 +220,7 @@ enum<short> BattleSkill
     Megidola = 71,
 
     // Generated from skill name table entry: Megidolaon
-    Megidolaon = 72,
+    Megidolaon1 = 72,
 
     // Generated from skill name table entry: Frei
     Frei = 73,
@@ -328,10 +328,10 @@ enum<short> BattleSkill
     SpiritDrain1 = 107,
 
     // Generated from skill name table entry: BLANK
-    BLANK20 = 108,
+    BLANK9 = 108,
 
     // Generated from skill name table entry: BLANK
-    BLANK21 = 109,
+    BLANK10 = 109,
 
     // Generated from skill name table entry: Foul Breath
     FoulBreath = 110,
@@ -346,13 +346,13 @@ enum<short> BattleSkill
     GhastlyWail = 113,
 
     // Generated from skill name table entry: BLANK
-    BLANK22 = 114,
+    BLANK11 = 114,
 
     // Generated from skill name table entry: Drain
-    Drain115 = 115,
+    Drain1 = 115,
 
     // Generated from skill name table entry: Megidola
-    Megidola116 = 116,
+    Megidola1 = 116,
 
     // Generated from skill name table entry: Launch
     Launch = 117,
@@ -601,7 +601,7 @@ enum<short> BattleSkill
     PsychoBlast = 198,
 
     // Generated from skill name table entry: BLANK
-    BLANK47 = 199,
+    BLANK12 = 199,
 
     // Generated from skill name table entry: Lunge
     Lunge = 200,
@@ -658,10 +658,10 @@ enum<short> BattleSkill
     DeathScythe = 217,
 
     // Generated from skill name table entry: BLANK
-    BLANK53 = 218,
+    BLANK13 = 218,
 
     // Generated from skill name table entry: BLANK
-    BLANK54 = 219,
+    BLANK14 = 219,
 
     // Generated from skill name table entry: Cornered Fang
     CorneredFang = 220,
@@ -700,13 +700,13 @@ enum<short> BattleSkill
     VorpalBlade = 231,
 
     // Generated from skill name table entry: BLANK
-    BLANK58 = 232,
+    BLANK15 = 232,
 
     // Generated from skill name table entry: BLANK
-    BLANK59 = 233,
+    BLANK16 = 233,
 
     // Generated from skill name table entry: BLANK
-    BLANK60 = 234,
+    BLANK17 = 234,
 
     // Generated from skill name table entry: Vicious Strike
     ViciousStrike = 235,
@@ -739,7 +739,7 @@ enum<short> BattleSkill
     Agneyastra = 244,
 
     // Generated from skill name table entry: BLANK
-    BLANK64 = 245,
+    BLANK18 = 245,
 
     // Generated from skill name table entry: Regeneration
     Regeneration = 246,
@@ -1063,10 +1063,10 @@ enum<short> BattleSkill
     Masukunda = 352,
 
     // Generated from skill name table entry: Analysis
-    Analysis353 = 353,
+    Analysis = 353,
 
     // Generated from skill name table entry: Analysis
-    Analysis354 = 354,
+    Analysis1 = 354,
 
     // Generated from skill name table entry: Dekunda
     Dekunda = 355,
@@ -1075,10 +1075,10 @@ enum<short> BattleSkill
     Dekaja = 356,
 
     // Generated from skill name table entry: Explosion
-    Explosion357 = 357,
+    Explosion = 357,
 
     // Generated from skill name table entry: Explosion
-    Explosion358 = 358,
+    Explosion1 = 358,
 
     // Generated from skill name table entry: Sphynx Swipe
     SphynxSwipe = 359,
@@ -1105,7 +1105,7 @@ enum<short> BattleSkill
     Revolution = 366,
 
     // Generated from skill name table entry: Make It Rain
-    MakeItRain367 = 367,
+    MakeItRain1 = 367,
 
     // Generated from skill name table entry: Special Guards
     SpecialGuards = 368,
@@ -1138,10 +1138,10 @@ enum<short> BattleSkill
     KillshotOfLove = 377,
 
     // Generated from skill name table entry: BLANK
-    BLANK121 = 378,
+    BLANK19 = 378,
 
     // Generated from skill name table entry: BLANK
-    BLANK122 = 379,
+    BLANK20 = 379,
 
     // Generated from skill name table entry: Fire Wall
     FireWall = 380,
@@ -1156,7 +1156,7 @@ enum<short> BattleSkill
     WindWall = 383,
 
     // Generated from skill name table entry: BLANK
-    BLANK123 = 384,
+    BLANK21 = 384,
 
     // Generated from skill name table entry: Fire Break
     FireBreak = 385,
@@ -1171,7 +1171,7 @@ enum<short> BattleSkill
     ElecBreak = 388,
 
     // Generated from skill name table entry: BLANK
-    BLANK124 = 389,
+    BLANK22 = 389,
 
     // Generated from skill name table entry: Trafuri
     Trafuri = 390,
@@ -1195,13 +1195,13 @@ enum<short> BattleSkill
     PsyBreak = 396,
 
     // Generated from skill name table entry: BLANK
-    BLANK126 = 397,
+    BLANK23 = 397,
 
     // Generated from skill name table entry: BLANK
-    BLANK127 = 398,
+    BLANK24 = 398,
 
     // Generated from skill name table entry: Flow
-    Flow399 = 399,
+    Flow1 = 399,
 
     // Generated from skill name table entry: All-out Lv 1
     AlloutLv1 = 400,
@@ -1216,7 +1216,7 @@ enum<short> BattleSkill
     EmergencyEscape = 403,
 
     // Generated from skill name table entry: Attack
-    Attack2 = 404,
+    Attack1 = 404,
 
     // Generated from skill name table entry: Down Shot
     DownShot = 405,
@@ -1330,7 +1330,7 @@ enum<short> BattleSkill
     SubrecoverSP = 441,
 
     // Generated from skill name table entry: Analysis
-    Analysis = 442,
+    Analysis2 = 442,
 
     // Generated from skill name table entry: Deep Analysis
     DeepAnalysis = 443,
@@ -1801,7 +1801,7 @@ enum<short> BattleSkill
     Coffee2 = 598,
 
     // Generated from skill name table entry: Double Fangs
-    DoubleFangs599 = 599,
+    DoubleFangs1 = 599,
 
     // Generated from skill name table entry: Twins Down Attack
     TwinsDownAttack = 600,
@@ -1813,7 +1813,7 @@ enum<short> BattleSkill
     CaroAttack = 602,
 
     // Generated from skill name table entry: Megidolaon
-    Megidolaon1 = 603,
+    Megidolaon2 = 603,
 
     // Generated from skill name table entry: Rays of Control
     RaysofControl = 604,
@@ -1957,13 +1957,13 @@ enum<short> BattleSkill
     BigBangTreat = 650,
 
     // Generated from skill name table entry: Explosion
-    Explosion651 = 651,
+    Explosion2 = 651,
 
     // Generated from skill name table entry: Explosion
-    Explosion652 = 652,
+    Explosion3 = 652,
 
     // Generated from skill name table entry: Explosion
-    Explosion653 = 653,
+    Explosion4 = 653,
 
     // Generated from skill name table entry: Big Bang Order
     BigBangOrder = 654,
@@ -1996,7 +1996,7 @@ enum<short> BattleSkill
     FollowBlack = 663,
 
     // Generated from skill name table entry: BLANK
-    BLANK134 = 664,
+    BLANK25 = 664,
 
     // Generated from skill name table entry: Madara-Megido
     MadaraMegido = 665,
@@ -2023,7 +2023,7 @@ enum<short> BattleSkill
     MetabolicWave = 672,
 
     // Generated from skill name table entry: Laevateinn
-    Laevateinn673 = 673,
+    Laevateinn1 = 673,
 
     // Generated from skill name table entry: Desperation
     Desperation = 674,
@@ -2038,7 +2038,7 @@ enum<short> BattleSkill
     GrailLight2 = 677,
 
     // Generated from skill name table entry: Megidola
-    Megidola1 = 678,
+    Megidola2 = 678,
 
     // Generated from skill name table entry: Rage Transmission
     RageTransmission = 679,
@@ -2065,13 +2065,13 @@ enum<short> BattleSkill
     ExecutivePunch = 686,
 
     // Generated from skill name table entry: Megidolaon
-    Megidolaon2 = 687,
+    Megidolaon3 = 687,
 
     // Generated from skill name table entry: Vorpal Blade
     VorpalBlade1 = 688,
 
     // Generated from skill name table entry: Megidolaon
-    Megidolaon3 = 689,
+    Megidolaon4 = 689,
 
     // Generated from skill name table entry: Big Bang Burger
     BigBangBurger = 690,
@@ -2167,10 +2167,10 @@ enum<short> BattleSkill
     Megido1 = 720,
 
     // Generated from skill name table entry: Megidola
-    Megidola2 = 721,
+    Megidola3 = 721,
 
     // Generated from skill name table entry: Megidolaon
-    Megidolaon4 = 722,
+    Megidolaon5 = 722,
 
     // Generated from skill name table entry: Slam
     Slam = 723,
@@ -2287,7 +2287,7 @@ enum<short> BattleSkill
     KittyTalk = 760,
 
     // Generated from skill name table entry: Marin Karin
-    MarinKarin761 = 761,
+    MarinKarin1 = 761,
 
     // Generated from skill name table entry: Womanizing
     Womanizing = 762,
@@ -2296,13 +2296,13 @@ enum<short> BattleSkill
     IndignantRevenge = 763,
 
     // Generated from skill name table entry: Healing Power
-    HealingPower764 = 764,
+    HealingPower = 764,
 
     // Generated from skill name table entry: Healing Power
-    HealingPower765 = 765,
+    HealingPower1 = 765,
 
     // Generated from skill name table entry: Taunt
-    Taunt766 = 766,
+    Taunt1 = 766,
 
     // Generated from skill name table entry: Iridescent Change
     IridescentChange = 767,
@@ -2341,7 +2341,7 @@ enum<short> BattleSkill
     AdamSkill6 = 778,
 
     // Generated from skill name table entry: Vorpal Blade
-    VorpalBlade779 = 779,
+    VorpalBlade2 = 779,
 
     // Generated from skill name table entry: MonaRyuji Unison Attack
     MonaRyujiUnisonAttack = 780,
@@ -2374,34 +2374,34 @@ enum<short> BattleSkill
     ProtagKasumiUnisonAttack = 789,
 
     // Generated from skill name table entry: MonaRyuji Unison Attack
-    MonaRyujiUnisonAttack2 = 790,
+    MonaRyujiUnisonAttack1 = 790,
 
     // Generated from skill name table entry: MonaAnn Unison Attack
-    MonaAnnUnisonAttack2 = 791,
+    MonaAnnUnisonAttack1 = 791,
 
     // Generated from skill name table entry: MonaHaru Unison Attack
-    MonaHaruUnisonAttack2 = 792,
+    MonaHaruUnisonAttack1 = 792,
 
     // Generated from skill name table entry: YusukeAnn Unison Attack
-    YusukeAnnUnisonAttack2 = 793,
+    YusukeAnnUnisonAttack1 = 793,
 
     // Generated from skill name table entry: RyujiYusuke Unison Attack
-    RyujiYusukeUnisonAttack2 = 794,
+    RyujiYusukeUnisonAttack1 = 794,
 
     // Generated from skill name table entry: RyujiMakoto Unison Attack
-    RyujiMakotoUnisonAttack2 = 795,
+    RyujiMakotoUnisonAttack1 = 795,
 
     // Generated from skill name table entry: ProtagAkechi Unison Attack
-    ProtagAkechiUnisonAttack2 = 796,
+    ProtagAkechiUnisonAttack1 = 796,
 
     // Generated from skill name table entry: MakotoHaru Unison Attack
-    MakotoHaruUnisonAttack2 = 797,
+    MakotoHaruUnisonAttack1 = 797,
 
     // Generated from skill name table entry: Akechi Unison Attack
-    AkechiUnisonAttack2 = 798,
+    AkechiUnisonAttack1 = 798,
 
     // Generated from skill name table entry: ProtagKasumi Unison Attack
-    ProtagKasumiUnisonAttack2 = 799,
+    ProtagKasumiUnisonAttack1 = 799,
 
     // Generated from skill name table entry: Counter
     Counter = 800,
@@ -2716,7 +2716,7 @@ enum<short> BattleSkill
     DrainPhys = 903,
 
     // Generated from skill name table entry: Null Bless Curse
-    NullBlessCurse904 = 904,
+    NullBlessCurse1 = 904,
 
     // Generated from skill name table entry: Ailment Boost
     AilmentBoost = 905,
@@ -2833,7 +2833,7 @@ enum<short> BattleSkill
     ShockBoost = 942,
 
     // Generated from skill name table entry: BLANK
-    BLANK203 = 943,
+    BLANK26 = 943,
 
     // Generated from skill name table entry: Fortified Moxy
     FortifiedMoxy = 944,
@@ -2848,7 +2848,7 @@ enum<short> BattleSkill
     HeatUp = 947,
 
     // Generated from skill name table entry: BLANK
-    BLANK204 = 948,
+    BLANK27 = 948,
 
     // Generated from skill name table entry: Touch n' Go
     TouchnGo = 949,
@@ -2917,7 +2917,7 @@ enum<short> BattleSkill
     PsyAmp = 970,
 
     // Generated from skill name table entry: Sexy Technique
-    SexyTechnique971 = 971,
+    SexyTechnique1 = 971,
 
     // Generated from skill name table entry: Dodge Nuke
     DodgeNuke = 972,
@@ -2926,7 +2926,7 @@ enum<short> BattleSkill
     EvadeNuke = 973,
 
     // Generated from skill name table entry: Detox
-    Detox974 = 974,
+    Detox = 974,
 
     // Generated from skill name table entry: Dodge Psy
     DodgePsy = 975,
@@ -2935,7 +2935,7 @@ enum<short> BattleSkill
     EvadePsy = 976,
 
     // Generated from skill name table entry: Detox
-    Detox977 = 977,
+    Detox1 = 977,
 
     // Generated from skill name table entry: Bless Boost
     BlessBoost = 978,
@@ -2944,7 +2944,7 @@ enum<short> BattleSkill
     BlessAmp = 979,
 
     // Generated from skill name table entry: RESERVE
-    RESERVE7 = 980,
+    RESERVE4 = 980,
 
     // Generated from skill name table entry: Curse Boost
     CurseBoost = 981,
@@ -2992,16 +2992,16 @@ enum<short> BattleSkill
     ManaRise = 995,
 
     // Generated from skill name table entry: Soul Touch
-    SoulTouch996 = 996,
+    SoulTouch1 = 996,
 
     // Generated from skill name table entry: Victory Cry
-    VictoryCry997 = 997,
+    VictoryCry1 = 997,
 
     // Generated from skill name table entry: Trait DLC For Bitedown
     TraitDLCForBitedown = 998,
 
     // Generated from skill name table entry: BLANK
-    BLANK211 = 999,
+    BLANK28 = 999,
 
 };
 
