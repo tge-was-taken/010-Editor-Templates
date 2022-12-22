@@ -4653,7 +4653,7 @@ enum<short> BattleUnit
     Cendrillon = 490,
 
     // Generated from enemy name table entry: Kasumi
-    Kasumi = 491,
+    Kasumi1 = 491,
 
     // Generated from enemy name table entry: Ersatz Sorrow
     ErsatzSorrow = 492,
@@ -5542,6 +5542,7 @@ enum<ushort> PartyMember
     Haru = 7,
     Futaba = 8,
     Goro = 9,
+    Kasumi = 10
 };
 
 enum<ushort> MusicID
