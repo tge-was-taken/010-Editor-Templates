@@ -1,52 +1,112 @@
 //------------------------------------------------
 //--- 010 Editor v12.0.1 Binary Template
 //
-//      File: 
-//   Authors: 
-//   Version: 
+//      File: p5_corptbl.tbl
+//   Authors: SecreC.
+//   Version: 1.0
 //   Purpose: 
-//  Category: 
-// File Mask: 
+//  Category: Persona 5
+// File Mask: corptbl.tbl
 //  ID Bytes: 
 //   History: 
 //------------------------------------------------
 #include "common/include.h"
 
+enum<short> weather
+{
+    All = 0,
+    Sunny = 1,
+    Rainy = 2,
+    Cloudy = 3,
+    Snowy = 4,
+};
+
 typedef struct
 {
-	
+	s8 dummy : 1;
+    s8 AM_A : 1;
+    s8 AM_B : 1;
+    s8 PM_A : 1;
+    s8 PM_B : 1;
+    s8 PM_C : 1;
+    s8 PM_D : 1;
+    s8 PM_E : 1;
+}TimeOfDay;
+
+typedef struct
+{
+  s32 Disable_Turn_To_Joker : 1;
+  s32 NPC_Interaction_Type_Bit01 : 1;
+  s32 NPC_Interaction_Type_Bit02 : 1;
+  s32 NPC_Interaction_Type_Bit03 : 1;
+  s32 NPC_Interaction_Type_Bit04 : 1;
+  s32 Disable_Name_Tag : 1;
+  s32 NPC_Interaction_Type_Bit06 : 1;
+  s32 NPC_Interaction_Type_Bit07 : 1;
+  s32 Listen_Type_Prompt : 1;
+  s32 NPC_Interaction_Type_Bit09 : 1;
+  s32 NPC_Interaction_Type_Bit10 : 1;
+  s32 NPC_Interaction_Type_Bit11 : 1;
+  s32 NPC_Interaction_Type_Bit12 : 1;
+  s32 NPC_Interaction_Type_Bit13 : 1;
+  s32 NPC_Interaction_Type_Bit14 : 1;
+  s32 NPC_Interaction_Type_Bit15 : 1;
+  s32 NPC_Interaction_Type_Bit16 : 1;
+  s32 NPC_Interaction_Type_Bit17 : 1;
+  s32 NPC_Interaction_Type_Bit18 : 1;
+  s32 NPC_Interaction_Type_Bit19 : 1;
+  s32 NPC_Interaction_Type_Bit20 : 1;
+  s32 NPC_Interaction_Type_Bit21 : 1;
+  s32 NPC_Interaction_Type_Bit22 : 1;
+  s32 NPC_Interaction_Type_Bit23 : 1;
+  s32 NPC_Interaction_Type_Bit24 : 1;
+  s32 NPC_Interaction_Type_Bit25 : 1;
+  s32 NPC_Interaction_Type_Bit26 : 1;
+  s32 NPC_Interaction_Type_Bit27 : 1;
+  s32 NPC_Interaction_Type_Bit28 : 1;
+  s32 NPC_Interaction_Type_Bit29 : 1;
+  s32 NPC_Interaction_Type_Bit30 : 1;
+  s32 NPC_Interaction_Type_Bit31 : 1;
+} NPC_Hit_Flags;
+
+typedef struct
+{
 	LittleEndian();
-	u16 Field00;
+	u16 FBN_NPC_ID;
 	u16 Field02;
 	u16 Field04;
 	u16 Field06;
 	u32 Field08;
-	s32 Field0C[22] <name = "Bitflags">;
-	u16 Field_MajorId;
-	u8 Field_MinorId;
-	u8 Field_SubId;
-	u16 NPC_ResourceId;
-	s32 Field6A;
-	u16 Field6E;
+	Bitflag EnablingBitflags[11] <name = "Enabling Bitflags">;
+	Bitflag DisablingBitflags[11] <name = "Disabling Bitflags">;
+	u16 Field_MajorId <name = "Field Major Id">;
+	u8 Field_MinorId <name = "Field Minor Id">;
+	u8 Field_SubId <name = "Field Sub Id">;
+	u16 Resource_NPC_ID <name = "NPC Resource TBL Id">;
+	s32 Field6A <name = "NPC Resource Override">;
+	u16 Field6E <name = "Animation ID">;
 	u32 Field70;
-	s32 Field74;
-	s16 Field78;
-	s16 Field7A;
+	s32 Field74 <name = "BF Init Procedure Index?">;
+    BigEndian();
+	weather Field78<name = "Weather Availability">;
+	LittleEndian();
+    TimeOfDay Field7A;
+	u8 TimeofDayOverride;
 	u32 P5RNew<hidden=true>;
 	f32 Field7C;
 	f32 Field80;
 	f32 Field84;
 	f32 Field88;
 	f32 Field8C;
-	s32 Field90;
+	f32 Field90;
 	s32 Field94;
-	s32 Field98;
-	s32 Field9C;
+	NPC_Hit_Flags Interaction_Flags;  
+	f32 Field9C;
 	f32 FieldA0;
-	s32 FieldA4;
-	s32 ExtraBitFlag1;
-	s32 ExtraBitFlag2;
-	s32 FieldB0;
+	s32 FieldA4 <name = "Interact Name ID">;
+	Bitflag ExtraBitFlag1;
+    Bitflag ExtraBitFlag2;
+	s32 MainProcedureID;
 	u32 P5RNew_2;
 	BigEndian();
 }table <read=table_read, name = "Corp Table Entry">;
@@ -55,12 +115,12 @@ typedef struct
 {
 	SetBackColor( MyRandom( 0xFFFFFFFF ) );
 	char corptblname[14] <name = "Entry Name">;
-	u8 padding[20];
+	u8 padding[20]<hidden = true>;
 	u16 segSize <name = "Segment Size">;
 	Printf("Segment Size: %d\n", segSize );
 	table data[segSize / 188] <optimize=false>;
 	s8 extra[segSize % 188];
-	Printf("Extra Bytes: %d\n", segSize % 188 );
+	Printf("Extra Bytes: %d\n", segSize % 180 );
 }main <name = "Corpfile Struct">;
 
 BigEndian();
