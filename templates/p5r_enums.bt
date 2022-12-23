@@ -5526,7 +5526,7 @@ enum<short> BattleUnit
     Titania = 781,
 
     // Generated from enemy name table entry: RESERVE
-    RESERVE146 = 782
+    RESERVE146 = 782,
 
 };
 
@@ -5542,7 +5542,7 @@ enum<ushort> PartyMember
     Haru = 7,
     Futaba = 8,
     Goro = 9,
-    Kasumi = 10
+    Kasumi = 10,
 };
 
 enum<ushort> MusicID
@@ -5581,8 +5581,10 @@ enum<byte> ArcanaID
     Sun = 20,
     Judgement = 21,
     Aeon = 22,
-    BlankArcana = 23,
+    Other = 23,
     World = 24,
+    Faith = 29,
+    Councillor = 30,
 };
 
 // This enum represents elemental affinity status (i.e. weak, resist, etc.)
