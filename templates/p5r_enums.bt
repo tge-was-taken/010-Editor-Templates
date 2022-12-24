@@ -5534,7 +5534,7 @@ enum<short> BattleUnit
 enum<short> BattleTrait
 {
     // Generated from trait name table entry: No Trait
-    NoTrait = 0
+    NoTrait = 0,
 
     // Generated from trait name table entry: RESERVE
     RESERVE147 = 1,
@@ -5582,25 +5582,25 @@ enum<short> BattleTrait
     AveMaria = 15,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 16,
+    RESERVE157 = 16,
 
     // Generated from trait name table entry: Foul Stench
     FoulStench = 17,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 18,
+    RESERVE158 = 18,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 19,
+    RESERVE159 = 19,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 20,
+    RESERVE160 = 20,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 21,
+    RESERVE161 = 21,
 
     // Generated from trait name table entry: Static Electricity
-    StaticElectricity = 22,
+    StaticElectricity1 = 22,
 
     // Generated from trait name table entry: Ghost Nest
     GhostNest = 23,
@@ -5609,91 +5609,91 @@ enum<short> BattleTrait
     ColdBlooded = 24,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 25,
+    RESERVE162 = 25,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 26,
+    RESERVE163 = 26,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 27,
+    RESERVE164 = 27,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 28,
+    RESERVE165 = 28,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 29,
+    RESERVE166 = 29,
 
     // Generated from trait name table entry: Allure of Wisdom
     AllureOfWisdom = 30,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 31,
+    RESERVE167 = 31,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 32,
+    RESERVE168 = 32,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 33,
+    RESERVE169 = 33,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 34,
+    RESERVE170 = 34,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 35,
+    RESERVE171 = 35,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 36,
+    RESERVE172 = 36,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 37,
+    RESERVE173 = 37,
 
     // Generated from trait name table entry: Frenzied Bull
     FrenziedBull = 38,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 39,
+    RESERVE174 = 39,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 40,
+    RESERVE175 = 40,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 41,
+    RESERVE176 = 41,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 42,
+    RESERVE177 = 42,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 43,
+    RESERVE178 = 43,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 44,
+    RESERVE179 = 44,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 45,
+    RESERVE180 = 45,
 
     // Generated from trait name table entry: Intense Focus
     IntenseFocus = 46,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 47,
+    RESERVE181 = 47,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 48,
+    RESERVE182 = 48,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 49,
+    RESERVE183 = 49,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 50,
+    RESERVE184 = 50,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 51,
+    RESERVE185 = 51,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 52,
+    RESERVE186 = 52,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 53,
+    RESERVE187 = 53,
 
     // Generated from trait name table entry: Mighty Gaze
     MightyGaze = 54,
@@ -5702,7 +5702,7 @@ enum<short> BattleTrait
     StaticElectricity = 55,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 56,
+    RESERVE188 = 56,
 
     // Generated from trait name table entry: Striking Weight
     StrikingWeight = 57,
@@ -5711,13 +5711,13 @@ enum<short> BattleTrait
     UndyingFury = 58,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 59,
+    RESERVE189 = 59,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 60,
+    RESERVE190 = 60,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 61,
+    RESERVE191 = 61,
 
     // Generated from trait name table entry: Retaliating Body
     RetaliatingBody = 62,
@@ -5726,22 +5726,22 @@ enum<short> BattleTrait
     InviolableBeauty = 63,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 64,
+    RESERVE192 = 64,
 
     // Generated from trait name table entry: Pagan Allure
     PaganAllure = 65,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 66,
+    RESERVE193 = 66,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 67,
+    RESERVE194 = 67,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 68,
+    RESERVE195 = 68,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 69,
+    RESERVE196 = 69,
 
     // Generated from trait name table entry: Rare Antibody
     RareAntibody = 70,
@@ -5750,7 +5750,7 @@ enum<short> BattleTrait
     Immunity = 71,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 72,
+    RESERVE197 = 72,
 
     // Generated from trait name table entry: Skillful Combo
     SkillfulCombo = 73,
@@ -5759,13 +5759,13 @@ enum<short> BattleTrait
     LinkedBloodline = 74,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 75,
+    RESERVE198 = 75,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 76,
+    RESERVE199 = 76,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 77,
+    RESERVE200 = 77,
 
     // Generated from trait name table entry: Foul Odor
     FoulOdor = 78,
@@ -5774,22 +5774,22 @@ enum<short> BattleTrait
     ThermalConduct = 79,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 80,
+    RESERVE201 = 80,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 81,
+    RESERVE202 = 81,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 82,
+    RESERVE203 = 82,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 83,
+    RESERVE204 = 83,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 84,
+    RESERVE205 = 84,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 85,
+    RESERVE206 = 85,
 
     // Generated from trait name table entry: Pinch Anchor
     PinchAnchor = 86,
@@ -5801,19 +5801,19 @@ enum<short> BattleTrait
     GloomyChild = 88,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 89,
+    RESERVE207 = 89,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 90,
+    RESERVE208 = 90,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 91,
+    RESERVE209 = 91,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 92,
+    RESERVE210 = 92,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 93,
+    RESERVE211 = 93,
 
     // Generated from trait name table entry: Sinful Technique
     SinfulTechnique = 94,
@@ -5822,7 +5822,7 @@ enum<short> BattleTrait
     UniversalLaw = 95,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 96,
+    RESERVE212 = 96,
 
     // Generated from trait name table entry: Ailment Hunter
     AilmentHunter = 97,
@@ -5831,13 +5831,13 @@ enum<short> BattleTrait
     HollowJester = 98,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 99,
+    RESERVE213 = 99,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 100,
+    RESERVE214 = 100,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 101,
+    RESERVE215 = 101,
 
     // Generated from trait name table entry: Deathly Illness
     DeathlyIllness = 102,
@@ -5846,85 +5846,85 @@ enum<short> BattleTrait
     Omen = 103,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 104,
+    RESERVE216 = 104,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 105,
+    RESERVE217 = 105,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 106,
+    RESERVE218 = 106,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 107,
+    RESERVE219 = 107,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 108,
+    RESERVE220 = 108,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 109,
+    RESERVE221 = 109,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 110,
+    RESERVE222 = 110,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 111,
+    RESERVE223 = 111,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 112,
+    RESERVE224 = 112,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 113,
+    RESERVE225 = 113,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 114,
+    RESERVE226 = 114,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 115,
+    RESERVE227 = 115,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 116,
+    RESERVE228 = 116,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 117,
+    RESERVE229 = 117,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 118,
+    RESERVE230 = 118,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 119,
+    RESERVE231 = 119,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 120,
+    RESERVE232 = 120,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 121,
+    RESERVE233 = 121,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 122,
+    RESERVE234 = 122,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 123,
+    RESERVE235 = 123,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 124,
+    RESERVE236 = 124,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 125,
+    RESERVE237 = 125,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 126,
+    RESERVE238 = 126,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 127,
+    RESERVE239 = 127,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 128,
+    RESERVE240 = 128,
 
     // Generated from trait name table entry: Explosive Scheme
     ExplosiveScheme = 129,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 130,
+    RESERVE241 = 130,
 
     // Generated from trait name table entry: Infinite Scheme
     InfiniteScheme = 131,
@@ -5936,16 +5936,16 @@ enum<short> BattleTrait
     EccentricTemper = 133,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 134,
+    RESERVE242 = 134,
 
     // Generated from trait name table entry: Proud Presence
-    RESERVE156 = 135,
+    RESERVE243 = 135,
 
     // Generated from trait name table entry: Magestic Presence
     MajesticPresence = 136,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 137,
+    RESERVE244 = 137,
 
     // Generated from trait name table entry: Mastery of Magic
     MasteryOfMagic = 138,
@@ -5954,7 +5954,7 @@ enum<short> BattleTrait
     PinnacleOfMagic = 139,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 140,
+    RESERVE245 = 140,
 
     // Generated from trait name table entry: Scoundrel Eyes
     ScoundrelEyes = 141,
@@ -5963,7 +5963,7 @@ enum<short> BattleTrait
     UnparalleledEyes = 142,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 143,
+    RESERVE246 = 143,
 
     // Generated from trait name table entry: Gaia Pact
     GaiaPact = 144,
@@ -5972,7 +5972,7 @@ enum<short> BattleTrait
     GaiaBlessing = 145,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 146,
+    RESERVE247 = 146,
 
     // Generated from trait name table entry: Icy Glare
     IcyGlare = 147,
@@ -5981,7 +5981,7 @@ enum<short> BattleTrait
     CoolCustomer = 148,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 149,
+    RESERVE248 = 149,
 
     // Generated from trait name table entry: Tactical Spirit
     TacticalSpirit = 150,
@@ -5999,7 +5999,7 @@ enum<short> BattleTrait
     VeilOfSunrise = 154,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 155,
+    RESERVE249 = 155,
 
     // Generated from trait name table entry: Heated Bloodline
     HeatedBloodline = 156,
@@ -6050,7 +6050,7 @@ enum<short> BattleTrait
     MothersLament = 171,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 172,
+    RESERVE250 = 172,
 
     // Generated from trait name table entry: Gluttonmouth
     Gluttonmouth = 173,
@@ -6083,7 +6083,7 @@ enum<short> BattleTrait
     DrainingMouth = 182,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 183,
+    RESERVE251 = 183,
 
     // Generated from trait name table entry: Tag Team
     TagTeam = 184,
@@ -6101,7 +6101,7 @@ enum<short> BattleTrait
     WillOfTheSword = 188,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 189,
+    RESERVE252 = 189,
 
     // Generated from trait name table entry: Circle of Sadness
     CircleOfSadness = 190,
@@ -6128,310 +6128,310 @@ enum<short> BattleTrait
     BlessSpirit = 197,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 198,
+    RESERVE253 = 198,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 199,
+    RESERVE254 = 199,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 200,
+    RESERVE255 = 200,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 201,
+    RESERVE256 = 201,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 202,
+    RESERVE257 = 202,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 203,
+    RESERVE258 = 203,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 204,
+    RESERVE259 = 204,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 205,
+    RESERVE260 = 205,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 206,
+    RESERVE261 = 206,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 207,
+    RESERVE262 = 207,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 208,
+    RESERVE263 = 208,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 209,
+    RESERVE264 = 209,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 210,
+    RESERVE265 = 210,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 211,
+    RESERVE266 = 211,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 212,
+    RESERVE267 = 212,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 213,
+    RESERVE268 = 213,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 214,
+    RESERVE269 = 214,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 215,
+    RESERVE270 = 215,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 216,
+    RESERVE271 = 216,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 217,
+    RESERVE272 = 217,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 218,
+    RESERVE273 = 218,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 219,
+    RESERVE274 = 219,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 220,
+    RESERVE275 = 220,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 221,
+    RESERVE276 = 221,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 222,
+    RESERVE277 = 222,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 223,
+    RESERVE278 = 223,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 224,
+    RESERVE279 = 224,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 225,
+    RESERVE280 = 225,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 226,
+    RESERVE281 = 226,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 227,
+    RESERVE282 = 227,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 228,
+    RESERVE283 = 228,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 229,
+    RESERVE284 = 229,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 230,
+    RESERVE285 = 230,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 231,
+    RESERVE286 = 231,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 232,
+    RESERVE287 = 232,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 233,
+    RESERVE288 = 233,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 234,
+    RESERVE289 = 234,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 235,
+    RESERVE290 = 235,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 236,
+    RESERVE291 = 236,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 237,
+    RESERVE292 = 237,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 238,
+    RESERVE293 = 238,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 239,
+    RESERVE294 = 239,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 240,
+    RESERVE295 = 240,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 241,
+    RESERVE296 = 241,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 242,
+    RESERVE297 = 242,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 243,
+    RESERVE298 = 243,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 244,
+    RESERVE299 = 244,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 245,
+    RESERVE300 = 245,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 246,
+    RESERVE301 = 246,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 247,
+    RESERVE302 = 247,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 248,
+    RESERVE303 = 248,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 249,
+    RESERVE304 = 249,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 250,
+    RESERVE305 = 250,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 251,
+    RESERVE306 = 251,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 252,
+    RESERVE307 = 252,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 253,
+    RESERVE308 = 253,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 254,
+    RESERVE309 = 254,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 255,
+    RESERVE310 = 255,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 256,
+    RESERVE311 = 256,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 257,
+    RESERVE312 = 257,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 258,
+    RESERVE313 = 258,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 259,
+    RESERVE314 = 259,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 260,
+    RESERVE315 = 260,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 261,
+    RESERVE316 = 261,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 262,
+    RESERVE317 = 262,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 263,
+    RESERVE318 = 263,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 264,
+    RESERVE319 = 264,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 265,
+    RESERVE320 = 265,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 266,
+    RESERVE321 = 266,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 267,
+    RESERVE322 = 267,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 268,
+    RESERVE323 = 268,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 269,
+    RESERVE324 = 269,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 270,
+    RESERVE325 = 270,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 271,
+    RESERVE326 = 271,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 272,
+    RESERVE327 = 272,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 273,
+    RESERVE328 = 273,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 274,
+    RESERVE329 = 274,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 275,
+    RESERVE330 = 275,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 276,
+    RESERVE331 = 276,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 277,
+    RESERVE332 = 277,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 278,
+    RESERVE333 = 278,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 279,
+    RESERVE334 = 279,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE156 = 280,
+    RESERVE335 = 280,
 
     // Generated from trait name table entry: Ultimate Vessel
     UltimateVessel = 281,
 
     // Generated from trait name table entry: Ultimate Vessel
-    UltimateVessel = 282,
+    UltimateVessel1 = 282,
 
     // Generated from trait name table entry: Ultimate Vessel
-    UltimateVessel = 283,
+    UltimateVessel2 = 283,
 
     // Generated from trait name table entry: Ultimate Vessel
-    UltimateVessel = 284,
+    UltimateVessel3 = 284,
 
     // Generated from trait name table entry: Ultimate Vessel
-    UltimateVessel = 285,
+    UltimateVessel4 = 285,
 
     // Generated from trait name table entry: Ultimate Vessel
-    UltimateVessel = 286,
+    UltimateVessel5 = 286,
 
     // Generated from trait name table entry: Ultimate Vessel
-    UltimateVessel = 287,
+    UltimateVessel6 = 287,
 
     // Generated from trait name table entry: Ultimate Vessel
-    UltimateVessel = 288,
+    UltimateVessel7 = 288,
 
     // Generated from trait name table entry: Ultimate Vessel
-    UltimateVessel = 289,
+    UltimateVessel8 = 289,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE = 290,
+    RESERVE336 = 290,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE = 291,
+    RESERVE337 = 291,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE = 292,
+    RESERVE338 = 292,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE = 293,
+    RESERVE339 = 293,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE = 294,
+    RESERVE340 = 294,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE = 295,
+    RESERVE341 = 295,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE = 296,
+    RESERVE342 = 296,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE = 297,
+    RESERVE343 = 297,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE = 298,
+    RESERVE344 = 298,
 
     // Generated from trait name table entry: RESERVE
-    RESERVE = 299,
+    RESERVE345 = 299,
 
 };
 
