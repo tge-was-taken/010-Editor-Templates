@@ -159,7 +159,7 @@ typedef struct
 local u32 personaSkillsAndStatGrowth = 0;
 typedef struct
 {
-    PersonaStats wStatDist; // chance to gain +1 on level-up ( weight / weightSum )
+    PersonaStats wStatDist <name = "Weighted Stat Growth Distribution", comment = "Chance to gain +1 on level-up = (Stat Weight / Sum of Stat Weights). 3 chances per level.">; // chance to gain +1 on level-up ( weight / weightSum )
                             // 3 total per level
     u8 _;
 
