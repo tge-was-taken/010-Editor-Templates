@@ -4878,16 +4878,16 @@ enum<short> BattleUnit
     AdamKadmon2 = 565,
 
     // Generated from enemy name table entry: Adam Kadmon
-    Alilat = 566,
+    AdamKadmon3 = 566,
 
     // Generated from enemy name table entry: Adam Kadmon
-    Alilat1 = 567,
+    AdamKadmon4 = 567,
 
     // Generated from enemy name table entry: RESERVE
     RESERVE127 = 568,
 
     // Generated from enemy name table entry: Adam Kadmon
-    Alilat2 = 569,
+    AdamKadmon5 = 569,
 
     // Generated from enemy name table entry: RESERVE
     RESERVE128 = 570,
