@@ -165,13 +165,13 @@ typedef struct
 
     struct
     {
-        u8 levelDelta;
-        u8 flags;
+        u8 levelsDelta <name = "Pending Levels">;
+        u8 flags <name = "Learnability", comment = "0 = False, 1 = True, 3 = Trait">;
 
         union
         {
-          BattleSkill skill;
-          BattleTrait trait;
+          BattleSkill skills <name = "Skill ID">;
+          BattleTrait traits <name = "Trait ID">;
         } data;
     } PersonaSkill[ 16 ];
 
@@ -184,19 +184,19 @@ typedef struct
 
 typedef struct
 {
-    PartyMember member;
-    u8 levelCount;
+    PartyMember member <name = "Character">;
+    u8 levelCount <name = "Levels Available">;
     u8 _;
 
     struct
     {
-        u8 level;
-        u8 flags;
+        u8 level <name = "Level Learned">;
+        u8 flags <name = "Learnability", comment = "0 = False, 1 = True, 3 = Trait">;
         
         union
         {
-          BattleSkill skill;
-          BattleTrait trait;
+          BattleSkill skill <name = "Skill ID">;
+          BattleTrait trait <name = "Trait ID">;
         } data;
     } PersonaSkill[ 32 ];
 
