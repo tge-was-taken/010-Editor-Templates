@@ -159,15 +159,21 @@ typedef struct
 local u32 personaSkillsAndStatGrowth = 0;
 typedef struct
 {
-    PersonaStats WeightedStatDistribution <name = "Weighted Stat Growth Distribution", comment = "Chance to gain +1 on level-up = (Stat Weight / Sum of Stat Weights). 3 chances per level.">;
-    u8 : 1;
+    PersonaStats wStatDist; // chance to gain +1 on level-up ( weight / weightSum )
+                            // 3 total per level
+    u8 _;
 
     struct
     {
-        u8 PendingLevels <name = "Pending Levels">;
-        bool Learnable <name = "Learnable?">;
-        BattleSkill Skill  <name = "Skill">;
-    } PersonaSkill[ 16 ] <name = "Skills">;
+        u8 levelDelta;
+        u8 flags;
+
+        union
+        {
+          BattleSkill skill;
+          BattleTrait trait;
+        } data;
+    } PersonaSkill[ 16 ];
 
 } TPersonaSkillsAndStatGrowths <name = "Skills & Stat Growths">;
 
@@ -178,19 +184,23 @@ typedef struct
 
 typedef struct
 {
-    PartyMember Member <name = "Character">;
-    u8 LevelsAvailable <name = "Levels Available">;
-    u8 Unknown;
+    PartyMember member;
+    u8 levelCount;
+    u8 _;
 
     struct
     {
-        u8 Level <name = "Level Learned">;
-        bool Learnable <name = "Learnable?">;
-        BattleSkill Skill <name = "Skill">;
-    } PersonaSkill[ 32 ] <name = "Persona Skills">;
+        u8 level;
+        u8 flags;
+        
+        union
+        {
+          BattleSkill skill;
+          BattleTrait trait;
+        } data;
+    } PersonaSkill[ 32 ];
 
-    PersonaStats StatGain[ 98 ] <name = "Persona Stat Gain by Level">;
-
+    PersonaStats statGain[ 98 ];
 } TPersonaPartyPersonas <name = "Party Member Personas">;
 
 // Player
