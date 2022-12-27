@@ -166,7 +166,7 @@ typedef struct
     struct
     {
         u8 levelsDelta <name = "Pending Levels">;
-        u8 flags <name = "Learnability", comment = "0 = False, 1 = True, 3 = Trait">;
+        enum <u8> { Nothing = 0, Skill = 1, Trait = 3 } LearnableFlags <name = "Learnability">;
 
         union
         {
@@ -191,7 +191,7 @@ typedef struct
     struct
     {
         u8 level <name = "Level Learned">;
-        u8 flags <name = "Learnability", comment = "0 = False, 1 = True, 3 = Trait">;
+        enum <u8> { Nothing0 = 0, Skill0 = 1, Trait0 = 3 } LearnableFlags <name = "Learnability">;
         
         union
         {
