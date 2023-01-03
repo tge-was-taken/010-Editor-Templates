@@ -4,7 +4,7 @@
 enum<short> BattleSkill
 {
     // Generated from skill name table entry: Attack
-    Attack0 = 0,
+    Attack = 0,
 
     // Generated from skill name table entry: BLANK
     BLANK = 1,
@@ -151,7 +151,7 @@ enum<short> BattleSkill
     VoltBall = 48,
 
     // Generated from skill name table entry: Make It Rain
-    MakeItRain = 49,
+    MakeitRain = 49,
 
     // Generated from skill name table entry: Hama
     Hama = 50,
@@ -327,11 +327,11 @@ enum<short> BattleSkill
     // Generated from skill name table entry: Spirit Drain
     SpiritDrain1 = 107,
 
-    // Generated from skill name table entry: BLANK
-    BLANK9 = 108,
+    // Generated from skill name table entry: NOT USED
+    NOTUSED = 108,
 
     // Generated from skill name table entry: BLANK
-    BLANK10 = 109,
+    BLANK9 = 109,
 
     // Generated from skill name table entry: Foul Breath
     FoulBreath = 110,
@@ -345,8 +345,8 @@ enum<short> BattleSkill
     // Generated from skill name table entry: Ghastly Wail
     GhastlyWail = 113,
 
-    // Generated from skill name table entry: BLANK
-    BLANK11 = 114,
+    // Generated from skill name table entry: NOT USED
+    NOTUSED1 = 114,
 
     // Generated from skill name table entry: Drain
     Drain1 = 115,
@@ -601,7 +601,7 @@ enum<short> BattleSkill
     PsychoBlast = 198,
 
     // Generated from skill name table entry: BLANK
-    BLANK12 = 199,
+    BLANK10 = 199,
 
     // Generated from skill name table entry: Lunge
     Lunge = 200,
@@ -657,11 +657,11 @@ enum<short> BattleSkill
     // Generated from skill name table entry: Death Scythe
     DeathScythe = 217,
 
-    // Generated from skill name table entry: BLANK
-    BLANK13 = 218,
+    // Generated from skill name table entry: UNUSED
+    UNUSED = 218,
 
-    // Generated from skill name table entry: BLANK
-    BLANK14 = 219,
+    // Generated from skill name table entry: NOT USED
+    NOTUSED2 = 219,
 
     // Generated from skill name table entry: Cornered Fang
     CorneredFang = 220,
@@ -699,14 +699,14 @@ enum<short> BattleSkill
     // Generated from skill name table entry: Vorpal Blade
     VorpalBlade = 231,
 
-    // Generated from skill name table entry: BLANK
-    BLANK15 = 232,
+    // Generated from skill name table entry: NOT USED
+    NOTUSED3 = 232,
 
-    // Generated from skill name table entry: BLANK
-    BLANK16 = 233,
+    // Generated from skill name table entry: NOT USED
+    NOTUSED4 = 233,
 
-    // Generated from skill name table entry: BLANK
-    BLANK17 = 234,
+    // Generated from skill name table entry: NOT USED
+    NOTUSED5 = 234,
 
     // Generated from skill name table entry: Vicious Strike
     ViciousStrike = 235,
@@ -738,8 +738,8 @@ enum<short> BattleSkill
     // Generated from skill name table entry: Agneyastra
     Agneyastra = 244,
 
-    // Generated from skill name table entry: BLANK
-    BLANK18 = 245,
+    // Generated from skill name table entry: NOT USED
+    NOTUSED6 = 245,
 
     // Generated from skill name table entry: Regeneration
     Regeneration = 246,
@@ -811,7 +811,7 @@ enum<short> BattleSkill
     BrainShake = 268,
 
     // Generated from skill name table entry: Attack
-    Attack = 269,
+    Attack1 = 269,
 
     // Generated from skill name table entry: Flash Bomb
     FlashBomb = 270,
@@ -1105,7 +1105,7 @@ enum<short> BattleSkill
     Revolution = 366,
 
     // Generated from skill name table entry: Make It Rain
-    MakeItRain1 = 367,
+    MakeitRain1 = 367,
 
     // Generated from skill name table entry: Special Guards
     SpecialGuards = 368,
@@ -1123,7 +1123,7 @@ enum<short> BattleSkill
     Tetraja = 372,
 
     // Generated from skill name table entry: Taste Of Wrath
-    TasteOfWrath = 373,
+    TasteofWrath = 373,
 
     // Generated from skill name table entry: True Fake
     TrueFake = 374,
@@ -1135,13 +1135,13 @@ enum<short> BattleSkill
     MakaraBreak = 376,
 
     // Generated from skill name table entry: Killshot Of Love
-    KillshotOfLove = 377,
+    KillshotofLove = 377,
 
-    // Generated from skill name table entry: BLANK
-    BLANK19 = 378,
+    // Generated from skill name table entry: NOT USED
+    NOTUSED7 = 378,
 
-    // Generated from skill name table entry: BLANK
-    BLANK20 = 379,
+    // Generated from skill name table entry: NOT USED
+    NOTUSED8 = 379,
 
     // Generated from skill name table entry: Fire Wall
     FireWall = 380,
@@ -1156,7 +1156,7 @@ enum<short> BattleSkill
     WindWall = 383,
 
     // Generated from skill name table entry: BLANK
-    BLANK21 = 384,
+    BLANK11 = 384,
 
     // Generated from skill name table entry: Fire Break
     FireBreak = 385,
@@ -1171,7 +1171,7 @@ enum<short> BattleSkill
     ElecBreak = 388,
 
     // Generated from skill name table entry: BLANK
-    BLANK22 = 389,
+    BLANK12 = 389,
 
     // Generated from skill name table entry: Trafuri
     Trafuri = 390,
@@ -1195,10 +1195,10 @@ enum<short> BattleSkill
     PsyBreak = 396,
 
     // Generated from skill name table entry: BLANK
-    BLANK23 = 397,
+    BLANK13 = 397,
 
     // Generated from skill name table entry: BLANK
-    BLANK24 = 398,
+    BLANK14 = 398,
 
     // Generated from skill name table entry: Flow
     Flow1 = 399,
@@ -1216,7 +1216,7 @@ enum<short> BattleSkill
     EmergencyEscape = 403,
 
     // Generated from skill name table entry: Attack
-    Attack1 = 404,
+    Attack2 = 404,
 
     // Generated from skill name table entry: Down Shot
     DownShot = 405,
@@ -1996,7 +1996,7 @@ enum<short> BattleSkill
     FollowBlack = 663,
 
     // Generated from skill name table entry: BLANK
-    BLANK25 = 664,
+    BLANK15 = 664,
 
     // Generated from skill name table entry: Madara-Megido
     MadaraMegido = 665,
@@ -2035,7 +2035,7 @@ enum<short> BattleSkill
     BigBangChallenge = 676,
 
     // Generated from skill name table entry: Grail Light 2
-    GrailLight2 = 677,
+    GrailLight = 677,
 
     // Generated from skill name table entry: Megidola
     Megidola2 = 678,
@@ -2205,11 +2205,11 @@ enum<short> BattleSkill
     // Generated from skill name table entry: Reviv-All Z
     RevivAllZ = 733,
 
-    // Generated from skill name table entry: Dark Akechi-For Pursuing
-    DarkAkechiForPursuing = 734,
+    // Generated from skill name table entry: Dark Akechi-For pursuing
+    DarkAkechiForpursuing = 734,
 
-    // Generated from skill name table entry: Dark Akechi-For Gun Pursuing
-    DarkAkechiForGunPursuing = 735,
+    // Generated from skill name table entry: Dark Akechi-For Gun pursuing
+    DarkAkechiForGunpursuing = 735,
 
     // Generated from skill name table entry: Wild Talk
     WildTalk = 736,
@@ -2833,7 +2833,7 @@ enum<short> BattleSkill
     ShockBoost = 942,
 
     // Generated from skill name table entry: BLANK
-    BLANK26 = 943,
+    BLANK16 = 943,
 
     // Generated from skill name table entry: Fortified Moxy
     FortifiedMoxy = 944,
@@ -2848,7 +2848,7 @@ enum<short> BattleSkill
     HeatUp = 947,
 
     // Generated from skill name table entry: BLANK
-    BLANK27 = 948,
+    BLANK17 = 948,
 
     // Generated from skill name table entry: Touch n' Go
     TouchnGo = 949,
@@ -3001,7 +3001,7 @@ enum<short> BattleSkill
     TraitDLCForBitedown = 998,
 
     // Generated from skill name table entry: BLANK
-    BLANK28 = 999,
+    BLANK18 = 999,
 
     // Generated from skill name table entry: Ailment Effect Up
     AilmentEffectUp = 1000,
@@ -3058,10 +3058,10 @@ enum<short> BattleSkill
     HealMagicUp25 = 1017,
 
     // Generated from skill name table entry: Chance of 0 HP Cost
-    ChanceOf0HPCost = 1018,
+    Chanceof0HPCost = 1018,
 
     // Generated from skill name table entry: Chance of 0 SP Cost
-    ChanceOf0SPCost = 1019,
+    Chanceof0SPCost = 1019,
 
     // Generated from skill name table entry: Target ATK Up
     TargetATKUp = 1020,
@@ -3085,7 +3085,7 @@ enum<short> BattleSkill
     AilmentSuccessUp = 1026,
 
     // Generated from skill name table entry: BLANK
-    BLANK29 = 1027,
+    BLANK19 = 1027,
 
     // Generated from skill name table entry: 4-Affinity Boost
     FourAffinityBoost = 1028,
@@ -3145,34 +3145,34 @@ enum<short> BattleSkill
     AbsoluteEscape = 1046,
 
     // Generated from skill name table entry: Shield of Loyalty
-    ShieldOfLoyalty = 1047,
+    ShieldofLoyalty = 1047,
 
     // Generated from skill name table entry: All Amp
     AllAmp = 1048,
 
     // Generated from skill name table entry: BLANK
-    BLANK30 = 1049,
+    BLANK20 = 1049,
 
     // Generated from skill name table entry: BLANK
-    BLANK31 = 1050,
+    BLANK21 = 1050,
 
     // Generated from skill name table entry: BLANK
-    BLANK32 = 1051,
+    BLANK22 = 1051,
 
     // Generated from skill name table entry: BLANK
-    BLANK33 = 1052,
+    BLANK23 = 1052,
 
     // Generated from skill name table entry: BLANK
-    BLANK34 = 1053,
+    BLANK24 = 1053,
 
     // Generated from skill name table entry: BLANK
-    BLANK35 = 1054,
+    BLANK25 = 1054,
 
     // Generated from skill name table entry: BLANK
-    BLANK36 = 1055,
+    BLANK26 = 1055,
 
     // Generated from skill name table entry: BLANK
-    BLANK37 = 1056
+    BLANK27 = 1056
 
 };
 
@@ -3180,7 +3180,7 @@ enum<short> BattleSkill
 enum<short> BattleUnit
 {
     // Generated from enemy name table entry: Not Used
-    NotUsed = 0,
+    NotUsed9 = 0,
 
     // Generated from enemy name table entry: Shadow of God
     ShadowofGod = 1,
@@ -3452,8 +3452,8 @@ enum<short> BattleUnit
     // Generated from enemy name table entry: Lamenting Sacrifice
     LamentingSacrifice = 90,
 
-    // Generated from enemy name table entry: Life-draining Spirit
-    LifedrainingSpirit = 91,
+    // Generated from enemy name table entry: Life-Draining Spirit
+    LifeDrainingSpirit = 91,
 
     // Generated from enemy name table entry: Shadowy Ninja
     ShadowyNinja = 92,
@@ -3692,13 +3692,13 @@ enum<short> BattleUnit
     // Generated from enemy name table entry: Execurobo MDL-ED
     ExecuroboMDLED = 170,
 
-    // Generated from enemy name table entry: Corporobo MDL-
+    // Generated from enemy name table entry: Corporobo MDL-?
     CorporoboMDL = 171,
 
-    // Generated from enemy name table entry: Corporobo MDL-
+    // Generated from enemy name table entry: Corporobo MDL-?
     CorporoboMDL1 = 172,
 
-    // Generated from enemy name table entry: Corporobo MDL-
+    // Generated from enemy name table entry: Corporobo MDL-?
     CorporoboMDL2 = 173,
 
     // Generated from enemy name table entry: Corporobo MDL-CH
@@ -3815,7 +3815,7 @@ enum<short> BattleUnit
     // Generated from enemy name table entry: Museum Boss All Weakness
     MuseumBossAllWeakness = 211,
 
-    // Generated from enemy name table entry: Treasure of Mementos
+    // Generated from enemy name table entry: Treasure of Mementos?
     TreasureofMementos = 212,
 
     // Generated from enemy name table entry: Junya Bael Kaneshiro
@@ -3839,8 +3839,8 @@ enum<short> BattleUnit
     // Generated from enemy name table entry: Guard Dog of Hades
     GuardDogofHades1 = 219,
 
-    // Generated from enemy name table entry: Spear-wielding General
-    SpearwieldingGeneral = 220,
+    // Generated from enemy name table entry: Spear-Wielding General
+    SpearWieldingGeneral = 220,
 
     // Generated from enemy name table entry: Kunikazu Mammon Okumura
     KunikazuMammonOkumura = 221,
@@ -4016,8 +4016,8 @@ enum<short> BattleUnit
     // Generated from enemy name table entry: Shadow Wakasa
     ShadowWakasa = 278,
 
-    // Generated from enemy name table entry: Life-draining Spirit
-    LifedrainingSpirit1 = 279,
+    // Generated from enemy name table entry: Life-Draining Spirit
+    LifeDrainingSpirit1 = 279,
 
     // Generated from enemy name table entry: Guard Dog of Hades
     GuardDogofHades2 = 280,
@@ -4140,7 +4140,7 @@ enum<short> BattleUnit
     WanderingReviver2 = 319,
 
     // Generated from enemy name table entry: Shadow Odo
-    ShadowOdo1 = 320,
+    ShadowOdo = 320,
 
     // Generated from enemy name table entry: Shadow Asakura
     ShadowAsakura1 = 321,
@@ -4187,8 +4187,8 @@ enum<short> BattleUnit
     // Generated from enemy name table entry: Scandalous Queen
     ScandalousQueen1 = 335,
 
-    // Generated from enemy name table entry: Spear-wielding General
-    SpearwieldingGeneral1 = 336,
+    // Generated from enemy name table entry: Spear-Wielding General
+    SpearWieldingGeneral1 = 336,
 
     // Generated from enemy name table entry: Pagan Savior
     PaganSavior1 = 337,
@@ -4202,8 +4202,8 @@ enum<short> BattleUnit
     // Generated from enemy name table entry: Thunder Emperor
     ThunderEmperor2 = 340,
 
-    // Generated from enemy name table entry: Spear-wielding General
-    SpearwieldingGeneral2 = 341,
+    // Generated from enemy name table entry: Spear-Wielding General
+    SpearWieldingGeneral2 = 341,
 
     // Generated from enemy name table entry: Harlot of Desire
     HarlotofDesire1 = 342,
@@ -4452,7 +4452,7 @@ enum<short> BattleUnit
     RESERVE124 = 423,
 
     // Generated from enemy name table entry: Dancer of Death
-    DancerOfDeath = 424,
+    DancerofDeath = 424,
 
     // Generated from enemy name table entry: Decadent False God
     DecadentFalseGod = 425,
@@ -4488,49 +4488,49 @@ enum<short> BattleUnit
     InfuriatedWisdomKing = 435,
 
     // Generated from enemy name table entry: Hunting Puss in Boots
-    HuntingPussInBoots = 436,
+    HuntingPussinBoots = 436,
 
-    // Generated from enemy name table entry: Dragon-Slaying Genius
-    DragonSlayingGenius = 437,
+    // Generated from enemy name table entry: Dragon-slaying Genius
+    DragonslayingGenius = 437,
 
     // Generated from enemy name table entry: Guard Dog of Hades
-    GuardDogOfHades = 438,
+    GuardDogofHades3 = 438,
 
     // Generated from enemy name table entry: Decadent False God
     DecadentFalseGod1 = 439,
 
     // Generated from enemy name table entry: ラヴェ専用ケルピー
-    KelpieForLavenza = 440,
+    KelpieforLavenza = 440,
 
     // Generated from enemy name table entry: ラヴェ専用ベリス
-    BerithForLavenza = 441,
+    BerithforLavenza = 441,
 
     // Generated from enemy name table entry: ラヴェ専用イヌガミ
-    InugamiForLavenza = 442,
+    InugamiforLavenza = 442,
 
     // Generated from enemy name table entry: ラヴェ専用ヌエ
-    NueForLavenza = 443,
+    NueforLavenza = 443,
 
     // Generated from enemy name table entry: ラヴェ専用オニ
-    OniForLavenza = 444,
+    OniforLavenza = 444,
 
     // Generated from enemy name table entry: ラヴェ専用アヌビス
-    AnubisForLavenza = 445,
+    AnubisforLavenza = 445,
 
     // Generated from enemy name table entry: ラヴェ専用ミトラス
-    MithrasForLavenza = 446,
+    MithrasforLavenza = 446,
 
     // Generated from enemy name table entry: ラヴェ専用オセ
-    OseForLavenza = 447,
+    OseforLavenza = 447,
 
     // Generated from enemy name table entry: ラヴェ専用アタバク
-    AtavakaForLavenza = 448,
+    AtavakaforLavenza = 448,
 
     // Generated from enemy name table entry: ラヴェ専用トール
-    ThorForLavenza = 449,
+    ThorforLavenza = 449,
 
     // Generated from enemy name table entry: ラヴェ専用ルシファー
-    LuciferForLavenza = 450,
+    LuciferforLavenza = 450,
 
     // Generated from enemy name table entry: P3 Orpheus
     P3Orpheus = 451,
@@ -4563,7 +4563,7 @@ enum<short> BattleUnit
     P4Yoshitsune = 460,
 
     // Generated from enemy name table entry: P4 Izanagi-no-Okami
-    P4IzanagiNoOkami = 461,
+    P4IzanaginoOkami = 461,
 
     // Generated from enemy name table entry: Pagan Savior
     PaganSavior2 = 462,
@@ -4578,7 +4578,7 @@ enum<short> BattleUnit
     SuguruAsmodeusKamoshida1 = 465,
 
     // Generated from enemy name table entry: Trophy of Obsession
-    TrophyOfObsession = 466,
+    TrophyofObsession1 = 466,
 
     // Generated from enemy name table entry: Teacher Boss Post Aff Change
     TeacherBossPostAffChange1 = 467,
@@ -4610,8 +4610,8 @@ enum<short> BattleUnit
     // Generated from enemy name table entry: Cognitive Wakaba Isshiki
     CognitiveWakabaIsshiki1 = 476,
 
-    // Generated from enemy name table entry: Beast That Rules The Palace
-    BeastThatRulesThePalace = 477,
+    // Generated from enemy name table entry: Beast That Rules the Palace
+    BeastThatRulesthePalace1 = 477,
 
     // Generated from enemy name table entry: Execurobo MDL-ED
     ExecuroboMDLED2 = 478,
@@ -4724,14 +4724,14 @@ enum<short> BattleUnit
     // Generated from enemy name table entry: Troublesome Housemaid
     TroublesomeHousemaid2 = 514,
 
-    // Generated from enemy name table entry: Dirty Two-Horned Beast
-    DirtyTwoHornedBeast2 = 515,
+    // Generated from enemy name table entry: Dirty Two-horned Beast
+    DirtyTwohornedBeast2 = 515,
 
-    // Generated from enemy name table entry: Dirty Two-Horned Beast
-    DirtyTwoHornedBeast3 = 516,
+    // Generated from enemy name table entry: Dirty Two-horned Beast
+    DirtyTwohornedBeast3 = 516,
 
-    // Generated from enemy name table entry: Dirty Two-Horned Beast
-    DirtyTwoHornedBeast4 = 517,
+    // Generated from enemy name table entry: Dirty Two-horned Beast
+    DirtyTwohornedBeast4 = 517,
 
     // Generated from enemy name table entry: War-Hungry Horseman
     WarHungryHorseman = 518,
@@ -4751,8 +4751,8 @@ enum<short> BattleUnit
     // Generated from enemy name table entry: Bodyguard-For-Hire
     BodyguardForHire = 523,
 
-    // Generated from enemy name table entry: EX Stepstool For Kaneshiro's Attack
-    EXStepstoolForKaneshirosAttack = 524,
+    // Generated from enemy name table entry: EX Stepstool for Kaneshiro's Attack
+    EXStepstoolforKaneshirosAttack = 524,
 
     // Generated from enemy name table entry: Evil Synthetic Organism
     EvilSyntheticOrganism4 = 525,
@@ -4767,13 +4767,13 @@ enum<short> BattleUnit
     AwakenedGod2 = 528,
 
     // Generated from enemy name table entry: Monk of the Valley
-    MonkOfTheValley = 529,
+    MonkoftheValley2 = 529,
 
     // Generated from enemy name table entry: Foolish Monk
     FoolishMonk1 = 530,
 
-    // Generated from enemy name table entry: Twin-Headed Guardian
-    TwinHeadedGuardian = 531,
+    // Generated from enemy name table entry: Twin-headed Guardian
+    TwinheadedGuardian1 = 531,
 
     // Generated from enemy name table entry: Battle Fiend
     BattleFiend2 = 532,
@@ -4803,7 +4803,7 @@ enum<short> BattleUnit
     CognitiveKyotoNagata = 540,
 
     // Generated from enemy name table entry: Dancer of Death
-    DancerOfDeath1 = 541,
+    DancerofDeath1 = 541,
 
     // Generated from enemy name table entry: Reviled Dictator
     ReviledDictator1 = 542,
@@ -4818,7 +4818,7 @@ enum<short> BattleUnit
     EvilSnowman1 = 545,
 
     // Generated from enemy name table entry: Fly of the Dead
-    FlyOfTheDead1 = 546,
+    FlyoftheDead1 = 546,
 
     // Generated from enemy name table entry: Adam Target 1
     AdamTarget1 = 547,
@@ -4827,25 +4827,25 @@ enum<short> BattleUnit
     AdamTarget2 = 548,
 
     // Generated from enemy name table entry: Quaking Lady of Shadow
-    QuakingLadyOfShadow1 = 549,
+    QuakingLadyofShadow1 = 549,
 
     // Generated from enemy name table entry: Dirty Two-Horned Beast
     DirtyTwoHornedBeast5 = 550,
 
     // Generated from enemy name table entry: Tentacle of Assistance
-    TentacleOfAssistance = 551,
+    TentacleofAssistance = 551,
 
     // Generated from enemy name table entry: Tentacle of Protection
-    TentacleOfProtection = 552,
+    TentacleofProtection = 552,
 
     // Generated from enemy name table entry: Tentacle of Healing
-    TentacleOfHealing = 553,
+    TentacleofHealing = 553,
 
     // Generated from enemy name table entry: Decadent False God
     DecadentFalseGod3 = 554,
 
     // Generated from enemy name table entry: Monarch of Snow
-    MonarchOfSnow = 555,
+    MonarchofSnow1 = 555,
 
     // Generated from enemy name table entry: Mocking Snowman
     MockingSnowman1 = 556,
@@ -4908,7 +4908,7 @@ enum<short> BattleUnit
     TheBlackAvenger2 = 575,
 
     // Generated from enemy name table entry: Harlot of Desire
-    HarlotOfDesire = 576,
+    HarlotofDesire2 = 576,
 
     // Generated from enemy name table entry: Lilith's Eldest Daughter
     LilithsEldestDaughter = 577,
@@ -4959,7 +4959,7 @@ enum<short> BattleUnit
     AzathothTendrilSecondHalf6 = 592,
 
     // Generated from enemy name table entry: Missionary of Depravity
-    MissionaryOfDepravity2 = 593,
+    MissionaryofDepravity2 = 593,
 
     // Generated from enemy name table entry: Dream-Dwelling Skull
     DreamDwellingSkull1 = 594,
@@ -4989,7 +4989,7 @@ enum<short> BattleUnit
     DefeatedAvenger2 = 602,
 
     // Generated from enemy name table entry: Bringer of Misfortune
-    BringerOfMisfortune = 603,
+    BringerofMisfortune2 = 603,
 
     // Generated from enemy name table entry: Possessing Dog Ghost
     PossessingDogGhost2 = 604,
@@ -5004,7 +5004,7 @@ enum<short> BattleUnit
     TornadoDevil3 = 607,
 
     // Generated from enemy name table entry: Life-Draining Spirit
-    LifeDrainingSpirit = 608,
+    LifeDrainingSpirit2 = 608,
 
     // Generated from enemy name table entry: Cognitive Haru Okumura
     CognitiveHaruOkumura = 609,
@@ -5031,7 +5031,7 @@ enum<short> BattleUnit
     ArrogantVulture3 = 616,
 
     // Generated from enemy name table entry: Girl Enthralled by a Dream
-    GirlEnthralledByADream = 617,
+    GirlEnthralledbyaDream = 617,
 
     // Generated from enemy name table entry: Hallucinating Captain
     HallucinatingCaptain = 618,
@@ -5046,13 +5046,13 @@ enum<short> BattleUnit
     PleasantSnowman = 621,
 
     // Generated from enemy name table entry: Snowman Living an Evil Life
-    SnowmanLivingAnEvilLife = 622,
+    SnowmanLivinganEvilLife = 622,
 
     // Generated from enemy name table entry: Joyful Snake King
     JoyfulSnakeKing = 623,
 
     // Generated from enemy name table entry: Snakeman in an Ominous Place
-    SnakemanInAnOminousPlace = 624,
+    SnakemaninanOminousPlace = 624,
 
     // Generated from enemy name table entry: Militant Elephant
     MilitantElephant = 625,
@@ -5070,7 +5070,7 @@ enum<short> BattleUnit
     DelusiveLeopard = 629,
 
     // Generated from enemy name table entry: Omniscient Fish of the Sea
-    OmniscientFishOfTheSea = 630,
+    OmniscientFishoftheSea = 630,
 
     // Generated from enemy name table entry: Shadowless Pentagram
     ShadowlessPentagram = 631,
@@ -5079,13 +5079,13 @@ enum<short> BattleUnit
     LightGuardian = 632,
 
     // Generated from enemy name table entry: Guard Dog of Paradise
-    GuardDogOfParadise = 633,
+    GuardDogofParadise = 633,
 
     // Generated from enemy name table entry: Immortal Feline
     ImmortalFeline = 634,
 
-    // Generated from enemy name table entry: Playful Puss In Boots
-    PlayfulPussInBoots = 635,
+    // Generated from enemy name table entry: Playful Puss in Boots
+    PlayfulPussinBoots = 635,
 
     // Generated from enemy name table entry: Endless Pulsing Mud
     EndlessPulsingMud = 636,
@@ -5145,7 +5145,7 @@ enum<short> BattleUnit
     SaeLeviathanNiijima10 = 654,
 
     // Generated from enemy name table entry: Bearer of the Scales
-    BearerOfTheScales2 = 655,
+    BeareroftheScales2 = 655,
 
     // Generated from enemy name table entry: Slithering Snakewoman
     SlitheringSnakewoman1 = 656,
@@ -5157,7 +5157,7 @@ enum<short> BattleUnit
     ViciousPentagram1 = 658,
 
     // Generated from enemy name table entry: Quaking Lady of Shadow
-    QuakingLadyOfShadow2 = 659,
+    QuakingLadyofShadow2 = 659,
 
     // Generated from enemy name table entry: Dancing Witch
     DancingWitch2 = 660,
@@ -5172,31 +5172,31 @@ enum<short> BattleUnit
     MissionaryOfDepravity3 = 663,
 
     // Generated from enemy name table entry: Conversation Query 1 for Compatibility Change
-    ConversationQuery1ForCompatibilityChange = 664,
+    ConversationQuery1forCompatibilityChange = 664,
 
     // Generated from enemy name table entry: Conversation Query 2 for Compatibility Change
-    ConversationQuery2ForCompatibilityChange = 665,
+    ConversationQuery2forCompatibilityChange = 665,
 
     // Generated from enemy name table entry: Conversation Query 3 for Compatibility Change
-    ConversationQuery3ForCompatibilityChange = 666,
+    ConversationQuery3forCompatibilityChange = 666,
 
     // Generated from enemy name table entry: Conversation Query 4 for Compatibility Change
-    ConversationQuery4ForCompatibilityChange = 667,
+    ConversationQuery4forCompatibilityChange = 667,
 
     // Generated from enemy name table entry: Conversation Query 6 for Compatibility Change
-    ConversationQuery6ForCompatibilityChange = 668,
+    ConversationQuery6forCompatibilityChange = 668,
 
     // Generated from enemy name table entry: Conversation Query 7 for Compatibility Change
-    ConversationQuery7ForCompatibilityChange = 669,
+    ConversationQuery7forCompatibilityChange = 669,
 
     // Generated from enemy name table entry: Conversation Query 8 for Compatibility Change
-    ConversationQuery8ForCompatibilityChange = 670,
+    ConversationQuery8forCompatibilityChange = 670,
 
     // Generated from enemy name table entry: Conversation Query 9 for Compatibility Change
-    ConversationQuery9ForCompatibilityChange = 671,
+    ConversationQuery9forCompatibilityChange = 671,
 
     // Generated from enemy name table entry: Conversation Query 10 for Compatibility Change
-    ConversationQuery10ForCompatibilityChange = 672,
+    ConversationQuery10forCompatibilityChange = 672,
 
     // Generated from enemy name table entry: Cait Sith
     CaitSith = 673,
@@ -5358,7 +5358,7 @@ enum<short> BattleUnit
     ReviledDictator2 = 725,
 
     // Generated from enemy name table entry: Bearer of the Scales
-    BearerOfTheScales3 = 726,
+    BeareroftheScales3 = 726,
 
     // Generated from enemy name table entry: The Blackened Fury
     TheBlackenedFury2 = 727,
@@ -5366,17 +5366,17 @@ enum<short> BattleUnit
     // Generated from enemy name table entry: Final Assessor
     FinalAssessor1 = 728,
 
-    // Generated from enemy name table entry: Coffin-Borne God
-    CoffinBorneGod = 729,
+    // Generated from enemy name table entry: Coffin-borne God
+    CoffinborneGod2 = 729,
 
     // Generated from enemy name table entry: Pixie
     Pixie = 730,
 
     // Generated from enemy name table entry: Shadow of God
-    ShadowOfGod = 731,
+    ShadowofGod1 = 731,
 
     // Generated from enemy name table entry: Fly of the Dead
-    FlyOfTheDead2 = 732,
+    FlyoftheDead2 = 732,
 
     // Generated from enemy name table entry: Hero-Gathering Tyrant
     HeroGatheringTyrant = 733,
@@ -5397,19 +5397,19 @@ enum<short> BattleUnit
     MockingSnowman3 = 738,
 
     // Generated from enemy name table entry: Herald of Death
-    HeraldOfDeath = 739,
+    HeraldofDeath1 = 739,
 
     // Generated from enemy name table entry: Jack Frost
     JackFrost = 740,
 
     // Generated from enemy name table entry: Cleanser of Heaven
-    CleanserOfHeaven = 741,
+    CleanserofHeaven1 = 741,
 
     // Generated from enemy name table entry: Koppa Tengu
     KoppaTengu = 742,
 
-    // Generated from enemy name table entry: Jack-o-Lantern
-    JackOLantern = 743,
+    // Generated from enemy name table entry: Jack-o'-Lantern
+    JackoLantern = 743,
 
     // Generated from enemy name table entry: S.E.E.S. Boy
     SEESBoy1 = 744,
@@ -5469,7 +5469,7 @@ enum<short> BattleUnit
     Rakshasa1 = 762,
 
     // Generated from enemy name table entry: Missionary of Depravity
-    MissionaryOfDepravity = 763,
+    MissionaryofDepravity4 = 763,
 
     // Generated from enemy name table entry: Wandering Reviver
     WanderingReviver3 = 764,
@@ -5508,7 +5508,7 @@ enum<short> BattleUnit
     MiniMara1 = 775,
 
     // Generated from enemy name table entry: Yamata-no-Orochi
-    YamataNoOrochi = 776,
+    YamatanoOrochi = 776,
 
     // Generated from enemy name table entry: Destructive Beauty
     DestructiveBeauty1 = 777,
@@ -6432,6 +6432,20 @@ enum<short> BattleTrait
 
     // Generated from trait name table entry: RESERVE
     RESERVE345 = 299,
+
+};
+
+// This enum represents learnability flags for skills and traits.
+enum<byte> LearnableFlags
+{
+    // No skill or trait
+    Nothing = 0,
+
+    // Learnable ID is for a skill
+    Skill = 1,
+
+    // Learnable ID is for a trait
+    Trait = 3,
 
 };
 
