@@ -511,7 +511,7 @@ typedef struct
     struct
         {
             bool Lust : 1 <name = "Lust">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool NoSPFlee : 1 <name = "No SP Flee", comment = "Only affects enemies">;
             bool Berserk : 1 <name = "Berserk", comment = "Visual effect only">;
             bool Desparation : 1 <name = "Desparation", comment = "Attack up, Defense down; not affected by other buffs/debuffs">;
             bool Brainwash : 1 <name = "Brainwash">;
