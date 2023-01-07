@@ -389,21 +389,47 @@ typedef struct
 
 typedef struct
 {
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-} TEncounter_Segment2 <name = "Unknown Segment">;
+    PartyMember PlayerID[4];
+} TEncounter_ForcedPartyData <name = "Forced Party Data", read=Str("%s - %s - %s - %s", EnumToString(this.PlayerID[0]), EnumToString(this.PlayerID[1]), EnumToString(this.PlayerID[2]), EnumToString(this.PlayerID[3]))>;
 
 typedef struct
 {
-    u8 UnknownR;
+  u16 Category; // trial, chain, ...
+  u16 CategoryIdx;
+  u32 _1 <hidden=true>; Assert( _1 == 0 );
+  u32 Flag <format=hex>;
 
-} TEncounter_Segment3 <name = "Unknown Segment">;
+  u16 TurnBonusCount;
+  u16 _2 <hidden=true>; Assert( _2 == 0 );
+  u32 TurnBonus;
+
+  struct
+  {
+    u32 Target;
+    u32 Type;
+    f32 Mult;
+  } Bonus[ 5 ] <optimize=false>;
+
+  u32 WaveEncounter[ 5 ] <optimize=false>;
+  u32 _3[ 5 ] <hidden=true, optimize=false>;
+
+  //local int i;
+  //for ( i = 0; i < 5; i++ ) Assert( _3[ i ] == 0 );
+
+  u32 Level;
+  u32 IconCount;
+
+  struct
+  {
+    u32 RequiredScore;
+
+    u16 _4 <hidden=true>; Assert( _4 == 0 );
+    u16 _5 <hidden=true>; Assert( _5 == 0 );
+    u16 _6 <hidden=true>; Assert( _6 == 0 );
+
+    u16 ItemId; 
+  } Award[ 3 ] <optimize=false>;
+} TEncount_Challenge <optimize=false, name = "Challenge Battle Data">;
 
 // Unit table
 typedef struct
@@ -1556,11 +1582,11 @@ typedef struct( TableSegmentType _type )
             break;
 
         case TableSegmentType_Encounter_Segment2:
-            TEncounter_Segment2 TEncounters[ Size / sizeof( TEncounter_Segment2 ) ];
+            TEncounter_ForcedPartyData TEncounters[ Size / sizeof( TEncounter_ForcedPartyData ) ];
             break;
 
         case TableSegmentType_Encounter_Segment3:
-            TEncounter_Segment3 TEncounters[ Size / sizeof( TEncounter_Segment3 ) ];
+            TEncount_Challenge TEncounters[ Size / 0xA4 ];
             break;
 
         case TableSegmentType_Skill_Elements:
