@@ -6575,6 +6575,7 @@ enum<ubyte>Skill_ApplyOrCureEffect
     NoEffect = 0,
     ApplyEffect = 1,
     CureEffect = 2,
+    ApplyMultipleEffects = 3
 };
 
 enum<ubyte>Skill_ExtraEffect
