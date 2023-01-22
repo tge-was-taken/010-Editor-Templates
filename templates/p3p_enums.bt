@@ -226,11 +226,16 @@ enum<ubyte>Skill_SkillType
 
 enum<ubyte>Skill_Bonus
 {
+    GhastlyWailCheck = 1,
     FullMoon = 2,
     NewMoon = 3,
     Great = 4,
     Tired = 5,
+    TrafuriCheck = 6,
+    Charmed = 7,
     Downed = 8,
+    GigaSparkCheck = 9,
+    GreatSeal1 = 10,
 };
 
 enum<ushort>BattleSkill
