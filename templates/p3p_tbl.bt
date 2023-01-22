@@ -309,11 +309,7 @@ typedef struct
             bool Poison : 1 <name = "Poison">;
             bool OrgiaMode : 1 <name = "OrgiaMode">;
             bool Overheat : 1 <name = "Overheat">;
-            bool Unknown : 1;
-            bool Unknown : 1;
-            bool Unknown : 1;
-            bool Unknown : 1;
-            bool Unknown : 1;
+            bool Tired : 1 <name = "Tired", comment = "Applies animation when low HP or Tired. Doesn't seem to affect anything.">;
         } Effect2 <name = "Effects">;
 	 
     Skill_SpecialAilments SpecialAil <name = "Special Ailments">;
