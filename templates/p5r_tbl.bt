@@ -159,15 +159,21 @@ typedef struct
 local u32 personaSkillsAndStatGrowth = 0;
 typedef struct
 {
-    PersonaStats WeightedStatDistribution <name = "Weighted Stat Growth Distribution", comment = "Chance to gain +1 on level-up = (Stat Weight / Sum of Stat Weights). 3 chances per level.">;
-    u8 : 1;
+    PersonaStats wStatDist <name = "Weighted Stat Growth Distribution", comment = "Chance to gain +1 on level-up = (Stat Weight / Sum of Stat Weights). 3 chances per level.">; // chance to gain +1 on level-up ( weight / weightSum )
+                            // 3 total per level
+    u8 _;
 
     struct
     {
-        u8 PendingLevels <name = "Pending Levels">;
-        bool Learnable <name = "Learnable?">;
-        BattleSkill Skill  <name = "Skill">;
-    } PersonaSkill[ 16 ] <name = "Skills">;
+        u8 levelsDelta <name = "Pending Levels">;
+        enum LearnableFlags flags <name = "Learnability">;
+
+        union
+        {
+          BattleSkill skills <name = "Skill ID">;
+          BattleTrait traits <name = "Trait ID">;
+        } data;
+    } PersonaSkill[ 16 ];
 
 } TPersonaSkillsAndStatGrowths <name = "Skills & Stat Growths">;
 
@@ -178,19 +184,23 @@ typedef struct
 
 typedef struct
 {
-    PartyMember Member <name = "Character">;
-    u8 LevelsAvailable <name = "Levels Available">;
-    u8 Unknown;
+    PartyMember member <name = "Character">;
+    u8 levelCount <name = "Levels Available">;
+    u8 _;
 
     struct
     {
-        u8 Level <name = "Level Learned">;
-        bool Learnable <name = "Learnable?">;
-        BattleSkill Skill <name = "Skill">;
-    } PersonaSkill[ 32 ] <name = "Persona Skills">;
+        u8 level <name = "Level Learned">;
+        enum LearnableFlags flags <name = "Learnability">;
+        
+        union
+        {
+          BattleSkill skill <name = "Skill ID">;
+          BattleTrait trait <name = "Trait ID">;
+        } data;
+    } PersonaSkill[ 32 ];
 
-    PersonaStats StatGain[ 98 ] <name = "Persona Stat Gain by Level">;
-
+    PersonaStats statGain[ 98 ];
 } TPersonaPartyPersonas <name = "Party Member Personas">;
 
 // Player
@@ -379,21 +389,47 @@ typedef struct
 
 typedef struct
 {
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-} TEncounter_Segment2 <name = "Unknown Segment">;
+    PartyMember PlayerID[4];
+} TEncounter_ForcedPartyData <name = "Forced Party Data", read=Str("%s - %s - %s - %s", EnumToString(this.PlayerID[0]), EnumToString(this.PlayerID[1]), EnumToString(this.PlayerID[2]), EnumToString(this.PlayerID[3]))>;
 
 typedef struct
 {
-    u8 UnknownR;
+  u16 Category; // trial, chain, ...
+  u16 CategoryIdx;
+  u32 _1 <hidden=true>; Assert( _1 == 0 );
+  u32 Flag <format=hex>;
 
-} TEncounter_Segment3 <name = "Unknown Segment">;
+  u16 TurnBonusCount;
+  u16 _2 <hidden=true>; Assert( _2 == 0 );
+  u32 TurnBonus;
+
+  struct
+  {
+    u32 Target;
+    u32 Type;
+    f32 Mult;
+  } Bonus[ 5 ] <optimize=false>;
+
+  u32 WaveEncounter[ 5 ] <optimize=false>;
+  u32 _3[ 5 ] <hidden=true, optimize=false>;
+
+  //local int i;
+  //for ( i = 0; i < 5; i++ ) Assert( _3[ i ] == 0 );
+
+  u32 Level;
+  u32 IconCount;
+
+  struct
+  {
+    u32 RequiredScore;
+
+    u16 _4 <hidden=true>; Assert( _4 == 0 );
+    u16 _5 <hidden=true>; Assert( _5 == 0 );
+    u16 _6 <hidden=true>; Assert( _6 == 0 );
+
+    u16 ItemId; 
+  } Award[ 3 ] <optimize=false>;
+} TEncount_Challenge <optimize=false, name = "Challenge Battle Data">;
 
 // Unit table
 typedef struct
@@ -501,7 +537,7 @@ typedef struct
     struct
         {
             bool Lust : 1 <name = "Lust">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool NoSPFlee : 1 <name = "No SP Flee", comment = "Only affects enemies">;
             bool Berserk : 1 <name = "Berserk", comment = "Visual effect only">;
             bool Desparation : 1 <name = "Desparation", comment = "Attack up, Defense down; not affected by other buffs/debuffs">;
             bool Brainwash : 1 <name = "Brainwash">;
@@ -640,7 +676,7 @@ typedef struct
             bool Accessory : 1 <name = "Accessory">;
             bool Armor : 1 <name = "Armor">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
             bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
             bool GL : 1 <name = "Grenade Launcher (Haru)">;
             bool Revolver : 1 <name = "Revolver (Makoto)">;
@@ -650,7 +686,7 @@ typedef struct
             bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
             bool Handgun : 1 <name = "Handgun (Joker)">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool Rapier : 1 <name = "Rapier (Kasumi)">;
             bool BeamSword : 1 <name = "Beam Sword (Goro)">;
             bool Axe : 1 <name = "Axe (Haru)">;
             bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
@@ -673,7 +709,7 @@ typedef struct
     u8 Agility <name = "Agility Boost">;
     u8 Luck <name = "Luck Boost">;
     u8 Unknown;
-    GearEffect Effect <name = "Effect">;
+    BattleSkill Effect <name = "Effect">;
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
@@ -717,7 +753,7 @@ typedef struct
             bool Accessory : 1 <name = "Accessory">;
             bool Armor : 1 <name = "Armor">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
             bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
             bool GL : 1 <name = "Grenade Launcher (Haru)">;
             bool Revolver : 1 <name = "Revolver (Makoto)">;
@@ -727,7 +763,7 @@ typedef struct
             bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
             bool Handgun : 1 <name = "Handgun (Joker)">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool Rapier : 1 <name = "Rapier (Kasumi)">;
             bool BeamSword : 1 <name = "Beam Sword (Goro)">;
             bool Axe : 1 <name = "Axe (Haru)">;
             bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
@@ -784,7 +820,7 @@ typedef struct
             bool Accessory : 1 <name = "Accessory">;
             bool Armor : 1 <name = "Armor">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
             bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
             bool GL : 1 <name = "Grenade Launcher (Haru)">;
             bool Revolver : 1 <name = "Revolver (Makoto)">;
@@ -794,7 +830,7 @@ typedef struct
             bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
             bool Handgun : 1 <name = "Handgun (Joker)">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool Rapier : 1 <name = "Rapier (Kasumi)">;
             bool BeamSword : 1 <name = "Beam Sword (Goro)">;
             bool Axe : 1 <name = "Axe (Haru)">;
             bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
@@ -848,7 +884,7 @@ struct
         bool Accessory : 1 <name = "Accessory">;
         bool Armor : 1 <name = "Armor">;
         bool Unknown : 1 <name = "Unknown">;
-        bool Unknown : 1 <name = "Unknown">;
+        bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
         bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
         bool GL : 1 <name = "Grenade Launcher (Haru)">;
         bool Revolver : 1 <name = "Revolver (Makoto)">;
@@ -858,7 +894,7 @@ struct
         bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
         bool Handgun : 1 <name = "Handgun (Joker)">;
         bool Unknown : 1 <name = "Unknown">;
-        bool Unknown : 1 <name = "Unknown">;
+        bool Rapier : 1 <name = "Rapier (Kasumi)">;
         bool BeamSword : 1 <name = "Beam Sword (Goro)">;
         bool Axe : 1 <name = "Axe (Haru)">;
         bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
@@ -893,7 +929,7 @@ struct
         bool Accessory : 1 <name = "Accessory">;
         bool Armor : 1 <name = "Armor">;
         bool Unknown : 1 <name = "Unknown">;
-        bool Unknown : 1 <name = "Unknown">;
+        bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
         bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
         bool GL : 1 <name = "Grenade Launcher (Haru)">;
         bool Revolver : 1 <name = "Revolver (Makoto)">;
@@ -903,7 +939,7 @@ struct
         bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
         bool Handgun : 1 <name = "Handgun (Joker)">;
         bool Unknown : 1 <name = "Unknown">;
-        bool Unknown : 1 <name = "Unknown">;
+        bool Rapier : 1 <name = "Rapier (Kasumi)">;
         bool BeamSword : 1 <name = "Beam Sword (Goro)">;
         bool Axe : 1 <name = "Axe (Haru)">;
         bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
@@ -955,7 +991,7 @@ typedef struct
             bool Accessory : 1 <name = "Accessory">;
             bool Armor : 1 <name = "Armor">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
             bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
             bool GL : 1 <name = "Grenade Launcher (Haru)">;
             bool Revolver : 1 <name = "Revolver (Makoto)">;
@@ -965,7 +1001,7 @@ typedef struct
             bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
             bool Handgun : 1 <name = "Handgun (Joker)">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool Rapier : 1 <name = "Rapier (Kasumi)">;
             bool BeamSword : 1 <name = "Beam Sword (Goro)">;
             bool Axe : 1 <name = "Axe (Haru)">;
             bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
@@ -1022,7 +1058,7 @@ typedef struct
             bool Accessory : 1 <name = "Accessory">;
             bool Armor : 1 <name = "Armor">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
             bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
             bool GL : 1 <name = "Grenade Launcher (Haru)">;
             bool Revolver : 1 <name = "Revolver (Makoto)">;
@@ -1032,7 +1068,7 @@ typedef struct
             bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
             bool Handgun : 1 <name = "Handgun (Joker)">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool Rapier : 1 <name = "Rapier (Kasumi)">;
             bool BeamSword : 1 <name = "Beam Sword (Goro)">;
             bool Axe : 1 <name = "Axe (Haru)">;
             bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
@@ -1077,7 +1113,7 @@ typedef struct
             bool Accessory : 1 <name = "Accessory">;
             bool Armor : 1 <name = "Armor">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
             bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
             bool GL : 1 <name = "Grenade Launcher (Haru)">;
             bool Revolver : 1 <name = "Revolver (Makoto)">;
@@ -1087,7 +1123,7 @@ typedef struct
             bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
             bool Handgun : 1 <name = "Handgun (Joker)">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool Rapier : 1 <name = "Rapier (Kasumi)">;
             bool BeamSword : 1 <name = "Beam Sword (Goro)">;
             bool Axe : 1 <name = "Axe (Haru)">;
             bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
@@ -1128,7 +1164,7 @@ typedef struct
             bool Accessory : 1 <name = "Accessory">;
             bool Armor : 1 <name = "Armor">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
             bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
             bool GL : 1 <name = "Grenade Launcher (Haru)">;
             bool Revolver : 1 <name = "Revolver (Makoto)">;
@@ -1138,7 +1174,7 @@ typedef struct
             bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
             bool Handgun : 1 <name = "Handgun (Joker)">;
             bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool Rapier : 1 <name = "Rapier (Kasumi)">;
             bool BeamSword : 1 <name = "Beam Sword (Goro)">;
             bool Axe : 1 <name = "Axe (Haru)">;
             bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
@@ -1546,11 +1582,11 @@ typedef struct( TableSegmentType _type )
             break;
 
         case TableSegmentType_Encounter_Segment2:
-            TEncounter_Segment2 TEncounters[ Size / sizeof( TEncounter_Segment2 ) ];
+            TEncounter_ForcedPartyData TEncounters[ Size / sizeof( TEncounter_ForcedPartyData ) ];
             break;
 
         case TableSegmentType_Encounter_Segment3:
-            TEncounter_Segment3 TEncounters[ Size / sizeof( TEncounter_Segment3 ) ];
+            TEncount_Challenge TEncounters[ Size / 0xA4 ];
             break;
 
         case TableSegmentType_Skill_Elements:
