@@ -49,17 +49,21 @@ enum<short> AffinityStatus
 enum<ubyte>PersonaInherit
 {
     InheritNone = 0,
-    InheritPhysical = 1,
-    InheritFire = 2,
-    InheritIce = 3,
-    InheritElec = 4,
-    InheritWind = 5,
-    InheritLight = 6,
-    InheritDark = 7,
-    InheritHealing = 8,
-    InheritAilment = 10,
-    InheritAlmighty = 12,
-    InheritRESERVE = 13
+    InheritFire = 1,
+    InheritIce = 2,
+    InheritElec = 3,
+    InheritWind = 4,
+    InheritLight = 5,
+    InheritDark = 6,
+    InheritParty = 7,
+    InheritParty2 = 8,
+    InheritHealing = 9,
+    InheritStrike = 11,
+    InheritSlash = 12,
+    InheritPierce = 13,
+    InheritAilment = 15,
+    InheritDarkLight = 16,
+    InheritAll = 17
 };
 
 enum<ubyte> ElementalType
@@ -84,6 +88,54 @@ enum<ubyte> ElementalType
     Healing = 16,
     Support = 17,
     Special2 = 18,
+};
+
+enum<ushort>AttackType
+{
+    SlashDamage = 0,
+    ReaperDamageType = 1, // unknown
+    PierceDamage2 = 304, // used by Takaya exclusively
+    FireDamage2 = 305, // used by Jin exclusively
+    IceDamage = 346,
+    WindDamage = 347,
+    ElecDamage = 348,
+    FireDamage = 349,
+    PierceDamage = 350,
+    StrikeDamage = 351,
+    AlmightyDamage = 395, // used by Nyx, multitarget
+};
+
+enum<ushort>FuukaScan
+{
+    NoResistance = 0,
+    Arcana = 88,
+    NoNavi = 90,
+    GoldHand = 96,
+    Elizabeth = 120,
+    Guardian = 122,
+};
+
+enum<ushort>ItemDrop
+{
+    CupOfQueen = 1338,
+    Amethyst = 1376,
+    Aquamarine = 1377,
+    Emerald = 1378,
+    Onyx = 1379,
+    Opal = 1380,
+    Garnet = 1381,
+    Sapphire = 1382,
+    Diamond = 1383,
+    Turquoise = 1384,
+    Topaz = 1385,
+    Pearl = 1386,
+    Ruby = 1387,
+    WealthCoin = 1424,
+    TreasureCoin = 1425,
+    SupremeCoin = 1426,
+    OpulentCoin = 1427,
+    LuxuryCoin = 1428,
+    GloriousCoin = 1429,
 };
 
 enum<ubyte>Skill_ApplyOrCureEffect
@@ -171,6 +223,23 @@ enum<ubyte>Skill_NumberOfTargets
     Everyone = 2, // might be redundant with Multi + SelfNotAllowed
 };
 
+enum<ubyte>Skill_AilmentTargetType
+{
+    AnyAilment = 1,
+    PatraTarget = 35, // has Panic, Fear, Distress, Shock, Freeze
+    PoisonedTarget = 127,
+    EnragedTarget = 223,
+    FearfulTarget = 239,
+    CharmedTarget = 253,
+    KnockedOrDeadTarget = 255, // also applies to posumudi, needs research
+};
+
+enum<ubyte>Skill_AilmentTargets
+{
+    NonAilmentTarget = 0,
+    AilmentTarget = 255,
+};
+
 enum<ubyte>Skill_SpecialAilments
 {
     InstaKill = 8,
@@ -194,8 +263,14 @@ enum<ubyte>Skill_CostType
 enum<ubyte>Skill_CostTypeType
 {
     NormalSPCost = 0,
+    KillUser = 1,
+    BasicAttack = 2,
     HealingSkills = 8,
     SPPercentage = 16,
+    HealNonUser = 25,
+    BossCostType = 32,
+    FleeBattle = 40,
+    SummerDreamCost = 48,
 };
 
 enum<ubyte>Skill_PhysicalOrMagicSkill
@@ -1500,5 +1575,9 @@ enum<ubyte>SkillProgression
 enum<ubyte>TargetStatus
 {
     Normal = 0,
+    TargetStatus1 = 1, // used by skills 220,221,228,368,414, unknown function
+    TargetStatus2 = 2, // mostly basic attacks but also boss uniques, used by 0,40,95,236,304,305,350,351,356,357,359,360,395
     Unconscious = 4,
+    KnockedDown = 8,
+    Poisoned = 127, 
 };
