@@ -1,0 +1,55 @@
+FSeek( 0x10 );
+
+LittleEndian();
+DisplayFormatHex();
+
+typedef struct { float X; float Y; float Z; } Vec3f;
+typedef struct { float X; float Y; float Z; float W; } Vec4f;
+
+typedef struct {
+  ushort  Flags<comment="Rotation Locks can be enabled here">; // 0001 - enabled
+  ushort  AnimationID<format=decimal>;
+  
+  ushort  Field04;
+  ushort  Field06;
+  ushort  Field08;
+  ushort  Field0A;
+  
+  Vec3f View;
+  Vec3f Rot;
+
+  uint  Field24; // 0
+  uint  Field28; // 0
+
+  float MaxRotationLeft;
+  float MaxRotationRight;
+
+  float Scale;
+
+  Vec4f Light;
+
+  uint  LightRGBA;
+} PDD <size=0x4c,optimize=false>;
+
+SetBackColor( 0x880000 );
+
+local uint i = 0;
+local int j = 0;
+
+for ( i = 0; i <= 209; i++ )
+{
+  SetBackColor( ( i % 2 ) * 0x440000 + 0x880000 );
+  PDD pdd<read="use ID - 141">;
+  j++;
+}
+
+int numOfBlocks;
+int R_unk1;
+int R_unk2;
+int R_unk3;
+
+for ( i = 0; i < numOfBlocks; i++ )
+{
+  SetBackColor( ( i % 2 ) * 0x440000 + 0x880000 );
+  PDD pdd<read="use ID - 259">;
+}
