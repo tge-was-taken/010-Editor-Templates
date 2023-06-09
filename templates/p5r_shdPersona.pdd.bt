@@ -7,17 +7,13 @@ typedef struct { float X; float Y; float Z; } Vec3f;
 typedef struct { float X; float Y; float Z; float W; } Vec4f;
 
 typedef struct {
-  ushort  Field00; // 0001 - enabled
-  ushort  Field02;
+  ushort  Flags<comment="Rotation Locks can be enabled here">; // 0001 - enabled
+  ushort  AnimationID<format=decimal>;
   
-  BigEndian();
   ushort  Field04;
-  LittleEndian();
-  ushort Field06;
+  ushort  Field06;
   ushort  Field08;
-  BigEndian();
   ushort  Field0A;
-  LittleEndian();
   
   Vec3f View;
   Vec3f Rot;
@@ -25,8 +21,8 @@ typedef struct {
   uint  Field24; // 0
   uint  Field28; // 0
 
-  float Field2C;
-  float Field30;
+  float MaxRotationLeft;
+  float MaxRotationRight;
 
   float Scale;
 
@@ -40,6 +36,6 @@ SetBackColor( 0x880000 );
 local uint i = 0;
 for ( i = 0; i < ( FileSize() - 0x10 ) / 0x4c; i++ )
 {
-    SetBackColor( ( i % 2 ) * 0x440000 + 0x880000 );
-    PDD pdd;
+  SetBackColor( ( i % 2 ) * 0x440000 + 0x880000 );
+  PDD pdd;
 }
