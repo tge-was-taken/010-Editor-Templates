@@ -16,26 +16,46 @@ typedef struct
 
 typedef struct
 {
-    AffinityStatus PhysAffinity <name = "Physical">;
-    AffinityStatus GunAffinity <name = "Gun">;
-    AffinityStatus FireAffinity <name = "Fire">;
-    AffinityStatus IceAffinity <name = "Ice">;
-    AffinityStatus ElecAffinity <name = "Electric">;
-    AffinityStatus WindAffinity <name = "Wind">;
-    AffinityStatus PsyAffinity <name = "Psy">;
-    AffinityStatus NukeAffinity <name = "Nuke">;
-    AffinityStatus BlessAffinity <name = "Bless">;
-    AffinityStatus CurseAffinity <name = "Curse">;
-    AffinityStatus AlmightyAffinity <name = "Almighty">;
-    AffinityStatus DizzyAffinity <name = "Dizzy">;
-    AffinityStatus ConfuseAffinity <name = "Confuse">;
-    AffinityStatus FearAffinity <name = "Fear">;
-    AffinityStatus ForgetAffinity <name = "Forget">;
-    AffinityStatus HungerAffinity <name = "Hunger">;
-    AffinityStatus SleepAffinity <name = "Sleep">;
-    AffinityStatus RageAffinity <name = "Rage">;
-    AffinityStatus DespairAffinity <name = "Despair">;
-    AffinityStatus BrainwashAffinity <name = "Brainwash">; 
+    u8 Byte2_bit32768 : 1<hidden=true>;
+    u8 Byte2_bit16384 : 1<hidden=true>;
+    u8 Ailment_Immune : 1;
+    u8 Resist : 1;
+    u8 Weak : 1;
+    u8 Drain : 1;
+    u8 Repel : 1;
+    u8 Block : 1;
+    u8 Take_640_Percent_Damage : 1;
+    u8 Take_320_Percent_Damage : 1;
+    u8 Take_160_Percent_Damage : 1;
+    u8 Take_80_Percent_Damage : 1;
+    u8 Take_40_Percent_Damage : 1;
+    u8 Take_20_Percent_Damage : 1;
+    u8 Take_10_Percent_Damage : 1;
+    u8 Take_5_Percent_Damage : 1;
+} AffinityBitfield <name = "Affinity Status">;
+
+typedef struct
+{
+    AffinityBitfield PhysAffinity <name = "Physical">;
+    AffinityBitfield GunAffinity <name = "Gun">;
+    AffinityBitfield FireAffinity <name = "Fire">;
+    AffinityBitfield IceAffinity <name = "Ice">;
+    AffinityBitfield ElecAffinity <name = "Electric">;
+    AffinityBitfield WindAffinity <name = "Wind">;
+    AffinityBitfield PsyAffinity <name = "Psy">;
+    AffinityBitfield NukeAffinity <name = "Nuke">;
+    AffinityBitfield BlessAffinity <name = "Bless">;
+    AffinityBitfield CurseAffinity <name = "Curse">;
+    AffinityBitfield AlmightyAffinity <name = "Almighty">;
+    AffinityBitfield DizzyAffinity <name = "Dizzy">;
+    AffinityBitfield ConfuseAffinity <name = "Confuse">;
+    AffinityBitfield FearAffinity <name = "Fear">;
+    AffinityBitfield ForgetAffinity <name = "Forget">;
+    AffinityBitfield HungerAffinity <name = "Hunger">;
+    AffinityBitfield SleepAffinity <name = "Sleep">;
+    AffinityBitfield RageAffinity <name = "Rage">;
+    AffinityBitfield DespairAffinity <name = "Despair">;
+    AffinityBitfield BrainwashAffinity <name = "Brainwash">; 
 } ElementalAffinities <name = "Elemental Affinities">;
 
 typedef struct

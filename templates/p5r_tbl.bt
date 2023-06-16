@@ -359,6 +359,38 @@ typedef struct
     u32 Unknown;
 } TAICalc_Segment7;
 
+typedef struct
+{
+    u16 ReplacementEnemyID;
+    u8 Overall_Replacement_Chance<comment="if flag 0x2000005d is on, chance is increased by 30%">;
+    u8 Slot_1_Chance<comment="Random chance is same for shared enemy IDs.  If one enemy ID fails, then even if in another slot, that same enemy ID will still fail.">;
+    u8 Slot_2_Chance;
+    u8 Slot_3_Chance;
+    u8 Slot_4_Chance;
+    u8 Slot_5_Chance;
+} TRoyalEnemyReplace <name = "Enemy Replacement Data">;
+
+typedef struct
+{
+    u8 Overall_Disaster_Chance;
+    u8 Slot_1_Chance;
+    u8 Slot_2_Chance;
+    u8 Slot_3_Chance;
+    u8 Slot_4_Chance;
+    u8 Slot_5_Chance;
+    u8 Max_Disaster_Shadows;
+} TRoyalDisasterReplace <name = "Disaster Shadow Data">;
+
+typedef struct
+{
+    TRoyalEnemyReplace EnemyReplacementData;
+    TRoyalDisasterReplace DisasterData;
+    u8 Field0f<comment="Sorta like a difficulty modifier?  3 and 4 can cause disasters to spawn with sleep and rage.">;
+    u8 Field10<comment="Related to how likely it is for normal enemies to attack their disaster allies.">;
+    u8 Field11;
+    u8 Field12;
+    u8 Field13;
+} TRoyalncounter <name = "P5R Data">;
 
 // Encounter
 typedef struct
@@ -370,21 +402,7 @@ typedef struct
     u16 FieldId <name = "Field ID">;
     u16 RoomId <name = "Room ID">;
     MusicID MusicId <name = "Music">;
-    u16 UnknownR;
-    u16 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u16 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u16 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u16 UnknownR;
+	TRoyalncounter ExtraData <name = "Extra Data">;
 } TEncounter_Segment1 <name = "Enemy Encounters">;
 
 typedef struct
@@ -456,8 +474,15 @@ typedef struct
 
 typedef struct
 {
-    u8 Values[ 24 ];
-} TUnitSegment3Entry;
+    u8 VoiceID <comment = "Subtract 1 from the id i.e. 9 to load voicepack 10">;
+    u8 TALK_PERSON;
+    u8 VoiceABCValue;
+    u8 padding;
+    u16 TALK_MONEYMIN;
+    u16 TALK_MONEYMAX;
+    u16 TALK_ITEM[4]<format=hex>;
+    u16 TALK_ITEM_RARE[4]<format=hex>;
+} TUnitVoiceIndex <name = "Voice Index">;
 
 typedef struct
 {
@@ -1260,11 +1285,109 @@ typedef struct
     u8 Unknown;
 } TItem_Footer <name ="Footer">;
 
+typedef struct
+{
+	s16 AttackHitRegFrames [ 8 ];
+	s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues1 [ 2 ];
+    s16 CriticalHitRegFrames [ 8 ];
+    s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues2 [ 2 ];
+    s16 AmbushedAttackHitRegFrames [ 8 ];
+    s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues3 [ 2 ];
+}TVisual_AttackFrameData <name = "Attack Frame Data">;
+
+typedef struct
+{
+	s16 AttackHitRegFrames [ 8 ];
+	s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues1 [ 2 ];
+    s16 MagicCastDuration [ 8 ];
+    s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues2 [ 2 ];
+    s16 UnknownAnimationDuration [ 8 ];
+    s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues3 [ 2 ];
+}TVisual_AttackFrameDataEnemy <name = "Attack Frame Data">;
+
+typedef struct
+{
+	s16 AttackHitRegFrames [ 8 ];
+	s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues1 [ 2 ];
+    s16 MagicCastDuration [ 8 ];
+    s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues2 [ 2 ];
+}TVisual_AttackFrameDataPersona <name = "Attack Frame Data">;
+
 // VISUAL.TBL
 
 typedef struct
 {
     u32 Field00;
+    f32 HeartIconXAxis<name="Heart Icon location(X axis)">;
+    f32 HeartIconYAxis<name="Heart Icon location(Y axis)">;
+    f32 HeartIconZAxis<name="Heart Icon location(Z axis)">;;
+    f32 VirtualWidth;
+    f32 VirtualDepth;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
+    f32 Field28;
+    f32 Field2C;
+    f32 Field30;
+    f32 Field34;
+    f32 Field38;
+    f32 Field3C;
+    f32 RightCameraFocus;
+    f32 TopCameraFocus;
+    f32 LeftCameraFocus;
+    f32 SkillUseEffectSize1;
+    f32 SkillUseEffectSize2;
+    f32 Field54;
+    f32 VirtualYLocation;
+    f32 VirtualZLocation;
+    f32 AttackSkillCameraDistance;
+    f32 UnkVirtualLocation;
+    u16 ModelScale<name="Model Scale %">;
+    u16 Field6A;
+    u16 Field6C;
+    u16 Field6E;
+    f32 Field70;
+    f32 Field74;
+    f32 Field78;
+    f32 Field7C;
+    TVisual_AttackFrameDataEnemy FrameData;
+} TVisual_EnemyVisualVariablesA <name = "Enemy Visual Variables A">;
+
+typedef struct
+{
+    byte Unknown[ 0x104 ];
+	u16 ModelScale<name="Model Scale %">;
+    u16 Field6A;
+    u16 Field6C;
+    u16 Field6E;
+    f32 Field70;
+    f32 Field74;
+    f32 Field78;
+    f32 Field7C;
+    TVisual_AttackFrameData FrameData;
+	byte Unknown2 [ 0x30 ];
+} TVisual_PlayerVisualVariablesA <name = "Player Visual Variables A">;
+
+typedef struct
+{
+    f32 Field00;
     f32 Field04;
     f32 Field08;
     f32 Field0C;
@@ -1285,138 +1408,16 @@ typedef struct
     f32 Field48;
     f32 Field4C;
     f32 Field50;
-    f32 Field54;
-    f32 Field58;
-    f32 Field5C;
-    f32 Field60;
-    f32 Field64;
-    u16 Field68;
-    u16 Field6A;
-    u16 Field6C;
-    u16 Field6E;
-    f32 Field70;
-    f32 Field74;
-    f32 Field78;
-    f32 Field7C;
-    s16 Field80[36];
-} TVisual_EnemyVisualVariablesA <name = "Enemy Visual Variables A">;
-
-typedef struct
-{
-    byte Unknown[ 404 ];
-} TVisual_PlayerVisualVariablesA <name = "Player Visual Variables A">;
-
-typedef struct
-{
-    u8 Padding1 [ 4 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding2 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding3 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding4 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u16 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding5 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u16 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u16 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u16 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding6 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding7 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u16 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
+    s16 Field54;
+    s16 Field56;
+    s16 Field58;
+    s16 Field5A;
+    s16 Field5C;
+    s16 Field5E;
     short BattleModelScale <name="Persona Model Scale % (Battle)">;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    byte Unknown;
-    byte Unknown;
+    TVisual_AttackFrameDataPersona FrameData;
+	u8 Field92;
+	u8 Field93;
 } TVisual_PersonaVisualVariablesA <name = "Persona Visual Variables A">;
 
 typedef struct
@@ -1484,7 +1485,7 @@ enum TableSegmentType
     TableSegmentType_Unit_EnemyUnitStats,
     TableSegmentType_Unit_EnemyElementalAffinities,
     TableSegmentType_Unit_PersonaElementalAffinities,
-    TableSegmentType_Unit_Segment3,
+    TableSegmentType_Unit_VoiceIndex,
     TableSegmentType_Unit_VisualIndex,
     TableSegmentType_Visual_EnemyVisualVariablesA,
     TableSegmentType_Visual_PlayerVisualVariablesA,
@@ -1663,8 +1664,8 @@ typedef struct( TableSegmentType _type )
             ElementalAffinities Affinities[ Size / sizeof( ElementalAffinities ) ];
             break;
 
-        case TableSegmentType_Unit_Segment3:
-            TUnitSegment3Entry Entries[ Size / sizeof( TUnitSegment3Entry ) ];
+        case TableSegmentType_Unit_VoiceIndex:
+            TUnitVoiceIndex Entries[ Size / sizeof( TUnitVoiceIndex ) ];
             break;
 
         case TableSegmentType_Unit_VisualIndex:
@@ -1806,7 +1807,7 @@ typedef struct( string tableName, u32 endOffset )
                 case 0: segmentType = TableSegmentType_Unit_EnemyUnitStats; break;
                 case 1: segmentType = TableSegmentType_Unit_EnemyElementalAffinities; break;
                 case 2: segmentType = TableSegmentType_Unit_PersonaElementalAffinities; break;
-                case 3: segmentType = TableSegmentType_Unit_Segment3; break;
+                case 3: segmentType = TableSegmentType_Unit_VoiceIndex; break;
                 case 4: segmentType = TableSegmentType_Unit_VisualIndex; break;
             }
         }
