@@ -74,9 +74,9 @@ typedef struct
     bool Treasure : 1 <name = "Treasure Demon">;
     bool Unknown : 1;
     bool Unknown : 1;
-    bool Unknown : 1;
-    bool Unknown : 1;
-    bool Unknown : 1;
+    bool PartyPersona : 1;
+    bool StoryPersona : 1;
+    bool NotRegisterable : 1;
     bool Unknown : 1;
     bool NoNormalFusion : 1 <name = "Cannot Be Fused Normally", comment = "Set this to True to prevent this Persona from being fused through standard two-Persona fusion">;
     bool Evolved : 1 <name = "Evolved">;

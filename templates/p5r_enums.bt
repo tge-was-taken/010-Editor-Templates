@@ -6942,3 +6942,11 @@ enum<ubyte>Skill_AreaType
     UsableInBattle = 2,
     UsableInFieldAndBattle = 3
 };
+
+enum<short> Usability
+{
+	NotUsable = 0,
+	UsableinBattle = 1,
+	UsableinField = 2,
+	UsableinBattleandField = 3,
+};
