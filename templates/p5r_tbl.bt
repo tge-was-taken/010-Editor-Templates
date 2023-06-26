@@ -42,12 +42,12 @@ typedef struct
 
 typedef struct
 {
-    u8 bit0 : 1;
-    u8 bit1 : 1;
+    u8 nonbegging : 1 <name = "No Begging Shadows", comment = "Enemies will never beg regardless of their personality (Meaning, it is as if it's always irritable)">;
+    u8 hidingstatus : 1 <name = "Hiding the status", comment = "Enemies status can be hidden similar to boss">;
     u8 bit2 : 1;
     u8 bit3 : 1;
-    u8 bit4 : 1;
-    u8 bit5 : 1;
+    u8 ContinuebattleandGuaranteePersonaMask : 1 <name = "Continue Battle and Guarantee Persona Mask", comment = "Even after obtaining Persona, you will still return the battle">;
+    u8 nonnegotiable : 1 <name = "Not negotiable", comment = "Enemies will never be able to negotiate">;
     u8 bit6 : 1;
     u8 bit7 : 1;
     u8 bit8 : 1;
@@ -55,9 +55,9 @@ typedef struct
     u8 bit10 : 1;
     u8 bit11 : 1;
     u8 bit12 : 1;
-    u8 bit13 : 1;
+    u8 hidingstatus2 : 1 <name = "Hiding the status", comment = "Enemies status can be hidden similar to boss">;
     u8 bit14 : 1;
-    u8 bit15 : 1;
+    u8 NoCritical : 1 <name = "No Critical", comment = "Even if you have a skill with 100% Critical, it will never trigger critical if this is ON">;
 } b16;
 
 typedef struct
@@ -74,26 +74,26 @@ typedef struct
     u8 bit9 : 1;
     u8 bit10 : 1;
     u8 bit11 : 1;
-    u8 bit12 : 1;
+    u8 NonNegotiable : 1 <name = "No Negotiation", comment = "If this turns on, every enemy in that battle can't be negotiated">;
     u8 bit13 : 1;
     u8 bit14 : 1;
     u8 bit15 : 1;
-    u8 bit16 : 1;
-    u8 bit17 : 1;
+    u8 PreventKnockdown : 1 <name = "Prevent Knockdown", comment = "Enemy can never get knockdown 100% by Critical but not WEAK">;
+    u8 PositionHack : 1 <name = "Position Hack", comment = "Triggers Position Hack when you enter the battle">;
     u8 bit18 : 1;
-    u8 bit19 : 1;
-    u8 bit20 : 1;
+    u8 shadownotdisappearinbattle : 1 <name = "Not Disappear in Battle", comment = "When the shadow HP reaches 0, it will not disperse if this is turned ON in ENCOUNT.TBL Flag">;
+    u8 BulletHailonstart : 1 <name = "Bullet Hail on Start", comment = "When you start the battle, you will always start with Bullet Hail">;
     u8 bit21 : 1;
     u8 bit22 : 1;
-    u8 bit23 : 1;
+    u8 loadformationfile : 1 <name = "Formation File Load", comment = "This will load a .BFL file for this particular battle">;
     u8 bit24 : 1;
     u8 bit25 : 1;
-    u8 bit26 : 1;
-    u8 bit27 : 1;
-    u8 bit28 : 1;
+    u8 loadbattlescript : 1 <name = "Battle script load", comment = "This will load the battle script for this particular battle (CAUTION: Will cause freeze if the battle script file is not exist)">;
+    u8 EnemyFirstAct : 1 <name = "Enemy First Act", comment = "This will cause all enemies to act first turn as if party got ambushed. (Whether it must be scripted or random encounter is still unknown.">;
+    u8 NoCritical : 1 <name = "No Critical", comment = "Even if you have a skill with 100% Critical, it will never trigger critical if this is ON">;
     u8 bit29 : 1;
     u8 bit30 : 1;
-    u8 bit31 : 1;
+    u8 NoEscape : 1 <name = "No Escape", comment = "This will make your battle unescapable if it is ON">;
 } b32;
 
 
@@ -359,6 +359,38 @@ typedef struct
     u32 Unknown;
 } TAICalc_Segment7;
 
+typedef struct
+{
+    u16 ReplacementEnemyID;
+    u8 Overall_Replacement_Chance<comment="if flag 0x2000005d is on, chance is increased by 30%">;
+    u8 Slot_1_Chance<comment="Random chance is same for shared enemy IDs.  If one enemy ID fails, then even if in another slot, that same enemy ID will still fail.">;
+    u8 Slot_2_Chance;
+    u8 Slot_3_Chance;
+    u8 Slot_4_Chance;
+    u8 Slot_5_Chance;
+} TRoyalEnemyReplace <name = "Enemy Replacement Data">;
+
+typedef struct
+{
+    u8 Overall_Disaster_Chance;
+    u8 Slot_1_Chance;
+    u8 Slot_2_Chance;
+    u8 Slot_3_Chance;
+    u8 Slot_4_Chance;
+    u8 Slot_5_Chance;
+    u8 Max_Disaster_Shadows;
+} TRoyalDisasterReplace <name = "Disaster Shadow Data">;
+
+typedef struct
+{
+    TRoyalEnemyReplace EnemyReplacementData;
+    TRoyalDisasterReplace DisasterData;
+    u8 Field0f<comment="Sorta like a difficulty modifier?  3 and 4 can cause disasters to spawn with sleep and rage.">;
+    u8 Field10<comment="Related to how likely it is for normal enemies to attack their disaster allies.">;
+    u8 Field11;
+    u8 Field12;
+    u8 Field13;
+} TRoyalncounter <name = "P5R Data">;
 
 // Encounter
 typedef struct
@@ -370,21 +402,7 @@ typedef struct
     u16 FieldId <name = "Field ID">;
     u16 RoomId <name = "Room ID">;
     MusicID MusicId <name = "Music">;
-    u16 UnknownR;
-    u16 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u16 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u16 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u16 UnknownR;
+	TRoyalncounter ExtraData <name = "Extra Data">;
 } TEncounter_Segment1 <name = "Enemy Encounters">;
 
 typedef struct
@@ -456,8 +474,15 @@ typedef struct
 
 typedef struct
 {
-    u8 Values[ 24 ];
-} TUnitSegment3Entry;
+    u8 VoiceID <comment = "Subtract 1 from the id i.e. 9 to load voicepack 10">;
+    u8 TALK_PERSON;
+    u8 VoiceABCValue;
+    u8 padding;
+    u16 TALK_MONEYMIN;
+    u16 TALK_MONEYMAX;
+    u16 TALK_ITEM[4]<format=hex>;
+    u16 TALK_ITEM_RARE[4]<format=hex>;
+} TUnitVoiceIndex <name = "Voice Index">;
 
 typedef struct
 {
@@ -472,7 +497,7 @@ typedef struct
 {
     ElementalType Element <name = "Elemental Type">;
     Skill_PassiveOrActive PassiveOrActive <name = "Passive or Active?", comment = "Must be set correctly for the element icon to appear properly, even though it's otherwise redundant">;
-    u8 UnknownR;
+    u8 InheritableSkill <name = "Inheritable", comment = "Put 1 until 8 for Inheritable skill. 0 if you don't want to">;
     u8 UnknownR;
     u8 UnknownR;
     u8 UnknownR;
@@ -524,38 +549,38 @@ typedef struct
 
    struct
         {
-            bool Unknown : 1 <name = "Unknown">;
+            bool Counter : 1 <name = "Counter?", comment = "it may be possibly counter mode exclusive to Yaldabaoth">;
             bool Mouse : 1 <name = "Mouse", comment = "Only affects the Phantom Thieves">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool Gluttony : 1 <name = "Gluttony?", comment = "it may be possibly Gluttony ailment exclusive to Yaldabaoth">;
             bool KnockDown : 1 <name = "Knock Down">;
             bool Unconscious : 1 <name = "Unconscious">;
-            bool WeakToAllElements : 1 <name = "Weak to all Elements">;
+            bool WeakToAllElements : 1 <name = "Weak to all Elements", comment = "Shock,Knockdown,Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
             bool Jealousy : 1 <name = "Jealousy">;
             bool Wrath : 1 <name = "Wrath">;
         } Effect1 <name = "Effect List 1">;
 
     struct
         {
-            bool Lust : 1 <name = "Lust">;
-            bool NoSPFlee : 1 <name = "No SP Flee", comment = "Only affects enemies">;
-            bool Berserk : 1 <name = "Berserk", comment = "Visual effect only">;
+            bool Lust : 1 <name = "Lust", comment = "Lust, Rage, Berserk can be combined into 1 single ailment">;
+            bool Panic : 1 <name = "Panic", comment = "Will cause Shadows to run away">;
+            bool Berserk : 1 <name = "Berserk", comment = "Visual effect only. Also, Lust, Rage, Berserk can be combined into 1 single ailment">;
             bool Desparation : 1 <name = "Desparation", comment = "Attack up, Defense down; not affected by other buffs/debuffs">;
             bool Brainwash : 1 <name = "Brainwash">;
-            bool Despair : 1 <name = "Despair">;
-            bool Rage : 1 <name = "Rage">;
-            bool Sleep : 1 <name = "Sleep">;
+            bool Despair : 1 <name = "Despair", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            bool Rage : 1 <name = "Rage", comment = "Lust, Rage, Berserk can be combined into 1 single ailment">;
+            bool Sleep : 1 <name = "Sleep", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
         } Effect2 <name = "Effect List 2">;
 
    struct
         {
-            bool Hunger : 1 <name = "Hunger", comment = "Only affects the Phantom Thieves">;
-            bool Forget : 1 <name = "Forget">;
-            bool Fear : 1 <name = "Fear">;
-            bool Confuse : 1 <name = "Confuse">;
-            bool Dizzy : 1 <name = "Dizzy">;
-            bool Shock : 1 <name = "Shock">;
-            bool Freeze : 1 <name = "Freeze">;
-            bool Burn : 1 <name = "Burn">;
+            bool Hunger : 1 <name = "Hunger", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            bool Forget : 1 <name = "Forget", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            bool Fear : 1 <name = "Fear", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            bool Confuse : 1 <name = "Confuse", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            bool Dizzy : 1 <name = "Dizzy", comment = "Dizzy, Weakness and Knockdown can be combined into 1 single ailment">;
+            bool Shock : 1 <name = "Shock", comment = "Shock, Weakness and Knockdown can be combined into 1 single ailment">;
+            bool Freeze : 1 <name = "Freeze", comment = "Burn and Freeze can be combined into 1 single ailment">;
+            bool Burn : 1 <name = "Burn", comment = "Burn and Freeze can be combined into 1 single ailment">;
         } Effect3 <name = "Effect List 3">;
 
    struct
@@ -596,8 +621,8 @@ typedef struct
 
     struct
         {
-            bool AccuracyDown : 1 <name = "Evasion Down">;
-            bool AccuracyUp : 1 <name = "Evasion Up">;
+            bool AccuracyDown : 1 <name = "Accuracy Down">;
+            bool AccuracyUp : 1 <name = "Accuracy Up">;
             bool DefenseDown : 1 <name = "Defense Down">;
             bool DefenseUp : 1 <name = "Defense Up">;
             bool EvasionDown : 1 <name = "Evasion Down">;
@@ -610,7 +635,7 @@ typedef struct
     u8 UnknownR;
     u8 UnknownR;
     u8 UnknownR;
-    Skill_ExtraEffect ExtraEffect <name = "Extra Effects">;
+    Skill_ExtraEffect ExtraEffect <name = "Extra Effects", comment = "Ignore resistance works 100% for Physical. Magic including Light, Dark, Almighty can only Semi Pierce (NULL, DRAIN, REPEL can't be pierced).">;
     u8 CritChance <name = "Crit Chance", comment = "Only works for Physical or Gun skills">;
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
@@ -651,7 +676,7 @@ typedef struct
     s32 IsUnique : 1;
     s32 IsTreasure : 1;
     s32 HasSubTrait : 1; // see effect union
-    s32 _ : 29;
+    s32 _ : 29 <name = "Inheritable Trait", comment="Put 0 for inheritable trait. Put 1 if you don't want to">;
   } trait_flags;
 } TSkill_TraitData;
 
@@ -715,10 +740,8 @@ typedef struct
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
@@ -793,10 +816,8 @@ typedef struct
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
@@ -842,20 +863,18 @@ typedef struct
         } Icon <name = "Icon">;
 
     u16 Unknown;
+    u16 FieldMenuItemSorting <name = "Field Menu Item Sorting", comment = "Highest Value will show up at the top in item menu (Not in battle). If same value is given, it is sorted by same class. If same item class is given, it will be sorted via ID. (Consumables is Higher Priority)">;
     u16 Unknown;
+    Usability Availability <name = "Availability", comment = "Set if it is able to use in battle or field or none">;
+    BattleSkill Skill <name = "Battle Skill", comment = "Set the item to use the skill">;
     u16 Unknown;
-    u16 Unknown;
-    BattleSkill Skill;
-    u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
     u16 Unknown;
-    u16 Unknown;
+    u16 BattleMenuItemSorting <name = "Battle Menu Item Sorting", comment = "Lowest Value will show up at the top in item menu (In battle). If same value is given, it will be sorted via ID. Same value does not equal same class. (Consumables is Higher Priority)">;
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
@@ -954,10 +973,8 @@ struct
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
@@ -1031,10 +1048,8 @@ typedef struct
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
@@ -1140,10 +1155,8 @@ typedef struct
     BattleSkill Skill;
     u16 Unknown;
     u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    u32 PurchasePrice;
+    u32 SellPrice;
 } TItem_SkillCards <name ="Skill Cards">;
 
 typedef struct
@@ -1204,15 +1217,13 @@ typedef struct
     u16 Unknown;
     u16 Unknown;
     u16 Unknown;
+    u16 IwaisUpgradeRank <name= "Iwai's Upgrade Rank", comment= "This weapon will be available in accordance with Iwai's Upgrade rank confidant. 1 is Starter Weapons, 2 is Medium Weapons, and 3 is High Grade Weapons">;
     u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
-    u16 Unknown;
+    u16 RangedWeaponUpgradeFrom <name = "Ranged Weapon Upgrade From", comment = "When upgrading, this weapon will be changed from another weapon with the insertion of Weapon's HEX ID">; 
     u16 UnknownR;
     u16 UnknownR;
     u16 UnknownR;
@@ -1260,11 +1271,109 @@ typedef struct
     u8 Unknown;
 } TItem_Footer <name ="Footer">;
 
+typedef struct
+{
+	s16 AttackHitRegFrames [ 8 ];
+	s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues1 [ 2 ];
+    s16 CriticalHitRegFrames [ 8 ];
+    s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues2 [ 2 ];
+    s16 AmbushedAttackHitRegFrames [ 8 ];
+    s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues3 [ 2 ];
+}TVisual_AttackFrameData <name = "Attack Frame Data">;
+
+typedef struct
+{
+	s16 AttackHitRegFrames [ 8 ];
+	s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues1 [ 2 ];
+    s16 MagicCastDuration [ 8 ];
+    s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues2 [ 2 ];
+    s16 UnknownAnimationDuration [ 8 ];
+    s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues3 [ 2 ];
+}TVisual_AttackFrameDataEnemy <name = "Attack Frame Data">;
+
+typedef struct
+{
+	s16 AttackHitRegFrames [ 8 ];
+	s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues1 [ 2 ];
+    s16 MagicCastDuration [ 8 ];
+    s16 AttackAnimationSpeed;
+	s16 DistanceFromTarget;
+    s16 UnkValues2 [ 2 ];
+}TVisual_AttackFrameDataPersona <name = "Attack Frame Data">;
+
 // VISUAL.TBL
 
 typedef struct
 {
     u32 Field00;
+    f32 HeartIconXAxis<name="Heart Icon location(X axis)">;
+    f32 HeartIconYAxis<name="Heart Icon location(Y axis)">;
+    f32 HeartIconZAxis<name="Heart Icon location(Z axis)">;;
+    f32 VirtualWidth <name="Target Icon Position", comment = "It is the Icon target position focus on enemy. Higher value will move it up">;
+    f32 VirtualDepth <name="Camera Focus Message Effect", comment = "It is the camera focus on enemy during the message effect. Higher value will zoomed out. It can also cause freeze if the value is too high">;
+    f32 ShadowReposition <name="Shadow Reposition", comment = "It is to reposition the shadow in battlefield. Higher value will move the shadow to the right">;
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
+    f32 Field28;
+    f32 Field2C;
+    f32 Field30;
+    f32 Field34;
+    f32 Field38;
+    f32 Field3C;
+    f32 RightCameraFocus <name="Right Camera Focus Casting", comment = "It is the right camera focus on enemy during Casting. Higher value will move to right">;
+    f32 TopCameraFocus <name="Up Camera Focus Casting", comment = "It is the Up camera focus on enemy during Casting. Higher value will move to up">;
+    f32 LeftCameraFocus <name="Left Camera Focus Casting", comment = "It is the Left camera focus on enemy during Casting. Higher value will move to Left">;
+    f32 SkillUseEffectSize1;
+    f32 SkillUseEffectSize2;
+    f32 CameraFocusAfterCasting <name="Right Camera Focus After Casting", comment = "It may be the right camera focus on enemy after Casting. Higher value will move to right (NEED MORE TEST)">;
+    f32 VirtualYLocation;
+    f32 VirtualZLocation;
+    f32 AttackSkillCameraDistance;
+    f32 UnkVirtualLocation;
+    u16 ModelScale<name="Model Scale %">;
+    u16 AilmentIndicatorSize <name="Ailment Indicator Size", comment = "It is the size of the ailment when inflicted to enemy. Higher value will make it larger">;
+    u16 Field6C;
+    u16 Field6E;
+    f32 Field70;
+    f32 Field74;
+    f32 Field78;
+    f32 Field7C;
+    TVisual_AttackFrameDataEnemy FrameData;
+} TVisual_EnemyVisualVariablesA <name = "Enemy Visual Variables A">;
+
+typedef struct
+{
+    byte Unknown[ 0x104 ];
+	u16 ModelScale<name="Model Scale %">;
+    u16 Field6A;
+    u16 Field6C;
+    u16 Field6E;
+    f32 Field70;
+    f32 Field74;
+    f32 Field78;
+    f32 Field7C;
+    TVisual_AttackFrameData FrameData;
+	byte Unknown2 [ 0x30 ];
+} TVisual_PlayerVisualVariablesA <name = "Player Visual Variables A">;
+
+typedef struct
+{
+    f32 Field00;
     f32 Field04;
     f32 Field08;
     f32 Field0C;
@@ -1285,138 +1394,16 @@ typedef struct
     f32 Field48;
     f32 Field4C;
     f32 Field50;
-    f32 Field54;
-    f32 Field58;
-    f32 Field5C;
-    f32 Field60;
-    f32 Field64;
-    u16 Field68;
-    u16 Field6A;
-    u16 Field6C;
-    u16 Field6E;
-    f32 Field70;
-    f32 Field74;
-    f32 Field78;
-    f32 Field7C;
-    s16 Field80[36];
-} TVisual_EnemyVisualVariablesA <name = "Enemy Visual Variables A">;
-
-typedef struct
-{
-    byte Unknown[ 404 ];
-} TVisual_PlayerVisualVariablesA <name = "Player Visual Variables A">;
-
-typedef struct
-{
-    u8 Padding1 [ 4 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding2 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding3 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding4 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u16 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding5 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u16 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u16 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u16 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding6 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding7 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u16 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
+    s16 Field54;
+    s16 Field56;
+    s16 Field58;
+    s16 Field5A;
+    s16 Field5C;
+    s16 Field5E;
     short BattleModelScale <name="Persona Model Scale % (Battle)">;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    byte Unknown;
-    byte Unknown;
+    TVisual_AttackFrameDataPersona FrameData;
+	u8 Field92;
+	u8 Field93;
 } TVisual_PersonaVisualVariablesA <name = "Persona Visual Variables A">;
 
 typedef struct
@@ -1484,7 +1471,7 @@ enum TableSegmentType
     TableSegmentType_Unit_EnemyUnitStats,
     TableSegmentType_Unit_EnemyElementalAffinities,
     TableSegmentType_Unit_PersonaElementalAffinities,
-    TableSegmentType_Unit_Segment3,
+    TableSegmentType_Unit_VoiceIndex,
     TableSegmentType_Unit_VisualIndex,
     TableSegmentType_Visual_EnemyVisualVariablesA,
     TableSegmentType_Visual_PlayerVisualVariablesA,
@@ -1663,8 +1650,8 @@ typedef struct( TableSegmentType _type )
             ElementalAffinities Affinities[ Size / sizeof( ElementalAffinities ) ];
             break;
 
-        case TableSegmentType_Unit_Segment3:
-            TUnitSegment3Entry Entries[ Size / sizeof( TUnitSegment3Entry ) ];
+        case TableSegmentType_Unit_VoiceIndex:
+            TUnitVoiceIndex Entries[ Size / sizeof( TUnitVoiceIndex ) ];
             break;
 
         case TableSegmentType_Unit_VisualIndex:
@@ -1806,7 +1793,7 @@ typedef struct( string tableName, u32 endOffset )
                 case 0: segmentType = TableSegmentType_Unit_EnemyUnitStats; break;
                 case 1: segmentType = TableSegmentType_Unit_EnemyElementalAffinities; break;
                 case 2: segmentType = TableSegmentType_Unit_PersonaElementalAffinities; break;
-                case 3: segmentType = TableSegmentType_Unit_Segment3; break;
+                case 3: segmentType = TableSegmentType_Unit_VoiceIndex; break;
                 case 4: segmentType = TableSegmentType_Unit_VisualIndex; break;
             }
         }
