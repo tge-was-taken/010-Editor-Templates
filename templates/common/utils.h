@@ -4,7 +4,6 @@
 
 #include "common/types.h"
 
-
 void PrintValueUInt( string name, u64 value )
 {
     PrintValueUIntEx( name, value, true );
@@ -17,7 +16,7 @@ void PrintValueUIntEx( string name, u64 value, bool newline )
         PrintNl();
 }
 
-void PrintValueFloat( string name, f32 value )
+void PrintValueFloat( string name, u64 value )
 {
     PrintValueFloatEx( name, value, true );
 }
@@ -258,5 +257,15 @@ void ArrayMaxUInt( u32 array[], u32 count )
     return max;
 }
 
+typedef int Bitflag<read=FlagConvert(this),open=true>;                         
+int FlagConvert( int flag )
+{
+    if      (flag >= 0x50000000){ flag = (flag - 0x50000000) + 12288; }
+    else if (flag >= 0x40000000){ flag = (flag - 0x40000000) + 11776; }
+    else if (flag >= 0x30000000){ flag = (flag - 0x30000000) + 11264; }
+    else if (flag >= 0x20000000){ flag = (flag - 0x20000000) + 6144;  }
+    else if (flag >= 0x10000000){ flag = (flag - 0x10000000) + 3072;  }
+    return flag;
+}
 
 #endif // #ifndef UTILS_H
