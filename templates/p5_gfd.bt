@@ -1127,7 +1127,6 @@ typedef struct( u32 version )
 
     if ( version > 0x1104110 )
     {
-        local u32 Flags;
         TAnimationFlags AnimationFlags;
     }
 
@@ -1580,7 +1579,7 @@ typedef struct( u32 version, u32 in_type )
     else 
         struct TEplLeafCommonData6 SizeOverLife;
 
-    f32 Field12C;
+    f32 Field12C; //Nothing
     f32 Field130;
     TVector2 SpawnerAngles;
     TVector2 CycleRate_FromBirth;
@@ -1675,10 +1674,10 @@ typedef struct
 
         case 2:
         {
-            u32 Field04;
-            u32 Field0C;
-            u32 Field14;
-            u32 Field1C;
+            u8 Color1[4];
+            u8 Color2[4];
+            u8 Color3[4];
+            u8 Color4[4];
             break;
         }
 
@@ -1991,15 +1990,15 @@ typedef struct( u32 version )
         FSeek( 4 );
 
     u32 Field00;
-    u32 Field04;
-    f32 Field08;
-    f32 Field0C;
-    u32 Field12C;
+    u32 Brightness;
+    f32 FuzzAmount;
+    f32 StartingSize;
+    u32 TrailLife;
     f32 Field130;
     f32 Field134;
 
     if ( version > 0x1104170 )
-        f32 Field138;
+        f32 Length;
 
     struct TEplLeafCommonData6 Field10;
     struct TEplLeafCommonData6 Field74;
