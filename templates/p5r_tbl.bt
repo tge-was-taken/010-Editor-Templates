@@ -78,7 +78,7 @@ typedef struct
     u8 bit13 : 1;
     u8 bit14 : 1;
     u8 bit15 : 1;
-    u8 PreventKnockdown : 1 <name = "Prevent Knockdown", comment = "Enemy can never get knockdown 100% by Critical but not WEAK">;
+    u8 NoCritical : 1 <name = "No Critical", comment = "Prevents Critical hits against enemies in this encounter.">;
     u8 PositionHack : 1 <name = "Position Hack", comment = "Triggers Position Hack when you enter the battle">;
     u8 bit18 : 1;
     u8 shadownotdisappearinbattle : 1 <name = "Not Disappear in Battle", comment = "When the shadow HP reaches 0, it will not disperse if this is turned ON in ENCOUNT.TBL Flag">;
@@ -90,7 +90,7 @@ typedef struct
     u8 bit25 : 1;
     u8 loadbattlescript : 1 <name = "Battle script load", comment = "This will load the battle script for this particular battle (CAUTION: Will cause freeze if the battle script file is not exist)">;
     u8 EnemyFirstAct : 1 <name = "Enemy First Act", comment = "This will cause all enemies to act first turn as if party got ambushed. (Whether it must be scripted or random encounter is still unknown.">;
-    u8 NoCritical : 1 <name = "No Critical", comment = "Even if you have a skill with 100% Critical, it will never trigger critical if this is ON">;
+    u8 bit28: 1;
     u8 bit29 : 1;
     u8 bit30 : 1;
     u8 NoEscape : 1 <name = "No Escape", comment = "This will make your battle unescapable if it is ON">;

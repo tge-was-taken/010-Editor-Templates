@@ -16,22 +16,15 @@ typedef struct
 
 typedef struct
 {
-    u8 Byte2_bit32768 : 1<hidden=true>;
-    u8 Byte2_bit16384 : 1<hidden=true>;
-    u8 Ailment_Immune : 1;
-    u8 Resist : 1;
-    u8 Weak : 1;
+    u8 Double_Ailment_Chance : 1<name = "Double Ailment Chance", comment = "Used on Fire/Ice/Elec affinity to double the chance that an incoming attack inflicts the corresponding ailment (Burn/Freeze/Shock).">;
+    u8 Guarantee_Ailment : 1<name = "Guarantee Ailment", comment = "Incoming attacks with an ailment chance always inflict the ailment.">;
+    u8 Ailment_Immune : 1<name = "Ailment Immune", comment = "Incoming attacks never inflict ailments (including insta-kill). Overrides Guarantee Ailment. Does NOT prevent Critical hits.">;
+    u8 Resist : 1 <comment = "Displays Resist text and halves damage (by default) when hit. (However, If Mutliplier field is specified (non-zero), it replaces the default 0.5x multiplier.)">;
+    u8 Weak : 1 <comment = "Damage x 1.25 (by default) and knockdown. (However, if Multiplier field is specified (non-zero), it replaces the default 1.25x mutliplier.)">;
     u8 Drain : 1;
     u8 Repel : 1;
     u8 Block : 1;
-    u8 Take_640_Percent_Damage : 1;
-    u8 Take_320_Percent_Damage : 1;
-    u8 Take_160_Percent_Damage : 1;
-    u8 Take_80_Percent_Damage : 1;
-    u8 Take_40_Percent_Damage : 1;
-    u8 Take_20_Percent_Damage : 1;
-    u8 Take_10_Percent_Damage : 1;
-    u8 Take_5_Percent_Damage : 1;
+	u8 Multiplier <name = "Multiplier (in increments of 5%)", comment = "Multiplies damage & ailment chance. 20 is Neutral since 20 x 5% = 100% of normal dmg & ail. chance. 80 x 5% = 400% = 4x multiplier. 0 is ignored (does not nullify attack).">;
 } AffinityBitfield <name = "Affinity Status">;
 
 typedef struct
