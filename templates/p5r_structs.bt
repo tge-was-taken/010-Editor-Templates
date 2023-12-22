@@ -51,6 +51,23 @@ typedef struct
     AffinityBitfield BrainwashAffinity <name = "Brainwash">; 
 } ElementalAffinities <name = "Elemental Affinities">;
 
+typedef struct 
+{
+  u32 OtherAilments : 20<name = "Other Ailments", comment = "Bitfield for the various 'special' ailments that players don't normally inflict">;
+  u32 AilmentStatus_11_Brainwash : 1<name = "Brainwashed">;
+  u32 AilmentStatus_10_Despair : 1<name = "Despair">;
+  u32 AilmentStatus_09_Rage : 1<name = "Rage">;
+  u32 AilmentStatus_08_Sleep : 1<name = "Sleep">;
+  u32 AilmentStatus_07_Hunger : 1<name = "Hunger">;
+  u32 AilmentStatus_06_Forget : 1<name = "Forget">;
+  u32 AilmentStatus_05_Fear : 1<name = "Fear">;
+  u32 AilmentStatus_04_Confuse : 1<name = "Confused">;
+  u32 AilmentStatus_03_Dizzy : 1<name = "Dizzy">;
+  u32 AilmentStatus_02_Shock : 1<name = "Shock">;
+  u32 AilmentStatus_01_Freeze : 1<name = "Freeze">;
+  u32 AilmentStatus_00_Burn : 1<name = "Burn">;
+} AilmentStatus;
+
 typedef struct
 {
     u8 Strength <name = "Strength">;

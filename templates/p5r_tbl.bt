@@ -643,17 +643,13 @@ typedef struct
 
 typedef struct
 {
+    AilmentStatus ApplicableAilments<name = "Applicable Ailments", comment = "If the target has any of these ailments, the affinities in the TechnicalAffinities fields will deal Technical damage.">;
+    uint AllAffinitiesAreTechnical<name = "All Affinities are Technical", comment = "If set to 1, the TechnicalAffinities array is ignored; instead, ALL damaging skills inflict Technical damage agaisnt these ailments.">;
+    Tech_TechnicalSkillAffinity TechnicalAffinities[5]<name = "Technical Affinities", comment = "Skills of these affinities are Technical against foes with the above ailments.">;
     u32 UnknownR;
     u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-} TSkill_Skill_UnknownR <name = "Unknown Skill Segment">;
+    Tech_RequiresKnowingTheHeart RequiresKnowingTheHeart<name = "Requires Knowing the Heart", comment = "If set to Yes, this entry of the map only applies if you've read the book \"Knowing the Heart\" for extra Tech combos.">;
+} TSkill_Skill_TechnicalMap <name = "Technical Combo Map">;
 
 typedef int s32;
 
@@ -1453,7 +1449,7 @@ enum TableSegmentType
     TableSegmentType_Encounter_Segment3,
     TableSegmentType_Skill_Elements,
     TableSegmentType_Skill_ActiveSkillData,
-    TableSegmentType_Skill_Skill_UnknownR,
+    TableSegmentType_Skill_TechnicalMap,
     TableSegmentType_Skill_TraitData,
     TableSegmentType_Item_Accessories,
     TableSegmentType_Item_Armor,
@@ -1581,8 +1577,8 @@ typedef struct( TableSegmentType _type )
             TSkill_ActiveSkillData Skill[ Size / sizeof( TSkill_ActiveSkillData ) ];
             break;
 
-        case TableSegmentType_Skill_Skill_UnknownR:
-            TSkill_Skill_UnknownR Skill[ Size / sizeof( TSkill_Skill_UnknownR ) ];
+        case TableSegmentType_Skill_TechnicalMap:
+            TSkill_Skill_TechnicalMap Skill[ Size / sizeof( TSkill_Skill_TechnicalMap ) ];
             break;
 
         case TableSegmentType_Skill_TraitData:
@@ -1763,7 +1759,7 @@ typedef struct( string tableName, u32 endOffset )
             {
                 case 0: segmentType = TableSegmentType_Skill_Elements; break;
                 case 1: segmentType = TableSegmentType_Skill_ActiveSkillData; break;
-                case 2: segmentType = TableSegmentType_Skill_Skill_UnknownR; break;
+                case 2: segmentType = TableSegmentType_Skill_TechnicalMap; break;
                 case 3: segmentType = TableSegmentType_Skill_TraitData; break;
             }
         }

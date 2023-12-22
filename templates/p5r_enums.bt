@@ -6589,6 +6589,7 @@ enum<ubyte>Skill_ExtraEffect
     NoEffect6 = 0,
     OnlyHitTargetsInflictedWithFear = 1, // used by Ghastly Wail
     EscapeBattle = 2,
+	DoubleDamageIfFoeIsDown = 3, // used by Rebellion Blade
     ThrowAwayMoney = 6,
     AlwaysKills = 13, // used for 9999 damage Megidolaon (603)
     BigBangBurgerDocumentVisual = 15, // used by Shadow Okumura's Sacrifice Order
@@ -6706,6 +6707,28 @@ enum<ubyte>Skill_PassiveOrActive
     ActiveSkill = 0,
     PassiveSkill = 1, // MUST be enabled for passive skills to function properly
     NULL_Skill = 255
+};
+
+enum<int> Tech_TechnicalSkillAffinity
+{
+    TechAffinity_BLANK = -1,
+    TechAffinity_Physical = 0,
+    TechAffinity_Gun = 1,
+    TechAffinity_Fire = 2,
+    TechAffinity_Ice = 3,
+    TechAffinity_Electric = 4,
+    TechAffinity_Wind = 5,
+    TechAffinity_Psy = 6,
+    TechAffinity_Nuke = 7,
+    TechAffinity_Bless = 8,
+    TechAffinity_Curse = 9,
+    TechAffinity_Almighty = 10
+};
+
+enum<uint> Tech_RequiresKnowingTheHeart
+{
+	No = 0,
+	Yes = 0x3000013d
 };
 
 enum<int>GearEquippable
