@@ -1,0 +1,53 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+// File Mask: ttr
+// Authors: DeathChaos
+//------------------------------------------------
+
+#include "common/include.h"
+
+LittleEndian();
+
+enum<s16> FlagSection
+{
+  FlagSection0 = 0,
+  FlagSection1 = 0x1000,
+  FlagSection2 = 0x2000,
+  FlagSection3 = 0x3000,
+  FlagSection4 = 0x4000,
+  FlagSection5 = 0x5000
+};
+
+typedef struct
+{
+  s16 flagID;
+  FlagSection flagSection<format=hex>; //thanks P5R
+  s32 Field04; // always 00?
+  s32 NumOfPages;
+} DataTableStruct<read=ShowFlag>;
+
+typedef struct
+{
+  SetBackColor( ( sus++ ) * 0x0000FF );
+	u32 Field00;
+  u32 FileMagic; //FTD0
+  u32 FileSize;
+  u32 Field0C;
+  u32 SubHeaderSize;
+  u32 Padding[4];
+  u32 EntryTotalSize;
+  u32 NumOfEntries;
+  Printf("DATA TABLE: Expected EntryTotalSize is 0x%x, currently set to 0x%x\n", ( NumOfEntries * 0xC ), EntryTotalSize);
+  u32 Align;
+  DataTableStruct DataTables[NumOfEntries];
+} TTR_DATATABLE <optimize=false>;
+
+local uint sus = 1;
+TTR_DATATABLE DataTableFile;
+
+string ShowFlag( DataTableStruct &o )
+{
+  local string s;
+  SPrintf( s, "Flag: 0x%08x, Pages: %d", o.flagID + ( o.flagSection * 0x10000 ), o.NumOfPages );
+  return s;
+}

@@ -1,0 +1,40 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+// File Mask: ttr
+// Authors: DeathChaos
+//------------------------------------------------
+
+#include "common/include.h"
+
+LittleEndian();
+
+typedef struct
+{
+  char TitleName[0x40];
+} TutorialTitleName<read=ShowTitle>;
+
+typedef struct
+{
+  SetBackColor( ( sus++ ) * 0x0000FF );
+	u32 Field00;
+  u32 FileMagic; //FTD0
+  u32 FileSize;
+  u32 Field0C;
+  u32 SubHeaderSize;
+  u32 Padding[4];
+  u32 EntryTotalSize;
+  u32 NumOfEntries;
+  Printf("TITLE NAME: Expected EntryTotalSize is 0x%x, currently set to 0x%x\n", ( NumOfEntries * 0x40 ), EntryTotalSize);
+  u32 Align;
+  TutorialTitleName TutorialName[NumOfEntries];
+} TTR_TITLENAME <optimize=false>;
+
+local uint sus = 1;
+TTR_TITLENAME TitleNameFile;
+
+string ShowTitle( TutorialTitleName &o )
+{
+  local string s;
+  SPrintf( s, "%s", o.TitleName );
+  return s;
+}
