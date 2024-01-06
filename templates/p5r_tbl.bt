@@ -646,7 +646,7 @@ typedef struct
     AilmentStatus ApplicableAilments<name = "Applicable Ailments", comment = "If the target has any of these ailments, the affinities in the TechnicalAffinities fields will deal Technical damage.">;
     uint AllAffinitiesAreTechnical<name = "All Affinities are Technical", comment = "If set to 1, the TechnicalAffinities array is ignored; instead, ALL damaging skills inflict Technical damage agaisnt these ailments.">;
     Tech_TechnicalSkillAffinity TechnicalAffinities[5]<name = "Technical Affinities", comment = "Skills of these affinities are Technical against foes with the above ailments.">;
-    u32 UnknownR;
+	float damageMultiplier <name = "Damage Multiplier", comment = "Technicals of this type will multiply damage by this amount, plus up to 0.3 for party's Techncial Rank.">;
     u32 UnknownR;
     Tech_RequiresKnowingTheHeart RequiresKnowingTheHeart<name = "Requires Knowing the Heart", comment = "If set to Yes, this entry of the map only applies if you've read the book \"Knowing the Heart\" for extra Tech combos.">;
 } TSkill_Skill_TechnicalMap <name = "Technical Combo Map">;
