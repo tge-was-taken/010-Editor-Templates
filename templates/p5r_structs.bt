@@ -16,22 +16,15 @@ typedef struct
 
 typedef struct
 {
-    u8 Byte2_bit32768 : 1<hidden=true>;
-    u8 Byte2_bit16384 : 1<hidden=true>;
-    u8 Ailment_Immune : 1;
-    u8 Resist : 1;
-    u8 Weak : 1;
+    u8 Double_Ailment_Chance : 1<name = "Double Ailment Chance", comment = "Used on Fire/Ice/Elec affinity to double the chance that an incoming attack inflicts the corresponding ailment (Burn/Freeze/Shock).">;
+    u8 Guarantee_Ailment : 1<name = "Guarantee Ailment", comment = "Incoming attacks with an ailment chance always inflict the ailment.">;
+    u8 Ailment_Immune : 1<name = "Ailment Immune", comment = "Incoming attacks never inflict ailments (including insta-kill). Overrides Guarantee Ailment. Does NOT prevent Critical hits.">;
+    u8 Resist : 1 <comment = "Displays Resist text and halves damage (by default) when hit. (However, If Mutliplier field is specified (non-zero), it replaces the default 0.5x multiplier.)">;
+    u8 Weak : 1 <comment = "Damage x 1.25 (by default) and knockdown. (However, if Multiplier field is specified (non-zero), it replaces the default 1.25x mutliplier.)">;
     u8 Drain : 1;
     u8 Repel : 1;
     u8 Block : 1;
-    u8 Take_640_Percent_Damage : 1;
-    u8 Take_320_Percent_Damage : 1;
-    u8 Take_160_Percent_Damage : 1;
-    u8 Take_80_Percent_Damage : 1;
-    u8 Take_40_Percent_Damage : 1;
-    u8 Take_20_Percent_Damage : 1;
-    u8 Take_10_Percent_Damage : 1;
-    u8 Take_5_Percent_Damage : 1;
+	u8 Multiplier <name = "Multiplier (in increments of 5%)", comment = "Multiplies damage & ailment chance. 20 is Neutral since 20 x 5% = 100% of normal dmg & ail. chance. 80 x 5% = 400% = 4x multiplier. 0 is ignored (does not nullify attack).">;
 } AffinityBitfield <name = "Affinity Status">;
 
 typedef struct
@@ -57,6 +50,23 @@ typedef struct
     AffinityBitfield DespairAffinity <name = "Despair">;
     AffinityBitfield BrainwashAffinity <name = "Brainwash">; 
 } ElementalAffinities <name = "Elemental Affinities">;
+
+typedef struct 
+{
+  u32 OtherAilments : 20<name = "Other Ailments", comment = "Bitfield for the various 'special' ailments that players don't normally inflict">;
+  u32 AilmentStatus_11_Brainwash : 1<name = "Brainwashed">;
+  u32 AilmentStatus_10_Despair : 1<name = "Despair">;
+  u32 AilmentStatus_09_Rage : 1<name = "Rage">;
+  u32 AilmentStatus_08_Sleep : 1<name = "Sleep">;
+  u32 AilmentStatus_07_Hunger : 1<name = "Hunger">;
+  u32 AilmentStatus_06_Forget : 1<name = "Forget">;
+  u32 AilmentStatus_05_Fear : 1<name = "Fear">;
+  u32 AilmentStatus_04_Confuse : 1<name = "Confused">;
+  u32 AilmentStatus_03_Dizzy : 1<name = "Dizzy">;
+  u32 AilmentStatus_02_Shock : 1<name = "Shock">;
+  u32 AilmentStatus_01_Freeze : 1<name = "Freeze">;
+  u32 AilmentStatus_00_Burn : 1<name = "Burn">;
+} AilmentStatus;
 
 typedef struct
 {

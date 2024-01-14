@@ -634,8 +634,8 @@ typedef struct
     u8 UnknownR;
     u8 UnknownR;
     u8 UnknownR;
-    u8 UnknownR;
-    Skill_ExtraEffect ExtraEffect <name = "Extra Effects", comment = "Ignore resistance works 100% for Physical. Magic including Light, Dark, Almighty can only Semi Pierce (NULL, DRAIN, REPEL can't be pierced).">;
+    Skill_RareEffect RareEffect <name = "Rare Effect", comment = "This byte is only ever set for Bleeding Dry Brush. Value of 2 applies one-use Drain All Affinities (except Almighty) barrier on target.">;
+    Skill_ExtraEffect ExtraEffect <name = "Extra Effects", comment = "Pierce works 100% for Physical. Magic including Light, Dark, Almighty can only Semi Pierce (NULL, DRAIN, REPEL can't be pierced).">;
     u8 CritChance <name = "Crit Chance", comment = "Only works for Physical or Gun skills">;
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
@@ -643,40 +643,33 @@ typedef struct
 
 typedef struct
 {
+    AilmentStatus ApplicableAilments<name = "Applicable Ailments", comment = "If the target has any of these ailments, the affinities in the TechnicalAffinities fields will deal Technical damage.">;
+    uint AllAffinitiesAreTechnical<name = "All Affinities are Technical", comment = "If set to 1, the TechnicalAffinities array is ignored; instead, ALL damaging skills inflict Technical damage agaisnt these ailments.">;
+    Tech_TechnicalSkillAffinity TechnicalAffinities[5]<name = "Technical Affinities", comment = "Skills of these affinities are Technical against foes with the above ailments.">;
+	float damageMultiplier <name = "Damage Multiplier", comment = "Technicals of this type will multiply damage by this amount, plus up to 0.3 for party's Techncial Rank.">;
     u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-} TSkill_Skill_UnknownR <name = "Unknown Skill Segment">;
+    Tech_RequiresKnowingTheHeart RequiresKnowingTheHeart<name = "Requires Knowing the Heart", comment = "If set to Yes, this entry of the map only applies if you've read the book \"Knowing the Heart\" for extra Tech combos.">;
+} TSkill_Skill_TechnicalMap <name = "Technical Combo Map">;
 
 typedef int s32;
 
 typedef struct
 {
-  u16 ord; // trait command
+  u16 ord <name = "Effect", comment = "Selects the effect of the trait from a preprogrammed list.">;
   u16 field_2;
-  s32 effect_rate;
+  s32 effect_rate <name = "Effect Rate", comment = "Percent chance that the trait triggers.">;
   
-  union {
-    s32 trait; // sub trait
-    s32 trait_effects; // bitfield
-  } effect;
+  s32 union_effect <name = "Sub Trait", comment = "Adds effect of trait with given ID to this trait. Requires 'Use Sub Trait'=1.">;
 
-  f32 effect_size;
-  s32 trait_ex[ 10 ]; // extra inheritable traits in fusion
+  f32 effect_size <name = "Effect Size", comment = "Strength of effect. Usually a multiplier for damage, healing, skill costs, ailment chance, etc.">;
+  s32 trait_ex[ 10 ] <name = "Substitute Traits", comment = "Alternate inheritable traits during fusion if this one is a duplicate or a Treasure Demon trait.">;
 
   struct
   {
-    s32 IsUnique : 1;
-    s32 IsTreasure : 1;
-    s32 HasSubTrait : 1; // see effect union
-    s32 _ : 29 <name = "Inheritable Trait", comment="Put 0 for inheritable trait. Put 1 if you don't want to">;
+	s32 UnknownBitfield : 29;
+	s32 UseSubTrait : 1 <name = "Use Sub Trait", comment = "If set to 1, this trait will also include effects of trait with ID in the 'Sub Trait' field.">;
+	s32 IsTreasure : 1 <name = "Is Treasure", comment = "If 1, indicates that this is from a Treasure Demon and a substitute trait should be inherited instead.">;
+    s32 IsUnique : 1 <name = "Is Unique", comment = "Put 0 for inheritable trait. Put 1 if you don't want to">;
   } trait_flags;
 } TSkill_TraitData;
 
@@ -1456,7 +1449,7 @@ enum TableSegmentType
     TableSegmentType_Encounter_Segment3,
     TableSegmentType_Skill_Elements,
     TableSegmentType_Skill_ActiveSkillData,
-    TableSegmentType_Skill_Skill_UnknownR,
+    TableSegmentType_Skill_TechnicalMap,
     TableSegmentType_Skill_TraitData,
     TableSegmentType_Item_Accessories,
     TableSegmentType_Item_Armor,
@@ -1584,8 +1577,8 @@ typedef struct( TableSegmentType _type )
             TSkill_ActiveSkillData Skill[ Size / sizeof( TSkill_ActiveSkillData ) ];
             break;
 
-        case TableSegmentType_Skill_Skill_UnknownR:
-            TSkill_Skill_UnknownR Skill[ Size / sizeof( TSkill_Skill_UnknownR ) ];
+        case TableSegmentType_Skill_TechnicalMap:
+            TSkill_Skill_TechnicalMap Skill[ Size / sizeof( TSkill_Skill_TechnicalMap ) ];
             break;
 
         case TableSegmentType_Skill_TraitData:
@@ -1766,7 +1759,7 @@ typedef struct( string tableName, u32 endOffset )
             {
                 case 0: segmentType = TableSegmentType_Skill_Elements; break;
                 case 1: segmentType = TableSegmentType_Skill_ActiveSkillData; break;
-                case 2: segmentType = TableSegmentType_Skill_Skill_UnknownR; break;
+                case 2: segmentType = TableSegmentType_Skill_TechnicalMap; break;
                 case 3: segmentType = TableSegmentType_Skill_TraitData; break;
             }
         }
