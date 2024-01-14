@@ -1,0 +1,1373 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//   Authors: Rirurin, Sierra
+//   Version: v0.4.1
+//   Purpose: Persona 5 Royal Battle Cutscene Data Template
+// File Mask: *.bcd
+//   History: v0.4.1 (2023/12/30) - Add Camera Interpolation enum, other minor fixes done over the year
+//            v0.4.0 (2023/02/25) - All BCD Blocks named, revised some fields, added version number 
+//            global to check for version specific fields
+//            v0.3.1 (2022/12/03) - More labelled fields
+//            v0.3.0 (2022/11/27) - Labelled some fields, added remaining BCD blocks (untested)
+//            v0.2.0 (2022/11/26) - More Blocks implemented, corrected Unit_Face,
+//            obtained AnimationValue and Animator enums from Sierra's BCD Template for P5 vanilla
+//            v0.1.0 (2022/11/25) - First Release
+//------------------------------------------------
+
+// Any references to native functions (e.g FUN_1400ada90) are named according
+// to their location in P5R.exe v1.0.1 Steam
+
+// BCD Blocks marked with a UNTESTED comment above them have had their structures written only by analysing
+// that block's deserialization function
+
+#include "common/include.h"
+LittleEndian();
+
+typedef struct {
+    SetRandomBackColor();
+    u32 Flags; // btl::event::CutsceneData u32 Field08
+    u32 SectionCount; // btl::event::CutsceneData u32 Field0C
+} BCDHeader<read=Str("%d sections, version %x", SectionCount, Flags)>;
+
+// Royal has 105 BCD Blocks. EPL_Char_Comb, GUI_damage and the EqPersona blocks were added on top
+// of vanilla's 98 blocks (0x63 - 0x69)
+
+enum CutsceneCmdTypes {
+    CutsceneCmd_BCDPlay,
+    CutsceneCmd_Unit_Anim,
+    CutsceneCmd_EPL,
+    CutsceneCmd_EPL_Coordinate,
+    CutsceneCmd_Unit_crdSet,
+    CutsceneCmd_Unit_move,
+    CutsceneCmd_Unit_rot,
+    CutsceneCmd_Unit_rotPos,
+    CutsceneCmd_Unit_homePos,
+    CutsceneCmd_Cam,
+    CutsceneCmd_Unit_Culled,
+    CutsceneCmd_Cam_overview,
+    CutsceneCmd_EPL_Ex,
+    CutsceneCmd_Env_bright,
+    CutsceneCmd_Fld_color,
+    CutsceneCmd_Fld_HDR,
+    CutsceneCmd_Env_saturation,
+    CutsceneCmd_Unit_DyingCulled,
+    CutsceneCmd_Cam_chant,
+    CutsceneCmd_Cam_move,
+    CutsceneCmd_Cam_goto,
+    CutsceneCmd_Cam_Chara,
+    CutsceneCmd_Cam_Chara_goto,
+    CutsceneCmd_Cam_Chara_fixed,
+    CutsceneCmd_Cam_Chara_look,
+    CutsceneCmd_Cam_Chara_view,
+    CutsceneCmd_Unit_pathMove,
+    CutsceneCmd_EPL_Char,
+    CutsceneCmd_Cam_Chara_move,
+    CutsceneCmd_BCDPlay_random,
+    CutsceneCmd_Unit_Helper,
+    CutsceneCmd_Unit_damage,
+    CutsceneCmd_EPL_Char_cylinder,
+    CutsceneCmd_Cam_fovy,
+    CutsceneCmd_Unit_Cylinder,
+    CutsceneCmd_Cam_rotZ,
+    CutsceneCmd_Unit_Color,
+    CutsceneCmd_Unit_Outline,
+    CutsceneCmd_Env_correct,
+    CutsceneCmd_Env_radialBlur,
+    CutsceneCmd_Env_straightBlur,
+    CutsceneCmd_Env_noiseBlur,
+    CutsceneCmd_Env_clearColor,
+    CutsceneCmd_Env_DOF,
+    CutsceneCmd_Unit_rotUnit,
+    CutsceneCmd_Unit_rotCam,
+    CutsceneCmd_Env_distortBlur,
+    CutsceneCmd_Env_monotone,
+    CutsceneCmd_Env_fill,
+    CutsceneCmd_Unit_scale,
+    CutsceneCmd_EPL_Char_unit,
+    CutsceneCmd_Env_brightImmediate,
+    CutsceneCmd_Env_saturationImmediate,
+    CutsceneCmd_Env_hue,
+    CutsceneCmd_Env_hueImmediate,
+    CutsceneCmd_Fld_HDR_I,
+    CutsceneCmd_Cam_Chara_lookLine,
+    CutsceneCmd_Cam_upshot,
+    CutsceneCmd_Unit_homeMove,
+    CutsceneCmd_Unit_plane,
+    CutsceneCmd_Unit_grayscale,
+    CutsceneCmd_Unit_Face,
+    CutsceneCmd_Unit_AnimEx,
+    CutsceneCmd_Fld_anim,
+    CutsceneCmd_Fld_objVisible,
+    CutsceneCmd_Cam_shake,
+    CutsceneCmd_EPL_Stage_helper,
+    CutsceneCmd_EPL_Char_helper,
+    CutsceneCmd_padRumble_L,
+    CutsceneCmd_padRumble_S,
+    CutsceneCmd_Unit_HelperGoto,
+    CutsceneCmd_Unit_HelperMove,
+    CutsceneCmd_Unit_WeaponCulled,
+    CutsceneCmd_Cam_pan,
+    CutsceneCmd_Fld_objRot,
+    CutsceneCmd_EPL_Object_helper,
+    CutsceneCmd_Cam_helper,
+    CutsceneCmd_Cam_lookHelper,
+    CutsceneCmd_Cam_slide,
+    CutsceneCmd_Cam_lookHelperLine,
+    CutsceneCmd_Fld_colorR,
+    // Morgana Car cutscene blocks
+    CutsceneCmd_Mor_setup,
+    CutsceneCmd_Mor_pos,
+    CutsceneCmd_Mor_goto,
+    CutsceneCmd_Mor_anim,
+    CutsceneCmd_Mor_path,
+    CutsceneCmd_Env_ILight,
+    CutsceneCmd_Mor_color,
+    CutsceneCmd_Unit_CylinderGoto,
+    CutsceneCmd_Persona_Setup,
+    CutsceneCmd_Persona_Pos,
+    CutsceneCmd_Persona_Anim,
+    CutsceneCmd_Sound,
+    CutsceneCmd_SoundCmn,
+    CutsceneCmd_Cam_Chara_lookLineGo,
+    CutsceneCmd_Cam_saveUp,
+    CutsceneCmd_Fade,
+    CutsceneCmd_SoundSurround,
+    CutsceneCmd_Persona_Color,
+    // Added in Persona 5 Royal
+    CutsceneCmd_EqPersona_Setup,
+    CutsceneCmd_EqPersona_Pos,
+    CutsceneCmd_EqPersona_Anim,
+    CutsceneCmd_EqPersona_Color,
+    CutsceneCmd_EPL_Char_Comb,
+    CutsceneCmd_GUI_damage,    
+    CutsceneCmd_Cam_crossfade,
+};
+
+enum<u8>AnimationValue
+{
+    Idle = 0,
+	Low_HP = 1,
+	Running = 2,
+    Running2 = 3,
+	Attack = 4,
+	Crit = 5,
+	Attack_Rush = 6,
+    Low_HP2 = 7,
+	Die = 8,
+	Revive = 9,
+	Take_Damage = 10,
+	Dodge = 11,
+	Move_Back = 14,
+	Skill_1_Summon_1 = 15,
+	Skill_2_Summon_2 = 16,
+	Skill_3_Summon_3 = 17,
+	Skill_4_Summon_4 = 18,
+	Skill_5_Summon_5 = 19,
+	Use_Item = 20,
+	Persona_Change = 21,
+	Idle2 = 24,
+	Guard = 25,
+	Knocked_Down = 31,
+	Hold_Up_Taunt = 32,
+	Down = 33,
+	Get_up = 34,
+	Baton_Pass_Out = 35,
+	Baton_Pass_In = 36,
+	Protect = 37,
+	Item_Cancel = 39,
+	Victory = 40,
+	To_Ready_Anim = 41,
+	Ready = 42,
+	To_Idle_Anim = 43,
+	Gun = 44,
+	Pull_Out_Gun = 45,
+	Item_In_Menu = 46,
+	AoA_Jump = 47,
+	AoA = 48,
+	Gun_out_Party_Members_Put_Away = 49,
+	Shoot_Gun = 51,
+	Put_Gun_Away = 52,
+	Prep_For_Enemy_Attack = 53,
+	Assist_Attack_Joker_Use_Down_Shot = 54,
+	Ready_For_Assist = 55,
+	Assist_Gun = 56,
+	Walk = 57,
+	Gain_Persona = 58,
+	Victory2 = 61,
+	Victory3 = 62,
+	Harisen_Recovery_Joker_Runs = 63,
+	Tactics_1 = 64,
+	Tactics_2 = 65,
+	Tactics_3 = 66,
+	Swapped_into_Battle = 67,
+    CanShowtimeThisTurn = 76,
+    Showtime1 = 77,
+    Showtime2 = 78,
+    Showtime3 = 79,
+    Showtime4 = 80,
+    Showtime5 = 81,
+    Showtime6 = 82,
+    Showtime7 = 83,
+    Showtime8 = 84,
+    Showtime9 = 85,
+};
+
+enum<ubyte>Animator
+{
+    Member1_And_Enemy = 1,
+	Member3_Member1_Enemy = 4,
+	Everyone = 14,
+	Everyone2 = 16,
+	Enemy = 32,
+	Everyone3 = 64,
+	All_Enemies = 80,
+	Member1 = 96,
+    Everyone4 = 112,
+	Nobody = 128,
+	Member4 = 130,
+	Member3 = 132,
+	Member3_Member4 = 134,
+	Member2 = 136,
+	Member2_Member4 = 138,
+	Member2_Member3 = 140,
+	Member2_Member3_Member4 = 142,
+};
+
+// 0x1400ada90
+enum<uint> InterpolateType {
+    EaseIn = 0,
+    EaseOut = 1,
+    Linear = 2,
+    EaseInOut = 3,
+    EaseInOut2 = 4,
+};
+
+// Generic Types
+
+typedef struct {
+    f32 x;
+    f32 y;
+} Vector2 <read=(Str("vec2(%g, %g)", x, y))>;
+
+typedef struct {
+    f32 x;
+    f32 y;
+    f32 z;
+} Vector3 <read=(Str("vec3(%g, %g, %g)", x, y, z))>;
+
+typedef struct {
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 w;
+} Vector4 <read=(Str("vec4(%g, %g, %g, %g)", x, y, z, w))>;
+
+typedef struct {
+    Vector3 row1;
+    Vector3 row2;
+    Vector3 row3;
+    Vector3 row4;
+} Matrix3x4;
+
+typedef struct {
+    u8 r;
+    u8 g;
+    u8 b;
+} ColorRGB<read=(Str("#%.2x%.2x%.2x", r, g, b))>;
+
+typedef struct {
+    u8 a;
+    u8 b;
+    u8 g;
+    u8 r;
+} ColorRGBA<read=(Str("#%.2x%.2x%.2x%.2x", r, g, b, a))>;
+
+typedef struct {
+    u8 length;
+    char filename[length];
+} NonZeroedString<read=(Str("%s", filename))>;
+
+// Helper Functions
+
+f32 radToDeg(f32 val) { return val * 180 / 3.14159; }
+
+string readVec3(Vector3& vec) {
+    string out;
+    SPrintf(out, "(%g, %g, %g)", vec.x, vec.y, vec.z);
+    return out;
+};
+
+string readVec4(Vector4& vec) {
+    string out;
+    SPrintf(out, "(%g, %g, %g, %g)", vec.x, vec.y, vec.z, vec.w);
+    return out;
+};
+
+string readRGB(ColorRGB& color) {
+    string out;
+    SPrintf(out, "#%.2x%.2x%.2x", color.r, color.g, color.b);
+    return out;
+};
+
+string readRGBA(ColorRGBA& color) {
+    string out;
+    SPrintf(out, "#%.2x%.2x%.2x%.2x", color.a, color.b, color.g, color.r);
+    return out;
+};
+
+// Implemented Cutscene CMD Types
+
+typedef struct {
+    NonZeroedString BCDFilename;
+} BCDSection_BCDPlay<read=Str("%s", BCDFilename.filename)>;
+
+typedef struct {
+    AnimationValue AnimValue;
+    u8 FieldA5; // btl::event::CutsceneCmd_Unit_Anim u16 FieldA8
+    f32 AnimSpeed; // btl::event::CutsceneCmd_Unit_Anim f32 Field98
+    u32 StartingFrame; //btl::event::CutsceneCmd_Unit_Anim u32 Field9C
+    f32 AnimDelay; //btl::event::CutsceneCmd_Unit_Anim f32 FieldA0
+} BCDSection_Unit_Anim<read=Str("Unit Play %s Animation, %.2fx speed from frame %d", EnumToString(AnimValue), AnimSpeed, StartingFrame)>;
+
+// UNTESTED
+typedef struct {
+    NonZeroedString EPLFilePath; // btl::event::CutsceneCmd_EPL_Ex char* Field58;
+} BCDSection_EPL<read=Str("%s", EPLFilePath.filename)>;
+
+// UNTESTED
+typedef struct {
+    NonZeroedString EPLFilePath; // btl::event::CutsceneCmd_EPL_Coordinate char* Field58;
+    Vector3 Location; // btl::event::CutsceneCmd_EPL_Coordinate Vector3 FieldB0;
+} BCDSection_EPL_Coordinate<read=Str("%s at %s", EPLFilePath.filename, readVec3(FieldB0))>;
+
+typedef struct {
+    Vector3 Position; // btl::event::CutsceneCmd_Unit_crdSet Vec3 Field60;
+    f32 Direction; // btl::event::CutsceneCmd_Unit_crdSet f32 FieldB0;
+} BCDSection_Unit_crdSet<read=Str("Unit: Position %s, Direction %g deg", readVec3(Position), Direction)>;
+
+typedef struct {
+    Vector3 Field10;
+    u32 Field1C;
+    f32 Field20;
+} BCDSection_Unit_move;
+
+typedef struct {
+    f32 rotation;
+} BCDSection_Unit_rot;
+
+// UNTESTED
+typedef struct {
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+} BCDSection_Unit_rotPos;
+
+typedef struct {
+} BCDSection_Unit_homePos;
+
+typedef struct {
+    Vector3 CameraLocation;
+    Vector3 CameraTarget;
+} BCDSection_Cam<read=Str("Camera from %s to %s", readVec3(CameraLocation), readVec3(CameraTarget))>;
+
+typedef struct {
+    u8 isVisible;
+} BCDSection_Unit_Culled;
+
+typedef struct {
+} BCDSection_Cam_overview;
+
+typedef struct {
+    NonZeroedString EPLFilePath; // btl::event::CutsceneCmd_EPL_Ex char* Field58;
+    Vector3 Location; // btl::event::CutsceneCmd_EPL_Ex Vector3 FieldB0;
+    f32 FieldC0; // changes fields 0x20 to 0x28 in EPL class
+    f32 FieldC4; // scale modifier?
+} BCDSection_EPL_Ex<read=Str("%s at %s", EPLFilePath.filename, readVec3(Location))>;
+
+typedef struct {
+    f32 BrightTransitionTime; // Brightness for Color Grading Section of ENV?
+    u8 ChangeFieldBrightness;
+    u8 ChangeCharacterBrightness;
+    u8 ChangeDiffuse;
+    u8 ChangeAmbient;
+    u8 ChangeSpecular;
+} BCDSection_Env_bright;
+
+typedef struct { 
+    ColorRGBA FldColor;
+} BCDSection_Fld_color<read=Str("Set field color to %s", readRGBA(FldColor))>;
+
+typedef struct {
+    f32 Field11;
+} BCDSection_Fld_HDR;
+
+typedef struct {
+    //u8 Field11;
+    u32 Field10;
+    u8 Field14;
+    u8 Field15;
+    if (version >= 0x9050000) {
+        u8 Field16;
+        u8 Field17;
+        u8 Field18;
+    }
+} BCDSection_Env_saturation;
+
+typedef struct {
+    u8 Field10;
+} BCDSection_Unit_DyingCulled;
+
+// UNTESTED
+typedef struct {
+} BCDSection_Cam_chant;
+
+typedef struct {
+    Matrix3x4 viewMatrix; // btl::event::CutsceneCmd_Cam_move Matrix4x4 Field60;
+    InterpolateType Field41; // btl::event::CutsceneCmd_Cam_move u32 FieldC0;
+} BCDSection_Cam_move;
+
+typedef struct {
+    Vector3 CameraLocation;
+    Vector3 CameraTarget;
+    InterpolateType Interpolation;
+} BCDSection_Cam_goto<read=Str("Camera from %s to %s", readVec3(CameraLocation), readVec3(CameraTarget))>;
+
+typedef struct {   
+    Vector3 Field10;
+    if (version >= 0x8060100) u32 Field1C;
+    f32 Field20;
+    InterpolateType Field24;
+} BCDSection_Cam_Chara;
+
+typedef struct {
+    BCDSection_Cam_Chara camCharaData;
+} BCDSection_Cam_Chara_goto;
+
+typedef struct {
+    BCDSection_Cam_Chara camCharaData;
+} BCDSection_Cam_Chara_fixed;
+
+typedef struct {
+    //Vector3 Field10;
+    BCDSection_Cam_Chara camCharaData;
+    u32 Field28;
+} BCDSection_Cam_Chara_look;
+
+typedef struct {
+    Vector3 Field10;
+    if (version >= 0x8060100) u32 Field1C;
+    Vector2 Field20;
+    InterpolateType Field28;
+} BCDSection_Cam_Chara_view;
+
+typedef struct {
+    NonZeroedString filename;
+} BCDPathFilename<read=Str("%s", filename.filename)>;
+
+typedef struct {
+    BCDPathFilename pathFile;
+    Vector3 FieldD0;
+    f32 FieldE0;
+    f32 FieldE4;
+    u8 FieldF9;
+    u8 TrackCurve;
+    u32 RunAnimType;
+    f32 RunAnimSpeed;
+    if (version >= 0x9020000) u8 FieldFA;
+    if (version >= 0x9030000) u8 CurveCount;
+    if (version >= 0xd010000) f32 FieldF4;
+} BCDSection_Unit_pathMove<read=Str("%s", pathFile.filename.filename)>;
+
+typedef struct {
+    NonZeroedString EPLFilePath;
+    u32 Field13;
+    u32 Field17;
+    Vector3 Field1B;
+} BCDSection_EPL_Char<read=Str("%s", EPLFilePath.filename)>;
+
+// UNTESTED
+typedef struct {
+    u32 Field10;
+    u32 Field14;
+    u8 Field18;
+} BCDSection_Unit_damage;
+
+typedef struct {
+    NonZeroedString EPLFilePath;
+    Vector4 Field10;
+} BCDSection_EPL_Char_cylinder<read=Str("%s", EPLFilePath.filename)>;
+
+typedef struct {
+    f32 FieldOfView; // btl::event::CutsceneCmd_Cam_fovy f32 Field5C 
+    InterpolateType Field15; // btl::event::CutsceneCmd_Cam_fovy u32 Field60
+} BCDSection_Cam_fovy<read=Str("Camera Set FOV to %.0f", FieldOfView)>;
+
+typedef struct {
+    BCDSection_Cam_Chara camCharaData;
+    Vector3 Field28;
+    if (version >= 0x8060100) u32 Field34;
+    f32 Field38;
+} BCDSection_Cam_Chara_move;
+
+typedef struct {
+    u32 RandomBCDCount;
+    NonZeroedString BCDFileLocation[RandomBCDCount]<name="BCD File Selection">;
+} BCDSection_BCDPlay_random<read=Str("Random Selection from %d BCD Files", RandomBCDCount)>;
+
+typedef struct {
+    u32 helperIDMatch;
+    f32 rotationDeg;
+    if (version >= 0xd030000) u32 useGlobalStage;
+    if (version >= 0xf020300) u32 FieldA4;
+} BCDSection_Unit_Helper;
+
+typedef struct {
+    Vector4 Field11;
+} BCDSection_Unit_Cylinder;
+
+typedef struct {
+    f32 roll;
+    InterpolateType Field15;
+} BCDSection_Cam_rotZ<read=Str("Camera Set Roll to %.0f deg", radToDeg(roll))>;
+
+typedef struct {
+    ColorRGBA DiffuseColor;
+    InterpolateType Field15;
+} BCDSection_Unit_Color<read=Str("Unit Set Diffuse Color to %s", readRGBA(DiffuseColor))>;
+
+typedef struct {
+    u8 HasOutline;
+} BCDSection_Unit_Outline;
+
+typedef struct {
+    f32 RedBlueLevel;
+    f32 GreenPinkLevel;
+    f32 BlueYellowLevel;
+    f32 Brightness;
+    f32 Contrast;
+    f32 Field24;
+    f32 Field28;
+    if (version >= 0x9040100) u8 Field14; // Display Color Grading?
+} BCDSection_Env_correct;
+
+typedef struct {
+    Vector2 blurUV;
+    Vector2 blurParams;
+    u32 Field20;
+    u8 Color;
+    u32 Field25;
+    f32 Field29;
+    f32 Field2D;
+} BCDSection_Env_radialBlur;
+
+typedef struct {
+    Vector2 Field10; // blurUV
+    f32 Field18; // blurParams0
+    u32 Field1C; // blurParams1
+    f32 Field20;
+    u32 Field24;
+} BCDSection_Env_straightBlur;
+
+// UNTESTED
+typedef struct {
+    u32 Field10;
+    u32 Field14;
+    u32 Field18;
+    u32 Field1C;
+    u8 Field20;
+    u32 Field21;
+    u32 Field25;
+} BCDSection_Env_noiseBlur;
+
+typedef struct {
+    ColorRGB skyColor;
+} BCDSection_Env_clearColor<read=Str("Set sky color to %s", readRGB(skyColor))>;
+
+typedef struct {  
+    u8 useCustomDOF; // true to use values
+    if (version >= 0xc010000) {
+        f32 FocalLength; // btl::event::CutsceneCmd_ENV_DOF f32 Field60
+        f32 DOFValue1;
+        f32 DOFValue2;
+        f32 BackgroundBlur; // blurs the background slightly
+        f32 ImageBlurOffset; // distance from image that blur images are offset by
+        f32 Field78;
+        f32 Field7C;
+    }
+    if (version >= 0xd000100) {
+        u32 Field74;
+    }
+} BCDSection_Env_DOF;
+
+typedef struct {
+    u8 Field10;
+} BCDSection_Unit_rotUnit;
+
+typedef struct {
+} BCDSection_Unit_rotCam;
+
+// UNTESTED
+typedef struct {
+    Vector4 Field10;
+    u32 Field20;
+    f32 Field24;
+    f32 Field28;
+    u32 Field2C;
+    f32 Field30;
+    f32 Field34;
+} BCDSection_Env_distortBlur;
+
+typedef struct {
+    f32 startingSaturation; // btl::event::CutsceneCmd_Env_monotone f32 Field 68
+    f32 saturationTransitionTime; // btl::event::CutsceneCmd_Env_monotone f32 Field 6C
+    f32 endingSaturation; // btl::event::CutsceneCmd_Env_monotone f32 Field 70
+} BCDSection_Env_monotone<read=Str("ENV Saturation %.2f -> %.2f in %.3f seconds", startingSaturation, endingSaturation, saturationTransitionTime)>;
+
+typedef struct {
+    u32 Field10;
+    ColorRGBA FillColor;
+    Vector2 Field18;
+} BCDSection_Env_fill;
+
+typedef struct {
+    NonZeroedString EPLFilename;
+    u32 Field10;
+    u32 Field14;
+    u32 Field18;
+    f32 Field1C;
+    u32 Field20;
+} BCDSection_EPL_Char_unit;
+
+// UNTESTED
+typedef struct {
+    u8 Field10;
+    u8 ChangeFieldBrightness;
+    u8 ChangeCharacterBrightness;
+    if (version >= 0x9050000) {
+        u8 ChangeDiffuse;
+        u8 ChangeAmbient;
+        u8 ChangeSpecular;
+    }
+} BCDSection_Env_brightImmediate;
+
+// UNTESTED
+typedef struct {
+    u8 Field10;
+    u8 Field11;
+    u8 Field12;
+    u8 Field13;
+    u8 Field14;
+    u8 Field15;
+} BCDSection_Env_saturationImmediate;
+
+// UNTESTED
+typedef struct {
+    ColorRGBA TargetColor;
+    u8 Field14;
+    u8 LayerControl;
+    if (version >= 0x9050000) {
+        u8 ChangeDiffuse;
+        u8 ChangeAmbient;
+        u8 ChangeSpecular;
+    }
+} BCDSection_Env_hue;
+
+// UNTESTED
+typedef struct {
+    u8 Field10;
+    u8 Field11;
+    u8 Field12;
+    u8 Field13;
+    u8 Field14;
+    u8 Field15;
+} BCDSection_Env_hueImmediate;
+
+// UNTESTED
+typedef struct {
+    u32 Field10;
+    f32 Field18;
+} BCDSection_Fld_HDR_I;
+
+typedef struct {
+    BCDSection_Cam_Chara camCharaData;
+    f32 Field28; // lookLine
+    f32 Field2C;
+    Animator eventAreaID2;
+} BCDSection_Cam_Chara_lookLine;
+
+typedef struct {
+    u32 Field10;
+} BCDSection_Cam_upshot;
+
+typedef struct {
+    f32 Field10;
+    u32 Field14;
+    f32 Field18;
+    u8 Field1C;
+} BCDSection_Unit_homeMove;
+
+typedef struct {
+    Vector4 Field10;
+    if (version >= 0xf010000) u32 Field20;
+    if (version >= 0xf020000) {
+        Vector4 Field24; 
+        u32 Field34;
+    } 
+    if (version >= 0xf010100) {
+        u32 Field38;
+        f32 Field3C;
+    }
+} BCDSection_Unit_plane;
+
+typedef struct {
+    u8 isGrayscale;
+} BCDSection_Unit_grayscale;
+
+typedef struct {
+    u32 Field11;
+    f32 Field15;
+    u32 Field19;
+    f32 Field1D;
+    if (version >= 0x10030400) f32 Field23;
+} BCDSection_Unit_Face;
+
+typedef struct {
+    AnimationValue AnimValue;
+    u8 DisableLoopFlag;
+    f32 AnimSpeed;
+    u32 StartingFrame;
+    if (version >= 0xb020000) f32 Field1A;
+    u32 Field1E;
+} BCDSection_Unit_AnimEx<read=Str("Unit Play %s Animation, %.2fx speed from frame %d", EnumToString(AnimValue), AnimSpeed, StartingFrame)>;
+
+typedef struct {
+    u32 Field10;
+    u32 Field14;
+    u32 Field18;
+    f32 Field1C;
+    u32 Field20;
+} BCDSection_Fld_anim;
+
+typedef struct {
+    u32 Field10;
+    u8 Field14;
+} BCDSection_Fld_objVisible;
+
+typedef struct {
+    u32 Field11;
+    Vector3 Field15;
+    u32 Field21;
+} BCDSection_Cam_shake;
+
+// UNTESTED
+typedef struct {
+    /*
+    NonZeroedString EPLFilePath; // btl::event::CutsceneCmd_EPL_Ex char* Field58;
+    f32 Field20;
+    f32 Field23;
+    f32 FieldB8;
+    f32 FieldC0;
+    f32 FieldC4;
+    */
+    BCDSection_EPL_Ex eplExData;
+    u32 FieldC8;
+} BCDSection_EPL_Stage_helper<read=Str("%s", EPLFilePath.filename)>;
+
+typedef struct {
+    NonZeroedString EPLFilePath;
+    f32 Field10;
+    f32 Field14;
+    u32 Field18;
+} BCDSection_EPL_Char_helper<read=Str("%s", EPLFilePath.filename)>;
+
+typedef struct {
+    u32 Field10;
+    u32 Field14;
+    u32 Field18;
+    u32 Field1C;
+} BCDSection_padRumble_L;
+
+typedef struct {
+    u32 Field10;
+    u32 Field14;
+    u32 Field18;
+    u32 Field1C;
+} BCDSection_padRumble_S;
+
+typedef struct {
+    u32 Field10;
+    u32 Field14;
+} BCDSection_Unit_HelperGoto;
+
+// UNTESTED
+typedef struct {
+    u32 Field10;
+    f32 Field14;
+    u32 Field18;
+} BCDSection_Unit_HelperMove;
+
+typedef struct {
+} BCDSection_Unit_WeaponCulled;
+
+typedef struct {
+    f32 Field11;
+    f32 Field15;
+    InterpolateType Field19;
+} BCDSection_Cam_pan;
+
+// UNTESTED
+typedef struct {
+    u32 Field10;
+    u32 Field14;
+} BCDSection_Fld_objRot;
+
+// UNTESTED
+typedef struct {
+    NonZeroedString EPLFilePath; // btl::event::CutsceneCmd_EPL_Ex char* Field58;
+    f32 Field20;
+    f32 Field23;
+    f32 FieldB8;
+    f32 FieldC0;
+    f32 FieldC4;
+    u32 FieldC8;
+    u32 FieldCC;
+} BCDSection_EPL_Object_helper<read=Str("%s", EPLFilePath.filename)>;
+
+// UNTESTED
+typedef struct {
+    u32 Field10;
+    u32 Field14;
+} BCDSection_Cam_helper;
+
+// UNTESTED
+typedef struct {
+    u32 Field10;
+    u32 Field14;
+} BCDSection_Cam_lookHelper;
+
+typedef struct {
+    Vector3 Field10;
+    InterpolateType Field1C;
+} BCDSection_Cam_slide;
+
+// UNTESTED
+typedef struct {
+    u32 Field10;
+    u32 Field14;
+    u32 Field18;
+    u32 Field1C;
+    u32 Field20;    
+    u32 Field24;
+    InterpolateType Field28;
+} BCDSection_Cam_lookHelperLine;
+
+typedef struct {
+    if (version >= 0x9050000) {
+        ColorRGBA FldColor;
+    } else {
+        ColorRGB FldColor;
+    }
+} BCDSection_Fld_colorR<read=readFldColorR>;
+
+string readFldColorR(BCDSection_Fld_colorR& bcdBlock) {
+    string out;
+    if (version >= 0x9050000) {
+        SPrintf(out, "Set field color to %s", readRGBA(bcdBlock.FldColor));
+    } else {
+        SPrintf(out, "Set field color to %s", readRGB(bcdBlock.FldColor));
+    }
+    return out;
+}
+
+typedef struct {
+    Vector4 Field10;
+} BCDSection_Unit_CylinderGoto;
+
+typedef struct {
+    u32 PersonaID;
+} BCDSection_Persona_Setup;
+
+typedef struct {
+    u32 PersonaID;
+    Vector3 Field14;
+    f32 Field20;
+} BCDSection_Persona_Pos;
+
+typedef struct {
+    u32 PersonaID;
+    u32 AnimID;
+    f32 AnimDelay;
+    f32 AnimSpeed;
+    u8 IsRepeating;
+} BCDSection_Persona_Anim;
+
+typedef struct {
+    u32 cueID;
+} BCDSection_Sound<read=Str("Play Cue ID %d", cueID)>;
+
+typedef struct {
+    u32 cueID;
+} BCDSection_SoundCmn<read=Str("Play Cue ID %d", cueID)>;
+
+typedef struct {
+} BCDSection_Mor_setup;
+
+typedef struct {
+    Vector4 Field11;
+} BCDSection_Mor_pos;
+
+typedef struct {
+    u32 Field10;
+    u32 Field14;
+    u32 Field18;
+    u32 Field1C;
+    u16 Field20;
+    f32 Field24;
+} BCDSection_Mor_anim;
+
+typedef struct {
+    BCDPathFilename pathFile;
+    u32 Field10;
+    u32 Field14;
+    Vector3 Field18;
+    u32 Field24;
+    u32 Field28;
+} BCDSection_Mor_path<read=Str("%s", pathFile.filename.filename)>;
+
+// UNTESTED
+typedef struct {
+    if (version >= 0x10010100) u32 Field10;
+} BCDSection_Env_ILight;
+
+typedef struct {
+    ColorRGBA color;
+    InterpolateType Field14;
+} BCDSection_Mor_color;
+
+typedef struct {
+    Vector3 Field10;
+    u32 Field1C;
+    u32 Field20;
+    u32 Field24;
+    Vector2 Field28;
+    u8 Field30;
+} BCDSection_Cam_Chara_lookLineGo;
+
+typedef struct {
+} BCDSection_Cam_saveUp;
+
+typedef struct {
+    u32 Field10;
+    u32 Field14;
+    u8 Field18;
+} BCDSection_Fade;
+
+typedef struct {
+    u32 cueID;
+} BCDSection_SoundSurround;
+
+typedef struct {
+    u32 PersonaID;
+    ColorRGBA Color;
+    u32 Field18;
+    u32 Field1C;
+} BCDSection_Persona_Color;
+
+// UNTESTED
+typedef struct {
+    u32 PersonaID;
+} BCDSection_EqPersona_Setup;
+
+// UNTESTED
+typedef struct {
+    u32 Field10;
+    f32 Field18;
+    u32 Field1C;
+    f32 Field20;
+    f32 Field24;
+} BCDSection_EqPersona_Pos;
+
+// UNTESTED
+typedef struct {
+    u32 Field10;
+    u32 Field14;
+    u32 Field18;
+    u32 Field1C;
+    u32 Field20;
+} BCDSection_EqPersona_Anim;
+
+// UNTESTED
+typedef struct {
+    u32 PersonaID;
+    ColorRGBA Color;
+    InterpolateType Field18;
+    if (version >= 0x11030100) ColorRGBA Color2;
+} BCDSection_EqPersona_Color;
+
+// UNTESTED
+typedef struct {
+    NonZeroedString EPLFilePath;
+    Vector3 Field14;
+    u32 Field20;
+    f32 Field24;
+} BCDSection_EPL_Char_Comb<read=Str("%s", EPLFilePath.filename)>;
+
+typedef struct {
+    u32 Field10;
+    u32 Field14;
+    f32 Field18;
+} BCDSection_GUI_damage;
+
+typedef struct {
+} BCDSection_Cam_crossfade;
+
+typedef struct {
+    SetRandomBackColor();
+    local u32 segmentType = ReadUInt();
+    local CutsceneCmdTypes cutsceneCmdType = segmentType;
+    Printf("[P5R_BCD] Found BCD Section of Type %s (0x%x)\n", EnumToString(cutsceneCmdType), cutsceneCmdType);
+    // Common fields across all BCD types
+    CutsceneCmdTypes sectionID; // btl::event::CutsceneBase u32 Field10;
+    u32 Field24; // btl::event::CutsceneBase u32 Field24;
+    f32 StartTime; // btl::event::CutsceneBase float Field14; (Often Used as Time)
+    f32 Duration; // btl::event::CutsceneBase float Field18; (Often Used as Duration)
+    Animator eventAreaID; // SmartPointer<btl::event::Area> Contents, 0x30 + 0x18 offset
+    // BCD Section Type Specific Fields
+    switch (cutsceneCmdType) {
+        case CutsceneCmd_BCDPlay:
+            BCDSection_BCDPlay BCDPlay<name = "BCD Play">;
+            break;
+        case CutsceneCmd_Unit_Anim:
+            BCDSection_Unit_Anim unitAnim<name = "Unit Anim">;
+            break;
+        case CutsceneCmd_EPL:
+            BCDSection_EPL EPL<name = "EPL">;
+            break;
+        case CutsceneCmd_EPL_Coordinate:
+            BCDSection_EPL_Coordinate EplCoord<name = "EPL Coordinate">;
+            break;
+        case CutsceneCmd_Unit_crdSet:
+            BCDSection_Unit_crdSet UnitCrdSet<name = "Unit Coordinate Set">;
+            break;
+        case CutsceneCmd_Unit_move:
+            BCDSection_Unit_move UnitMove<name = "Unit Move">;
+            break;
+        case CutsceneCmd_Unit_rot:
+            BCDSection_Unit_rot UnitRot<name = "Unit Rotation">;
+            break;
+        case CutsceneCmd_Unit_rotPos:
+            BCDSection_Unit_rotPos UnitRotPos<name = "Unit Position/Rotation">;
+            break;
+        case CutsceneCmd_Unit_homePos:
+            BCDSection_Unit_homePos UnithomePos<name = "Unit Home Position">;
+            break;
+        case CutsceneCmd_Cam:
+            BCDSection_Cam Cam<name = "Camera">;
+            break;
+        case CutsceneCmd_Unit_Culled:
+            BCDSection_Unit_Culled unitCulled<name = "Unit Culled">;
+            break;
+        case CutsceneCmd_Cam_overview:
+            BCDSection_Cam_overview CamOverview<name = "Camera Overview">;
+            break;
+        case CutsceneCmd_EPL_Ex:
+            BCDSection_EPL_Ex EPLEx<name = "EPL EX">;
+            break;
+        case CutsceneCmd_Env_bright:
+            BCDSection_Env_bright ENVBright<name = "ENV Bright">;
+            break;
+        case CutsceneCmd_Fld_color:
+            BCDSection_Fld_color FldColor<name = "FLD Color">;
+            break;
+        case CutsceneCmd_Fld_HDR:
+            BCDSection_Fld_HDR FldHDR<name = "FLD HDR">;
+            break;
+        case CutsceneCmd_Env_saturation:
+            BCDSection_Env_saturation EnvSaturation<name = "ENV Saturation">;
+            break;
+        case CutsceneCmd_Unit_DyingCulled:
+            BCDSection_Unit_DyingCulled UnitDyingCulled<name = "Unit Dying Culled">;
+            break;
+        case CutsceneCmd_Cam_chant:
+            BCDSection_Cam_chant CamChant<name = "Camera Chant">;
+            break;
+        case CutsceneCmd_Cam_move:
+            BCDSection_Cam_move CamMove<name = "Camera Movement">;
+            break;
+        case CutsceneCmd_Cam_goto:
+            BCDSection_Cam_goto CamGoto<name = "Camera Go To">;
+            break;
+        case CutsceneCmd_Cam_Chara:
+            BCDSection_Cam_Chara CamChara<name = "Camera Character">;
+            break;
+        case CutsceneCmd_Cam_Chara_goto:
+            BCDSection_Cam_Chara_goto CamCharaGoto<name = "Camera Character Go To">;
+            break;
+        case CutsceneCmd_Cam_Chara_fixed:
+            BCDSection_Cam_Chara_fixed CamCharaFixed<name = "Camera Character Fixed">;
+            break;
+        case CutsceneCmd_Cam_Chara_look:
+            BCDSection_Cam_Chara_look CamCharaLook<name = "Camera Character Look">;
+            break;
+        case CutsceneCmd_Cam_Chara_view:
+            BCDSection_Cam_Chara_view CamCharaView<name = "Camera Character View">;
+            break;
+        case CutsceneCmd_Unit_pathMove:
+            BCDSection_Unit_pathMove UnitPathMove<name = "Unit Path Move">;
+            break;
+        case CutsceneCmd_EPL_Char:
+            BCDSection_EPL_Char EPLChar<name = "EPL Char">;
+            break;
+        case CutsceneCmd_Cam_Chara_move:
+            BCDSection_Cam_Chara_move CamCharaMove<name = "Camera Character Move">;
+            break;
+        case CutsceneCmd_BCDPlay_random:
+            BCDSection_BCDPlay_random BCDPlayRandom<name = "BCD Play Random">;
+            break;
+        case CutsceneCmd_Unit_Helper:
+            BCDSection_Unit_Helper UnitHelper<name = "Unit Helper">;
+            break;
+        case CutsceneCmd_Unit_damage:
+            BCDSection_Unit_damage UnitDamage<name = "Unit Damage">;
+            break;
+        case CutsceneCmd_EPL_Char_cylinder:
+            BCDSection_EPL_Char_cylinder EPLCharCylinder<name = "EPL Char Cylinder">;
+            break;
+        case CutsceneCmd_Cam_fovy:
+            BCDSection_Cam_fovy CamFOVY<name = "Camera FOV Y">;
+            break;
+        case CutsceneCmd_Unit_Cylinder:
+            BCDSection_Unit_Cylinder UnitCylinder<name = "Unit Cylinder">;
+            break;
+        case CutsceneCmd_Cam_rotZ:
+            BCDSection_Cam_rotZ CamRotZ<name = "Camera Rotation Z">;
+            break;
+        case CutsceneCmd_Unit_Color:
+            BCDSection_Unit_Color UnitColor<name = "Unit Color">;
+            break;
+        case CutsceneCmd_Unit_Outline:
+            BCDSection_Unit_Outline UnitOutline<name = "Unit Outline">;
+            break;
+        case CutsceneCmd_Env_correct:
+            BCDSection_Env_correct EnvCorrect<name = "ENV Correction">;
+            break;
+        case CutsceneCmd_Env_radialBlur:
+            BCDSection_Env_radialBlur EnvRadialBlur<name = "ENV Radial Blur">;
+            break;
+        case CutsceneCmd_Env_straightBlur:
+            BCDSection_Env_straightBlur EnvStraightBlur<name = "ENV Straight Blur">;
+            break;
+        case CutsceneCmd_Env_noiseBlur:
+            BCDSection_Env_noiseBlur EnvNoiseBlur<name = "ENV Noise Blur">;
+            break;
+        case CutsceneCmd_Env_clearColor:
+            BCDSection_Env_clearColor EnvClearColor<name = "ENV Clear Color">;
+            break;
+        case CutsceneCmd_Env_DOF:
+            BCDSection_Env_DOF EnvDOF<name = "ENV Depth of Field">;
+            break;
+        case CutsceneCmd_Unit_rotUnit:
+            BCDSection_Unit_rotUnit UnitRotUnit<name = "Unit Rotation Unit">;
+            break;
+        case CutsceneCmd_Unit_rotCam:
+            BCDSection_Unit_rotCam UnitRotCam<name = "Unit Rot Cam">;
+            break;
+        case CutsceneCmd_Env_distortBlur:
+            BCDSection_Env_distortBlur EnvDistortBlur<name = "ENV Distort Blur">;
+            break;
+        case CutsceneCmd_Env_monotone:
+            BCDSection_Env_monotone EnvMonotone<name = "ENV Monotone">;
+            break;
+        case CutsceneCmd_Env_fill:
+            BCDSection_Env_fill EnvFill<name = "ENV Fill">;
+            break;
+        case CutsceneCmd_EPL_Char_unit:
+            BCDSection_EPL_Char_unit EPLCharUnit<name = "EPL Char Unit">;
+            break;
+        case CutsceneCmd_Env_brightImmediate:
+            BCDSection_Env_brightImmediate ENBrightImmediate<name = "ENV Bright Immediate">;
+            break;
+        case CutsceneCmd_Env_saturationImmediate:
+            BCDSection_Env_saturationImmediate EnvSaturationImmediate<name = "ENV Saturation Immediate">;
+            break;
+        case CutsceneCmd_Env_hue:
+            BCDSection_Env_hue EnvHue<name = "ENV Hue">;
+            break;
+        case CutsceneCmd_Env_hueImmediate:
+            BCDSection_Env_hueImmediate EnvHueImmediate<name = "ENV Hue Immediate">;
+            break;
+        case CutsceneCmd_Fld_HDR_I:
+            BCDSection_Fld_HDR_I FldHDRI<name = "FLD HDRI">;
+            break;
+        case CutsceneCmd_Cam_Chara_lookLine:
+            BCDSection_Cam_Chara_lookLine CamCharaLookLine<name = "Camera Character Look Line">;
+            break;
+        case CutsceneCmd_Cam_upshot:
+            BCDSection_Cam_upshot CamUpshot<name = "Camera Upshot">;
+            break;
+        case CutsceneCmd_Unit_homeMove:
+            BCDSection_Unit_homeMove UnitHomeMove<name = "Unit Home Move">;
+            break;
+        case CutsceneCmd_Unit_plane:
+            BCDSection_Unit_plane UnitPlane<name = "Unit Plane">;
+            break;
+        case CutsceneCmd_Unit_grayscale:
+            BCDSection_Unit_grayscale UnitGrayscale<name = "Unit Grayscale">;
+            break;
+        case CutsceneCmd_Unit_Face:
+            BCDSection_Unit_Face UnitFace<name = "Unit Face">;
+            break;
+        case CutsceneCmd_Unit_AnimEx:
+            BCDSection_Unit_AnimEx UnitAnimEx<name = "Unit Anim Ex">;
+            break;
+        case CutsceneCmd_Fld_anim:
+            BCDSection_Fld_anim FldAnim<name = "FLD Anim">;
+            break;
+        case CutsceneCmd_Fld_objVisible:
+            BCDSection_Fld_objVisible FldObjVisible<name = "FLD OBJ Visible">;
+            break;
+        case CutsceneCmd_Cam_shake:
+            BCDSection_Cam_shake CamShake<name = "Camera Shake">;
+            break;
+        case CutsceneCmd_EPL_Stage_helper:
+            BCDSection_EPL_Stage_helper EPLStageHelper<name = "EPL Stage Helper">;
+            break;
+        case CutsceneCmd_EPL_Char_helper:
+            BCDSection_EPL_Char_helper EPLCharHelper<name = "EPL Char Helper">;
+            break;
+        case CutsceneCmd_padRumble_L:
+            BCDSection_padRumble_L PadRumbleL<name = "Pad Rumble L">;
+            break;
+        case CutsceneCmd_padRumble_S:
+            BCDSection_padRumble_S PadRumbleS<name = "Pad Rumble S">;
+            break;
+        case CutsceneCmd_Unit_HelperGoto:
+            BCDSection_Unit_HelperGoto UnitHelperGoto<name = "Unit Helper Go To">;
+            break;
+        case CutsceneCmd_Unit_HelperMove:
+            BCDSection_Unit_HelperMove UnitHelperMove<name = "Unit Helper Move">;
+            break;
+        case CutsceneCmd_Unit_WeaponCulled:
+            BCDSection_Unit_WeaponCulled UnitWeaponCulled<name = "Unit Weapon Culled">;
+            break;
+        case CutsceneCmd_Cam_pan:
+            BCDSection_Cam_pan CamPan<name = "Camera Pan">;
+            break;
+        case CutsceneCmd_EPL_Object_helper:
+            BCDSection_EPL_Object_helper EPLObjectHelper<name = "EPL Object Helper">;
+            break;
+        case CutsceneCmd_Cam_helper:
+            BCDSection_Cam_helper CamHelper<name = "Camera Helper">;
+            break;
+        case CutsceneCmd_Cam_lookHelper:
+            BCDSection_Cam_lookHelper CamLookHelper<name = "Camera Look Helper">;
+            break;
+        case CutsceneCmd_Cam_slide:
+            BCDSection_Cam_slide CamSlide<name = "Camera Slide">;
+            break;
+        case CutsceneCmd_Cam_lookHelperLine:
+            BCDSection_Cam_lookHelperLine CamLookHelperLine <name = "Camera Look Helper Line">;
+            break;
+        case CutsceneCmd_Fld_objRot:
+            BCDSection_Fld_objRot FldObjRot<name = "FLD Object Rotate">;
+            break;
+        case CutsceneCmd_Fld_colorR:
+            BCDSection_Fld_colorR FldColor<name = "FLD Color">;
+            break;
+        case CutsceneCmd_Mor_setup:
+            BCDSection_Mor_setup MorganaSetup<name = "Morgana Car Setup">;
+            break;
+        case CutsceneCmd_Mor_pos:
+            BCDSection_Mor_pos MorganaPos<name = "Morgana Car Position">;
+            break;
+        case CutsceneCmd_Mor_anim:
+            BCDSection_Mor_anim MorganaAnim<name = "Morgana Car Animation">;
+            break;
+        case CutsceneCmd_Mor_path:
+            BCDSection_Mor_path MorganaPath<name = "Morgana Car Path">;
+            break;
+        case CutsceneCmd_Env_ILight:
+            BCDSection_Env_ILight EnvILight<name = "ENV ILight">;
+            break;
+        case CutsceneCmd_Mor_color:
+            BCDSection_Mor_color MorganaColor<name = "Morgana Car Color">;
+            break;
+        case CutsceneCmd_Unit_CylinderGoto:
+            BCDSection_Unit_CylinderGoto UnitCylinderGoTo<name = "Unit Cylinder Go To">;
+            break;
+        case CutsceneCmd_Persona_Setup:
+            BCDSection_Persona_Setup PersonaSetup<name = "Persona Setup">;
+            break;
+        case CutsceneCmd_Persona_Pos:
+            BCDSection_Persona_Pos PersonaPos<name = "Persona Pos">;
+            break;
+        case CutsceneCmd_Persona_Anim:
+            BCDSection_Persona_Anim PersonaAnim<name = "Persona Anim">;
+            break;
+        case CutsceneCmd_Sound:
+            BCDSection_Sound Sound<name = "Sound">;
+            break;
+        case CutsceneCmd_SoundCmn:
+            BCDSection_SoundCmn SoundCmn<name = "Sound CMN">;
+            break;
+        case CutsceneCmd_Cam_Chara_lookLineGo:
+            BCDSection_Cam_Chara_lookLineGo CamCharaLookLineGo<name = "Camera Character Look Line Go">;
+            break;
+        case CutsceneCmd_Cam_saveUp:
+            BCDSection_Cam_saveUp CamSaveup<name = "Camera Save Up">;
+            break;
+        case CutsceneCmd_Fade:
+            BCDSection_Fade Fade<name = "Fade">;
+            break;
+        case CutsceneCmd_SoundSurround:
+            BCDSection_SoundSurround SoundSurround<name = "Surround Sound">;
+            break;
+        case CutsceneCmd_Persona_Color:
+            BCDSection_Persona_Color PersonaColor<name = "Persona Color">;
+            break;
+        case CutsceneCmd_EqPersona_Setup:
+            BCDSection_EqPersona_Setup EqPersonaSetup<name = "EQ Persona Setup">;
+            break;
+        case CutsceneCmd_EqPersona_Pos:
+            BCDSection_EqPersona_Pos EqPersonaPos<name = "EQ Persona Position">;
+            break;
+        case CutsceneCmd_EqPersona_Anim:
+            BCDSection_EqPersona_Anim EqPersonaAnim<name = "EQ Persona Animation">;
+            break;
+        case CutsceneCmd_EqPersona_Color:
+            BCDSection_EqPersona_Color EqPersonaColor<name = "EQ Persona Color">;
+            break;
+        case CutsceneCmd_EPL_Char_Comb:
+            BCDSection_EPL_Char_Comb EPLCharComb<name = "EPL Char Comb">;   
+            break;
+        case CutsceneCmd_GUI_damage:
+            BCDSection_GUI_damage GUIDamage<name = "GUI Damage">;
+            break;
+        case CutsceneCmd_Cam_crossfade:
+            BCDSection_Cam_crossfade CamCrossFade<name = "Camera Cross Fade">;
+            break;
+        default:
+            Assert(false, Str("Type 0x%x Not Implemented", cutsceneCmdType));
+            break;
+    }
+} BCDSection<optimize=false, read=(Str("%s (0x%x)", EnumToString(cutsceneCmdType), cutsceneCmdType))>;
+
+// Battle Cutscene Data Parse:
+
+local string filePath = GetFileName();
+local string fileName = FileNameGetBase(filePath, false);
+local string fileExt = FileNameGetExtension(filePath);
+local u32 version = 0;
+
+if (Stricmp(fileExt, ".BCD") == 0) {
+    BCDHeader header<name = "BCD Header">;
+    version = header.Flags;
+    Printf("[P5R_BCD] Battle Combat Data File %s contains %d sections\n", fileName, header.SectionCount);
+    BCDSection sections[header.SectionCount]<name = "BCD Section">;
+} else {
+    Assert(false, Str("[P5R_BCD] Incorrect File Extension %s\n", fileExt));
+}
+
+// btl::event::CutsceneData size: 1068
+// Up to 128 BCD Sections can fit into a CutsceneData class
