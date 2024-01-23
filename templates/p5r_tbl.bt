@@ -737,8 +737,7 @@ typedef struct()
         } BuffDebuff <name = "Buffs and Debuffs">;
 
     u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
+    u16 RESERVE_2A;
     Skill_OtherEffect OtherBuff <name = "Other Buffs", comment = "Put 2 to make All Barriers that Drains">;
     Skill_ExtraEffect ExtraEffect <name = "Extra Effects", comment = "Ignore resistance works 100% for Physical. Magic including Light, Dark, Almighty can only Semi Pierce (NULL, DRAIN, REPEL can't be pierced).">;
     u8 CritChance <name = "Crit Chance", comment = "Only works for Physical or Gun skills">;

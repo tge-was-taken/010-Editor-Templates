@@ -6581,7 +6581,7 @@ enum<ubyte>Skill_ApplyOrCureEffect
 enum<ubyte>Skill_RareEffect
 {
     NoEffect7 = 0,
-    BleedingDryBrushEff = 2
+    BleedingDryBrushEff = 2,
     ApplyRandomEffects = 3
 };
 
@@ -7424,26 +7424,4 @@ enum<ubyte> ItemID
 	RyujiDog = 508,
 	AmateurCurry = 509,
 	Tonfa = 510,
-};
-
-enum<int> Tech_TechnicalSkillAffinity
-{
-    TechAffinity_BLANK = -1,
-    TechAffinity_Physical = 0,
-    TechAffinity_Gun = 1,
-    TechAffinity_Fire = 2,
-    TechAffinity_Ice = 3,
-    TechAffinity_Electric = 4,
-    TechAffinity_Wind = 5,
-    TechAffinity_Psy = 6,
-    TechAffinity_Nuke = 7,
-    TechAffinity_Bless = 8,
-    TechAffinity_Curse = 9,
-    TechAffinity_Almighty = 10
-};
-
-enum<uint> Tech_RequiresKnowingTheHeart
-{
-	No = 0,
-	Yes = 0x3000013d
 };
