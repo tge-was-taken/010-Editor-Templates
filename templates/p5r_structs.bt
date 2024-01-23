@@ -1,5 +1,6 @@
 typedef struct
 {
+        u16 RESERVE<format=hex>;
         byte : 5;
         bool Kasumi : 1 <name = "Equippable by Kasumi">;
         bool Goro : 1 <name = "Equippable by Goro">;
@@ -92,3 +93,15 @@ typedef struct
     bool Evolved : 1 <name = "Evolved">;
     
 } PersonaFlags;
+
+typedef struct
+{
+    u8 bit8 : 1;
+    u8 bit7 : 1;
+    u8 bit6 : 1;
+    u8 bit5 : 1;
+    u8 bit4 : 1;
+    u8 motionse_acb : 1;
+    u8 swordtrack : 1;
+    u8 motionse_dat : 1;
+} b8_exist;
