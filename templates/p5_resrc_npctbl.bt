@@ -33,29 +33,29 @@ enum<u16> CharacterID
 
 typedef struct
 {
+	SetBackColor( ( color++ ) * 0x0000FF );
 	u16 NPC_ID;
-	u8 Field01;
-	u8 Field02;
+	u16 Field02;
 	CharacterID ModelMajorID;
 	u8 ModelMinorID;
-	u8 Field07;
-	u16 Field08;
-	u8 Field0A;
-	u8 Field0B;
-	u16 Field0C;
-	u8 Field0E;
-	u8 Field0F;
+	u8 ModelSubID;
+	u16 attach_major;
+	u8 attach_minor;
+	u8 umbrella;
+	u16 attach_major2;
+	u8 attach_minor2;
+	u8 anim_type;
 	u16 Field10;
-	u8 Field12;
-	u8 Field13;
-	u16 GapID;
-	u16 Field16;
-	u16 GapID;
-	u16 Field1A;
-} resrcNPCTblEntry <optimize=false>;
+	u16 Field12;
+	u16 anim_base;
+	u16 anim_add;
+	u16 anim_base_rain;
+	u16 anim_add_rain;
+} resrcNPCTblEntry <optimize=false,read=Str("%05d - c%04d_%03d_%02d", this.NPC_ID, this.ModelMajorID, this.ModelMinorID, this.ModelSubID)>;
 
 typedef struct
 {
+  local uint color = 1;
   resrcNPCTblEntry Data[ FileSize() /  0x1C ];
 } resrcNPCTblFile <optimize=false>;
 
