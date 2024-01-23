@@ -1,0 +1,165 @@
+//------------------------------------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: *.ftd
+//   Authors: DeathChaos, Sierra
+//   Version: 1.00
+//   Purpose: Persona 5 SHT data
+//   History
+//------------------------------------------------------------------------------
+
+#include "common/include.h"
+
+enum fldShtType
+{
+	SHTTYPE_NULL = 0,
+	SHTTYPE_CONF = 1,
+	SHTTYPE_POINT = 2,
+	SHTTYPE_LINE = 3,
+	SHTTYPE_UNK = 4
+};
+
+typedef struct
+{
+    f32 X<name="X Offset">;
+    f32 Y<name="Y Offset">;
+    f32 Z<name="Z Offset">;
+} Center;
+
+typedef struct
+{
+    u32 Sig<name="Signature">;
+	u32 Version<name="Version",format=hex>;
+	u32 Unk1;
+	u32 Unk2;
+}SHTHeader<optimize=false>;
+
+typedef struct
+{
+    u32 FileID;
+	u32 Version<name="Version",format=hex>;
+	u32 SectionSize<name="Section Size">;
+	u32 RESERVE;
+	u32 Entry_Num<name="Number of Entries">;
+	u32 RESERVE[3];
+}DataHeader<optimize=false>;
+
+typedef struct
+{
+	char FileName[128];	
+}FileStringSec<optimize=false>;
+
+typedef struct
+{
+	s32 flags<name="Flags">;
+	s32 type<name="Type">;
+	Center PointCenter<name="Point Center">;
+	f32 interior_radius;
+	f32 exterior_radius;
+	s32 CueID<name="Sound Cue ID">;
+	s32 Field_20;
+	s32 Field_24;
+}Type2Data<optimize=false, read=TypeRead1>;
+
+typedef struct
+{
+	s32 flags;
+	f32 interior_radius;
+	f32 exterior_radius;
+	s32 CueID;
+	s32 Unk4;
+	s32 Unk5;
+	s32 Unk6;
+	s32 Unk7;
+	s32 Unk8;
+	s16 Unk9;
+	s16 Unk10;
+	f32 Unk11;
+	f32 Unk12;
+	f32 Unk13;
+	f32 Unk14;
+	f32 Unk15;
+	f32 Unk16;
+}Type3Data<optimize=false, read=TypeRead2>;
+
+typedef struct
+{
+	s32 Unk0;
+	f32 Unk1;
+	f32 Unk2;
+	f32 Unk3;
+	f32 Unk4;
+	s32 Unk5;
+	s32 CueID;
+	s32 Unk7;
+}Type4Data<optimize=false, read=TypeRead3>;
+
+
+typedef struct
+{
+	u32 Type;
+	u32 Version<name="Version",format=hex>;
+	u32 SectionSize<name="Section Size">;
+	u32 RESERVE;
+	if (Type == SHTTYPE_CONF)
+	{
+		FileStringSec AWB<name="AWB String">;
+		FileStringSec ACB<name="ACB String">;
+	}
+	else
+	{
+		u32 Entry_Num<name="Number of Entries">;
+		u32 RESERVE;
+		u32 RESERVE;
+		u32 RESERVE;
+	}
+	if (Type == 2)
+	{
+		Type2Data Type_2_Data[Entry_Num]<name="Point Data">;
+	}
+	else if (Type == 3)
+	{
+		Type3Data Type_3_Data[Entry_Num];
+	}
+	else if (Type == 4)
+	{
+		Type4Data Type_4_Data[Entry_Num];
+	}
+	
+	
+}SectionData<optimize=false>;
+
+
+string TypeRead1(Type2Data& block )
+{
+    char buffer[32];
+    SPrintf( buffer, "Cue ID %02d", block.CueID );
+    return buffer;
+};
+
+string TypeRead2(Type3Data& block )
+{
+    char buffer[32];
+    SPrintf( buffer, "Cue ID %02d", block.CueID );
+    return buffer;
+};
+
+string TypeRead3(Type4Data& block )
+{
+    char buffer[32];
+    SPrintf( buffer, "Cue ID %02d", block.CueID );
+    return buffer;
+};
+
+BigEndian();
+SHTHeader Header;
+while (FEof() == 0)
+{
+	SectionData Section<read=GetSectionName>;
+}
+
+string GetSectionName(SectionData &p)
+{
+	fldShtType localtype = p.Type;
+	return Str("Data Type %s", EnumToString(localtype));
+}
