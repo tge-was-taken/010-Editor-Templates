@@ -1,0 +1,96 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+// File Mask: fnt.bin
+// Authors: DeathChaos, Lipsum, Cherry, Sierra
+//------------------------------------------------
+
+#include "common/include.h"
+
+LittleEndian();
+
+typedef struct
+{
+  s32 Disable_Turn_To_Joker : 1;
+  s32 NPC_Interaction_Type_Bit01 : 1;
+  s32 NPC_Interaction_Type_Bit02 : 1;
+  s32 NPC_Interaction_Type_Bit03 : 1;
+  s32 NPC_Interaction_Type_Bit04 : 1;
+  s32 Disable_Name_Tag : 1;
+  s32 NPC_Interaction_Type_Bit06 : 1;
+  s32 NPC_Interaction_Type_Bit07 : 1;
+  s32 Listen_Type_Prompt : 1;
+  s32 NPC_Interaction_Type_Bit09 : 1;
+  s32 NPC_Interaction_Type_Bit10 : 1;
+  s32 NPC_Interaction_Type_Bit11 : 1;
+  s32 NPC_Interaction_Type_Bit12 : 1;
+  s32 NPC_Interaction_Type_Bit13 : 1;
+  s32 NPC_Interaction_Type_Bit14 : 1;
+  s32 NPC_Interaction_Type_Bit15 : 1;
+  s32 NPC_Interaction_Type_Bit16 : 1;
+  s32 NPC_Interaction_Type_Bit17 : 1;
+  s32 NPC_Interaction_Type_Bit18 : 1;
+  s32 NPC_Interaction_Type_Bit19 : 1;
+  s32 NPC_Interaction_Type_Bit20 : 1;
+  s32 NPC_Interaction_Type_Bit21 : 1;
+  s32 NPC_Interaction_Type_Bit22 : 1;
+  s32 NPC_Interaction_Type_Bit23 : 1;
+  s32 NPC_Interaction_Type_Bit24 : 1;
+  s32 NPC_Interaction_Type_Bit25 : 1;
+  s32 NPC_Interaction_Type_Bit26 : 1;
+  s32 NPC_Interaction_Type_Bit27 : 1;
+  s32 NPC_Interaction_Type_Bit28 : 1;
+  s32 NPC_Interaction_Type_Bit29 : 1;
+  s32 NPC_Interaction_Type_Bit30 : 1;
+  s32 NPC_Interaction_Type_Bit31 : 1;
+} NPC_Hit_Flags;
+
+typedef struct
+{
+    SetBackColor( ( sus++ ) * 0x0000FF );
+	s16 FBN_NPC_ID;                         // Points to numbered FBN Block 14 Entry (NPC Block)
+	u16 Resource_NPC_ID;                    // Points to numbered NPC Resource Table Entry
+	s16 ModelID_Override;                   // Ignores Resource_NPC_ID and directly specifies Model ID
+	s16 NPC_Exist_Group;                    // Links current FNT Entry to data in the NPC Exist Table
+	s16 Field_GAP_MinorID;                  // Specifies Field "A" .GAP 
+	s16 Animation_Index;                    // Specifies .GAP Animation Offset
+	s32 Hit_Procedure_Index;                // Points to a numbered procedure in the .BF on Hit
+	u32 Disabling_Bitflag<format=hex>;      // Specifies a BitFlag that disables the FNT Entry if TRUE
+	u32 Disabling_Bitflag2<format=hex>;     // Specifies a BitFlag that disables the FNT Entry if TRUE
+	f32 Hit_Procedure_Radius;               // Specifies the radius of the invisible Hit Prompt Trigger
+	f32 AutoHit_Procedure_Radius;           // Specifies the radius of the Invincible Rainbow Arrow ( Bit! Get! A-Set! )
+	s32 AutoHit_Procedure_Index;            // Points to a numbered procedure in the .BF when in Radius
+	s16 Field_0x24;
+	s16 Field_0x26;
+	s32 P5RNew;                           // IDK WTF this does & at this point, I'm too scared to ask
+	NPC_Hit_Flags Interaction_Flags;        // Specifies Hit Params like facing Joker or Hit prompt
+	f32 Model_Scale;                        // Specifies the scale of the current .GMD
+	f32 Collision_Capsule_Size;             // Specifies the size of the NPC Collis Capsule
+	f32 search_radius;
+	f32 search_center_offset;
+	s32 findout_script;
+	s32 catchup_script;
+	f32 chase_speed;
+	s32 questID;
+	s32 flower;
+	s16 nodeIdx[4];
+	s16 nodeScript[4];
+	s32 NPC_Prompt_Name;                    // Links current NPC to numbered entry in fldNPCName.ftd
+	f32 Interact_Direction_Range;           // Specifies the angles that are valid for Hit
+	s32 structSize;
+	s32 npcID;
+} FNT_NpcTable <read=ResourceRead, optimize=false>;
+
+typedef struct
+{
+  local uint sus = 1;
+  FNT_NpcTable Data[ FileSize() /  0x74 ]; // change to 0x74 if P5R
+} NpcTable <optimize=false>;
+
+NpcTable Bin;
+
+string ResourceRead( FNT_NpcTable &o )
+{
+  local string s;
+  SPrintf( s, "FBN ID %05d; Resource ID %05d", o.FBN_NPC_ID, o.Resource_NPC_ID );
+  return s;
+}
