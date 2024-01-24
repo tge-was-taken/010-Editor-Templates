@@ -1,0 +1,63 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+// File Mask: fnt.bin
+// Authors: DeathChaos, Lipsum, Cherry, Sierra
+//------------------------------------------------
+
+#include "common/include.h"
+
+LittleEndian();
+
+typedef struct
+{
+  SetBackColor( ( 3939 ) * 0x0000FF );
+	u16 month;
+	u16 day;
+	u16 time;
+	u16 align_ignore;
+  u32 flag<format=hex>;
+  u32 packid;
+  u32 reserve[4];
+} FPT_NpcTable <read=ResourceRead, optimize=false>;
+
+typedef struct
+{
+  FPT_NpcTable Data[ FileSize() /  0x20 ];
+} NpcTable <optimize=false>;
+
+NpcTable Bin;
+
+string ResourceRead( FPT_NpcTable &o )
+{
+  local string s;
+  SPrintf( s, "%02d/%02d %s", o.month, o.day, GetTimeOfDay(o.time) );
+  return s;
+}
+
+string GetTimeOfDay( int time )
+{
+  switch(time)
+  {
+      case 1:
+          return "Morning";
+          break;
+      case 2:
+          return "Lunchtime";
+          break;
+      case 3:
+          return "Afternoon";
+          break;
+      case 4:
+          return "After School";
+          break;
+      case 5:
+          return "Evening";
+          break;
+      case 6:
+          return "Night";
+          break;
+      default:
+          return "Early Morning";
+          break;
+  }
+}

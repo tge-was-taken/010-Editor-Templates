@@ -1,0 +1,36 @@
+#include "common/include.h"
+
+LittleEndian();
+
+typedef struct
+{
+	LittleEndian();
+    u16 major;
+	u16 minor;
+    u8 X;
+    u8 Y;
+    u8 Z;
+    u8 Direction;
+    u16 Field08;
+    BigEndian(); // what in the actual fuck
+    u16 priority;
+    u16 flag;
+    u16 Padding;
+} MAPDataEntry <optimize=false, read=Str("f%03d_%03d_0.GFS - %02d - %02x", this.major, this.minor, this.priority, this.flag)>;
+
+typedef struct
+{
+    u32 EntryCount;
+    u8 Unknown[8];
+    u32 padding;
+} MAPHeader;
+
+typedef struct
+{
+  local uint color = 1;
+
+  MAPHeader Header;
+  MAPDataEntry Data[ Header.EntryCount ];
+} MAPFile <optimize=false>;
+
+MAPFile file;

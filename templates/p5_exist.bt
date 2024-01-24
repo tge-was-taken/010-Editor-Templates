@@ -1,0 +1,105 @@
+//------------------------------------------------
+//--- 010 Editor Binary Template
+//
+//      File: p5_exist.bt
+//   Authors: DeathChaos, Raytwo
+//   Version: 1.0
+//   Purpose: Parse Persona 5 EXIST Table file.
+//  Category: Persona 5 and Royal
+// File Mask: *.tbl
+//  ID Bytes:
+//   History:
+//   1.0 - Initial release
+//------------------------------------------------
+
+//---------------------------------------------
+// Type definition
+//---------------------------------------------
+typedef ubyte u8;
+typedef short s16;
+typedef ushort u16;
+typedef uint u32;
+typedef float f32;
+
+typedef struct
+{
+    u8 bit8 : 1;
+    u8 bit7 : 1;
+    u8 bit6 : 1;
+    u8 bit5 : 1;
+    u8 bit4 : 1;
+    u8 bit3 : 1;
+    u8 bit2 : 1;
+    u8 bit1 : 1;
+} b8;
+
+typedef struct
+{
+    u8 bit8 : 1;
+    u8 bit7 : 1;
+    u8 bit6 : 1;
+    u8 bit5 : 1;
+    u8 bit4 : 1;
+    u8 motionse_acb : 1;
+    u8 swordtrack : 1;
+    u8 motionse_dat : 1;
+} b8_exist;
+
+BigEndian();
+
+typedef struct
+{
+    u16 section_1_count;
+    u16 section_2_count;
+    u16 section_1_relative_offset<format=hex>;
+    u16 section_2_relative_offset<format=hex>;
+    u16 section_3_count;
+    u16 section_3_relative_offset<format=hex>;
+    u16 section_4_count;
+    u16 section_4_relative_offset<format=hex>;
+} TExist_Header<name="Header">;
+
+typedef struct
+{
+    u16 ID;
+    u8 model_start;
+    u8 model_end;
+    b8 bitfield;
+    b8 bitfield;
+} TExist_Segment1<name="Characters ", read=Str( "ID %04d", this.ID)>;
+
+typedef struct
+{
+    u8 ID;
+    b8 b8_exist;
+} TExist_Segment2<name="Character Models ", read=Str( "ID %02d", this.ID)>;
+
+typedef struct
+{
+    u16 ID;
+    b8_exist flags1<name="Exist Flags 1">;
+    b8 flags2<name="Flags 2">;
+} TExist_Segment3<name="Enemies ", read=Str( "ID %03d", this.ID)>;
+
+typedef struct
+{
+    u16 ID;
+    b8_exist flags1<name="Exist Flags 1">;
+    b8 flags2<name="Flags 2">;
+} TExist_Segment4<name="Personas ", read=Str( "ID %03d", this.ID)>;
+
+typedef struct
+{
+    uint sizeoffile<name="FileSize">;
+    TExist_Header header;
+    FSeek( header.section_1_relative_offset + 4 );
+    TExist_Segment1 Segment1[header.section_1_count];
+    FSeek( header.section_2_relative_offset + 4 );
+    TExist_Segment2 Segment2[header.section_2_count];
+    FSeek( header.section_3_relative_offset + 4 );
+    TExist_Segment3 Segment3[header.section_3_count];
+    FSeek( header.section_4_relative_offset + 4 );
+    TExist_Segment4 Segment4[header.section_4_count];
+} TExist_File;
+
+TExist_File File<name="EXIST">;

@@ -17,57 +17,95 @@ typedef hfloat f16;
 typedef float f32;
 typedef double f64;
 
-typedef struct
-{
-		f32 Unknown3;
-		f32 Unknown4;
-		f32 Unknown5;
-} Type3SubStruct<name="Entry", optimize=false>;
+typedef struct {
+    char magic[4];
+    u32 version;
+    u32 endian;
+    u32 size;
+    u32 flag;
+    u32 reserve0;
+    u32 reserve1;
+    u32 reserve2;
+}fldPCDHeader_tag;
+
+typedef struct {
+    float x;
+    float y;
+    float z;
+    float maxRange;
+}fldPCDTgtOfs_t<read=Str("x: %f, y: %f, z: %f, maxRange %f", x, y, z, maxRange)>;
+
+typedef struct {
+    float x;
+    float y;
+    float z;
+}fldPCDCtrlPnt_t<read=Str("x: %f, y: %f, z: %f", x, y, z)>;
+
+typedef struct {
+    float pitch;
+    float yaw;
+    float roll;
+    float fovy;
+}fldPCDIdxDat_t<read=Str("pitch: %f, yaw: %f, roll: %f, fovy: %f", pitch, yaw, roll, fovy)>;
+
+typedef struct {
+    u32 type;
+    s32 freeSize;
+    s32 camIdxNum;
+    u32 pCamIdx;
+    u32 pCamCurve;
+    u32 pTgtCurve;
+    float delayTime;
+    u8 rotInterpType;
+    u8 padding[3];
+    fldPCDTgtOfs_t tgtOfs;
+}fldPCDHandleBin_t;
 
 typedef struct
 {
-	char Signature[4];
-	u16 Unk1;
-	u16 Unk2;
-	u32 Unk3;
-	u32 Unk4;
-	u32 Unk5;
-	u32 Unk6;
-	u32 Unk7;
-	u32 Unk8;
-	u32 Unk9;
-	u32 Unk10;
-	u32 Unk11;
-	u32 Unk12;
-	u32 Unk13;
-	u32 Unk14;
-	f32 Unk15;
-	u32 Unk16;
-	u32 Unk17;
-	u32 Unk18;
-	u32 Unk19;
-	u32 Unk20;
-	f32 Unk21<name="Point 2 Movement X">;
-	f32 Unk22<name="Point 2 Movement Y">;
-	f32 Unk23<name="Point 2 Movement Z">;
-	f32 Unk24<name="Point 1 Movement X">;
-	f32 Unk25<name="Point 1 Movement Y">;
-	f32 Unk26<name="Point 1 Movement Z">;
-	f32 Unk27<name="Point 2 Target X">;
-	f32 Unk28<name="Point 2 Target Y">;
-	f32 Unk29<name="Point 2 Target Z">;
-	f32 Unk30<name="Point 1 Target X">;
-	f32 Unk31<name="Point 1 Target Y">;
-	f32 Unk32<name="Point 1 Target Z">;
-	f32 Unk33;
-	f32 Unk34<name="End Point Something angle-related">;
-	f32 Unk35<name="End Point Angle">;
-	f32 Unk36<name="End Point FOV">;
-	f32 Unk37;
-	f32 Unk38<name="Start Point Something angle-related">;
-	f32 Unk39<name="Start Point Angle">;
-	f32 Unk40<name="Start Point FOV">;
-}PCD<optimize=false>;
+	local int endian = ReadInt(8);
+	
+	if (endian != 1)
+		LittleEndian();
+		
+	fldPCDHeader_tag header;
+	fldPCDHandleBin_t handle;
+	
+	if (header.version == 16777221)
+	{
+		f32 RoyalOnlyValue;
+	}
+	else if (header.version == 16777222)
+	{
+		f32 RoyalOnlyValues[3];
+	}
+	
+	local int i;
+	
+	struct 
+	{
+		for (i = 0; i < handle.camIdxNum; i++)
+		{
+			fldPCDCtrlPnt_t point;
+		}
+	}Points;
+	
+	struct 
+	{
+		for (i = 0; i < handle.camIdxNum; i++)
+		{
+			fldPCDCtrlPnt_t point;
+		}
+	}Targets;
+	
+	struct 
+	{
+		for (i = 0; i < handle.camIdxNum; i++)
+		{
+			fldPCDIdxDat_t rotate;
+		}
+	}Rotates;
+}fldPCDFile<optimize=false>;
 
 BigEndian();
-PCD Segment;
+fldPCDFile file;

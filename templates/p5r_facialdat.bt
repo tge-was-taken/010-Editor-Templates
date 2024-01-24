@@ -1,0 +1,64 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: data.cpk/battle/face/bb00XX_facial.dat
+//   Authors: DeathChaos
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: *.dat
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h"
+
+// These files are always big endian
+BigEndian();
+
+typedef struct
+{
+    SetBackColor( ( color+= 39 ) * 0x0000FF );
+    u32 Version;
+    u32 numofEntries;
+    u32 padding[2];
+} TFileHeader <name="File Header">;
+
+typedef struct
+{
+    s16 start_timing<name="Starting Frame">;
+    s8 blend_anim_id[4]<name="EMT Anim Index">;
+    s8 blend_strength[4]<name="EMT Anim Strength">;
+    u8 Field_0A;
+    u8 Field_0B;
+    f32 anim_wait_time[4]<name="Duration?">;
+} TFaceEntriesSub<name="Face Data Animation Data",read=Str("%02d   %02d   %02d   %02d", this.blend_anim_id[0], this.blend_anim_id[1], this.blend_anim_id[2], this.blend_anim_id[3])>;
+
+typedef struct
+{
+	SetBackColor( ( color+= 39 ) * 0x0000FF );
+    TFaceEntriesSub Entries [ 10 ];
+}TFaceEntries <name="Face Data">;
+
+typedef struct(u32 count) {
+	local u32 i;
+	for (i = 0; i < count; i++)
+	{
+		TFaceEntries animEntry;
+	}
+}TFaceEntriesWrapper;
+
+typedef struct
+{
+	u32 Field_00[3];
+}TFaceFooter <name="Face Data Footer">;
+
+typedef struct
+{
+    local uint color = 39;
+    TFileHeader FileHeader;
+	TFaceEntriesWrapper FaceDataBlock(FileHeader.numofEntries)<name="Data">;
+    TFaceFooter Footer;
+} TFile <name="facial.dat">;
+
+TFile file;
