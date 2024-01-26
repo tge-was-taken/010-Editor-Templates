@@ -1,0 +1,29 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+LittleEndian();
+
+typedef struct
+{
+  short startItemId<comment="The first item in the group">;
+  short endItemId<comment="The last item in the group is this -1">;
+} CostumeGroup;
+
+typedef struct
+{
+  uint FtdSize;
+  uint FtdNumber;
+  byte Padding[8];
+  CostumeGroup Group[FtdNumber];
+} TFtd;
+
+TFtd File;

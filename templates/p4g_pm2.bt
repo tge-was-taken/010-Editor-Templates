@@ -1,0 +1,28 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+struct FILE {
+    struct HEADER {
+        byte    garbage[72];
+    } header;
+
+    struct LOCATION {
+        byte    locationThing[24];
+        byte    fieldMajor;
+        byte    moreGarbage[3];
+        byte    fieldMinor;
+        byte    garbage[5];
+        byte    playerLocationAnimation;
+        byte    soMuchTrash[189];
+        byte    mightMovePlayer[40];
+     } location;
+} file;

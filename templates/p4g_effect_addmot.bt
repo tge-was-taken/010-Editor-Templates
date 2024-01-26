@@ -1,0 +1,34 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: p4g's EFFECT_ADDMOT files
+//   Authors: Pioziomgames
+//   Version: 1.0
+//   Purpose: Parse p4g EFFECT_ADDMOT (found in amd files)
+//  Category: 
+// File Mask: EFFECT_ADDMOT
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "include/common.bt"
+
+//This file is used for making gmo FCurves independed of the animation length, which allows for easy looping
+
+typedef struct 
+{
+    SetRandomBackColor();
+    byte Name[128];
+} String128;
+
+typedef struct
+{
+    SetRandomBackColor();
+    uint FCurveCount;
+    SetRandomBackColor();
+    uint AnimationIndex <comment="Index of an animation inside the gmo">;
+    String128 FCurveNames[FCurveCount] <comment="Name matching an FCurve name inside of the gmo animation">;
+    //Any other data after this is padding
+} EFFECT_ADDMOT <optimize=false>;
+
+LittleEndian();
+EFFECT_ADDMOT File <optimize=false>;

@@ -1,0 +1,33 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: p4g's fclCostumeLineUp.ftd found in init_free.bin/init/fclTable.bin
+//   Authors: Pioziomgames
+//   Version: 1.0
+//   Purpose: Editing items that appear in the costume shop
+//  Category: Persona 4 Golden
+// File Mask: fclCostumeLineUp.ftd
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+LittleEndian();
+
+
+typedef struct(  )
+{
+    ushort ItemID;
+    byte Unk0[4];
+    byte ItemSaleMonth;
+    byte ItemSaleDay;
+} Entry <optimize = false>;
+
+typedef struct
+{
+  uint FtdSize;
+  uint FtdEntries;
+  byte Padding[8];
+  Entry Entries[FtdEntries];
+} TFtd <optimize = false>;
+
+TFtd File;
