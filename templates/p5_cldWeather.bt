@@ -40,10 +40,10 @@ enum<byte> WeatherType
 typedef struct
 {
     SetRandomBackColor();
+    byte somethingCalendarMode;
     WeatherType WeatherPeriod1 <name = "Daily Period 1">;
     WeatherType WeatherPeriod2 <name = "Daily Period 2">;
     WeatherType WeatherPeriod3 <name = "Daily Period 3">;
-    WeatherType WeatherPeriod4 <name = "Daily Period 4">;
 } DailyWeather <name = "Daily Weather">;
 
 DailyWeather Apr[30] <name = "April Weather">;DailyWeather May[31] <name = "May Weather">;DailyWeather Jun[30] <name = "June Weather">;DailyWeather Jul[31] <name = "July Weather">;DailyWeather Aug[31] <name = "August Weather">;DailyWeather Sep[30] <name = "September Weather">;DailyWeather Oct[31] <name = "October Weather">;DailyWeather Nov[30] <name = "November Weather">;DailyWeather Dec[31] <name = "December Weather">;DailyWeather Jan[31] <name = "January Weather">;DailyWeather Feb[28] <name = "February Weather">;DailyWeather Mar[31] <name = "March Weather">;

@@ -1,0 +1,33 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+// File Mask: EVTFADEOUTTABLE.BIN
+// Authors: DeathChaos
+//------------------------------------------------
+
+#include "common/include.h"
+
+BigEndian();
+
+typedef struct
+{
+    SetBackColor( ( color++ ) * 0x0000FF );
+	u16 evt_major_id;
+	u16 evt_minor_id;
+	u16 evt_fade_id;
+	u16 RESERVE;
+} EVTFADEOUTTABLE <read=ResourceRead, optimize=false>;
+
+typedef struct
+{
+  local uint color = 1;
+  EVTFADEOUTTABLE Data[ FileSize() /  0x8 ];
+} FadeOutTables <optimize=false>;
+
+FadeOutTables Bin;
+
+string ResourceRead( EVTFADEOUTTABLE &o )
+{
+  local string s;
+  SPrintf( s, "e%03d_%03d - fade = %02d", o.evt_major_id, o.evt_minor_id, o.evt_fade_id );
+  return s;
+}

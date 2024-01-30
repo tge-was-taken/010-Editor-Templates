@@ -64,20 +64,20 @@ typedef struct
     SetRandomBackColor();
     LittleEndian();
 	char Magic[4];      // 'SPR0'
-	u32 Field04;        // always 2, maybe version
+	u32 FileType;        // always 2, maybe version
 	u32 FileSize;
 	u32 Field0C;        // 0
 	u32 Field10;        // 0x20, offset
-	u16 TextureCount;   // 1
-	u16 EntryCount;     // number of entries in the file
-	u32 TextureOffset;  // 0x20, offset
-	u32 EntryOffset;    // 0x80, offset
+	u16 ImageCount;   // 1
+	u16 SpriteCount;    // number of entries in the file
+	u32 ImageInfoOffset;  // 0x20, offset
+	u32 SpriteInfoOffset;    // 0x80, offset
 
-    FSeek( TextureOffset );
-    SpriteTexture Textures[ TextureCount ];
+    FSeek( ImageInfoOffset );
+    SpriteTexture Textures[ ImageCount ];
 
-    FSeek( EntryOffset );
-    SpriteEntry Entries[ EntryCount ];
+    FSeek( SpriteInfoOffset );
+    SpriteEntry Entries[ SpriteCount ];
 
 } SprFile <optimize=false>;
 
@@ -86,7 +86,7 @@ typedef struct
     SetRandomBackColor();
 
 	u32 Id;                 // starts at 1
-	u32 Field04;            // 0?
+	u32 Flag;            	// 0?
 	u32 Offset;             // offset of data in file
 	u32 Size;               // size of data in file
 	u32 Width;              // width of the texture
@@ -106,36 +106,48 @@ typedef struct
 {
     SetRandomBackColor();
 
-	u32 Id;                 // starts at 1
-	u32 Texture_Id;            // 1?
-	u32 Field08;            // 4?
-	u32 Field0C;            // 0
-	u32 Field10;            // 0
-	u32 Field14;            // 0
-	u32 Field18;            // 0
-	u32 Field1C;            // 0
-	u32 X_Position;            // 1
-	u32 Y_Position;            // 1
-	u32 X_Length;            // 119
-	u32 Y_Length;            // 44
-	u32 Field30;            // 0
-	u32 Field34;            // 0
-	u32 X_Scale;            // 119
-	u32 Y_Scale;            // 44
-	u32 Field40;            // 0
-	u32 Field44;            // 0
-	u32 Field48;            // 0
-	u32 Field4C;            // 0
-	u32 Field50;            // 0xFFFFFFFF
-	u32 Field54;            // 0xFFFFFFFF
-	u32 Field58;            // 0xFFFFFFFF
-	u32 Field5C;            // 0xFFFFFFFF
-	u32 Field60;            // 0
-	u32 Field64;            // 0
-	u32 Field68;            // 0
-	u32 Field6C;            // 0
-	char Description[48];
+	u32 SpriteID;
+    u32 TargetImageID;
+    u32 SysFlag;
+    u32 EdtFlag;
+    u32 Layer;
+    u32 AlphaReg;
+    u32 Reserve1;
+    u32 Reserve2;
+    u32 TexPosX;
+    u32 TexPosY;
+    u32 TexWidth;
+    u32 TexHeight;
+    s32 ScrPosX;
+    s32 ScrPosY;
+    u32 ScrWidth;
+    u32 ScrHeight;
+    u32 StretchLenT;
+    u32 StretchLenB;
+    u32 StretchLenL;
+    u32 StretchLenR;
+    u32 VertexColLT;
+    u32 VertexColRT;
+    u32 VertexColRB;
+    u32 VertexColLB;
+    u8 RepeatNumsX;
+    u8 RepeatNumsY;
+    u8 RepeatStepX;
+    u8 RepeatStepY;
+    u16 Wait;
+    u16 AnimWait;
+    u32 Reserve3;
+    u32 Reserve4;
+    char Name[48];
 
-} SpriteEntry <optimize=false, read=Str("Sprite Id: %d, Texture Id: %d", Id, Texture_Id)>;
+} SpriteEntry <optimize=false, read=Str("Sprite Id: %d, Texture Id: %d", SpriteID, TargetImageID)>;
 
-SprFile File;
+// Read file
+local string filePath = GetFileName();
+local string fileName = FileNameGetBase( filePath, false );
+local string fileExt = FileNameGetExtension( filePath );
+
+if (fileExt == ".spdspr")
+	SpriteEntry entry;
+else
+	SprFile File;

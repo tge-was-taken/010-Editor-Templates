@@ -2,8 +2,8 @@
 //--- 010 Editor v8.0 Binary Template
 //
 //      File: AtlusTable_P5R.bt
-//   Authors: TGE, Lillian Goulston, Scarltz, Lipsum
-//   Version: 1.0
+//   Authors: TGE, Scarltz, Lipsum, DeathChaos, Sierra
+//   Version: 2.0
 //   Purpose: Parse Persona 5 Royal Table files.
 //  Category: Persona 5 Royal
 // File Mask: *.tbl, *.pac
@@ -42,12 +42,12 @@ typedef struct
 
 typedef struct
 {
-    u8 bit0 : 1;
-    u8 bit1 : 1;
+    u8 nonbegging : 1 <name = "No Begging Shadows", comment = "Enemies will never beg regardless of their personality (Meaning, it is as if it's always irritable)">;
+    u8 hidingstatus : 1 <name = "Hiding the status", comment = "Enemies status can be hidden similar to boss">;
     u8 bit2 : 1;
     u8 bit3 : 1;
-    u8 bit4 : 1;
-    u8 bit5 : 1;
+    u8 GuaranteePersonaMask : 1 <name = "Guarantee Persona Mask", comment = "For some reason, turning this on will make the shadow has drop coin effect and shadow visual appearance. It will also no longer return to battle after obtaining Persona.">;
+    u8 nonnegotiable : 1 <name = "Not negotiable", comment = "Enemies will never be able to negotiate">;
     u8 bit6 : 1;
     u8 bit7 : 1;
     u8 bit8 : 1;
@@ -55,9 +55,9 @@ typedef struct
     u8 bit10 : 1;
     u8 bit11 : 1;
     u8 bit12 : 1;
+    u8 hidingstatus2 : 1 <name = "Hiding the status", comment = "Enemies status can be hidden similar to boss. This is used on Boss">;
+    u8 infiniteSP : 1 <name = "Infinite SP", comment = "Enemies will be able to use any skill regardless of SP pool">;
     u8 bit13 : 1;
-    u8 bit14 : 1;
-    u8 bit15 : 1;
 } b16;
 
 typedef struct
@@ -78,12 +78,12 @@ typedef struct
     u8 bit13 : 1;
     u8 bit14 : 1;
     u8 bit15 : 1;
-    u8 bit16 : 1;
-    u8 bit17 : 1;
+    u8 nonbegging : 1 <name = "No Begging Shadows", comment = "Enemies will never beg regardless of their personality (Meaning, it is as if it's always irritable)">;
+    u8 hidingstatus : 1 <name = "Hiding the status", comment = "Enemies status can be hidden similar to boss">;
     u8 bit18 : 1;
     u8 bit19 : 1;
-    u8 bit20 : 1;
-    u8 bit21 : 1;
+    u8 GuaranteePersonaMask : 1 <name = "Guarantee Persona Mask", comment = "For some reason, turning this on will make the shadow has drop coin effect and shadow visual appearance. It will also no longer return to battle after obtaining Persona.">;
+    u8 nonnegotiable : 1 <name = "Not negotiable", comment = "Enemies will never be able to negotiate">;
     u8 bit22 : 1;
     u8 bit23 : 1;
     u8 bit24 : 1;
@@ -91,10 +91,82 @@ typedef struct
     u8 bit26 : 1;
     u8 bit27 : 1;
     u8 bit28 : 1;
+    u8 hidingstatus2 : 1 <name = "Hiding the status", comment = "Enemies status can be hidden similar to boss. This is used on Boss">;
+    u8 infiniteSP : 1 <name = "Infinite SP", comment = "Enemies will be able to use any skill regardless of SP pool">;
+    u8 bit31 : 1;
+} b32_unit;
+
+typedef struct
+{
+    u8 bit0 : 1;
+    u8 bit1 : 1;
+    u8 bit2 : 1;
+    u8 bit3 : 1;
+    u8 bit4 : 1;
+    u8 bit5 : 1;
+    u8 bit6 : 1;
+    u8 bit7 : 1;
+    u8 bit8 : 1;
+    u8 bit9 : 1;
+    u8 bit10 : 1;
+    u8 bit11 : 1;
+    u8 NonNegotiable : 1 <name = "No Negotiation", comment = "If this turns on, every enemy in that battle can't be negotiated">;
+    u8 bit13 : 1;
+    u8 bit14 : 1;
+    u8 bit15 : 1;
+    u8 PreventKnockdown : 1 <name = "Prevent Knockdown", comment = "Enemy can never get knockdown 100% by Critical but not WEAK">;
+    u8 PositionHack : 1 <name = "Position Hack", comment = "Triggers Position Hack when you enter the battle">;
+    u8 NoHoldUp : 1 <name = "No Hold Up", comment = "Hold up after downing all enemies will not trigger">;
+    u8 shadownotdisappearinbattle : 1 <name = "Not Disappear in Battle", comment = "When the shadow HP reaches 0, it will not disperse if this is turned ON in ENCOUNT.TBL Flag">;
+    u8 BulletHailonstart : 1 <name = "Bullet Hail on Start", comment = "When you start the battle, you will always start with Bullet Hail">;
+    u8 NoNavigator : 1 <name = "No Navigator in Battle", comment = "This disables Navigator in battle">;
+    u8 bit22 : 1;
+    u8 loadbattlescript : 1 <name = "Battle script load", comment = "This will load the battle script for this particular battle (CAUTION: Will cause freeze if the battle script file is not exist)">;
+    u8 bit24 : 1;
+    u8 bit25 : 1;
+    u8 loadbattlescript2 : 1 <name = "BFL Battle script load", comment = "This will load the battle script including Battle Formation for this particular battle (CAUTION: Will cause freeze if the battle script file is not exist)">;
+    u8 EnemyFirstAct : 1 <name = "Enemy First Act", comment = "This will cause all enemies to act first turn as if party got ambushed. (Whether it must be scripted or random encounter is still unknown.">;
+    u8 NoCritical : 1 <name = "No Critical", comment = "Even if you have a skill with 100% Critical, it will never trigger critical if this is ON">;
     u8 bit29 : 1;
     u8 bit30 : 1;
-    u8 bit31 : 1;
+    u8 NoEscape : 1 <name = "No Escape", comment = "This will make your battle unescapable if it is ON">;
 } b32;
+
+typedef struct
+{
+    bool Unknown : 1 <name = "Unknown">;
+    bool Unknown : 1 <name = "Unknown">;
+    bool Gift : 1 <name = "Gift">;
+    bool CraftingMaterial : 1 <name = "Crafting Material">;
+    bool DungeonItem : 1 <name = "Dungeon Item">;
+    bool Outfit : 1 <name = "Outfit">;
+    bool SkillCard : 1 <name = "Skill Card">;
+    bool Treasure : 1 <name = "Treasure">;
+    bool KeyItem : 1 <name = "Key Item">;
+    bool Consumable : 1 <name = "Consumable">;
+    bool Accessory : 1 <name = "Accessory">;
+    bool Armor : 1 <name = "Armor">;
+    bool Unknown : 1 <name = "Unknown">;
+    bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
+    bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
+    bool GL : 1 <name = "Grenade Launcher (Haru)">;
+    bool Revolver : 1 <name = "Revolver (Makoto)">;
+    bool AR : 1 <name = "Assault Rifle (Yusuke)">;
+    bool Slingshot : 1 <name = "Slingshot (Morgana)">;
+    bool SMG : 1 <name = "SMG (Ann)">;
+    bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
+    bool Handgun : 1 <name = "Handgun (Joker)">;
+    bool Unknown : 1 <name = "Unknown">;
+    bool Rapier : 1 <name = "Rapier (Kasumi)">;
+    bool BeamSword : 1 <name = "Beam Sword (Goro)">;
+    bool Axe : 1 <name = "Axe (Haru)">;
+    bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
+    bool Katana : 1 <name = "Katana (Yusuke)">;
+    bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
+    bool Whip : 1 <name = "Whip (Ann)">;
+    bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
+    bool Dagger : 1 <name = "Dagger (Joker)">;
+} ItemType <name = "Icon">;
 
 
 //---------------------------------------------
@@ -264,7 +336,7 @@ typedef struct
             {
             u16 HP <name = "HP Gain">;
             u16 SP <name = "SP Gain">;
-            } HPSP_pad <name = "(extra space)">;
+            } HPSP_pad <name = "Kasumi">;
 
 } TPlayer_HPSPPerLevel <name = "HP/SP Per Level">;
 
@@ -308,17 +380,36 @@ typedef struct
 } TExist_Segment2;
 
 // Elsai
-typedef struct
-{
-    u16 Unused;
-    u16 AiId <name = "AI ID", comment = "All I know about this value is that if it's not 0, it causes the game to load an AI script for this enemy">;
-    u32 Unknown[ 10 ];
-} TElsaiSegment1Entry;
 
 typedef struct
 {
-    u16 Data[ 160 ];
-} TElsaiSegment2Entry;
+    u32 chara<name="chara",format=hex>;
+    u32 conditional<name="conditional",format=hex>;
+    u8 logical<name="logical",format=hex>;
+    u8 RESERVE_09<name="RESERVE">;
+    u8 RESERVE_0A<name="RESERVE">;
+    u8 RESERVE_0B<name="RESERVE">;
+    u32 chara2<name="chara2">;
+    u32 conditional2<name="conditional2",format=hex>;
+    u32 action<name="action",format=hex>;
+    u32 target<name="target",format=hex>;
+    u8 probability<name="probability">;
+    u8 RESERVE_1D<name="RESERVE">;
+    u8 RESERVE_1E<name="RESERVE">;
+    u8 RESERVE_1F<name="RESERVE">;
+} datAIXls_Check;
+
+typedef struct
+{
+    u16 Flags;
+    u16 ScripID<name="AI BF Script ID">;
+    u32 AiXLCheckIDs[10]<name="AI XL IDs">;
+} TElsaiSegment1Entry<name="ElsAI Data", read=Str("BF ID - %03d", this.ScripID)>;
+
+typedef struct
+{
+    datAIXls_Check Data[ 10 ]<name="AI XL Data">;
+} TElsaiSegment2Entry<name="AI XL">;
 
 // AICalc tables
 // Segment1 probably has bigger chunks than u32
@@ -359,6 +450,38 @@ typedef struct
     u32 Unknown;
 } TAICalc_Segment7;
 
+typedef struct
+{
+    u16 ReplacementEnemyID;
+    u8 Overall_Replacement_Chance<comment="if flag 0x2000005d is on, chance is increased by 30%">;
+    u8 Slot_1_Chance<comment="Random chance is same for shared enemy IDs.  If one enemy ID fails, then even if in another slot, that same enemy ID will still fail.">;
+    u8 Slot_2_Chance;
+    u8 Slot_3_Chance;
+    u8 Slot_4_Chance;
+    u8 Slot_5_Chance;
+} TRoyalEnemyReplace <name = "Enemy Replacement Data">;
+
+typedef struct
+{
+    u8 Overall_Disaster_Chance;
+    u8 Slot_1_Chance;
+    u8 Slot_2_Chance;
+    u8 Slot_3_Chance;
+    u8 Slot_4_Chance;
+    u8 Slot_5_Chance;
+    u8 Max_Disaster_Shadows;
+} TRoyalDisasterReplace <name = "Disaster Shadow Data">;
+
+typedef struct
+{
+    TRoyalEnemyReplace EnemyReplacementData;
+    TRoyalDisasterReplace DisasterData;
+    u8 Field0f<comment="Sorta like a difficulty modifier?  3 and 4 can cause disasters to spawn with sleep and rage.">;
+    u8 Field10<comment="Related to how likely it is for normal enemies to attack their disaster allies.">;
+    u8 Field11;
+    u8 Field12;
+    u8 Field13;
+} TRoyalncounter <name = "P5R Data">;
 
 // Encounter
 typedef struct
@@ -366,26 +489,12 @@ typedef struct
     b32 Flags <name = "Flags">;
     u16 Field04;
     u16 Field06;
-    BattleUnit Units[ 5 ] <name = "Battle Units">;
-    u16 FieldId <name = "Field ID">;
-    u16 RoomId <name = "Room ID">;
+    BattleUnit Units[5] <name = "Battle Units">;
+    u16 FieldId <name = "Field Major ID">;
+    u16 RoomId <name = "Field Minor ID">;
     MusicID MusicId <name = "Music">;
-    u16 UnknownR;
-    u16 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u16 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u16 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u16 UnknownR;
-} TEncounter_Segment1 <name = "Enemy Encounters">;
+	TRoyalncounter ExtraData <name = "Extra Data">;
+} TEncounter_Segment1 <name = "Enemy Encounters",read=Str("Enemies - %03d - %03d - %03d - %03d - %03d - f%03d_%03d", this.Units[0], this.Units[1], this.Units[2], this.Units[3], this.Units[4], this.FieldId, this.RoomId)>;
 
 typedef struct
 {
@@ -431,33 +540,56 @@ typedef struct
   } Award[ 3 ] <optimize=false>;
 } TEncount_Challenge <optimize=false, name = "Challenge Battle Data">;
 
+typedef struct
+{
+    u16 ItemId<name="Item ID">;
+    u16 DropProbability<name="Drop Probability %">;
+} datEnemyItemTable;
+
+typedef struct
+{
+    u16 EventID<name="Event ID">;
+    u16 ItemId<name="Item ID">;
+    u16 DropProbability<name="Drop Probability %">;
+} datEnemyEventItemTable;
+
+typedef struct
+{
+    ElementalType Attribute<name="Elemental Attribute">;
+    u8 Accuracy<name="Attack Accuracy">;
+    u16 Damage<name="Attack Damage">;
+} datEnemyAttackTable;
+
 // Unit table
 typedef struct
 {
-    b16 Flags <name = "Flags">;
-    u8 UnknownR;
-    u8 UnknownR;
+	b32_unit Flags <name = "Flags">;
     ArcanaID Arcana <name = "Arcana">;
-    u8 UnknownR;
+    u8 RESERVE_05<name="RESERVE">;
     u16 Level <name = "Level">;
     u32 Hp <name = "HP">;
     u32 Sp <name = "SP">;
-    PersonaStats Stats;
-    byte : 1;
+    PersonaStats Stats<name="Enemy Stats">;
+    u8 RESERVE_STAT<name="RESERVE">;
     BattleSkill SkillIds[ 8 ] <name = "Battle Skills">;
     u16 ExpReward <name = "EXP Reward">;
     u16 MoneyReward <name = "Money Reward">;
-    u16 Unknown4;
-    u16 Unknown5;
-    u8 Unknown6[ 18 ];
-    b16 Unknown7;
-    u16 AttackDamage <name = "Attack Damage">;
+    datEnemyItemTable DropTables[4]<name="Item Drop List">;
+    datEnemyEventItemTable EventDrop<name="Event Item Drop">;;
+    datEnemyAttackTable AttackDamage <name = "Attack Attributes">;
 } TEnemyUnitStats <name = "Enemy Unit Stats">;
 
 typedef struct
 {
-    u8 Values[ 24 ];
-} TUnitSegment3Entry;
+    u8 VoiceID <comment = "Subtract 1 from the id i.e. 9 to load voicepack 10">;
+    u8 TALK_PERSON;
+    u8 VoiceABCValue;
+    u8 padding;
+    u16 TALK_MONEYMIN;
+    u16 TALK_MONEYMAX;
+    u16 TALK_ITEM[4]<format=hex>;
+    u16 TALK_ITEM_RARE[4]<format=hex>;
+} TUnitVoiceIndex <name = "Voice Index">;
 
 typedef struct
 {
@@ -472,7 +604,7 @@ typedef struct
 {
     ElementalType Element <name = "Elemental Type">;
     Skill_PassiveOrActive PassiveOrActive <name = "Passive or Active?", comment = "Must be set correctly for the element icon to appear properly, even though it's otherwise redundant">;
-    u8 UnknownR;
+    u8 InheritableSkill <name = "Inheritable", comment = "Put 1 until 8 for Inheritable skill. 0 if you don't want to">;
     u8 UnknownR;
     u8 UnknownR;
     u8 UnknownR;
@@ -480,19 +612,18 @@ typedef struct
     b8 RedundantBitfield_ThanksATLUS <name = "Redundant Bitfield", comment = "Rightmost 4 bits of the bitfield don't do anything. Probably leftovers from early P5 coding.">;
 } TSkill_Elements <name = "Skill Elements">;
 
-typedef struct
+typedef struct()
 {
-    u8 UnknownR<hidden=true>;
     u8 UnknownR;
+    Skill_Condition Condition <name = "Condition Usage", comment = "Must be accompanied with Value 8 in Caster Effect 2">;
     Skill_CasterEffect1 CasterEffect1 <name = "Caster Effect", comment = "Needs more testing">;
     Skill_CasterEffect2 CasterEffect2 <name = "Caster Effect", comment = "Needs more testing">;
     u8 UnknownR;
-    u8 UnknownR;
+    Skill_AreaType PlaceUsage <name = "Area Type", comment = "Determine if it is usable in battle, field, or both">;
     Skill_DamageStat DamageStat <name = "Damage Stat", comment = "Determines which stat is used to determine damage">;
     Skill_CostType CostType <name = "Cost Type">;
-    u8 Unknown <name = "Unknown">;
-    u8 SkillCost <name = "Skill Cost", comment = "% of max HP or fixed amount of SP">;
-        u8 Unknown <name = "Unknown">;
+    u16 SkillCost <name = "Skill Cost", comment = "% of max HP or fixed amount of SP">;
+    u8 Add2 <name = "Add 256 SP Cost for every 1 value">;
     Skill_PhysicalOrMagicSkill PhysicalOrMagic <name = "Physical or Magic?", comment = "determines what's affected by either Charge or Concentrate, but doesn't seem to change what's reflected by Tetrakarn or Makarakarn. Needs more testing">;
     Skill_NumberOfTargets NumberOfTargets <name = "Number of Targets">;
 
@@ -516,46 +647,45 @@ typedef struct
     u16 BaseDamage <name = "Base Damage">;
     Skill_SPEffect SPEffect <name = "Deplete or Restore SP?">;
     u8 Unknown <name = "Unknown">;
-    u8 Unknown <name = "Unknown">;
-    u8 SPAmount <name = "SP Amount">;
-    Skill_ApplyOrCureEffect ApplyOrCureEffect <name = "Apply or Cure Effect?">;
+    u16 SPAmount <name = "SP Amount">;
+    Skill_ApplyOrCureEffect ApplyOrCureEffect <name = "Apply or Cure Effect?", comment = "Ignore resistance works 100% for Physical. Magic including Light, Dark, Almighty can only Semi Pierce (NULL, DRAIN, REPEL can't be pierced)">;
     u8 SecondaryEffectChance <name = "Effect Chance">;
     u8 Unknown <name = "Unknown">;
 
    struct
         {
-            bool Unknown : 1 <name = "Unknown">;
+            bool Counter : 1 <name = "Counter?", comment = "it may be possibly counter mode exclusive to Yaldabaoth">;
             bool Mouse : 1 <name = "Mouse", comment = "Only affects the Phantom Thieves">;
-            bool Unknown : 1 <name = "Unknown">;
+            bool Gluttony : 1 <name = "Gluttony?", comment = "it may be possibly Gluttony ailment exclusive to Yaldabaoth">;
             bool KnockDown : 1 <name = "Knock Down">;
             bool Unconscious : 1 <name = "Unconscious">;
-            bool WeakToAllElements : 1 <name = "Weak to all Elements">;
+            bool WeakToAllElements : 1 <name = "Weak to all Elements", comment = "Shock,Knockdown,Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
             bool Jealousy : 1 <name = "Jealousy">;
             bool Wrath : 1 <name = "Wrath">;
         } Effect1 <name = "Effect List 1">;
 
     struct
         {
-            bool Lust : 1 <name = "Lust">;
-            bool NoSPFlee : 1 <name = "No SP Flee", comment = "Only affects enemies">;
-            bool Berserk : 1 <name = "Berserk", comment = "Visual effect only">;
+            bool Lust : 1 <name = "Lust", comment = "Lust, Rage, Berserk can be combined into 1 single ailment">;
+            bool Panic : 1 <name = "Panic", comment = "Will cause Shadows to run away">;
+            bool Berserk : 1 <name = "Berserk", comment = "Visual effect only. Also, Lust, Rage, Berserk can be combined into 1 single ailment">;
             bool Desparation : 1 <name = "Desparation", comment = "Attack up, Defense down; not affected by other buffs/debuffs">;
             bool Brainwash : 1 <name = "Brainwash">;
-            bool Despair : 1 <name = "Despair">;
-            bool Rage : 1 <name = "Rage">;
-            bool Sleep : 1 <name = "Sleep">;
+            bool Despair : 1 <name = "Despair", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            bool Rage : 1 <name = "Rage", comment = "Lust, Rage, Berserk can be combined into 1 single ailment">;
+            bool Sleep : 1 <name = "Sleep", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
         } Effect2 <name = "Effect List 2">;
 
    struct
         {
-            bool Hunger : 1 <name = "Hunger", comment = "Only affects the Phantom Thieves">;
-            bool Forget : 1 <name = "Forget">;
-            bool Fear : 1 <name = "Fear">;
-            bool Confuse : 1 <name = "Confuse">;
-            bool Dizzy : 1 <name = "Dizzy">;
-            bool Shock : 1 <name = "Shock">;
-            bool Freeze : 1 <name = "Freeze">;
-            bool Burn : 1 <name = "Burn">;
+            bool Hunger : 1 <name = "Hunger", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            bool Forget : 1 <name = "Forget", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            bool Fear : 1 <name = "Fear", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            bool Confuse : 1 <name = "Confuse", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            bool Dizzy : 1 <name = "Dizzy", comment = "Dizzy, Weakness and Knockdown can be combined into 1 single ailment">;
+            bool Shock : 1 <name = "Shock", comment = "Shock, Weakness and Knockdown can be combined into 1 single ailment">;
+            bool Freeze : 1 <name = "Freeze", comment = "Burn and Freeze can be combined into 1 single ailment">;
+            bool Burn : 1 <name = "Burn", comment = "Burn and Freeze can be combined into 1 single ailment">;
         } Effect3 <name = "Effect List 3">;
 
    struct
@@ -596,8 +726,8 @@ typedef struct
 
     struct
         {
-            bool AccuracyDown : 1 <name = "Evasion Down">;
-            bool AccuracyUp : 1 <name = "Evasion Up">;
+            bool AccuracyDown : 1 <name = "Accuracy Down">;
+            bool AccuracyUp : 1 <name = "Accuracy Up">;
             bool DefenseDown : 1 <name = "Defense Down">;
             bool DefenseUp : 1 <name = "Defense Up">;
             bool EvasionDown : 1 <name = "Evasion Down">;
@@ -607,51 +737,43 @@ typedef struct
         } BuffDebuff <name = "Buffs and Debuffs">;
 
     u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    u8 UnknownR;
-    Skill_ExtraEffect ExtraEffect <name = "Extra Effects">;
+    u16 RESERVE_2A;
+    Skill_OtherEffect OtherBuff <name = "Other Buffs", comment = "Put 2 to make All Barriers that Drains">;
+    Skill_ExtraEffect ExtraEffect <name = "Extra Effects", comment = "Ignore resistance works 100% for Physical. Magic including Light, Dark, Almighty can only Semi Pierce (NULL, DRAIN, REPEL can't be pierced).">;
     u8 CritChance <name = "Crit Chance", comment = "Only works for Physical or Gun skills">;
+    u8 ForItem <name = "For Item?", comment = "Not sure what this does since it has 20 value on Firecracker, Magatama item">;
     u8 Unknown <name = "Unknown">;
-    u8 Unknown <name = "Unknown">;
-} TSkill_ActiveSkillData <name="Active Skill Data: ">;
+} TSkill_ActiveSkillData <name="Active Skill Data">;
 
 typedef struct
 {
+    AilmentStatus ApplicableAilments<name = "Applicable Ailments", comment = "If the target has any of these ailments, the affinities in the TechnicalAffinities fields will deal Technical damage.">;
+    uint AllAffinitiesAreTechnical<name = "All Affinities are Technical", comment = "If set to 1, the TechnicalAffinities array is ignored; instead, ALL damaging skills inflict Technical damage agaisnt these ailments.">;
+    Tech_TechnicalSkillAffinity TechnicalAffinities[5]<name = "Technical Affinities", comment = "Skills of these affinities are Technical against foes with the above ailments.">;
+    float damageMultiplier <name = "Damage Multiplier", comment = "Technicals of this type will multiply damage by this amount, plus up to 0.3 for party's Techncial Rank.">;
     u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-    u32 UnknownR;
-} TSkill_Skill_UnknownR <name = "Unknown Skill Segment">;
+    Tech_RequiresKnowingTheHeart RequiresKnowingTheHeart<name = "Requires Knowing the Heart", comment = "If set to Yes, this entry of the map only applies if you've read the book \"Knowing the Heart\" for extra Tech combos.">;
+} TSkill_Skill_TechnicalMap <name = "Technical Combo Map">;
 
 typedef int s32;
 
 typedef struct
 {
-  u16 ord; // trait command
+  u16 ord <name = "Effect", comment = "Selects the effect of the trait from a preprogrammed list.">;
   u16 field_2;
-  s32 effect_rate;
+  s32 effect_rate <name = "Effect Rate", comment = "Percent chance that the trait triggers.">;
   
-  union {
-    s32 trait; // sub trait
-    s32 trait_effects; // bitfield
-  } effect;
+  s32 union_effect <name = "Sub Trait", comment = "Adds effect of trait with given ID to this trait. Requires 'Use Sub Trait'=1.">;
 
-  f32 effect_size;
-  s32 trait_ex[ 10 ]; // extra inheritable traits in fusion
+  f32 effect_size <name = "Effect Size", comment = "Strength of effect. Usually a multiplier for damage, healing, skill costs, ailment chance, etc.">;
+  s32 trait_ex[ 10 ] <name = "Substitute Traits", comment = "Alternate inheritable traits during fusion if this one is a duplicate or a Treasure Demon trait.">;
 
   struct
   {
-    s32 IsUnique : 1;
-    s32 IsTreasure : 1;
-    s32 HasSubTrait : 1; // see effect union
-    s32 _ : 29;
+	s32 UnknownBitfield : 29;
+	s32 UseSubTrait : 1 <name = "Use Sub Trait", comment = "If set to 1, this trait will also include effects of trait with ID in the 'Sub Trait' field.">;
+	s32 IsTreasure : 1 <name = "Is Treasure", comment = "If 1, indicates that this is from a Treasure Demon and a substitute trait should be inherited instead.">;
+    s32 IsUnique : 1 <name = "Is Unique", comment = "Put 0 for inheritable trait. Put 1 if you don't want to">;
   } trait_flags;
 } TSkill_TraitData;
 
@@ -660,143 +782,43 @@ typedef struct
 
 typedef struct
 {
-
-    struct
-        {
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Gift : 1 <name = "Gift">;
-            bool CraftingMaterial : 1 <name = "Crafting Material">;
-            bool DungeonItem : 1 <name = "Dungeon Item">;
-            bool Outfit : 1 <name = "Outfit">;
-            bool SkillCard : 1 <name = "Skill Card">;
-            bool Treasure : 1 <name = "Treasure">;
-            bool KeyItem : 1 <name = "Key Item">;
-            bool Consumable : 1 <name = "Consumable">;
-            bool Accessory : 1 <name = "Accessory">;
-            bool Armor : 1 <name = "Armor">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
-            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
-            bool GL : 1 <name = "Grenade Launcher (Haru)">;
-            bool Revolver : 1 <name = "Revolver (Makoto)">;
-            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
-            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
-            bool SMG : 1 <name = "SMG (Ann)">;
-            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
-            bool Handgun : 1 <name = "Handgun (Joker)">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Rapier : 1 <name = "Rapier (Kasumi)">;
-            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
-            bool Axe : 1 <name = "Axe (Haru)">;
-            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
-            bool Katana : 1 <name = "Katana (Yusuke)">;
-            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
-            bool Whip : 1 <name = "Whip (Ann)">;
-            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
-            bool Dagger : 1 <name = "Dagger (Joker)">;
-        } Icon <name = "Icon">;
-
-
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    ItemType itemkind<name="Item Type">;
+    u16 WeaponFieldMenuSorting <name = "Accessories Field Menu Sorting", comment = "Higher Value will put it on top.">;
+    u16 WeaponShopMenuSorting <name = "Accessories Shop Menu Sorting", comment = "Lower Value will put it on top.">;
     EquippableUsers Users;
-    u16 Unknown;
-    u8 Strength <name = "Strength Boost">;
-    u8 Magic <name = "Magic Boost">;
-    u8 Endurance <name = "Endurance Boost">;
-    u8 Agility <name = "Agility Boost">;
-    u8 Luck <name = "Luck Boost">;
-    u8 Unknown;
-    BattleSkill Effect <name = "Effect">;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    AccessoriesShop isitavailable4 <name = "Show in Shop?", comment = "Put 1 to make it not shown. Put 0 to make it shown in Iwai Shop.">;
+    PersonaStats Stats<name="Stat Boosts">;
+    u8 RESERVE_STAT<name="RESERVE">;
+    GearEffect Effect[3] <name = "Effect">;
+    u16 level<name="Level">;
+    u16 value<name="Value">;
+    u16 RESERVE_1E<name="RESERVE">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    u16 RESERVE_2A<name="RESERVE">;
+    u32 material[5]<name="Materials",format=hex>;
 } TItem_Accessories <name ="Accessories">;
 
 
 typedef struct
 {
-
-    struct
-        {
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Gift : 1 <name = "Gift">;
-            bool CraftingMaterial : 1 <name = "Crafting Material">;
-            bool DungeonItem : 1 <name = "Dungeon Item">;
-            bool Outfit : 1 <name = "Outfit">;
-            bool SkillCard : 1 <name = "Skill Card">;
-            bool Treasure : 1 <name = "Treasure">;
-            bool KeyItem : 1 <name = "Key Item">;
-            bool Consumable : 1 <name = "Consumable">;
-            bool Accessory : 1 <name = "Accessory">;
-            bool Armor : 1 <name = "Armor">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
-            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
-            bool GL : 1 <name = "Grenade Launcher (Haru)">;
-            bool Revolver : 1 <name = "Revolver (Makoto)">;
-            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
-            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
-            bool SMG : 1 <name = "SMG (Ann)">;
-            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
-            bool Handgun : 1 <name = "Handgun (Joker)">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Rapier : 1 <name = "Rapier (Kasumi)">;
-            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
-            bool Axe : 1 <name = "Axe (Haru)">;
-            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
-            bool Katana : 1 <name = "Katana (Yusuke)">;
-            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
-            bool Whip : 1 <name = "Whip (Ann)">;
-            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
-            bool Dagger : 1 <name = "Dagger (Joker)">;
-        } Icon <name = "Icon">;
-
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    ItemType itemkind<name="Item Type">;
+    u16 WeaponFieldMenuSorting <name = "Armor Field Menu Sorting", comment = "Higher Value will put it on top.">;
+    u16 WeaponShopMenuSorting <name = "Armor Shop Menu Sorting", comment = "Lower Value will put it on top.">;
     EquippableUsers Users;
-    u16 Unknown;
+    ArmorWeaponShop isitavailable3 <name = "Show in Shop?", comment = "Put 1 to make it not shown. Put 0 to make it shown in Iwai Shop.">;
     u16 ArmorDefense <name = "Defense">;
     u16 ArmorEvasion <name = "Evasion">;
-    u8 ArmorStrength <name = "Strength Boost">;
-    u8 ArmorMagic <name = "Magic Boost">;
-    u8 ArmorEndurance <name = "Endurance Boost">;
-    u8 ArmorAgility <name = "Agility Boost">;
-    u8 ArmorLuck <name = "Luck Boost">;
-    u8 Unknown;
-    GearEffect Effect <name = "Effect">;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    PersonaStats Stats<name="Stat Boosts">;
+    u8 RESERVE_STAT<name="RESERVE">;
+    GearEffect Effect[3] <name = "Effect">;
+    u16 level<name="Level">;
+    u16 value<name="Value">;
+    u16 RESERVE_1E<name="RESERVE">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
     u16 Unknown;
@@ -804,455 +826,131 @@ typedef struct
 
 typedef struct
 {
-
-    struct
-        {
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Gift : 1 <name = "Gift">;
-            bool CraftingMaterial : 1 <name = "Crafting Material">;
-            bool DungeonItem : 1 <name = "Dungeon Item">;
-            bool Outfit : 1 <name = "Outfit">;
-            bool SkillCard : 1 <name = "Skill Card">;
-            bool Treasure : 1 <name = "Treasure">;
-            bool KeyItem : 1 <name = "Key Item">;
-            bool Consumable : 1 <name = "Consumable">;
-            bool Accessory : 1 <name = "Accessory">;
-            bool Armor : 1 <name = "Armor">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
-            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
-            bool GL : 1 <name = "Grenade Launcher (Haru)">;
-            bool Revolver : 1 <name = "Revolver (Makoto)">;
-            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
-            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
-            bool SMG : 1 <name = "SMG (Ann)">;
-            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
-            bool Handgun : 1 <name = "Handgun (Joker)">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Rapier : 1 <name = "Rapier (Kasumi)">;
-            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
-            bool Axe : 1 <name = "Axe (Haru)">;
-            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
-            bool Katana : 1 <name = "Katana (Yusuke)">;
-            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
-            bool Whip : 1 <name = "Whip (Ann)">;
-            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
-            bool Dagger : 1 <name = "Dagger (Joker)">;
-        } Icon <name = "Icon">;
-
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    BattleSkill Skill;
-    u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    ItemType itemkind<name="Item Type">;
+    u32 MenuSorting<name="Menu Sorting">;
+    u16 flag<name="Flags",format=hex>;
+    Usability Availability <name = "Availability", comment = "Set if it is able to use in battle or field or none">;
+    BattleSkill Skill <name = "Battle Skill", comment = "Set the item to use the skill">;
+    u16 RESERVE_0E<name="RESERVE">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    u16 RESERVE_1A<name="RESERVE">;
+    u32 Material[5]<name="Materials",format=hex>;
 } TItem_Consumables <name ="Consumables">;
 
 typedef struct
 {
-
-struct
-    {
-        bool Unknown : 1 <name = "Unknown">;
-        bool Unknown : 1 <name = "Unknown">;
-        bool Gift : 1 <name = "Gift">;
-        bool CraftingMaterial : 1 <name = "Crafting Material">;
-        bool DungeonItem : 1 <name = "Dungeon Item">;
-        bool Outfit : 1 <name = "Outfit">;
-        bool SkillCard : 1 <name = "Skill Card">;
-        bool Treasure : 1 <name = "Treasure">;
-        bool KeyItem : 1 <name = "Key Item">;
-        bool Consumable : 1 <name = "Consumable">;
-        bool Accessory : 1 <name = "Accessory">;
-        bool Armor : 1 <name = "Armor">;
-        bool Unknown : 1 <name = "Unknown">;
-        bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
-        bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
-        bool GL : 1 <name = "Grenade Launcher (Haru)">;
-        bool Revolver : 1 <name = "Revolver (Makoto)">;
-        bool AR : 1 <name = "Assault Rifle (Yusuke)">;
-        bool Slingshot : 1 <name = "Slingshot (Morgana)">;
-        bool SMG : 1 <name = "SMG (Ann)">;
-        bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
-        bool Handgun : 1 <name = "Handgun (Joker)">;
-        bool Unknown : 1 <name = "Unknown">;
-        bool Rapier : 1 <name = "Rapier (Kasumi)">;
-        bool BeamSword : 1 <name = "Beam Sword (Goro)">;
-        bool Axe : 1 <name = "Axe (Haru)">;
-        bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
-        bool Katana : 1 <name = "Katana (Yusuke)">;
-        bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
-        bool Whip : 1 <name = "Whip (Ann)">;
-        bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
-        bool Dagger : 1 <name = "Dagger (Joker)">;
-    } Icon <name = "Icon">;
-
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    ItemType itemkind<name="Item Type">;
+    u32 MenuSorting<name="Menu Sorting">;
+    u16 flag<name="Flags",format=hex>;
+    u16 RESERVE_1A<name="RESERVE">;
 } TItem_KeyItems <name ="Key Items">;
 
 typedef struct
 {
-
-struct
-    {
-        bool Unknown : 1 <name = "Unknown">;
-        bool Unknown : 1 <name = "Unknown">;
-        bool Gift : 1 <name = "Gift">;
-        bool CraftingMaterial : 1 <name = "Crafting Material">;
-        bool DungeonItem : 1 <name = "Dungeon Item">;
-        bool Outfit : 1 <name = "Outfit">;
-        bool SkillCard : 1 <name = "Skill Card">;
-        bool Treasure : 1 <name = "Treasure">;
-        bool KeyItem : 1 <name = "Key Item">;
-        bool Consumable : 1 <name = "Consumable">;
-        bool Accessory : 1 <name = "Accessory">;
-        bool Armor : 1 <name = "Armor">;
-        bool Unknown : 1 <name = "Unknown">;
-        bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
-        bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
-        bool GL : 1 <name = "Grenade Launcher (Haru)">;
-        bool Revolver : 1 <name = "Revolver (Makoto)">;
-        bool AR : 1 <name = "Assault Rifle (Yusuke)">;
-        bool Slingshot : 1 <name = "Slingshot (Morgana)">;
-        bool SMG : 1 <name = "SMG (Ann)">;
-        bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
-        bool Handgun : 1 <name = "Handgun (Joker)">;
-        bool Unknown : 1 <name = "Unknown">;
-        bool Rapier : 1 <name = "Rapier (Kasumi)">;
-        bool BeamSword : 1 <name = "Beam Sword (Goro)">;
-        bool Axe : 1 <name = "Axe (Haru)">;
-        bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
-        bool Katana : 1 <name = "Katana (Yusuke)">;
-        bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
-        bool Whip : 1 <name = "Whip (Ann)">;
-        bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
-        bool Dagger : 1 <name = "Dagger (Joker)">;
-    } Icon <name = "Icon">;
-
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    ItemType itemkind<name="Item Type">;
+    u32 MenuSorting<name="Menu Sorting">;
+    u16 flag<name="Flags",format=hex>;
+    u16 value<name="Value">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    u16 RESERVE_16<name="RESERVE">;
+    u32 Material[5]<name="Materials",format=hex>;
 } TItem_Materials <name ="Materials">;
 
 typedef struct
 {
-
-    struct
-        {
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Gift : 1 <name = "Gift">;
-            bool CraftingMaterial : 1 <name = "Crafting Material">;
-            bool DungeonItem : 1 <name = "Dungeon Item">;
-            bool Outfit : 1 <name = "Outfit">;
-            bool SkillCard : 1 <name = "Skill Card">;
-            bool Treasure : 1 <name = "Treasure">;
-            bool KeyItem : 1 <name = "Key Item">;
-            bool Consumable : 1 <name = "Consumable">;
-            bool Accessory : 1 <name = "Accessory">;
-            bool Armor : 1 <name = "Armor">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
-            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
-            bool GL : 1 <name = "Grenade Launcher (Haru)">;
-            bool Revolver : 1 <name = "Revolver (Makoto)">;
-            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
-            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
-            bool SMG : 1 <name = "SMG (Ann)">;
-            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
-            bool Handgun : 1 <name = "Handgun (Joker)">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Rapier : 1 <name = "Rapier (Kasumi)">;
-            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
-            bool Axe : 1 <name = "Axe (Haru)">;
-            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
-            bool Katana : 1 <name = "Katana (Yusuke)">;
-            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
-            bool Whip : 1 <name = "Whip (Ann)">;
-            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
-            bool Dagger : 1 <name = "Dagger (Joker)">;
-        } Icon <name = "Icon">;
-
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    ItemType itemkind<name="Item Type">;
+    u16 WeaponFieldMenuSorting <name = "Melee Weapon Field Menu Sorting", comment = "Higher Value will put it on top.">;
+    u16 WeaponShopMenuSorting <name = "Melee Weapon Shop Menu Sorting", comment = "Lower Value will put it on top.">;
     EquippableUsers Users;
-    u16 Unknown;
-    u16 Unknown;
+    MeleeWeaponShop isitavailable <name = "Show in Shop?", comment = "Put 1 to make it not shown. Put 0 to make it shown in Iwai Shop.">;
+    u16 RESERVE;
     u16 Attack <name = "Attack">;
     u16 Accuracy <name = "Accuracy">;
-    u8 Strength <name = "Strength Boost">;
-    u8 Magic <name = "Magic Boost">;
-    u8 Endurance <name = "Endurance Boost">;
-    u8 Agility <name = "Agility Boost">;
-    u8 Luck <name = "Luck Boost">;
-    u8 Unknown;
-    GearEffect Effect <name = "Effect">;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
-    Month MonthAvailable <name = "Month Available for Purchase">;
-    u8 DayAvailable <name = "Day Available for Purchase">;
-    u16 Unknown;
+    PersonaStats Stats<name="Stat Boosts">;
+    u8 RESERVE_STAT<name="RESERVE">;
+    GearEffect Effect[3] <name = "Effect">;
+    u16 level<name="Level">;
+    u16 value<name="Value">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
+    Month MonthAvailable <name = "Month Available for Purchase", comment = "Put 3/31 if you don't want it to be shown in the shop.">;
+    u8 DayAvailable <name = "Day Available for Purchase", comment = "Put 3/31 if you don't want it to be shown in the shop.">;
+    u16 UNKNOWN_2E;
 } TItem_MeleeWeapons <name ="Melee Weapons">;
 
 typedef struct
 {
-
-    struct
-        {
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Gift : 1 <name = "Gift">;
-            bool CraftingMaterial : 1 <name = "Crafting Material">;
-            bool DungeonItem : 1 <name = "Dungeon Item">;
-            bool Outfit : 1 <name = "Outfit">;
-            bool SkillCard : 1 <name = "Skill Card">;
-            bool Treasure : 1 <name = "Treasure">;
-            bool KeyItem : 1 <name = "Key Item">;
-            bool Consumable : 1 <name = "Consumable">;
-            bool Accessory : 1 <name = "Accessory">;
-            bool Armor : 1 <name = "Armor">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
-            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
-            bool GL : 1 <name = "Grenade Launcher (Haru)">;
-            bool Revolver : 1 <name = "Revolver (Makoto)">;
-            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
-            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
-            bool SMG : 1 <name = "SMG (Ann)">;
-            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
-            bool Handgun : 1 <name = "Handgun (Joker)">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Rapier : 1 <name = "Rapier (Kasumi)">;
-            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
-            bool Axe : 1 <name = "Axe (Haru)">;
-            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
-            bool Katana : 1 <name = "Katana (Yusuke)">;
-            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
-            bool Whip : 1 <name = "Whip (Ann)">;
-            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
-            bool Dagger : 1 <name = "Dagger (Joker)">;
-        } Icon <name = "Icon">;
-
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    ItemType itemkind<name="Item Type">;
+    u16 FieldMenuSorting;
+    u16 ShopMenuSorting;
     EquippableUsers Users;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    GearEffect Effect[3] <name = "Effect">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
+    Month MonthAvailable <name = "Month Available for Purchase", comment = "Put 3/31 if you don't want it to be shown in the shop.">;
+    u8 DayAvailable <name = "Day Available for Purchase", comment = "Put 3/31 if you don't want it to be shown in the shop.">;
+    u16 RESERVE;
+    u16 RESERVE;
 } TItem_Outfits <name ="Outfits">;
 
 typedef struct
 {
-
-    struct
-        {
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Gift : 1 <name = "Gift">;
-            bool CraftingMaterial : 1 <name = "Crafting Material">;
-            bool DungeonItem : 1 <name = "Dungeon Item">;
-            bool Outfit : 1 <name = "Outfit">;
-            bool SkillCard : 1 <name = "Skill Card">;
-            bool Treasure : 1 <name = "Treasure">;
-            bool KeyItem : 1 <name = "Key Item">;
-            bool Consumable : 1 <name = "Consumable">;
-            bool Accessory : 1 <name = "Accessory">;
-            bool Armor : 1 <name = "Armor">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
-            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
-            bool GL : 1 <name = "Grenade Launcher (Haru)">;
-            bool Revolver : 1 <name = "Revolver (Makoto)">;
-            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
-            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
-            bool SMG : 1 <name = "SMG (Ann)">;
-            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
-            bool Handgun : 1 <name = "Handgun (Joker)">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Rapier : 1 <name = "Rapier (Kasumi)">;
-            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
-            bool Axe : 1 <name = "Axe (Haru)">;
-            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
-            bool Katana : 1 <name = "Katana (Yusuke)">;
-            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
-            bool Whip : 1 <name = "Whip (Ann)">;
-            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
-            bool Dagger : 1 <name = "Dagger (Joker)">;
-        } Icon <name = "Icon">;
-
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    BattleSkill Skill;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    ItemType itemkind<name="Item Type">;
+    u32 MenuSorting<name="Menu Sorting">;
+    u16 flag<name="Flags",format=hex>;
+    BattleSkill Skill<name="Skill ID">;
+    u16 level<name="Level">;
+    u16 value<name="Value">;
+    u32 PurchasePrice;
+    u32 SellPrice;
 } TItem_SkillCards <name ="Skill Cards">;
+
+typedef struct {
+	
+	RangedItemUpgradable RangedItemUpgradable2 <name = "Ranged Item Upgradable", comment = "If 0, this enhancement will not show in Iwai. 1 if you want to upgrade this specific enhancement">;
+	u16 Attack1 <name = "Attack">;
+	u16 Accuracy1 <name = "Accuracy">;
+	u16 Rounds1 <name = "Rounds">;
+	GearEffect Effect <name = "Effect">;
+} GunEnhancement;
 
 typedef struct
 {
-
-    struct
-        {
-            bool Unknown : 1 <name = "Unknown">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Gift : 1 <name = "Gift">;
-            bool CraftingMaterial : 1 <name = "Crafting Material">;
-            bool DungeonItem : 1 <name = "Dungeon Item">;
-            bool Outfit : 1 <name = "Outfit">;
-            bool SkillCard : 1 <name = "Skill Card">;
-            bool Treasure : 1 <name = "Treasure">;
-            bool KeyItem : 1 <name = "Key Item">;
-            bool Consumable : 1 <name = "Consumable">;
-            bool Accessory : 1 <name = "Accessory">;
-            bool Armor : 1 <name = "Armor">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
-            bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
-            bool GL : 1 <name = "Grenade Launcher (Haru)">;
-            bool Revolver : 1 <name = "Revolver (Makoto)">;
-            bool AR : 1 <name = "Assault Rifle (Yusuke)">;
-            bool Slingshot : 1 <name = "Slingshot (Morgana)">;
-            bool SMG : 1 <name = "SMG (Ann)">;
-            bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
-            bool Handgun : 1 <name = "Handgun (Joker)">;
-            bool Unknown : 1 <name = "Unknown">;
-            bool Rapier : 1 <name = "Rapier (Kasumi)">;
-            bool BeamSword : 1 <name = "Beam Sword (Goro)">;
-            bool Axe : 1 <name = "Axe (Haru)">;
-            bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
-            bool Katana : 1 <name = "Katana (Yusuke)">;
-            bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
-            bool Whip : 1 <name = "Whip (Ann)">;
-            bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
-            bool Dagger : 1 <name = "Dagger (Joker)">;
-        } Icon <name = "Icon">;
-
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
+    ItemType itemkind<name="Item Type">;
+    u16 WeaponFieldMenuSorting <name = "Ranged Weapon Field Menu Sorting", comment = "Higher Value will put it on top.">;
+    u16 WeaponShopMenuSorting <name = "Ranged Weapon Shop Menu Sorting", comment = "Lower Value will put it on top.">;
     EquippableUsers Users;
-    u16 Unknown;
-    u16 Unknown;
+    RangedWeaponShop isitavailable2 <name = "Show in Shop?", comment = "Put 1 to make it not shown. Put 0 to make it shown in Iwai Shop.">;
+    ElementalType Attribute<name="Elemental Attribute">;
+    u8 RESERVE_0F<name="RESERVE">;
     u16 Attack <name = "Attack">;
     u16 Accuracy <name = "Accuracy">;
     u16 Rounds <name = "Rounds">;
-    u8 Strength <name = "Strength Boost">;
-    u8 Magic <name = "Magic Boost">;
-    u8 Endurance <name = "Endurance Boost">;
-    u8 Agility <name = "Agility Boost">;
-    u8 Luck <name = "Luck Boost">;
-    u8 Unknown;
-    GearEffect Effect <name = "Effect">;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 Unknown;
-    u16 PurchasePrice <name = "Purchase Price">;
-    u16 Unknown;
-    u16 SellPrice <name = "Sell Price">;
+    PersonaStats Stats<name="Gun Stats">;
+    u8 RESERVE_STAT<name="RESERVE">;
+    GearEffect Effect[3] <name = "Effect">;
+    u16 FIELD_22;
+    u16 IwaisUpgradeRank <name= "Iwai's Upgrade Rank", comment= "This weapon will be available in accordance with Iwai's Upgrade rank confidant. 1 is Starter Weapons, 2 is Medium Weapons, and 3 is High Grade Weapons">;
+    u16 RESERVE_26<name="RESERVE">;
+    u32 PurchasePrice <name = "Purchase Price">;
+    u32 SellPrice <name = "Sell Price">;
     Month MonthAvailable <name = "Month Available for Purchase">;
     u8 DayAvailable <name = "Day Available for Purchase">;
-    u16 Unknown;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
-    u16 UnknownR;
+    GunEnhancement LongBarrelEnhancement <name = "Long Barrel Enhancement", comment = "This is the Long Barrel Enhancement that increases Accuracy from Iwai Upgrade Ranged"> ;
+	GunEnhancement GigaBarrelEnhancement <name = "Giga Barrel Enhancement", comment = "This is the Giga Barrel Enhancement that increases a lot of Accuracy but decreases Power from Iwai Upgrade Ranged"> ;
+	GunEnhancement PowerReceiver <name = "Power Receiver Enhancement", comment = "This is the Power Receiver Enhancement that increases Attack from Iwai Upgrade Ranged"> ;
+    GunEnhancement HighPowerReceiver <name = "High Power Receiver Enhancement", comment = "This is the High Power Receiver Enhancement that increases a lot of Attack but decreases Accuracy from Iwai Upgrade Ranged"> ;
+	GunEnhancement MegaPowerReceiver <name = "Mega Power Receiver Enhancement", comment = "This is the Mega Power Receiver Enhancement that increases tons of Attack but decreases Accuracy from Iwai Upgrade Ranged"> ;
+	GunEnhancement FireCamo <name = "Fire Camo Enhancement", comment = "This is the Fire Camo that decreases Attack and bullet but gives Ailment attack from Iwai Upgrade Ranged"> ;
+	GunEnhancement ElectricCamo <name = "Electric Camo Enhancement", comment = "This is the Electric Camo that decreases Attack and bullet but gives Ailment attack from Iwai Upgrade Ranged"> ;
+	GunEnhancement IceCamo <name = "Ice Camo Enhancement", comment = "This is the Ice Camo that decreases Attack and bullet but gives Ailment attack from Iwai Upgrade Ranged"> ;
+    u16 RESERVE_82<name="RESERVE">;
 } TItem_RangedWeapons <name ="Ranged Weapons">;
 
 typedef struct
@@ -1260,163 +958,108 @@ typedef struct
     u8 Unknown;
 } TItem_Footer <name ="Footer">;
 
+typedef struct
+{
+	s16 AttackHitRegFrames [ 8 ]<name="Hit Register Frames">;
+	s16 AttackAnimationSpeed<name="Animation Speed">;
+	s16 DistanceFromTarget<name="Collision Distance">;
+    s16 stop<name="Stop Frames">;
+    s16 blend<name="Interpolation Frames">;;
+}TVisual_AttackFrameData_Struct <name = "Attack Frame Data">;
+
+typedef struct
+{
+	TVisual_AttackFrameData_Struct PlayerNormalAttack<name="Normal Attack">;
+    TVisual_AttackFrameData_Struct PlayerCritAttack<name="Critical Attack">;
+    TVisual_AttackFrameData_Struct PlayerMissedAttack<name="Missed Attack">;
+    TVisual_AttackFrameData_Struct PlayerItemUse<name="Item Use">;
+    TVisual_AttackFrameData_Struct PlayerMagicCast<name="Magic Cast">;
+}TVisual_AttackFrameData <name = "Attack Frame Data">;
+
+typedef struct
+{
+	TVisual_AttackFrameData_Struct EnemyNormalAttack<name="Normal Attack">;
+    TVisual_AttackFrameData_Struct EnemyMagicCast<name="Magic Cast">;
+    TVisual_AttackFrameData_Struct EnemyUnkAttack<name="Unknown Attack">;
+}TVisual_AttackFrameDataEnemy <name = "Attack Frame Data">;
+
+typedef struct
+{
+	TVisual_AttackFrameData_Struct PersonaNormalAttack<name="Normal Attack">;
+    TVisual_AttackFrameData_Struct PersonaMagicAttack<name="Magic Cast">;
+}TVisual_AttackFrameDataPersona <name = "Attack Frame Data">;
+
 // VISUAL.TBL
 
 typedef struct
 {
-    u32 Field00;
-    f32 Field04;
-    f32 Field08;
-    f32 Field0C;
-    f32 Field10;
-    f32 Field14;
-    f32 Field18;
-    f32 Field1C;
-    f32 Field20;
-    f32 Field24;
-    f32 Field28;
-    f32 Field2C;
-    f32 Field30;
-    f32 Field34;
-    f32 Field38;
-    f32 Field3C;
-    f32 Field40;
-    f32 Field44;
-    f32 Field48;
-    f32 Field4C;
-    f32 Field50;
-    f32 Field54;
-    f32 Field58;
-    f32 Field5C;
-    f32 Field60;
-    f32 Field64;
-    u16 Field68;
-    u16 Field6A;
-    u16 Field6C;
-    u16 Field6E;
-    f32 Field70;
-    f32 Field74;
-    f32 Field78;
-    f32 Field7C;
-    s16 Field80[36];
+    f32 X<name="X Offset">;
+    f32 Y<name="Y Offset">;
+    f32 Z<name="Z Offset">;
+} CameraCenter<name="Camera Center">;
+
+typedef struct
+{
+    CameraCenter Center;
+    f32 VirtualHeight<name="Unit Height">;
+    f32 VirtualRadius<name="Unit Radius">;
+} datCollisionTable<name="Collision Table">;
+
+typedef struct
+{
+    u32 Flags;
+    f32 Speed;
+} datMoveTable<name="Move Table">;
+
+typedef struct
+{
+    u32 Flags;
+    datCollisionTable NormalCylinder<name="Normal Camera">;
+    datCollisionTable DyingCylinder<name="Dying Camera">;
+    datCollisionTable DownCylinder<name="Downed Camera">;
+    datCollisionTable Skill1Cylinder<name="Skill Use 1 Camera">;
+    datCollisionTable Skill2Cylinder<name="Skill Use 2 Camera">;
+    u16 ModelScale<name="Model Scale %">;
+    u16 AilmentIndicatorSize <name="Ailment VFX Scale %", comment = "It is the size of the ailment when inflicted to enemy. Higher value will make it larger">;
+    u16 EffectScale<name="Effect Scale %">;
+    u16 UnkScale<name="Unknown Scale %">;
+    datMoveTable ForwardMove<name="Forward Movement">;
+    datMoveTable BackwardMove<name="Backward Movement">;
+    TVisual_AttackFrameDataEnemy FrameData;
 } TVisual_EnemyVisualVariablesA <name = "Enemy Visual Variables A">;
 
 typedef struct
 {
-    byte Unknown[ 404 ];
+    datCollisionTable CollisionTable[13]<name="Camera Data">;
+	u16 ModelScale<name="Model Scale %">;
+    u16 AilmentIndicatorSize <name="Ailment VFX Scale %", comment = "It is the size of the ailment when inflicted to enemy. Higher value will make it larger">;
+    u16 EffectScale<name="Effect Scale %">;
+    u16 UnkScale<name="Unknown Scale %">;
+    datMoveTable ForwardMove<name="Forward Movement">;
+    datMoveTable BackwardMove<name="Backward Movement">;
+    TVisual_AttackFrameData FrameData;
 } TVisual_PlayerVisualVariablesA <name = "Player Visual Variables A">;
 
 typedef struct
 {
-    u8 Padding1 [ 4 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding2 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding3 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding4 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u16 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding5 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u16 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u16 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u16 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding6 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding7 [ 2 ];
-    u8 Unknown;
-    u8 Unknown;
-    u8 Padding;
-    u8 Padding;
-    u8 Unknown;
-    u8 Unknown;
-    u16 Unknown;
-    u8 Unknown;
-    u8 Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    byte Unknown;
-    short BattleModelScale <name="Persona Model Scale % (Battle)">;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    short Unknown;
-    byte Unknown;
-    byte Unknown;
+    s16 X<name="X">;
+    s16 Y<name="Y">;
+    s16 Z<name="Z">;
+} OffsetPosition;
+
+typedef struct
+{
+    u32 Flags;
+    datCollisionTable NormalCylinder<name="Normal Camera">;
+    datCollisionTable ButuriCylinder<name="Phys Attack Camera">;
+    datCollisionTable SkillCCylinder<name="Skill Camera 1">;
+    datCollisionTable SkillSCylinder<name="Skill Camera 2">;
+    OffsetPosition ButuriPosition<name="Attack Position Offset">;
+    OffsetPosition MagicPosition<name="Magic Cast Offset">;
+    short BattleModelScale <name="Model Scale % (Battle)">;
+    TVisual_AttackFrameDataPersona FrameData;
+	u8 Alpha<name="Model Alpha">;
+	u8 AlignmentReserve;
 } TVisual_PersonaVisualVariablesA <name = "Persona Visual Variables A">;
 
 typedef struct
@@ -1469,7 +1112,7 @@ enum TableSegmentType
     TableSegmentType_Encounter_Segment3,
     TableSegmentType_Skill_Elements,
     TableSegmentType_Skill_ActiveSkillData,
-    TableSegmentType_Skill_Skill_UnknownR,
+    TableSegmentType_Skill_TechnicalMap,
     TableSegmentType_Skill_TraitData,
     TableSegmentType_Item_Accessories,
     TableSegmentType_Item_Armor,
@@ -1484,7 +1127,7 @@ enum TableSegmentType
     TableSegmentType_Unit_EnemyUnitStats,
     TableSegmentType_Unit_EnemyElementalAffinities,
     TableSegmentType_Unit_PersonaElementalAffinities,
-    TableSegmentType_Unit_Segment3,
+    TableSegmentType_Unit_VoiceIndex,
     TableSegmentType_Unit_VisualIndex,
     TableSegmentType_Visual_EnemyVisualVariablesA,
     TableSegmentType_Visual_PlayerVisualVariablesA,
@@ -1597,8 +1240,8 @@ typedef struct( TableSegmentType _type )
             TSkill_ActiveSkillData Skill[ Size / sizeof( TSkill_ActiveSkillData ) ];
             break;
 
-        case TableSegmentType_Skill_Skill_UnknownR:
-            TSkill_Skill_UnknownR Skill[ Size / sizeof( TSkill_Skill_UnknownR ) ];
+        case TableSegmentType_Skill_TechnicalMap:
+            TSkill_Skill_TechnicalMap Skill[ Size / sizeof( TSkill_Skill_TechnicalMap ) ];
             break;
 
         case TableSegmentType_Skill_TraitData:
@@ -1663,8 +1306,8 @@ typedef struct( TableSegmentType _type )
             ElementalAffinities Affinities[ Size / sizeof( ElementalAffinities ) ];
             break;
 
-        case TableSegmentType_Unit_Segment3:
-            TUnitSegment3Entry Entries[ Size / sizeof( TUnitSegment3Entry ) ];
+        case TableSegmentType_Unit_VoiceIndex:
+            TUnitVoiceIndex Entries[ Size / sizeof( TUnitVoiceIndex ) ];
             break;
 
         case TableSegmentType_Unit_VisualIndex:
@@ -1779,7 +1422,7 @@ typedef struct( string tableName, u32 endOffset )
             {
                 case 0: segmentType = TableSegmentType_Skill_Elements; break;
                 case 1: segmentType = TableSegmentType_Skill_ActiveSkillData; break;
-                case 2: segmentType = TableSegmentType_Skill_Skill_UnknownR; break;
+                case 2: segmentType = TableSegmentType_Skill_TechnicalMap; break;
                 case 3: segmentType = TableSegmentType_Skill_TraitData; break;
             }
         }
@@ -1806,7 +1449,7 @@ typedef struct( string tableName, u32 endOffset )
                 case 0: segmentType = TableSegmentType_Unit_EnemyUnitStats; break;
                 case 1: segmentType = TableSegmentType_Unit_EnemyElementalAffinities; break;
                 case 2: segmentType = TableSegmentType_Unit_PersonaElementalAffinities; break;
-                case 3: segmentType = TableSegmentType_Unit_Segment3; break;
+                case 3: segmentType = TableSegmentType_Unit_VoiceIndex; break;
                 case 4: segmentType = TableSegmentType_Unit_VisualIndex; break;
             }
         }

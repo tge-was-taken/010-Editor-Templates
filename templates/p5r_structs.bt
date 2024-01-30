@@ -1,5 +1,6 @@
 typedef struct
 {
+        u16 RESERVE<format=hex>;
         byte : 5;
         bool Kasumi : 1 <name = "Equippable by Kasumi">;
         bool Goro : 1 <name = "Equippable by Goro">;
@@ -16,27 +17,57 @@ typedef struct
 
 typedef struct
 {
-    AffinityStatus PhysAffinity <name = "Physical">;
-    AffinityStatus GunAffinity <name = "Gun">;
-    AffinityStatus FireAffinity <name = "Fire">;
-    AffinityStatus IceAffinity <name = "Ice">;
-    AffinityStatus ElecAffinity <name = "Electric">;
-    AffinityStatus WindAffinity <name = "Wind">;
-    AffinityStatus PsyAffinity <name = "Psy">;
-    AffinityStatus NukeAffinity <name = "Nuke">;
-    AffinityStatus BlessAffinity <name = "Bless">;
-    AffinityStatus CurseAffinity <name = "Curse">;
-    AffinityStatus AlmightyAffinity <name = "Almighty">;
-    AffinityStatus DizzyAffinity <name = "Dizzy">;
-    AffinityStatus ConfuseAffinity <name = "Confuse">;
-    AffinityStatus FearAffinity <name = "Fear">;
-    AffinityStatus ForgetAffinity <name = "Forget">;
-    AffinityStatus HungerAffinity <name = "Hunger">;
-    AffinityStatus SleepAffinity <name = "Sleep">;
-    AffinityStatus RageAffinity <name = "Rage">;
-    AffinityStatus DespairAffinity <name = "Despair">;
-    AffinityStatus BrainwashAffinity <name = "Brainwash">; 
+    u8 Double_Ailment_Chance : 1<name = "Double Ailment Chance", comment = "Used on Fire/Ice/Elec affinity to double the chance that an incoming attack inflicts the corresponding ailment (Burn/Freeze/Shock).">;
+    u8 Guarantee_Ailment : 1<name = "Guarantee Ailment", comment = "Incoming attacks with an ailment chance always inflict the ailment.">;
+    u8 Ailment_Immune : 1<name = "Ailment Immune", comment = "Incoming attacks never inflict ailments (including insta-kill). Overrides Guarantee Ailment. Does NOT prevent Critical hits.">;
+    u8 Resist : 1 <comment = "Displays Resist text and halves damage (by default) when hit. (However, If Mutliplier field is specified (non-zero), it replaces the default 0.5x multiplier.)">;
+    u8 Weak : 1 <comment = "Damage x 1.25 (by default) and knockdown. (However, if Multiplier field is specified (non-zero), it replaces the default 1.25x mutliplier.)">;
+    u8 Drain : 1;
+    u8 Repel : 1;
+    u8 Block : 1;
+	u8 Multiplier <name = "Multiplier (in increments of 5%)", comment = "Multiplies damage & ailment chance. 20 is Neutral since 20 x 5% = 100% of normal dmg & ail. chance. 80 x 5% = 400% = 4x multiplier. 0 is ignored (does not nullify attack).">;
+} AffinityBitfield <name = "Affinity Status">;
+
+typedef struct
+{
+    AffinityBitfield PhysAffinity <name = "Physical">;
+    AffinityBitfield GunAffinity <name = "Gun">;
+    AffinityBitfield FireAffinity <name = "Fire">;
+    AffinityBitfield IceAffinity <name = "Ice">;
+    AffinityBitfield ElecAffinity <name = "Electric">;
+    AffinityBitfield WindAffinity <name = "Wind">;
+    AffinityBitfield PsyAffinity <name = "Psy">;
+    AffinityBitfield NukeAffinity <name = "Nuke">;
+    AffinityBitfield BlessAffinity <name = "Bless">;
+    AffinityBitfield CurseAffinity <name = "Curse">;
+    AffinityBitfield AlmightyAffinity <name = "Almighty">;
+    AffinityBitfield DizzyAffinity <name = "Dizzy">;
+    AffinityBitfield ConfuseAffinity <name = "Confuse">;
+    AffinityBitfield FearAffinity <name = "Fear">;
+    AffinityBitfield ForgetAffinity <name = "Forget">;
+    AffinityBitfield HungerAffinity <name = "Hunger">;
+    AffinityBitfield SleepAffinity <name = "Sleep">;
+    AffinityBitfield RageAffinity <name = "Rage">;
+    AffinityBitfield DespairAffinity <name = "Despair">;
+    AffinityBitfield BrainwashAffinity <name = "Brainwash">; 
 } ElementalAffinities <name = "Elemental Affinities">;
+
+typedef struct 
+{
+  u32 OtherAilments : 20<name = "Other Ailments", comment = "Bitfield for the various 'special' ailments that players don't normally inflict">;
+  u32 AilmentStatus_11_Brainwash : 1<name = "Brainwashed">;
+  u32 AilmentStatus_10_Despair : 1<name = "Despair">;
+  u32 AilmentStatus_09_Rage : 1<name = "Rage">;
+  u32 AilmentStatus_08_Sleep : 1<name = "Sleep">;
+  u32 AilmentStatus_07_Hunger : 1<name = "Hunger">;
+  u32 AilmentStatus_06_Forget : 1<name = "Forget">;
+  u32 AilmentStatus_05_Fear : 1<name = "Fear">;
+  u32 AilmentStatus_04_Confuse : 1<name = "Confused">;
+  u32 AilmentStatus_03_Dizzy : 1<name = "Dizzy">;
+  u32 AilmentStatus_02_Shock : 1<name = "Shock">;
+  u32 AilmentStatus_01_Freeze : 1<name = "Freeze">;
+  u32 AilmentStatus_00_Burn : 1<name = "Burn">;
+} AilmentStatus;
 
 typedef struct
 {
@@ -54,11 +85,23 @@ typedef struct
     bool Treasure : 1 <name = "Treasure Demon">;
     bool Unknown : 1;
     bool Unknown : 1;
-    bool Unknown : 1;
-    bool Unknown : 1;
-    bool Unknown : 1;
+    bool PartyPersona : 1;
+    bool StoryPersona : 1;
+    bool NotRegisterable : 1;
     bool Unknown : 1;
     bool NoNormalFusion : 1 <name = "Cannot Be Fused Normally", comment = "Set this to True to prevent this Persona from being fused through standard two-Persona fusion">;
     bool Evolved : 1 <name = "Evolved">;
     
 } PersonaFlags;
+
+typedef struct
+{
+    u8 bit8 : 1;
+    u8 bit7 : 1;
+    u8 bit6 : 1;
+    u8 bit5 : 1;
+    u8 bit4 : 1;
+    u8 motionse_acb : 1;
+    u8 swordtrack : 1;
+    u8 motionse_dat : 1;
+} b8_exist;

@@ -1,0 +1,377 @@
+//------------------------------------------------
+//--- 010 Editor v12.0 Binary Template
+// File Mask: *.fbn
+//------------------------------------------------
+
+#include "common/include.h"
+
+void CherryRandomColor()
+{
+	SetBackColor( 518630000 + Random( 69420 ) );
+}
+
+BigEndian();
+
+typedef enum<s32>
+{
+    FBN_Trigger             = 1,
+    FBN_CROWD_SPAWN         = 2,
+    FBN_NAVI                = 3,
+    FBN_Entrance            = 4,
+    FBN_Hit                 = 5,
+    FBN_MASK                = 6,
+    FBN_CROWD_PATH          = 7,
+    FBN_WanderShadow        = 8,
+    FBN_Chest               = 9,
+    FBN_Cover               = 10,
+    FBN_PatrolShadow        = 11,
+    FBN_MementosHit         = 12, //5 Dupe
+    FBN_MementosEntrance    = 13, // 4 Dupe
+    FBN_Npc                 = 14,
+    FBN_STEALS_OBJ          = 15,
+    FBN_STEALS              = 16,
+    FBN_LIGHT_PATH          = 17,
+    FBN_SearchObject        = 18,
+    FBN_SearchObjectHit     = 19,
+    FBN_WarningObject       = 21, // Lol, lmao
+    FBN_VoiceHit            = 22,
+    FBN_MementosEntrance_2  = 24, //13 Dupe
+    FBN_GrappleObject       = 25,
+    FBN_GrappleTrigger      = 26,
+    FBN_Header              = 1178750512
+} FbnListType;
+
+typedef struct( s32 Type )
+{
+    CherryRandomColor();
+	s32 EntryCount;
+	u32 Padding[3];
+    switch ( Type )
+    {
+        case FBN_Trigger:             struct FbnTriggerVolume Entry  [ EntryCount ]; break;
+        case FBN_Entrance:            struct FbnEntrance Entry       [ EntryCount ]; break;
+        case FBN_Hit:                 struct FbnHitDefinition Entry  [ EntryCount ]; break;
+        case FBN_WanderShadow:        struct FbnWanderShadow Entry   [ EntryCount ]; break;
+        case FBN_Chest:               struct FbnTreasureChest Entry  [ EntryCount ]; break;
+        case FBN_Cover:               struct FbnCoverPoints Entry    [ EntryCount ]; break;
+        case FBN_PatrolShadow:        struct FbnPatrolShadow Entry   [ EntryCount ]; break;
+        case FBN_MementosHit:         struct FbnTriggerVolume Entry  [ EntryCount ]; break; //Mementos Exclusive
+        case FBN_MementosEntrance:    struct FbnEntrance Entry       [ EntryCount ]; break; //Mementos Exclusive, not sure why 13 is just 24
+        case FBN_Npc:                 struct FbnNpc Entry            [ EntryCount ]; break;
+        case FBN_SearchObject:        struct FbnSearchObject Entry   [ EntryCount ]; break;
+        case FBN_SearchObjectHit:     struct FbnTriggerVolume Entry  [ EntryCount ]; break;
+        case FBN_WarningObject:       struct FbnWarningObject Entry  [ EntryCount ]; break; //Mementos Exclusive
+        case FBN_VoiceHit:            struct FbnTriggerVolume Entry  [ EntryCount ]; break;
+        case FBN_GrappleObject:       struct FbnGrappleObject Entry  [ EntryCount ]; break;
+        case FBN_GrappleTrigger:      struct FbnGrappleTrigger Entry [ EntryCount ]; break;
+        case FBN_MementosEntrance_2:  struct FbnEntrance Entry       [ EntryCount ]; break; //Mementos Exclusive
+        default:
+            Assert( Type > 26 || Type != 0, "Tried to create block of invalid type" );     
+        break;
+    }
+} FbnList;
+
+typedef struct
+{
+    CherryRandomColor();
+    local s32 startOffset = FTell();
+    FbnListType Type;
+    local string TypeEnumString = EnumToString(Type);
+    s32 Version<format=hex>;
+    s32 Size;
+    s32 ListOffset;
+    if ( ListOffset != 0 )
+    {
+        FbnList List( Type );
+    }
+    local s32 endOffset = startOffset + Size ;
+    if ( FTell() < endOffset )
+    {
+        Printf( "[FbnBlock] Reading %d Bytes\n", endOffset - FTell() );
+        u8 RawData[ endOffset - FTell() ];
+    }
+    FSeek( endOffset );
+} FbnBlock <read = FbnBlockRead>;
+
+string FbnBlockRead( FbnBlock& block )
+{
+    char buffer[32];
+    if ( block.Type == 1178750512 )
+    {
+        SPrintf( buffer, "00 - %s :  v0x%08X", block.TypeEnumString, block.Version );
+    }
+    else
+    {
+        SPrintf( buffer, "%02d - %s :  v0x%08X", block.Type, block.TypeEnumString, block.Version );
+    }
+    return buffer;
+}
+
+//===========================================================================================================================================
+//  FBN BLOCK STRUCTURES START
+//===========================================================================================================================================
+
+typedef struct
+{
+    CherryRandomColor();
+    u32 Unk00;
+    local short TypeValue00 = ReadShort();
+    local short TypeValue01 = ReadShort(FTell()+2);
+    struct
+    {
+        u8 bit00 : 1; u8 bit01 : 1; u8 bit02 : 1; u8 bit03 : 1; 
+        u8 bit04 : 1; u8 bit05 : 1; u8 bit06 : 1; u8 bit07 : 1; 
+        u8 bit08 : 1; u8 bit09 : 1; u8 bit10 : 1; u8 bit11 : 1;
+        u8 bit12 : 1; u8 bit13 : 1; u8 bit14 : 1; u8 bit15 : 1;
+        u8 bit16 : 1; u8 bit17 : 1; u8 bit18 : 1; u8 bit19 : 1;
+        u8 bit20 : 1; u8 bit21 : 1; u8 bit22 : 1; u8 bit23 : 1;
+        u8 bit24 : 1; u8 bit25 : 1; u8 bit26 : 1; u8 bit27 : 1;
+        u8 bit28 : 1; u8 bit29 : 1; u8 bit30 : 1; u8 bit31 : 1;
+        
+    } TypeIdentifier;
+    TVector3 Center;
+    f32 Unk01;
+    f32 Unk02;
+    f32 Unk03;
+    f32 Scale;
+    f32 Unk04;
+    f32 Unk05;
+    TVector3 BottomRight;
+    TVector3 TopRight;
+    TVector3 BottomLeft;
+    TVector3 TopLeft;
+    f32 Unk06;
+    f32 Unk07;
+} FbnTriggerVolume <optimize = false, read = ( Str( "Mode :  1 - %i - %i   ||   Position :  %.00f, %.00f, %.00f", TypeValue00, TypeValue01, Center.X, Center.Y, Center.Z ) )>;
+
+typedef struct
+{
+    CherryRandomColor();
+    s32 Unk00;
+    s32 Unk01;
+    TVector3 Position;
+    TVector3 Rotation;
+    s16 EntranceID;
+    s16 Unk02;
+} FbnEntrance <optimize = false, read = ( Str( "Entrance :  %06i   ||   Position :  %.00f, %.00f, %.00f", EntranceID, Position.X, Position.Y, Position.Z ) )>;
+
+typedef struct
+{
+    LittleEndian();
+    CherryRandomColor();
+	struct
+	{
+		u32 BitFlag<name = "Enabling Bitflag ">; //Adachi True!
+		u32 BitFlag<name = "Enabling Bitflag ">;
+		u32 BitFlag<name = "Enabling Bitflag ">;
+		u32 BitFlag<name = "Disabling Bitflag ">;
+		u32 BitFlag<name = "Disabling Bitflag ">;
+		u32 BitFlag<name = "Disabling Bitflag ">;
+	} Bitflags <name = "Entry Bitflags">;
+    CherryRandomColor();
+    u8 PaddingByte;
+    enum <u8> { Autohit = 0, Hit = 2 } HitType;
+    u16 NameID;
+    u16 ProcedureIndex;
+    enum<short>
+    {
+        EXAMINE_fldCheckName0 = 0,
+        GO_Blank = 1,
+        EXAMINE_fldCheckName1 = 2,
+        EXAMINE_fldCheckName2 = 3,
+        EXAMINE_fldCheckName3 = 4,
+        EXAMINE_fldCheckName4 = 5,
+        STEAL_fldCheckName = 6,
+        ACTION_fldActionName0 = 7,
+        ACTION_fldActionName1 = 8,
+        ACTION_fldActionName2 = 9,
+        TALK_fldNPCName = 10,
+        GO_fldPlaceName = 11,
+        SHOP_fldCheckName = 12,
+        EXAMINE_fldKFECheckName = 13,
+    } PromptTypeList;
+    u32 UnusedValues[7];
+} FbnHitDefinition <optimize = false, read = ( Str( "Hit BF Index :  %05i   ||   Type :  %s   ||   String :  %s  [ #%i ]", ProcedureIndex, EnumToString( HitType ), EnumToString( PromptTypeList ), NameID ) )>;
+
+typedef struct
+{
+    CherryRandomColor();
+    s32 Unk00;
+    s16 Unk01;
+    s16 Unk02;
+    TVector3 Position;
+    TVector3 Rotation;
+    f32 WanderRadius;
+    u32 Unk04;
+} FbnWanderShadow <optimize = false, read = ( Str( "Wander Radius :  %06g   ||   Position :  %.00f, %.00f, %.00f", WanderRadius, Position.X, Position.Y, Position.Z ) )>;
+
+typedef struct
+{
+    CherryRandomColor();
+    s32 Unk00;
+    TVector3 Position;
+    TQuaternion Rotation;
+    s16 Model_MajorID;
+    s16 Model_MinorID;
+    u16 Chest_ResourceHandle;
+    s16 Unk01;
+} FbnTreasureChest <optimize = false, read = ( Str( "Model :  M%03i_%03i.GMD   ||   RESHND :  %i   ||   Position :  %.00f, %.00f, %.00f", Model_MajorID, Model_MinorID, Chest_ResourceHandle, Position.X, Position.Y, Position.Z ) )>;
+
+typedef struct
+{
+    CherryRandomColor();
+    local short TypeValue01 = ReadInt(FTell());
+    struct
+    {
+        u8 bit00 : 1; u8 bit01 : 1; u8 bit02 : 1; u8 bit03 : 1; 
+        u8 bit04 : 1; u8 bit05 : 1; u8 bit06 : 1; u8 bit07 : 1; 
+        u8 bit08 : 1; u8 bit09 : 1; u8 bit10 : 1; u8 bit11 : 1;
+        u8 bit12 : 1; u8 bit13 : 1; u8 bit14 : 1; u8 bit15 : 1;
+        u8 bit16 : 1; u8 bit17 : 1; u8 bit18 : 1; u8 bit19 : 1;
+        u8 bit20 : 1; u8 bit21 : 1; u8 bit22 : 1; u8 bit23 : 1;
+        u8 LStickAllowed : 1; 
+        u8 InvisibleFromOtherSpots : 1; 
+        u8 VisiblePartyMembers : 1; 
+        u8 bit27 : 1; 
+        u8 EnablePoint2 : 1;
+        u8 EnablePoint1 : 1; 
+        u8 bit30 : 1; u8 bit31 : 1;      
+    } CoverBehaviorFlags;
+    s32 Unk00;
+    TVector3 Point1_JokerPosition;
+    TVector3 Point2_JokerPosition; 
+    TVector3 Point1_PartyRotation;
+    TVector3 Point2_PartyRotation;
+    TVector3 Point1_IconPosition;
+    TVector3 Point2_IconPosition;
+    TVector3 Point1_CameraRotation;
+    TVector3 Point2_CameraRotation;
+    s32 Unk01;
+    s32 Unk02;
+    s32 Unk03;
+    s16 CameraHeightMode;
+    s16 ConnectedPoint_ID;
+    s16 Unk06;
+    s16 Unk07;
+    TVector3 Point1_JokerRotation;
+    TVector3 Point2_JokerRotation;
+} FbnCoverPoints <optimize = false, read = ( Str( "Cover Mode :  %04i-1   ||   ID :  %03d   ||   Start :  %.00f, %.00f, %.00f   ||   End :  %.00f, %.00f, %.00f", TypeValue01, ConnectedPoint_ID, Point1_JokerPosition.X, Point1_JokerPosition.Y, Point1_JokerPosition.Z, Point2_JokerPosition.X, Point2_JokerPosition.Y, Point2_JokerPosition.Z ) )>;
+
+typedef struct
+{
+    CherryRandomColor();
+    s32 Unk00;
+    f32 ShadowSpeed;
+    s32 Unk01;
+    s32 Unk02;
+    s32 Unk03;
+    s32 Unk04;
+    s16 PathNodeCount;
+    s16 Unk05;
+    TVector3 ShadowPathNode[ PathNodeCount ];
+    u32 WaitTimePerNode[ PathNodeCount ];
+} FbnPatrolShadow <optimize = false, read = ( Str( "Path Node Count :  %i   ||   %i %i %i %i %i %i", PathNodeCount, Unk00, ShadowSpeed, Unk01, Unk02, Unk03, Unk04 ) )>;
+
+typedef struct
+{
+    CherryRandomColor();
+	s32 Unk00;
+	f32 Unk01;
+	TVector3 NPCRotation<comment = "Last column of complex rotation matrix">;
+	f32 Unk02;
+	f32 Unk03;
+	s16 FNT_ID;
+	s16 Unk04;
+	s32 Unk05;
+    s32 Unk06;
+	s32 Unk07;
+	s16 PathNodeCount;
+	s16 Unk08;
+	TVector3 PathNodes[ PathNodeCount ];
+} FbnNpc <optimize = false, read = ( Str( "FNT ID :  %03i   ||   Path Node Count :  %i", FNT_ID, PathNodeCount ) )>;
+
+typedef struct
+{
+    CherryRandomColor();
+    s32 Unk00;
+    s16 Unk01;
+    s16 Unk02;
+    TVector3 Position;
+    TQuaternion Rotation;
+    s16 Model_MajorID;
+    s16 Model_MinorID;
+    u16 SearchObject_ResourceHandle;
+    s16 Unk03;
+} FbnSearchObject <optimize = false, read = ( Str( "Model :  M%03i_%03i.GMD   ||   RESHND :  %i   ||   Position :  %.00f, %.00f, %.00f", Model_MajorID, Model_MinorID, SearchObject_ResourceHandle, Position.X, Position.Y, Position.Z ) )>;
+
+typedef struct
+{
+    CherryRandomColor();
+    s32 Unk00;
+    TVector3 Position;
+    TQuaternion Rotation;
+    s16 Unk01;
+    s16 Unk02;
+    s16 Model_MajorID;
+    s16 Model_MinorID;
+    u16 Gimmick_ResourceHandle;
+    s16 Unk03;
+    s32 Unk04;
+    f32 ActiveTimer;
+    f32 InactiveTime;
+} FbnWarningObject <optimize = false, read = ( Str( "Model :  M%03i_%03i.GMD   ||   RESHND :  %i   ||   Position :  %.00f, %.00f, %.00f", Model_MajorID, Model_MinorID, Gimmick_ResourceHandle, Position.X, Position.Y, Position.Z ) )>;
+
+typedef struct
+{
+    CherryRandomColor();
+    u32 Unk00;
+    bool JumpAfterGrapple;
+    bool JumpAfterGrapple2;
+    s16 Wire_SequenceID;
+    TVector3 Position;
+    TQuaternion Rotation;
+    s16 Model_MajorID;
+    s16 Model_MinorID;
+    u16 Grapple_ResourceHandle;
+    u16 Unk01;
+    u16 JumpLength;
+    u16 JumpHeight;
+} FbnGrappleObject <optimize = false, read = ( Str(  "Model :  M%03i_%03i.GMD   ||   RESHND :  %i   ||   Sequence ID :  %i   ||   Position :  %.00f, %.00f, %.00f", Model_MajorID, Model_MinorID, Grapple_ResourceHandle, Wire_SequenceID, Position.X, Position.Y, Position.Z  ) )>;
+
+typedef struct
+{
+    CherryRandomColor();
+    u32 Unk00;
+    local short TypeValue00 = ReadShort();
+    local short TypeValue01 = ReadShort(FTell()+2);
+    struct
+    {
+        u8 bit00 : 1; u8 bit01 : 1; u8 bit02 : 1; u8 bit03 : 1; 
+        u8 bit04 : 1; u8 bit05 : 1; u8 bit06 : 1; u8 bit07 : 1; 
+        u8 bit08 : 1; u8 bit09 : 1; u8 bit10 : 1; u8 bit11 : 1;
+        u8 bit12 : 1; u8 bit13 : 1; u8 bit14 : 1; u8 bit15 : 1;
+        u8 bit16 : 1; u8 bit17 : 1; u8 bit18 : 1; u8 bit19 : 1;
+        u8 bit20 : 1; u8 bit21 : 1; u8 bit22 : 1; u8 bit23 : 1;
+        u8 bit24 : 1; u8 bit25 : 1; u8 bit26 : 1; u8 bit27 : 1;
+        u8 bit28 : 1; u8 bit29 : 1; u8 bit30 : 1; u8 bit31 : 1;
+        
+    } TypeIdentifier;
+    u16 Grapple_ResourceHandle;
+    s16 Unk03;
+    TVector3 Center;
+    f32 Unk04;
+    f32 Unk05;
+    f32 Unk06;
+    f32 Scale;
+    f32 Unk07;
+    f32 Unk08;
+    TVector3 BottomRight;
+    TVector3 TopRight;
+    TVector3 BottomLeft;
+    TVector3 TopLeft;
+    u16 Unk09;
+    u16 Unk10;
+} FbnGrappleTrigger <optimize = false, read = ( Str( "Mode :  1 - %i - %i   ||   RESHND :  %i   ||   Position :  %.00f, %.00f, %.00f", TypeValue00, TypeValue01, Grapple_ResourceHandle, Center.X, Center.Y, Center.Z ) )>;
+
+while ( !FEof() )
+    FbnBlock Block;
