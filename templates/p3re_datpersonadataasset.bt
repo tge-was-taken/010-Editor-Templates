@@ -1,0 +1,52 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: DatPersonaDataAsset.uasset
+//   Authors: Light8227
+//   Version: 1.0
+//------------------------------------------------
+LittleEndian();
+
+typedef struct
+{
+    byte unk[827];
+}unk;
+
+typedef struct
+{
+    byte flag[35];
+    byte race[34];
+    byte level[34];
+    byte params[34];
+    byte params2[34];
+    byte params3[34];
+    byte params4[34];
+    byte params5[34];
+    byte breakage[26];
+    byte succession[35];
+    byte conception[34];
+    byte message[34];
+}personaData;
+
+typedef struct
+{
+    byte flag[35];
+    byte race[34];
+    byte level[34];
+    byte params[34];
+    byte params2[34];
+    byte params3[34];
+    byte params4[34];
+    byte params5[34];
+    byte breakage[26];
+    byte succession[35];
+    byte conception[34];
+    byte message[21];
+}personaData2;
+
+struct
+{
+    unk unknown;
+    personaData personadata[463];
+    personaData2 personadata2;
+}fileData;
