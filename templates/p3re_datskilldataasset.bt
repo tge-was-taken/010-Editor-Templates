@@ -1,0 +1,27 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: DatSkillDataAsset.uasset
+//   Authors: Light8227
+//   Version: 1.0
+//------------------------------------------------
+LittleEndian();
+
+typedef struct
+{
+    long unk[176];
+    byte unk2[3];
+}unk;
+
+typedef struct
+{
+    byte attr[26];
+    byte type[26];
+    byte targetLv[34];
+}skillData;
+
+struct
+{
+    unk unknown;
+    skillData skilldata[1024];
+}fileData;
