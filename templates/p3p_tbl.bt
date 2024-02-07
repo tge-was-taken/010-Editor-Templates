@@ -228,6 +228,12 @@ typedef struct
 
 typedef struct
 {
+    ItemDrop Reward <name = "ItemDrop">;
+    u16 DropRate <name = "Drop Rate out of 200">;
+} TEnemyDrops <name = "Enemy Drops">;
+
+typedef struct
+{
     b16 Flags <name = "Flags">;
     ArcanaID Arcana <name = "Arcana">;
     u8 Level <name = "Level">;
@@ -238,9 +244,11 @@ typedef struct
     BattleSkill SkillID[ 8 ] <name = "Battle Skills">;
     FuukaScan ScanType <name = "FuukaScan", comment = "Determines the effectiveness of Fuukas scan">;
     u16 ExpReward <name = "Exp Reward">;
-    ItemDrop Reward <name = "ItemDrop">;
-    u16 DropRate <name = "Drop Rate out of 200">;
-    u8 QuestDrops[ 18 ] <comment = "Changes for enemies with possible quest drops, needs more research">;
+    TEnemyDrops ItemDrops[4] <name = "Item Drops">;
+    u16 QuestFlag <name = "Quest Flag", comment = "The flag that needs to be on for the item to drop">;
+    u16 QuestItem <name = "Quest Item">;
+    u8 QuestDropRate <name = "Quest Drop Rate", comment = "Out of 255 probably">;
+    u8 buff;
     u16 AttackAccuracy <name = "AttackAccuracy">;
     u16 AttackDamage <name = "AttackDamage">;
     AttackType SkillID <name = "AttackType">;

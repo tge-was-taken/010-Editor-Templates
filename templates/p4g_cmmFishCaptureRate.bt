@@ -1,0 +1,46 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+LittleEndian();
+
+enum<short> Fish
+{
+    Sea_Guardian = 1004,
+    Meguro_Tuna = 1005,
+    Drifting_Trash = 1006,
+    Filler = 1007,
+    Guardian = 1008,
+    Huge_Fish = 1009,
+    Inaba_Trout = 1010,
+    Amber_Seema = 1011,
+    Genji_Ayu = 1012,
+    Red_Goldfish = 1013,
+    Hachiro_Octopus = 1014,
+    Filler2 = 1015
+};
+
+typedef struct
+{
+  Fish fish;
+  byte Entry[6];
+  Fish fish2;
+  byte Unknown[10];
+} Bait;
+
+typedef struct
+{
+  uint DatSize;
+  uint DatEntries;
+  Bait BaitEntry[8];
+} TDat;
+
+TDat File;

@@ -1,0 +1,53 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: p4g's ps_model.bin found in facility\cmbroot.arc
+//   Authors: Pioziomgames
+//   Version: 1.5 
+//   Purpose: Editing position and lighting of persona models during fusion and in the compendium
+//  Category: Persona 4 Golden
+// File Mask: ps_model.bin
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "include/common.bt"
+
+
+typedef struct
+{
+    int16 XOffset;
+    int16 YOffset;
+    int16 ZOffset;
+    int16 Unk1;
+    float Scale;
+    float Rotation;
+    ubyte Opacity;
+    ubyte Unk2;
+    
+    int16 LightRotation;
+    ubyte Unk4; <comment="Unused alpha value?">;
+    ubyte PersonaColorB;
+    ubyte PersonaColorG;
+    ubyte PersonaColorR;
+
+    ubyte Unk6; <comment="Unused alpha value?">;
+    ubyte PersonaColorB2;
+    ubyte PersonaColorG2;
+    ubyte PersonaColorR2;
+
+    int16 CameraX;
+    int16 CameraY;
+} Entry;
+
+struct
+{
+    uint FusionEntryCount;
+    FSeek(16);
+    uint CompendiumEntryCount;
+    FSeek(32);
+    SetRandomBackColor();
+    Entry FusionPosition [FusionEntryCount];
+    SetRandomBackColor();
+    FSkip(80);
+    Entry CompendiumPosition [CompendiumEntryCount];
+} File;

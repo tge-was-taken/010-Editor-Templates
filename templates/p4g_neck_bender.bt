@@ -1,0 +1,29 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: 
+//   Authors: Pioziomgames
+//   Version: 1.0
+//   Purpose: Parse p4g NECK_BENDER files (found in amd files)
+//  Category: Model
+// File Mask: NECK_BENDER
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef struct
+{
+    char filename[32]<bgcolor=cYellow>;
+    uint FileSize<bgcolor=cRed>;
+    byte Data[FileSize] <bgcolor=cBlue>;
+} file <optimize=false>;
+
+
+typedef struct
+{
+    uint FileCount <bgcolor=cGreen>;
+    file File[FileCount];
+} mainFile <optimize=false>;
+
+LittleEndian();
+mainFile MainFile <optimize=false>;
