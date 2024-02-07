@@ -1,0 +1,90 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+LittleEndian();
+
+typedef struct
+{
+    byte unk[699];
+}unk;
+
+typedef struct
+{
+    short attr;
+    byte attr0[25];
+    short attr2;
+    byte attr22[25];
+    short attr3;
+    byte attr32[25];
+    short attr4;
+    byte attr42[25];
+    short attr5;
+    byte attr52[25];
+    short attr6;
+    byte attr62[25];
+    short attr7;
+    byte attr72[25];
+    short attr8;
+    byte attr82[25];
+    short attr9;
+    byte attr92[25];
+    short attr10;
+    byte attr102[25];
+    short attr11;
+    byte attr112[25];
+    short attr12;
+    byte attr122[25];
+    short attr13;
+    byte attr132[25];
+    short attr14;
+    byte attr142[25];
+    short attr15;
+    byte attr152[25];
+    short attr16;
+    byte attr162[25];
+    short attr17;
+    byte attr172[25];
+    short attr18;
+    byte attr182[25];
+    short attr19;
+    byte attr192[33];
+}affinityData;
+
+typedef struct
+{
+    byte attr[27];
+    byte attr2[27];
+    byte attr3[27];
+    byte attr4[27];
+    byte attr5[27];
+    byte attr6[27];
+    byte attr7[27];
+    byte attr8[27];
+    byte attr9[27];
+    byte attr10[27];
+    byte attr11[27];
+    byte attr12[27];
+    byte attr13[27];
+    byte attr14[27];
+    byte attr15[27];
+    byte attr16[27];
+    byte attr17[27];
+    byte attr18[27];
+    byte attr19[22];
+}affinityData2;
+
+struct
+{
+    unk unknown;
+    affinityData affinitydata[463];
+    affinityData2 affinitydata2;
+}fileData;

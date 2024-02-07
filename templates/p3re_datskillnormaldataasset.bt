@@ -1,0 +1,55 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+
+//------------------------------------------------
+LittleEndian();
+
+typedef struct
+{
+    long unk[296];
+    byte unk2[3];
+}unk;
+
+typedef struct
+{
+    long flag <name="flag">;
+    byte unk3[25];
+}flag;
+
+typedef struct
+{
+    flag flagData <name="flag">;
+    byte use[35] <name="use">;
+    byte koukatype[34] <name="koukatype">;
+    byte costtype[26] <name="costtype">;
+    byte cost[27] <name="cost">;
+    byte costbase[35] <name="costbase">;
+    byte targettype[34] <name="targettype">;
+    byte targetarea[34] <name="targetarea">;
+    byte targetrule[26] <name="targetrule">;
+    byte untargetbadstat[37] <name="untargetbadstat">;
+    byte hitratio[34] <name="hitratio">;
+    byte targetcntmin[34] <name="targetcntmin">;
+    byte targetcntmax[34] <name="targetcntmax">;
+    byte hptype[26] <name="hptype">;
+    byte hpn[35] <name="hpn">;
+    byte sptype[26] <name="sptype">;
+    byte spn[35] <name="spn">;
+    byte badtype[34] <name="badtype">;
+    byte badratio[26] <name="badratio">;
+    byte badstatus[29] <name="badstatus">;
+    byte support[37] <name="support">;
+    byte program[34] <name="program">;
+    byte criticalratio[34] <name="criticalratio">;
+    byte swoonratio[34] <name="swoonratio">;
+}skillData;
+
+struct
+{
+    unk unknown;
+    skillData skilldata[699];
+}fileData;
