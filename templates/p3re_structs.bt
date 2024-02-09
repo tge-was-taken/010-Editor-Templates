@@ -7,6 +7,7 @@
 //------------------------------------------------
 #include "p3re_enums.bt"
 
+// EnemyData's Item struct.
 typedef struct
 {
     byte item[25] <name="Item">;
@@ -16,6 +17,7 @@ typedef struct
     byte unk3[58];
 }itemStruct;
 
+// EnemyData's EventItem struct.
 typedef struct
 {
     byte eventitem[25] <name="EventItem">;
@@ -27,6 +29,7 @@ typedef struct
     byte unk7[58];
 }eventItemStruct;
 
+// EnemyData's Attack struct.
 typedef struct
 {
     byte attack[33] <name="Attack">;
@@ -37,3 +40,38 @@ typedef struct
     byte power <name="Power">;
     byte unk11[42];
 }attackStruct;
+
+// PersonaGrowthData's SkillEvent structs.
+typedef struct
+{
+    byte skillEvent[33] <name="SkillEvent">;
+    ubyte level <name="Level">;
+    byte unk12[25];
+    short eventId <name="EventID">;
+    byte unk13[25];
+    short skillId <name="SkillID">;
+    byte unk14[49];
+    byte unk15[8];
+}skillEventStruct;
+
+typedef struct
+{
+    byte skillEvent[33] <name="SkillEvent">;
+    ubyte level2 <name="Level">;
+    byte unk16[25];
+    short eventId2 <name="EventID">;
+    byte unk17[25];
+    short skillId2 <name="SkillID">;
+    byte unk18[49];
+}skillEventStruct2;
+
+typedef struct
+{
+    byte skillEvent[33] <name="SkillEvent">;
+    ubyte level3 <name="Level">;
+    byte unk19[25];
+    short eventId3 <name="EventID">;
+    byte unk20[25];
+    short skillId3 <name="SkillID">;
+    byte unk21[28];
+}skillEventStruct3;
