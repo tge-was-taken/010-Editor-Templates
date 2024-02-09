@@ -1,14 +1,9 @@
 //------------------------------------------------
 //--- 010 Editor v13.0.1 Binary Template
 //
-//      File: 
-//   Authors: 
-//   Version: 
-//   Purpose: 
-//  Category: 
-// File Mask: 
-//  ID Bytes: 
-//   History: 
+//      File: Help with other P3RE templates.
+//   Authors: Light8227
+//   Version: 1.0
 //------------------------------------------------
 #include "p3re_enums.bt"
 
