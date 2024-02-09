@@ -1,0 +1,36 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: p4g's EFECT_TRACK files
+//   Authors: Pioziomgames
+//   Version: 0.1
+//   Purpose: Parse p4g EFFECT_TRACK (found in amd files)
+//  Category: 
+// File Mask: EFFECT_TRACK
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "include/common.bt"
+
+
+typedef struct
+{
+    SetRandomBackColor();
+    uint Unknown;
+    SetRandomBackColor();
+    uint AnimationIndex <comment="Index of the gmo animation during which the effect will appear">;
+    SetRandomBackColor();
+    uint Tag;
+    Assert(Tag == 0x4B435254);
+    SetRandomBackColor();
+    uint FileSize <comment="doesn't seem to be actually used by the game">;
+
+    FSeek(76);
+    SetRandomBackColor();
+    ushort per3HelperIDTrackStart <comment="Id of the starting point of the effect">;
+    ushort per3HelperIDTrackEnd <comment="Id of the ending point">;
+
+} EFFECT_TRACK <optimize=false>;
+
+LittleEndian();
+EFFECT_TRACK File <optimize=false>;

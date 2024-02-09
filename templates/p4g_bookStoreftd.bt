@@ -1,0 +1,25 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+LittleEndian();
+
+
+
+typedef struct
+{
+  uint FtdSize;
+  uint numberOfBooks;
+  byte Padding[8];
+  short bookId[numberOfBooks];
+} TFtd;
+
+TFtd File;

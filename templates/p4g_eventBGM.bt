@@ -1,0 +1,31 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+LittleEndian();
+
+
+typedef struct( uint EntrySize )
+{
+  ushort MinorID;
+  ushort MajorID;
+  uint unknown;
+  uint BGMIndex;
+} TDatEntry;
+
+typedef struct
+{
+  uint DatSize;
+  uint DatEntries;
+  TDatEntry DatEntry(DatSize / DatEntries)[DatEntries];
+} TDat;
+
+TDat File;

@@ -1,0 +1,28 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: p4g's EFFECT_EPL files
+//   Authors: Pioziomgames
+//   Version: 2.0
+//   Purpose: Parse p4g EFFECT_EPL (found in amd files)
+//  Category: 
+// File Mask: EFFECT_EPL
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "include/eplinclude.bt"
+
+typedef struct
+{
+    SetRandomBackColor();
+    ushort per3HelperIDRangeStart <comment="Start of the range of values assigned to the embedded epl">;
+    ushort per3HelperIDRangeEnd <comment="End of the range, if both are the same only one value is used">;
+    uint EplSize <name = "EPL Size">;
+    FSkip(12);
+    Epl EmbeddedEpl;
+    FAlign(32);
+
+} EFFECT_EPL <optimize=false>;
+
+LittleEndian();
+EFFECT_EPL File <optimize=false>;

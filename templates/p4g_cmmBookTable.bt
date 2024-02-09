@@ -1,0 +1,65 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+LittleEndian();
+
+enum<byte> BookType
+{
+    
+    
+    Special = 5,
+    Filler = 6
+};
+
+enum<byte> SocialStat
+{
+    Courage = 0,
+    Knowledge = 1,
+    Diligence = 2,
+    Understanding = 3,
+    Expression = 4
+    
+};
+
+typedef struct()
+{
+    SocialStat    stat;
+    byte    amount<comment="Probably the amount the stat increases by (needs testing)">;
+} statBonus;
+
+typedef struct( uint EntrySize )
+{
+    short   someNumber;
+    char    buffer0[2];
+    short   price;
+    char    buffer1[2];
+    statBonus   stat[2] <name="Stat bonuses">;
+    char    name[16h];
+    char    posterDescription[38];
+    short   numberOfPages;
+    char    buffer2[2];
+    short   itemId;
+    char    buffer3[2];
+    short   readFlag <comment="The flag that is turned on when you finish reading the book">;
+    char    buffer4[2];
+
+} book <bgcolor=cGray>;
+
+typedef struct
+{
+  uint DatSize;
+  uint DatEntries;
+  book DatEntry(DatSize / DatEntries)[DatEntries] <name="Books">;
+} TDat;
+
+TDat File;
