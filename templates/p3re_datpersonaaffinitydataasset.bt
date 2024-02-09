@@ -3,102 +3,102 @@
 //
 //      File: DatPersonaAffinityDataAsset.uasset
 //   Authors: Light8227
-//   Version: 1.0
+//   Version: 1.1
 //------------------------------------------------
 LittleEndian();
 
 typedef struct
 {
-    byte unk[699];
+    ubyte unk[699];
 }unk;
 
 typedef struct
 {
-    short attr;
-    byte attr0[25];
-    short attr2;
-    byte attr22[25];
-    short attr3;
-    byte attr32[25];
-    short attr4;
-    byte attr42[25];
-    short attr5;
-    byte attr52[25];
-    short attr6;
-    byte attr62[25];
-    short attr7;
-    byte attr72[25];
-    short attr8;
-    byte attr82[25];
-    short attr9;
-    byte attr92[25];
-    short attr10;
-    byte attr102[25];
-    short attr11;
-    byte attr112[25];
-    short attr12;
-    byte attr122[25];
-    short attr13;
-    byte attr132[25];
-    short attr14;
-    byte attr142[25];
-    short attr15;
-    byte attr152[25];
-    short attr16;
-    byte attr162[25];
-    short attr17;
-    byte attr172[25];
-    short attr18;
-    byte attr182[25];
-    short attr19;
-    byte attr192[33];
+    ushort attr <name="Attr">;
+    ubyte unk2[25];
+    ushort attr2 <name="Attr">;
+    ubyte unk3[25];
+    ushort attr3 <name="Attr">;
+    ubyte unk4[25];
+    ushort attr4 <name="Attr">;
+    ubyte unk5[25];
+    ushort attr5 <name="Attr">;
+    ubyte unk6[25];
+    ushort attr6 <name="Attr">;
+    ubyte unk7[25];
+    ushort attr7 <name="Attr">;
+    ubyte unk8[25];
+    ushort attr8 <name="Attr">;
+    ubyte unk9[25];
+    ushort attr9 <name="Attr">;
+    ubyte unk10[25];
+    ushort attr10 <name="Attr">;
+    ubyte unk11[25];
+    ushort attr11 <name="Attr">;
+    ubyte unk12[25];
+    ushort attr12 <name="Attr">;
+    ubyte unk13[25];
+    ushort attr13 <name="Attr">;
+    ubyte unk14[25];
+    ushort attr14 <name="Attr">;
+    ubyte unk15[25];
+    ushort attr15 <name="Attr">;
+    ubyte unk16[25];
+    ushort attr16 <name="Attr">;
+    ubyte unk17[25];
+    ushort attr17 <name="Attr">;
+    ubyte unk18[25];
+    ushort attr18 <name="Attr">;
+    ubyte unk19[25];
+    ushort attr19 <name="Attr">;
+    ubyte unk20[33];
 }affinityData;
 
 typedef struct
 {
-    short attr;
-    byte attr0[25];
-    short attr2;
-    byte attr22[25];
-    short attr3;
-    byte attr32[25];
-    short attr4;
-    byte attr42[25];
-    short attr5;
-    byte attr52[25];
-    short attr6;
-    byte attr62[25];
-    short attr7;
-    byte attr72[25];
-    short attr8;
-    byte attr82[25];
-    short attr9;
-    byte attr92[25];
-    short attr10;
-    byte attr102[25];
-    short attr11;
-    byte attr112[25];
-    short attr12;
-    byte attr122[25];
-    short attr13;
-    byte attr132[25];
-    short attr14;
-    byte attr142[25];
-    short attr15;
-    byte attr152[25];
-    short attr16;
-    byte attr162[25];
-    short attr17;
-    byte attr172[25];
-    short attr18;
-    byte attr182[25];
-    short attr19;
-    byte attr192[20];
+    ushort attr20 <name="Attr">;
+    ubyte unk21[25];
+    ushort attr21 <name="Attr">;
+    ubyte unk22[25];
+    ushort attr22 <name="Attr">;
+    ubyte unk23[25];
+    ushort attr23 <name="Attr">;
+    ubyte unk24[25];
+    ushort attr24 <name="Attr">;
+    ubyte unk25[25];
+    ushort attr25 <name="Attr">;
+    ubyte unk26[25];
+    ushort attr26 <name="Attr">;
+    ubyte unk27[25];
+    ushort attr27 <name="Attr">;
+    ubyte unk28[25];
+    ushort attr28 <name="Attr">;
+    ubyte unk29[25];
+    ushort attr29 <name="Attr">;
+    ubyte unk30[25];
+    ushort attr30 <name="Attr">;
+    ubyte unk31[25];
+    ushort attr31 <name="Attr">;
+    ubyte unk32[25];
+    ushort attr32 <name="Attr">;
+    ubyte unk33[25];
+    ushort attr33 <name="Attr">;
+    ubyte unk34[25];
+    ushort attr34 <name="Attr">;
+    byte unk35[25];
+    ushort attr35 <name="Attr">;
+    ubyte unk36[25];
+    ushort attr36 <name="Attr">;
+    ubyte unk37[25];
+    ushort attr37 <name="Attr">;
+    ubyte unk38[25];
+    ushort attr38 <name="Attr">;
+    ubyte unk39[20];
 }affinityData2;
 
 struct
 {
-    unk unknown;
-    affinityData affinitydata[463];
-    affinityData2 affinitydata2;
-}fileData;
+    unk unknown <name="Unknown">;
+    affinityData affinitydata[463] <name="AffinityData">;
+    affinityData2 affinitydata2 <name="AffinityData", comment="Affinity data for Persona 463.">;
+}fileData <name="DatPersonaAffinityDataAsset.uasset">;

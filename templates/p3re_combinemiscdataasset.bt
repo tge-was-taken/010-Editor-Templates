@@ -1,0 +1,41 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: CombineMiscDataAsset.uasset
+//   Authors: Light
+//   Version: 1.0
+//------------------------------------------------
+LittleEndian();
+
+typedef struct
+{
+    byte unk[717];
+}unk;
+
+typedef struct
+{
+    float accidentBaseRate <name="AccidentBaseRate">;
+    byte unk2[25];
+    float foolAccidentRate <name="FoolAccidentRate">;
+    byte unk3[25];
+    short accidentMinLv <name="AccidentMinLv">;
+    byte unk4[25];
+    short accidentMaxLv <name="AccidentMaxLv">;
+    byte unk5[25];
+    float skillChangeBaseRate <name="SkillChangeBaseRate">;
+    byte unk6[25];
+    float skillBuildUpRate <name="SkillBuildUpRate">;
+    byte unk7[33];
+    byte unk8[4];
+    float skillChanges[3] <name="SkillChanges">;
+    byte unk9[33];
+    byte unk10[4];
+    float skillWeights[5] <name="SkillWeights">;
+    byte unk11[12];
+}miscData;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    miscData miscdata <name="MiscData">;
+}fileData <name="CombineMiscDataAsset.uasset">;

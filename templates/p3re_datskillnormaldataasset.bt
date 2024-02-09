@@ -3,52 +3,69 @@
 //
 //      File: DatSkillNormalDataAsset.uasset
 //   Authors: Light8227
-//   Version: 1.0
+//   Version: 1.1
 //------------------------------------------------
 LittleEndian();
 
 typedef struct
 {
-    long unk[296];
-    byte unk2[3];
+    byte unk[1187];
 }unk;
 
 typedef struct
 {
-    long flag <name="flag">;
-    byte unk3[25];
-}flag;
-
-typedef struct
-{
-    flag flagData <name="flag">;
-    byte use[35] <name="use">;
-    byte koukatype[34] <name="koukatype">;
-    byte costtype[26] <name="costtype">;
-    byte cost[27] <name="cost">;
-    byte costbase[35] <name="costbase">;
-    byte targettype[34] <name="targettype">;
-    byte targetarea[34] <name="targetarea">;
-    byte targetrule[26] <name="targetrule">;
-    byte untargetbadstat[37] <name="untargetbadstat">;
-    byte hitratio[34] <name="hitratio">;
-    byte targetcntmin[34] <name="targetcntmin">;
-    byte targetcntmax[34] <name="targetcntmax">;
-    byte hptype[26] <name="hptype">;
-    byte hpn[35] <name="hpn">;
-    byte sptype[26] <name="sptype">;
-    byte spn[35] <name="spn">;
-    byte badtype[34] <name="badtype">;
-    byte badratio[26] <name="badratio">;
-    byte badstatus[29] <name="badstatus">;
-    byte support[37] <name="support">;
-    byte program[34] <name="program">;
-    byte criticalratio[34] <name="criticalratio">;
-    byte swoonratio[34] <name="swoonratio">;
+    long flag <name="Flag">;
+    byte unk2[25];
+    byte use <name="Use">;
+    byte unk3[34];
+    byte koukatype <name="KoukaType">;
+    byte unk4[33];
+    byte costtype <name="CostType">;
+    byte unk5[25];
+    byte cost <name="Cost">;
+    byte unk6[26];
+    byte costbase <name="CostBase">;
+    byte unk7[34];
+    byte targettype <name="TargetType">;
+    byte unk8[33];
+    byte targetarea <name="TargetArea">;
+    byte unk9[33];
+    ubyte targetrule <name="TargetRule">;
+    byte unk10[25];
+    byte untargetbadstat <name="UntargetBadStat">;
+    byte unk11[36];
+    ubyte hitratio <name="HitRatio">;
+    byte unk12[33];
+    byte targetcntmin <name="TargetCntMin">;
+    byte unk13[33];
+    byte targetcntmax <name="TargetCntMax">;
+    byte unk14[33];
+    byte hptype <name="HPType">;
+    byte unk15[25];
+    byte hpn <name="HPN">;
+    byte unk16[34];
+    byte sptype <name="SPType">;
+    byte unk17[25];
+    byte spn <name="SPN">;
+    byte unk18[34];
+    byte badtype <name="BadType">;
+    byte unk19[33];
+    ubyte badratio <name="BadRatio">;
+    byte unk20[25];
+    byte badstatus <name="BadStatus">;
+    byte unk21[28];
+    byte support <name="Support">;
+    byte unk22[36];
+    byte program <name="Program">;
+    byte unk23[33];
+    byte criticalratio <name="CriticalRatio">;
+    byte unk24[33];
+    byte swoonratio <name="SwoonRatio">;
+    byte unk25[33];
 }skillData;
 
 struct
 {
-    unk unknown;
-    skillData skilldata[699];
-}fileData;
+    unk unknown <name="Unknown">;
+    skillData skilldata[699] <name="SkillData">;
+}fileData <name="DatSkillNormalDataAsset.uasset">;

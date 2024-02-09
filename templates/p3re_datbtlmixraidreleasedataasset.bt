@@ -3,42 +3,42 @@
 //
 //      File: DatBtlMixraidReleaseDataAsset.uasset
 //   Authors: Light8227
-//   Version: 1.0
+//   Version: 1.1
 //------------------------------------------------
 LittleEndian();
 
 typedef struct
 {
-    byte unk[811];
+    ubyte unk[811];
 }unk;
 
 typedef struct
 {
-    short personaAID;
-    byte personaAID2[25];
-    short personaBID;
-    byte personaBID2[25];
-    long flag;
-    byte flag2[25];
-    short skill;
-    byte skill2[33];
+    short personaAID <name="PersonaAID">;
+    byte unk2[25];
+    short personaBID <name="PersonaBID">;
+    byte unk3[25];
+    long flag <name="Flag">;
+    byte unk4[25];
+    short skill <name="Skill">;
+    byte unk5[33];
 }mixRaid;
 
 typedef struct
 {
-    short personaAID;
-    byte personaAID2[25];
-    short personaBID;
-    byte personaBID2[25];
-    long flag;
-    byte flag2[25];
-    short skill;
-    byte skill2[20];
+    short personaAID2 <name="PersonaAID">;
+    byte unk6[25];
+    short personaBID2 <name="PersonaBID">;
+    byte unk7[25];
+    long flag2 <name="Flag">;
+    byte unk8[25];
+    short skill2 <name="Skill">;
+    byte unk9[20];
 }mixRaid2;
 
 struct
 {
-    unk unknown;
-    mixRaid mixraid[6];
-    mixRaid2 mixraid2;
-}fileData;
+    unk unknown <name="Unknown">;
+    mixRaid mixraid[6] <name="MixRaid">;
+    mixRaid2 mixraid2 <name="MixRaid", comment="Data for Protagonist's Theurgy Skill 7.">;
+}fileData <name="DatBtlMixraidReleaseDataAsset.uasset">;

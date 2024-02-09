@@ -1,0 +1,44 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "p3re_enums.bt"
+
+typedef struct
+{
+    byte item[25] <name="Item">;
+    short id <name="ID">;
+    byte unk2[25];
+    ubyte prob <name="Prob">;
+    byte unk3[58];
+}itemStruct;
+
+typedef struct
+{
+    byte eventitem[25] <name="EventItem">;
+    byte event <name="Event">;
+    byte unk5[28];
+    byte id <name="ID">;
+    byte unk6[26];
+    byte prob <name="Prob">;
+    byte unk7[58];
+}eventItemStruct;
+
+typedef struct
+{
+    byte attack[33] <name="Attack">;
+    ElementalType attr <name="Attr">;
+    byte unk9[33];
+    ubyte hit <name="Hit">;
+    byte unk10[25];
+    byte power <name="Power">;
+    byte unk11[42];
+}attackStruct;

@@ -3,8 +3,10 @@
 //
 //      File: DatPersonaDataAsset.uasset
 //   Authors: Light8227
-//   Version: 1.0
+//   Version: 1.1
 //------------------------------------------------
+#include "p3re_enums.bt"
+
 LittleEndian();
 
 typedef struct
@@ -14,39 +16,63 @@ typedef struct
 
 typedef struct
 {
-    byte flag[35];
-    byte race[34];
-    byte level[34];
-    byte params[34];
-    byte params2[34];
-    byte params3[34];
-    byte params4[34];
-    byte params5[34];
-    byte breakage[26];
-    byte succession[35];
-    byte conception[34];
-    byte message[34];
+    ubyte flag <name="Flag">;
+    byte unk2[34];
+    RaceID race <name="Race">;
+    byte unk3[33];
+    byte level <name="Level">;
+    byte unk4[33];
+    byte params <name="Params">;
+    byte unk5[33];
+    byte params2 <name="Params">;
+    byte unk6[33];
+    byte params3 <name="Params">;
+    byte unk7[33];
+    byte params4 <name="Params">;
+    byte unk8[33];
+    byte params5 <name="Params">;
+    byte unk9[33];
+    byte breakage <name="Breakage">;
+    byte unk10[25];
+    PersonaInherit succession <name="Succession", comment="Controls what Skill affinities the Persona can inherit.">;
+    byte unk11[33];
+    byte conception <name="Conception">;
+    byte unk12[33];
+    byte message <name="Message">;
+    byte unk13[33];
 }personaData;
 
 typedef struct
 {
-    byte flag[35];
-    byte race[34];
-    byte level[34];
-    byte params[34];
-    byte params2[34];
-    byte params3[34];
-    byte params4[34];
-    byte params5[34];
-    byte breakage[26];
-    byte succession[35];
-    byte conception[34];
-    byte message[21];
+    byte flag2 <name="Flag">;
+    byte unk14[34];
+    RaceID race2 <name="Race">;
+    byte unk15[33];
+    byte level2 <name="Level">;
+    byte unk16[33];
+    byte params6 <name="Params">;
+    byte unk17[33];
+    byte params7 <name="Params">;
+    byte unk18[33];
+    byte params8 <name="Params">;
+    byte unk19[33];
+    byte params9 <name="Params">;
+    byte unk20[33];
+    byte params10 <name="Params">;
+    byte unk21[33];
+    byte breakage2 <name="Breakage">;
+    byte unk22[25];
+    PersonaInherit succession2 <name="Succession", comment="Controls what Skill affinities the Persona can inherit.">;
+    byte unk23[33];
+    byte conception2 <name="Conception">;
+    byte unk24[33];
+    byte message2 <name="Message">;
+    byte unk25[20];
 }personaData2;
 
 struct
 {
-    unk unknown;
-    personaData personadata[463];
-    personaData2 personadata2;
-}fileData;
+    unk unknown <name="Unknown">;
+    personaData personadata[463] <name="PersonaData">;
+    personaData2 personadata2 <name="PersonaData", comment="Persona data for Persona 463.">;
+}fileData <name="DatPersonaDataAsset.uasset">;

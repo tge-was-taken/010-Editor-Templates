@@ -1,0 +1,64 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: Help with other P3RE templates.
+//   Authors: Light8227
+//   Version: 1.0
+//------------------------------------------------
+// Enum for Skill affinities Personas can inherit.
+enum<ushort>PersonaInherit
+{
+    InheritAlmighty = 31,
+};
+
+// Enum for Skill elements.
+enum<ubyte>ElementalType
+{
+    Slash = 0,
+    Strike = 1,
+    Pierce = 2,
+    Fire = 3,
+    Ice = 4,
+    Electric = 5,
+    Wind = 6,
+    Almighty = 7,
+    Light = 8,
+    Dark = 9,
+    Charm = 10,
+    Poison = 11,
+    Distress = 12,
+    Confuse = 13,
+    Fear = 14,
+    Rage = 15,
+    Healing = 16,
+    Support = 17,
+    Fuuka = 18,
+    Passive = 255,
+};
+
+// Enum for Persona Race/Arcanas.
+enum<byte>RaceID
+{
+    Fool = 1,
+    Magician = 2,
+    Priestess = 3,
+    Empress = 4,
+    Emperor = 5,
+    Hierophant = 6,
+    Lovers = 7,
+    Chariot = 8,
+    Justice = 9,
+    Hermit = 10,
+    Fortune = 11,
+    Strength = 12,
+    HangedMan = 13,
+    Death = 14,
+    Temperance = 15,
+    Devil = 16,
+    Tower = 17,
+    Star = 18,
+    Moon = 19,
+    Sun = 20,
+    Judgement = 21,
+    Aeon = 22,
+};
