@@ -3,19 +3,21 @@
 //
 //      File: DatPersonaDataAsset.uasset
 //   Authors: Light8227
-//   Version: 1.1
+//   Version: 2.0
 //------------------------------------------------
 #include "p3re_enums.bt"
+#include "ue4_iopackage.bt"
 
 LittleEndian();
 
 typedef struct
 {
-    byte unk[827];
+    byte unk[98];
 }unk;
 
 typedef struct
 {
+    byte unk50[13];
     ubyte flag <name="Flag">;
     byte unk2[34];
     RaceID race <name="Race">;
@@ -39,40 +41,11 @@ typedef struct
     byte conception <name="Conception">;
     byte unk12[33];
     byte message <name="Message">;
-    byte unk13[33];
+    byte unk13[20];
 }personaData;
-
-typedef struct
-{
-    byte flag2 <name="Flag">;
-    byte unk14[34];
-    RaceID race2 <name="Race">;
-    byte unk15[33];
-    byte level2 <name="Level">;
-    byte unk16[33];
-    byte params6 <name="Params">;
-    byte unk17[33];
-    byte params7 <name="Params">;
-    byte unk18[33];
-    byte params8 <name="Params">;
-    byte unk19[33];
-    byte params9 <name="Params">;
-    byte unk20[33];
-    byte params10 <name="Params">;
-    byte unk21[33];
-    byte breakage2 <name="Breakage">;
-    byte unk22[25];
-    PersonaInherit succession2 <name="Succession", comment="Controls what Skill affinities the Persona can inherit.">;
-    byte unk23[33];
-    byte conception2 <name="Conception">;
-    byte unk24[33];
-    byte message2 <name="Message">;
-    byte unk25[20];
-}personaData2;
 
 struct
 {
     unk unknown <name="Unknown">;
-    personaData personadata[463] <name="PersonaData">;
-    personaData2 personadata2 <name="PersonaData", comment="Persona data for Persona 463.">;
+    personaData personadata[464] <name="PersonaData">;
 }fileData <name="DatPersonaDataAsset.uasset">;

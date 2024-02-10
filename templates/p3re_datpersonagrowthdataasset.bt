@@ -6,16 +6,18 @@
 //   Version: 1.0
 //------------------------------------------------
 #include "p3re_structs.bt"
+#include "ue4_iopackage.bt"
 
 LittleEndian();
 
 typedef struct
 {
-    byte unk[851];
+    byte unk[98];
 }unk;
 
 typedef struct
 {
+    byte unk50[21];
     byte paramsUp <name="ParamsUp">;
     byte unk2[33];
     byte paramsUp2 <name="ParamsUp">;
@@ -25,30 +27,12 @@ typedef struct
     byte paramsUp4 <name="ParamsUp">;
     byte unk5[33];
     byte paramsUp5 <name="ParamsUp">;
-    byte unk6[49];
-    skillEventStruct skillevent[15] <name="SkillEvent">;
-    skillEventStruct2 skillevent2 <name="SkillEvent", comment="Data for SkillEvent 16.">;
+    byte unk6[20];
+    skillEventStruct skillevent[16] <name="SkillEvent">;
 }growthData;
-
-typedef struct
-{
-    byte paramsUp6 <name="ParamsUp">;
-    byte unk7[33];
-    byte paramsUp7 <name="ParamsUp">;
-    byte unk8[33];
-    byte paramsUp8 <name="ParamsUp">;
-    byte unk9[33];
-    byte paramsUp9 <name="ParamsUp">;
-    byte unk10[33];
-    byte paramsUp10 <name="ParamsUp">;
-    byte unk11[49];
-    skillEventStruct skillevent[15] <name="SkillEvent">;
-    skillEventStruct3 skillevent3 <name="SkillEvent", comment="Data for SkillEvent 16.">;
-}growthData2;
 
 struct
 {
     unk unknown <name="Unknown">;
-    growthData growthdata[463] <name="GrowthData">;
-    growthData2 growthdata2 <name="GrowthData", comment="Growth data for Persona 464.">;
+    growthData growthdata[464] <name="GrowthData">;
 }fileData <name="DatPersonaGrowthDataAsset.uasset">;

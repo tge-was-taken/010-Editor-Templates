@@ -3,29 +3,31 @@
 //
 //      File: DatSkillDataAsset.uasset
 //   Authors: Light8227
-//   Version: 1.1
+//   Version: 2.0
 //------------------------------------------------
 #include "p3re_enums.bt"
+#include "ue4_iopackage.bt"
 
 LittleEndian();
 
 typedef struct
 {
-    byte unk[707];
+    byte unk[98];
 }unk;
 
 typedef struct
 {
+    byte unk2[13];
     ElementalType attr <name="Attr">;
-    byte unk2[25];
-    byte type <name="Type">;
     byte unk3[25];
+    byte type <name="Type">;
+    byte unk4[25];
     byte targetLv <name="TargetLv">;
-    byte unk4[33];
+    byte unk5[20];
 }skillData;
 
 struct
 {
     unk unknown <name="Unknown">;
-    skillData skilldata[1024] <name="SkillData">;
+    skillData skilldata[1025] <name="SkillData">;
 }fileData <name="DatSkillDataAsset.uasset">;

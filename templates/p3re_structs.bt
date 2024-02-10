@@ -3,7 +3,7 @@
 //
 //      File: Help with other P3RE templates.
 //   Authors: Light8227
-//   Version: 1.0
+//   Version: 2.0
 //------------------------------------------------
 #include "p3re_enums.bt"
 
@@ -12,9 +12,9 @@ typedef struct
 {
     byte item[25] <name="Item">;
     short id <name="ID">;
-    byte unk2[25];
+    byte unk[25];
     ubyte prob <name="Prob">;
-    byte unk3[58];
+    byte unk2[58];
 }itemStruct;
 
 // EnemyData's EventItem struct.
@@ -22,11 +22,11 @@ typedef struct
 {
     byte eventitem[25] <name="EventItem">;
     byte event <name="Event">;
-    byte unk5[28];
+    byte unk3[28];
     byte id <name="ID">;
-    byte unk6[26];
+    byte unk4[26];
     byte prob <name="Prob">;
-    byte unk7[58];
+    byte unk5[58];
 }eventItemStruct;
 
 // EnemyData's Attack struct.
@@ -34,44 +34,22 @@ typedef struct
 {
     byte attack[33] <name="Attack">;
     ElementalType attr <name="Attr">;
-    byte unk9[33];
+    byte unk6[33];
     ubyte hit <name="Hit">;
-    byte unk10[25];
+    byte unk7[25];
     byte power <name="Power">;
-    byte unk11[42];
+    byte unk8[29];
 }attackStruct;
 
-// PersonaGrowthData's SkillEvent structs.
+// PersonaGrowthData's SkillEvent struct.
 typedef struct
 {
-    byte skillEvent[33] <name="SkillEvent">;
+    byte unk9[29];
+    byte unk10[33] <name="SkillEvent">;
     ubyte level <name="Level">;
-    byte unk12[25];
+    byte unk11[25];
     short eventId <name="EventID">;
-    byte unk13[25];
+    byte unk12[25];
     short skillId <name="SkillID">;
-    byte unk14[49];
-    byte unk15[8];
+    byte unk13[28];
 }skillEventStruct;
-
-typedef struct
-{
-    byte skillEvent[33] <name="SkillEvent">;
-    ubyte level2 <name="Level">;
-    byte unk16[25];
-    short eventId2 <name="EventID">;
-    byte unk17[25];
-    short skillId2 <name="SkillID">;
-    byte unk18[49];
-}skillEventStruct2;
-
-typedef struct
-{
-    byte skillEvent[33] <name="SkillEvent">;
-    ubyte level3 <name="Level">;
-    byte unk19[25];
-    short eventId3 <name="EventID">;
-    byte unk20[25];
-    short skillId3 <name="SkillID">;
-    byte unk21[28];
-}skillEventStruct3;

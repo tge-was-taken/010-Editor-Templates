@@ -3,59 +3,61 @@
 //
 //      File: DatEnemyDataAsset.uasset
 //   Authors: Light8227
-//   Version: 1.0
+//   Version: 2.0
 //------------------------------------------------
 #include "p3re_structs.bt"
+#include "ue4_iopackage.bt"
 
 LittleEndian();
 
 typedef struct
 {
-    byte unk[1099];
+    byte unk[98];
 }unk;
 
 typedef struct
 {
+    byte unk2[13];
     byte flags <name="Flags">;
-    byte unk2[36];
+    byte unk3[36];
     RaceID race <name="Race">;
-    byte unk3[25];
-    short level <name="Level">;
     byte unk4[25];
+    short level <name="Level">;
+    byte unk5[25];
     ubyte maxhp <name="MaxHP">;
-    byte unk5[28];
+    byte unk6[28];
     ubyte maxsp <name="MaxSP">;
-    byte unk6[36];
+    byte unk7[36];
     byte params <name="Params">;
-    byte unk7[33];
-    byte params2 <name="Params">;
     byte unk8[33];
-    byte params3 <name="Params">;
+    byte params2 <name="Params">;
     byte unk9[33];
-    byte params4 <name="Params">;
+    byte params3 <name="Params">;
     byte unk10[33];
+    byte params4 <name="Params">;
+    byte unk11[33];
     byte params5 <name="Params">;
-    byte unk11[25];
+    byte unk12[25];
     ubyte skill <name="Skill">;
-    byte unk12[26];
-    ubyte skill2 <name="Skill">;
     byte unk13[26];
-    ubyte skill3 <name="Skill">;
+    ubyte skill2 <name="Skill">;
     byte unk14[26];
-    ubyte skill4 <name="Skill">;
+    ubyte skill3 <name="Skill">;
     byte unk15[26];
-    ubyte skill5 <name="Skill">;
+    ubyte skill4 <name="Skill">;
     byte unk16[26];
-    ubyte skill6 <name="Skill">;
+    ubyte skill5 <name="Skill">;
     byte unk17[26];
-    ubyte skill7 <name="Skill">;
+    ubyte skill6 <name="Skill">;
     byte unk18[26];
-    ubyte skill8 <name="Skill">;
+    ubyte skill7 <name="Skill">;
     byte unk19[26];
+    ubyte skill8 <name="Skill">;
+    byte unk20[26];
     byte exp <name="EXP">;
-    byte unk20[28];
+    byte unk21[28];
     byte money <name="Money">;
-    byte unk21[52];
+    byte unk22[52];
     itemStruct item[4];
     eventItemStruct eventItem;
     attackStruct attack;
@@ -64,5 +66,5 @@ typedef struct
 struct
 {
     unk unknown <name="Unknown">;
-    enemyData enemydata[600] <name="EnemyData">;
+    enemyData enemydata[601] <name="EnemyData">;
 }fileData <name="DatEnemyDataAsset.uasset">;

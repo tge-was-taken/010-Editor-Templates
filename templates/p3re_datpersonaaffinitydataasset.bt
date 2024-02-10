@@ -3,17 +3,20 @@
 //
 //      File: DatPersonaAffinityDataAsset.uasset
 //   Authors: Light8227
-//   Version: 1.1
+//   Version: 2.0
 //------------------------------------------------
+#include "ue4_iopackage.bt"
+
 LittleEndian();
 
 typedef struct
 {
-    ubyte unk[699];
+    ubyte unk[98];
 }unk;
 
 typedef struct
 {
+    byte unk50[13];
     ushort attr <name="Attr">;
     ubyte unk2[25];
     ushort attr2 <name="Attr">;
@@ -51,54 +54,11 @@ typedef struct
     ushort attr18 <name="Attr">;
     ubyte unk19[25];
     ushort attr19 <name="Attr">;
-    ubyte unk20[33];
+    ubyte unk20[20];
 }affinityData;
-
-typedef struct
-{
-    ushort attr20 <name="Attr">;
-    ubyte unk21[25];
-    ushort attr21 <name="Attr">;
-    ubyte unk22[25];
-    ushort attr22 <name="Attr">;
-    ubyte unk23[25];
-    ushort attr23 <name="Attr">;
-    ubyte unk24[25];
-    ushort attr24 <name="Attr">;
-    ubyte unk25[25];
-    ushort attr25 <name="Attr">;
-    ubyte unk26[25];
-    ushort attr26 <name="Attr">;
-    ubyte unk27[25];
-    ushort attr27 <name="Attr">;
-    ubyte unk28[25];
-    ushort attr28 <name="Attr">;
-    ubyte unk29[25];
-    ushort attr29 <name="Attr">;
-    ubyte unk30[25];
-    ushort attr30 <name="Attr">;
-    ubyte unk31[25];
-    ushort attr31 <name="Attr">;
-    ubyte unk32[25];
-    ushort attr32 <name="Attr">;
-    ubyte unk33[25];
-    ushort attr33 <name="Attr">;
-    ubyte unk34[25];
-    ushort attr34 <name="Attr">;
-    byte unk35[25];
-    ushort attr35 <name="Attr">;
-    ubyte unk36[25];
-    ushort attr36 <name="Attr">;
-    ubyte unk37[25];
-    ushort attr37 <name="Attr">;
-    ubyte unk38[25];
-    ushort attr38 <name="Attr">;
-    ubyte unk39[20];
-}affinityData2;
 
 struct
 {
     unk unknown <name="Unknown">;
-    affinityData affinitydata[463] <name="AffinityData">;
-    affinityData2 affinitydata2 <name="AffinityData", comment="Affinity data for Persona 463.">;
+    affinityData affinitydata[464] <name="AffinityData">;
 }fileData <name="DatPersonaAffinityDataAsset.uasset">;
