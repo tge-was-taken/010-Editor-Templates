@@ -17,31 +17,31 @@ typedef struct
 
 typedef struct
 {
-    byte unk50[13];
+    byte unk50[13] <hidden=true>;
     ubyte flag <name="Flag">;
-    byte unk2[34];
+    byte unk2[34] <hidden=true>;
     RaceID race <name="Race">;
-    byte unk3[33];
+    byte unk3[33] <hidden=true>;
     byte level <name="Level">;
-    byte unk4[33];
+    byte unk4[33] <hidden=true>;
     byte params <name="Params">;
-    byte unk5[33];
+    byte unk5[33] <hidden=true>;
     byte params2 <name="Params">;
-    byte unk6[33];
+    byte unk6[33] <hidden=true>;
     byte params3 <name="Params">;
-    byte unk7[33];
+    byte unk7[33] <hidden=true>;
     byte params4 <name="Params">;
-    byte unk8[33];
+    byte unk8[33] <hidden=true>;
     byte params5 <name="Params">;
-    byte unk9[33];
+    byte unk9[33] <hidden=true>;
     byte breakage <name="Breakage">;
-    byte unk10[25];
+    byte unk10[25] <hidden=true>;
     PersonaInherit succession <name="Succession", comment="Controls what Skill affinities the Persona can inherit.">;
-    byte unk11[33];
+    byte unk11[33] <hidden=true>;
     byte conception <name="Conception">;
-    byte unk12[33];
+    byte unk12[33] <hidden=true>;
     byte message <name="Message">;
-    byte unk13[20];
+    byte unk13[20] <hidden=true>;
 }personaData;
 
 struct

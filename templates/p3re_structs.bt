@@ -12,9 +12,9 @@ typedef struct
 {
     byte item[25] <name="Item">;
     short id <name="ID">;
-    byte unk[25];
+    byte unk[25] <hidden=true>;
     ubyte prob <name="Prob">;
-    byte unk2[58];
+    byte unk2[58] <hidden=true>;
 }itemStruct;
 
 // EnemyData's EventItem struct.
@@ -22,11 +22,11 @@ typedef struct
 {
     byte eventitem[25] <name="EventItem">;
     byte event <name="Event">;
-    byte unk3[28];
+    byte unk3[28] <hidden=true>;
     byte id <name="ID">;
-    byte unk4[26];
+    byte unk4[26] <hidden=true>;
     byte prob <name="Prob">;
-    byte unk5[58];
+    byte unk5[58] <hidden=true>;
 }eventItemStruct;
 
 // EnemyData's Attack struct.
@@ -34,22 +34,50 @@ typedef struct
 {
     byte attack[33] <name="Attack">;
     ElementalType attr <name="Attr">;
-    byte unk6[33];
+    byte unk6[33] <hidden=true>;
     ubyte hit <name="Hit">;
-    byte unk7[25];
+    byte unk7[25] <hidden=true>;
     byte power <name="Power">;
-    byte unk8[29];
+    byte unk8[29] <hidden=true>;
 }attackStruct;
 
 // PersonaGrowthData's SkillEvent struct.
 typedef struct
 {
-    byte unk9[29];
+    byte unk9[29] <hidden=true>;
     byte unk10[33] <name="SkillEvent">;
     ubyte level <name="Level">;
-    byte unk11[25];
+    byte unk11[25] <hidden=true>;
     short eventId <name="EventID">;
-    byte unk12[25];
+    byte unk12[25] <hidden=true>;
     short skillId <name="SkillID">;
-    byte unk13[28];
+    byte unk13[28] <hidden=true>;
 }skillEventStruct;
+
+// AllyPersonaGrowthData's SkillEvent struct.
+typedef struct
+{
+    byte unk14[31];
+    byte skillevent[33];
+    byte level[26];
+    byte eventid[27];
+    byte skillid[28];
+}allySkillEventStruct;
+
+// AllyPersonaGrowthData's ParamsUp struct.
+typedef struct
+{
+    byte unk14[24];
+    byte paramsup[33];
+    byte atk[34];
+    byte mat[34];
+    byte def[34];
+    byte spd[34];
+    byte luk[34];
+}paramsUpStruct;
+
+// AllyPersonaGrowthData's Exp struct.
+typedef struct
+{
+    byte exp[19];
+}expStruct;

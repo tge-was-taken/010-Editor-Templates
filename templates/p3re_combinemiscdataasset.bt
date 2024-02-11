@@ -17,23 +17,23 @@ typedef struct
 typedef struct
 {
     float accidentBaseRate <name="AccidentBaseRate">;
-    byte unk2[25];
+    byte unk2[25] <hidden=true>;
     float foolAccidentRate <name="FoolAccidentRate">;
-    byte unk3[25];
+    byte unk3[25] <hidden=true>;
     short accidentMinLv <name="AccidentMinLv">;
-    byte unk4[25];
+    byte unk4[25] <hidden=true>;
     short accidentMaxLv <name="AccidentMaxLv">;
-    byte unk5[25];
+    byte unk5[25] <hidden=true>;
     float skillChangeBaseRate <name="SkillChangeBaseRate">;
-    byte unk6[25];
+    byte unk6[25] <hidden=true>;
     float skillBuildUpRate <name="SkillBuildUpRate">;
-    byte unk7[33];
-    byte unk8[4];
+    byte unk7[33] <hidden=true>;
+    byte unk8[4] <hidden=true>;
     float skillChanges[3] <name="SkillChanges">;
-    byte unk9[33];
-    byte unk10[4];
+    byte unk9[33] <hidden=true>;
+    byte unk10[4] <hidden=true>;
     float skillWeights[5] <name="SkillWeights">;
-    byte unk11[12];
+    byte unk11[12] <hidden=true>;
 }miscData;
 
 struct

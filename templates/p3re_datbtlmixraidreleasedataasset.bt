@@ -17,15 +17,15 @@ typedef struct
 
 typedef struct
 {
-    byte unk50[13];
+    byte unk50[13] <hidden=true>;
     PersonaID personaAID <name="PersonaAID">;
-    byte unk2[25];
+    byte unk2[25] <hidden=true>;
     PersonaID personaBID <name="PersonaBID">;
-    byte unk3[25];
+    byte unk3[25] <hidden=true>;
     long flag <name="Flag">;
-    byte unk4[25];
+    byte unk4[25] <hidden=true>;
     short skill <name="Skill">;
-    byte unk5[20];
+    byte unk5[20] <hidden=true>;
 }mixRaid;
 
 struct

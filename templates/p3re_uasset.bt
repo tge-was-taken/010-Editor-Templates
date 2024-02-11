@@ -1,0 +1,144 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+#include "ue4_iopackage.bt"
+#include "p3re_enums.bt"
+
+LittleEndian();
+
+// DatBtlMixraidReleaseDataAsset.uasset
+typedef struct
+{
+    ubyte unk[98];
+    byte unk50[13];
+    PersonaID personaAID <name="PersonaAID">;
+    byte unk2[25];
+    PersonaID personaBID <name="PersonaBID">;
+    byte unk3[25];
+    long flag <name="Flag">;
+    byte unk4[25];
+    short skill <name="Skill">;
+    byte unk5[20];
+}TMixRaid;
+
+// CombineMiscDataAsset.uasset
+typedef struct
+{
+    float accidentBaseRate <name="AccidentBaseRate">;
+    byte unk2[25];
+    float foolAccidentRate <name="FoolAccidentRate">;
+    byte unk3[25];
+    short accidentMinLv <name="AccidentMinLv">;
+    byte unk4[25];
+    short accidentMaxLv <name="AccidentMaxLv">;
+    byte unk5[25];
+    float skillChangeBaseRate <name="SkillChangeBaseRate">;
+    byte unk6[25];
+    float skillBuildUpRate <name="SkillBuildUpRate">;
+    byte unk7[33];
+    byte unk8[4];
+    float skillChanges[3] <name="SkillChanges">;
+    byte unk9[33];
+    byte unk10[4];
+    float skillWeights[5] <name="SkillWeights">;
+    byte unk11[12];
+}TMiscData;
+
+
+
+
+typedef struct( TableSegmentType _type )
+{
+    fileData.FExportMapEntryexports[(Header.ExportBundlesOffset - Header.ExportMapOffset) / sizeof(FExportMapEntry)].CookedSerialSize
+    switch ( type )
+    {
+        case TableSegmentType_MixRaid:
+            TMixRaid mixraid[ Size / sizeof( TMixRaid ) ];
+            break;
+
+        default:
+            byte Data[ Size ];
+    }
+
+    FAlign( 16 );
+} TTableSegment <read=TableSegmentToString>;
+
+string TableSegmentToString( TTableSegment& segment )
+{
+    return EnumToString( segment.type );
+}
+
+typedef struct( string tableName, u32 endOffset )
+{
+    local int segmentIndex = 0;
+    local TableSegmentType segmentType;
+
+    while ( FTell() < endOffset )
+    {
+        segmentType = TableSegmentType_Unknown;
+        if ( !Stricmp( tableName, "DatBtlMixraidReleaseDataAsset" ) )
+        {
+            switch ( segmentIndex )
+            {
+                case 0: segmentType = TableSegmentType_MixRaid;
+            }
+        }
+
+        Printf( "%s\n", EnumToString( segmentType ) );
+        SetBackColor( MyRandom( 0xFFFFFFFF ) );
+        TTableSegment Segment( segmentType );
+
+        ++segmentIndex;
+    }
+
+} TTable;
+
+// FileName
+typedef struct
+{
+    LittleEndian();
+    char FileName[ 252 ];
+    u32 FileSize;
+
+    if ( Stricmp( FileNameGetExtension( FileName ), ".tbl" ) == 0 )
+    {
+        BigEndian();
+        TTable Table( FileNameGetBase( FileName, false ), FTell() + FileSize );
+    }
+    else
+    {
+        u8 Data[ FileSize ];
+    }
+
+    FAlign( 64 );
+} TFile <read=FileToString>;
+
+// Read table
+local string filePath = GetFileName();
+local string fileName = FileNameGetBase( filePath, false );
+local string fileExt = FileNameGetExtension( filePath );
+
+// FileEx
+if ( Stricmp( fileExt, ".pac" ) == 0 )
+{
+    // table.pac
+    while ( !FEof() )
+    {
+        TFile File;
+    }
+}
+else if ( Stricmp( fileExt, ".uasset" ) == 0 )
+{
+    // uasset file
+    LittleEndian();
+    TTable Table( fileName, FileSize() );
+}

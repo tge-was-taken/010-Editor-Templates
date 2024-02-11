@@ -17,13 +17,13 @@ typedef struct
 
 typedef struct
 {
-    byte unk2[13];
+    byte unk2[13] <hidden=true>;
     ElementalType attr <name="Attr">;
-    byte unk3[25];
+    byte unk3[25] <hidden=true>;
     byte type <name="Type">;
-    byte unk4[25];
+    byte unk4[25] <hidden=true>;
     byte targetLv <name="TargetLv">;
-    byte unk5[20];
+    byte unk5[20] <hidden=true>;
 }skillData;
 
 struct

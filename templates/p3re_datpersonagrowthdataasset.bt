@@ -17,17 +17,17 @@ typedef struct
 
 typedef struct
 {
-    byte unk50[21];
+    byte unk50[21] <hidden=true>;
     byte paramsUp <name="ParamsUp">;
-    byte unk2[33];
+    byte unk2[33] <hidden=true>;
     byte paramsUp2 <name="ParamsUp">;
-    byte unk3[33];
+    byte unk3[33] <hidden=true>;
     byte paramsUp3 <name="ParamsUp">;
-    byte unk4[33];
+    byte unk4[33] <hidden=true>;
     byte paramsUp4 <name="ParamsUp">;
-    byte unk5[33];
+    byte unk5[33] <hidden=true>;
     byte paramsUp5 <name="ParamsUp">;
-    byte unk6[20];
+    byte unk6[20] <hidden=true>;
     skillEventStruct skillevent[16] <name="SkillEvent">;
 }growthData;
 

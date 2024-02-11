@@ -6,6 +6,7 @@
 //   Version: 2.0
 //------------------------------------------------
 #include "ue4_iopackage.bt"
+#include "p3re_enums.bt"
 
 LittleEndian();
 
@@ -16,55 +17,65 @@ typedef struct
 
 typedef struct
 {
-    byte unk2[13];
+    byte unk2[13] <hidden=true>;
     long flag <name="Flag">;
-    byte unk3[25];
+    byte unk3[25] <hidden=true>;
     byte use <name="Use">;
-    byte unk4[34];
+    byte unk4[34] <hidden=true>;
     byte koukatype <name="KoukaType">;
-    byte unk5[33];
-    byte costtype <name="CostType">;
-    byte unk6[25];
-    byte cost <name="Cost">;
-    byte unk7[26];
+    byte unk5[33] <hidden=true>;
+    CostType costtype <name="CostType">;
+    byte unk6[25] <hidden=true>;
+    ubyte cost <name="Cost">;
+    byte unk7[26] <hidden=true>;
     byte costbase <name="CostBase">;
-    byte unk8[34];
+    byte unk8[34] <hidden=true>;
     byte targettype <name="TargetType">;
-    byte unk9[33];
+    byte unk9[33] <hidden=true>;
     byte targetarea <name="TargetArea">;
-    byte unk10[33];
+    byte unk10[33] <hidden=true>;
     ubyte targetrule <name="TargetRule">;
-    byte unk11[25];
+    byte unk11[25] <hidden=true>;
     uint untargetbadstat <name="UntargetBadStat">;
-    byte unk12[33];
+    byte unk12[33] <hidden=true>;
     ubyte hitratio <name="HitRatio">;
-    byte unk13[33];
+    byte unk13[33] <hidden=true>;
     byte targetcntmin <name="TargetCntMin">;
-    byte unk14[33];
+    byte unk14[33] <hidden=true>;
     byte targetcntmax <name="TargetCntMax">;
-    byte unk15[33];
+    byte unk15[33] <hidden=true>;
     byte hptype <name="HPType">;
-    byte unk16[25];
+    byte unk16[25] <hidden=true>;
     ubyte hpn <name="HPN">;
-    byte unk17[34];
+    byte unk17[34] <hidden=true>;
     byte sptype <name="SPType">;
-    byte unk18[25];
+    byte unk18[25] <hidden=true>;
     byte spn <name="SPN">;
-    byte unk19[34];
-    byte badtype <name="BadType">;
-    byte unk20[33];
+    byte unk19[34] <hidden=true>;
+    EffectType badtype <name="BadType">;
+    byte unk20[33] <hidden=true>;
     ubyte badratio <name="BadRatio">;
-    byte unk21[25];
-    byte badstatus <name="BadStatus">;
-    byte unk22[28];
+    byte unk21[25] <hidden=true>;
+    struct
+    {
+        Bool PoisonEffect : 1;
+        Bool CharmEffect : 1;
+        Bool DistressEffect : 1;
+        Bool ConfuseEffect : 1;
+        Bool FearEffect : 1;
+        Bool RageEffect : 1;
+        Bool FreezeEffect : 1;
+        Bool ShockEffect : 1;
+    } Effect1 <name="BadStatus">;
+    byte unk22[27] <hidden=true>;
     byte support <name="Support">;
-    byte unk23[36];
+    byte unk23[36] <hidden=true>;
     byte program <name="Program">;
-    byte unk24[33];
+    byte unk24[33] <hidden=true>;
     byte criticalratio <name="CriticalRatio">;
-    byte unk25[33];
+    byte unk25[33] <hidden=true>;
     byte swoonratio <name="SwoonRatio">;
-    byte unk26[20];
+    byte unk26[20] <hidden=true>;
 }skillData;
 
 struct
