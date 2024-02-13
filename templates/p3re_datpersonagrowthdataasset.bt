@@ -3,7 +3,7 @@
 //
 //      File: DatPersonaGrowthDataAsset.uasset
 //   Authors: Light8227
-//   Version: 1.0
+//   Version: 2.0
 //------------------------------------------------
 #include "p3re_structs.bt"
 #include "ue4_iopackage.bt"
@@ -17,17 +17,17 @@ typedef struct
 
 typedef struct
 {
-    byte unk50[21] <hidden=true>;
-    byte paramsUp <name="ParamsUp">;
-    byte unk2[33] <hidden=true>;
-    byte paramsUp2 <name="ParamsUp">;
-    byte unk3[33] <hidden=true>;
-    byte paramsUp3 <name="ParamsUp">;
-    byte unk4[33] <hidden=true>;
-    byte paramsUp4 <name="ParamsUp">;
-    byte unk5[33] <hidden=true>;
-    byte paramsUp5 <name="ParamsUp">;
-    byte unk6[20] <hidden=true>;
+    byte padding[21] <hidden=true>;
+    ubyte paramsUp <name="ParamsUp">;
+    byte padding2[33] <hidden=true>;
+    ubyte paramsUp2 <name="ParamsUp">;
+    byte padding3[33] <hidden=true>;
+    ubyte paramsUp3 <name="ParamsUp">;
+    byte padding4[33] <hidden=true>;
+    ubyte paramsUp4 <name="ParamsUp">;
+    byte padding5[33] <hidden=true>;
+    ubyte paramsUp5 <name="ParamsUp">;
+    byte padding6[20] <hidden=true>;
     skillEventStruct skillevent[16] <name="SkillEvent">;
 }growthData;
 

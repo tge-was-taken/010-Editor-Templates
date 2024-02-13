@@ -3,7 +3,7 @@
 //
 //      File: DatPersonaDataAsset.uasset
 //   Authors: Light8227
-//   Version: 2.0
+//   Version: 3.0
 //------------------------------------------------
 #include "p3re_enums.bt"
 #include "ue4_iopackage.bt"
@@ -17,31 +17,31 @@ typedef struct
 
 typedef struct
 {
-    byte unk50[13] <hidden=true>;
+    byte padding[13] <hidden=true>;
     ubyte flag <name="Flag">;
-    byte unk2[34] <hidden=true>;
+    byte padding2[34] <hidden=true>;
     RaceID race <name="Race">;
-    byte unk3[33] <hidden=true>;
-    byte level <name="Level">;
-    byte unk4[33] <hidden=true>;
-    byte params <name="Params">;
-    byte unk5[33] <hidden=true>;
-    byte params2 <name="Params">;
-    byte unk6[33] <hidden=true>;
-    byte params3 <name="Params">;
-    byte unk7[33] <hidden=true>;
-    byte params4 <name="Params">;
-    byte unk8[33] <hidden=true>;
-    byte params5 <name="Params">;
-    byte unk9[33] <hidden=true>;
-    byte breakage <name="Breakage">;
-    byte unk10[25] <hidden=true>;
+    byte padding3[33] <hidden=true>;
+    ubyte level <name="Level">;
+    byte padding4[33] <hidden=true>;
+    ubyte params <name="Params">;
+    byte padding5[33] <hidden=true>;
+    ubyte params2 <name="Params">;
+    byte padding6[33] <hidden=true>;
+    ubyte params3 <name="Params">;
+    byte padding7[33] <hidden=true>;
+    ubyte params4 <name="Params">;
+    byte padding8[33] <hidden=true>;
+    ubyte params5 <name="Params">;
+    byte padding9[33] <hidden=true>;
+    ubyte breakage <name="Breakage">;
+    byte padding10[25] <hidden=true>;
     PersonaInherit succession <name="Succession", comment="Controls what Skill affinities the Persona can inherit.">;
-    byte unk11[33] <hidden=true>;
-    byte conception <name="Conception">;
-    byte unk12[33] <hidden=true>;
-    byte message <name="Message">;
-    byte unk13[20] <hidden=true>;
+    byte padding11[34] <hidden=true>;
+    ubyte conception <name="Conception">;
+    byte padding12[33] <hidden=true>;
+    ubyte message <name="Message">;
+    byte padding13[20] <hidden=true>;
 }personaData;
 
 struct

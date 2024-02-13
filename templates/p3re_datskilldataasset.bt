@@ -3,7 +3,7 @@
 //
 //      File: DatSkillDataAsset.uasset
 //   Authors: Light8227
-//   Version: 2.0
+//   Version: 3.0
 //------------------------------------------------
 #include "p3re_enums.bt"
 #include "ue4_iopackage.bt"
@@ -17,13 +17,13 @@ typedef struct
 
 typedef struct
 {
-    byte unk2[13] <hidden=true>;
+    byte padding[13] <hidden=true>;
     ElementalType attr <name="Attr">;
-    byte unk3[25] <hidden=true>;
-    byte type <name="Type">;
-    byte unk4[25] <hidden=true>;
-    byte targetLv <name="TargetLv">;
-    byte unk5[20] <hidden=true>;
+    byte padding2[25] <hidden=true>;
+    ubyte type <name="Type">;
+    byte padding3[25] <hidden=true>;
+    ubyte targetLv <name="TargetLv">;
+    byte padding4[20] <hidden=true>;
 }skillData;
 
 struct

@@ -3,7 +3,7 @@
 //
 //      File: DatBtlMixraidReleaseDataAsset.uasset
 //   Authors: Light8227
-//   Version: 2.0
+//   Version: 3.0
 //------------------------------------------------
 #include "ue4_iopackage.bt"
 #include "p3re_enums.bt"
@@ -17,15 +17,15 @@ typedef struct
 
 typedef struct
 {
-    byte unk50[13] <hidden=true>;
+    byte padding[13] <hidden=true>;
     PersonaID personaAID <name="PersonaAID">;
-    byte unk2[25] <hidden=true>;
+    byte padding2[25] <hidden=true>;
     PersonaID personaBID <name="PersonaBID">;
-    byte unk3[25] <hidden=true>;
-    long flag <name="Flag">;
-    byte unk4[25] <hidden=true>;
-    short skill <name="Skill">;
-    byte unk5[20] <hidden=true>;
+    byte padding3[25] <hidden=true>;
+    uint flag <name="Flag">;
+    byte padding4[25] <hidden=true>;
+    ushort skill <name="Skill">;
+    byte padding5[20] <hidden=true>;
 }mixRaid;
 
 struct

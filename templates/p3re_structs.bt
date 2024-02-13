@@ -3,81 +3,112 @@
 //
 //      File: Help with other P3RE templates.
 //   Authors: Light8227
-//   Version: 2.0
+//   Version: 3.0
 //------------------------------------------------
-#include "p3re_enums.bt"
+
 
 // EnemyData's Item struct.
 typedef struct
 {
     byte item[25] <name="Item">;
     short id <name="ID">;
-    byte unk[25] <hidden=true>;
+    byte padding[25] <hidden=true>;
     ubyte prob <name="Prob">;
-    byte unk2[58] <hidden=true>;
+    byte padding2[58] <hidden=true>;
 }itemStruct;
 
 // EnemyData's EventItem struct.
 typedef struct
 {
     byte eventitem[25] <name="EventItem">;
-    byte event <name="Event">;
-    byte unk3[28] <hidden=true>;
-    byte id <name="ID">;
-    byte unk4[26] <hidden=true>;
-    byte prob <name="Prob">;
-    byte unk5[58] <hidden=true>;
+    ubyte event <name="Event">;
+    byte padding3[28] <hidden=true>;
+    ubyte id <name="ID">;
+    byte padding4[26] <hidden=true>;
+    ubyte prob <name="Prob">;
+    byte padding5[58] <hidden=true>;
 }eventItemStruct;
 
 // EnemyData's Attack struct.
 typedef struct
 {
-    byte attack[33] <name="Attack">;
+    ubyte attack[33] <name="Attack">;
     ElementalType attr <name="Attr">;
-    byte unk6[33] <hidden=true>;
+    byte padding6[33] <hidden=true>;
     ubyte hit <name="Hit">;
-    byte unk7[25] <hidden=true>;
-    byte power <name="Power">;
-    byte unk8[29] <hidden=true>;
+    byte padding7[25] <hidden=true>;
+    ubyte power <name="Power">;
+    byte padding8[29] <hidden=true>;
 }attackStruct;
 
 // PersonaGrowthData's SkillEvent struct.
 typedef struct
 {
-    byte unk9[29] <hidden=true>;
-    byte unk10[33] <name="SkillEvent">;
+    byte padding9[29] <hidden=true>;
+    byte skillEvent[33] <name="SkillEvent">;
     ubyte level <name="Level">;
-    byte unk11[25] <hidden=true>;
+    byte padding10[25] <hidden=true>;
     short eventId <name="EventID">;
-    byte unk12[25] <hidden=true>;
+    byte padding11[25] <hidden=true>;
     short skillId <name="SkillID">;
-    byte unk13[28] <hidden=true>;
+    byte padding12[28] <hidden=true>;
 }skillEventStruct;
 
 // AllyPersonaGrowthData's SkillEvent struct.
 typedef struct
 {
-    byte unk14[31];
+    byte padding13[31] <hidden=true>;
     byte skillevent[33];
-    byte level[26];
-    byte eventid[27];
-    byte skillid[28];
+    ubyte level <name="Level">;
+    byte padding14[25] <hidden=true>;
+    ushort eventId <name="EventID">;
+    byte padding15[25] <hidden=true>;
+    ushort skillId <name="SkillID">;
+    byte padding16[26] <hidden=true>;
 }allySkillEventStruct;
 
 // AllyPersonaGrowthData's ParamsUp struct.
 typedef struct
 {
-    byte unk14[24];
-    byte paramsup[33];
-    byte atk[34];
-    byte mat[34];
-    byte def[34];
-    byte spd[34];
-    byte luk[34];
+    byte padding15[24] <hidden=true>;
+    byte paramsUp[33] <name="ParamsUp">;
+    ubyte ATK <name="ATK">;
+    byte padding16[33] <hidden=true>;
+    ubyte MAT <name="MAT">;
+    byte padding17[33] <hidden=true>;
+    ubyte DEF <name="DEF">;
+    byte padding18[33] <hidden=true>;
+    ubyte SPD <name="SPD">;
+    byte padding19[33] <hidden=true>;
+    ubyte LUK <name="LUK">;
+    byte padding20[33] <hidden=true>;
 }paramsUpStruct;
 
 // AllyPersonaGrowthData's Exp struct.
 typedef struct
 {
-    byte exp[19];
+    uint exp <name="Exp">;
+    byte padding21[25] <hidden=true>;
 }expStruct;
+
+// AllyPersonaGrowthData's Exp struct.
+typedef struct
+{
+    uint exp <name="Exp">;
+    byte padding22[20] <hidden=true>;
+}expStruct2;
+
+// This enum is for Skill flag data.
+enum<ubyte>FlagList
+{
+    HPto1 = 4,
+    SPto1 = 8,
+    HPSPto1 = 12,
+    Theurgy = 32,
+};
+
+// SkillNormalData's Flag struct.
+typedef struct
+{
+    FlagList flag[4] <name="Flag">;
+}FlagStruct;

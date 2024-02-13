@@ -1,0 +1,50 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: DatAllyPersonaGrowthDataAsset.uasset
+//   Authors: Light8227
+//   Version: 1.0
+//------------------------------------------------
+#include "ue4_iopackage.bt"
+#include "p3re_structs.bt"
+
+LittleEndian();
+
+typedef struct
+{
+    byte unk[103];
+}unk;
+
+typedef struct
+{
+    byte padding[16] <hidden=true>;
+    ubyte playerId <name="PlayerID">;
+    byte padding2[33] <hidden=true>;
+    ubyte levelMax <name="LevelMax">;
+    byte padding3[18] <hidden=true>;
+    allySkillEventStruct skillevent[32] <name="SkillEvent">;
+    byte padding4[7] <hidden=true>;
+    paramsUpStruct paramsup[98] <name="ParamsUp">;
+    expStruct exp[98] <name="Exp">;
+}allyPersona;
+
+typedef struct
+{
+    byte padding[16] <hidden=true>;
+    ubyte playerId <name="PlayerID">;
+    byte padding2[33] <hidden=true>;
+    ubyte levelMax <name="LevelMax">;
+    byte padding3[18] <hidden=true>;
+    allySkillEventStruct skillevent[32] <name="SkillEvent">;
+    byte padding4[7] <hidden=true>;
+    paramsUpStruct paramsup[98] <name="ParamsUp">;
+    expStruct exp[97] <name="Exp">;
+    expStruct2 exp2 <name="Exp", comment="Last Exp struct for Persona 16.">;
+}allyPersona2;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    allyPersona allypersona[16]<name="AllyPersona">;
+    allyPersona2 allypersona2 <name="AllyPersona", comment="Ally Persona data for Persona 16.">;
+}fileData <name="DatAllyPersonaGrowthDataAsset.uasset">;

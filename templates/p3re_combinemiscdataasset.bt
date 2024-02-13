@@ -3,7 +3,7 @@
 //
 //      File: CombineMiscDataAsset.uasset
 //   Authors: Light
-//   Version: 2.0
+//   Version: 3.0
 //------------------------------------------------
 #include "ue4_iopackage.bt"
 
@@ -17,23 +17,23 @@ typedef struct
 typedef struct
 {
     float accidentBaseRate <name="AccidentBaseRate">;
-    byte unk2[25] <hidden=true>;
+    byte padding[25] <hidden=true>;
     float foolAccidentRate <name="FoolAccidentRate">;
-    byte unk3[25] <hidden=true>;
+    byte padding2[25] <hidden=true>;
     short accidentMinLv <name="AccidentMinLv">;
-    byte unk4[25] <hidden=true>;
-    short accidentMaxLv <name="AccidentMaxLv">;
-    byte unk5[25] <hidden=true>;
+    byte padding3[25] <hidden=true>;
+    ushort accidentMaxLv <name="AccidentMaxLv">;
+    byte padding4[25] <hidden=true>;
     float skillChangeBaseRate <name="SkillChangeBaseRate">;
-    byte unk6[25] <hidden=true>;
+    byte padding5[25] <hidden=true>;
     float skillBuildUpRate <name="SkillBuildUpRate">;
-    byte unk7[33] <hidden=true>;
-    byte unk8[4] <hidden=true>;
+    byte padding6[33] <hidden=true>;
+    byte padding7[4] <hidden=true>;
     float skillChanges[3] <name="SkillChanges">;
-    byte unk9[33] <hidden=true>;
-    byte unk10[4] <hidden=true>;
+    byte padding8[33] <hidden=true>;
+    byte padding9[4] <hidden=true>;
     float skillWeights[5] <name="SkillWeights">;
-    byte unk11[12] <hidden=true>;
+    byte padding10[12] <hidden=true>;
 }miscData;
 
 struct

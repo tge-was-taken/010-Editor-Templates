@@ -3,10 +3,10 @@
 //
 //      File: Help with other P3RE templates.
 //   Authors: Light8227
-//   Version: 1.0
+//   Version: 2.0
 //------------------------------------------------
 // Enum for Skill affinities Personas can inherit.
-enum<ushort>PersonaInherit
+enum<ubyte>PersonaInherit
 {
     InheritAlmighty = 31,
 };
@@ -37,7 +37,7 @@ enum<ubyte>ElementalType
 };
 
 // Enum for Persona Race/Arcanas.
-enum<byte>RaceID
+enum<ubyte>RaceID
 {
     FoolArcana = 1,
     MagicianArcana = 2,
@@ -64,7 +64,7 @@ enum<byte>RaceID
 };
 
 // Enum for Persona IDs.
-enum<short>PersonaID
+enum<ushort>PersonaID
 {
     Unused = 0,
     Io = 1,
@@ -630,7 +630,7 @@ enum<ushort>BGMID
 };
 
 // Enum for Enemy IDs.
-enum<short>EnemyID
+enum<ushort>EnemyID
 {
     NoEnemy = 0,
     MagicHand = 1,
@@ -1236,7 +1236,7 @@ enum<short>EnemyID
 };
 
 // This enum is for damage relating to elemental affinities.
-enum<short> AffinityStatus
+enum<ushort> AffinityStatus
 {
     Neutral95percentdamagereduced = 1,
 	Neutral90percentdamagereduced = 2,
@@ -1309,7 +1309,7 @@ enum<ubyte>CostType
 };
 
 // This enum is for basic bool statements.
-enum<ushort>Bool
+enum<ubyte>Bool
 {
     False = 0,
     True = 1,
@@ -1320,5 +1320,28 @@ enum<ubyte>EffectType
 {
     NoEffects = 0,
     OneEffect = 1,
+    HealEffect = 2,
     MultipleEffects = 3,
+};
+
+// This enum is for the Program value of Skills.
+enum<ubyte>ProgramEffect
+{
+    MoreDmgDownedFoe = 3,
+    IgnoreResist = 18,
+    MoreDmgCloserFullMoon = 24,
+    MoreDmgCloserNewMoon = 25,
+};
+
+// This enum is for the TargetType value of Skills.
+enum<ubyte>TargetTypeList
+{
+    SingleTarget = 0,
+    MultipleTargets = 1,
+};
+
+enum<ubyte>CostBaseTest
+{
+    Test0 = 0,
+    Test1 = 1,
 };
