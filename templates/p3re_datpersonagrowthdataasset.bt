@@ -5,14 +5,14 @@
 //   Authors: Light8227
 //   Version: 2.0
 //------------------------------------------------
-#include "p3re_structs.bt"
+#include "p3re_enums.bt"
 #include "ue4_iopackage.bt"
 
 LittleEndian();
 
 typedef struct
 {
-    byte unk[98];
+    byte unk[98] <name="Unknown">;
 }unk;
 
 typedef struct
@@ -28,7 +28,17 @@ typedef struct
     byte padding5[33] <hidden=true>;
     ubyte paramsUp5 <name="ParamsUp">;
     byte padding6[20] <hidden=true>;
-    skillEventStruct skillevent[16] <name="SkillEvent">;
+    struct
+    {
+        byte padding9[29] <hidden=true>;
+        byte skillEvent[33] <name="SkillEvent">;
+        ubyte level <name="Level">;
+        byte padding10[25] <hidden=true>;
+        short eventId <name="EventID">;
+        byte padding11[25] <hidden=true>;
+        SkillList skillId <name="SkillID">;
+        byte padding12[28] <hidden=true>;
+    }skillEventStruct[16] <name="SkillEvent">;
 }growthData;
 
 struct

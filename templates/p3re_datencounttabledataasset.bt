@@ -12,7 +12,7 @@ LittleEndian();
 
 typedef struct
 {
-    ubyte unk[91];
+    ubyte unk[91] <name="Unknown">;
 }unk;
 
 typedef struct

@@ -6,7 +6,6 @@
 //   Version: 3.0
 //------------------------------------------------
 
-
 // EnemyData's Item struct.
 typedef struct
 {
@@ -29,6 +28,31 @@ typedef struct
     byte padding5[58] <hidden=true>;
 }eventItemStruct;
 
+// Enum for Skill elements.
+enum<ubyte>ElementalType
+{
+    Slash = 0,
+    Strike = 1,
+    Pierce = 2,
+    Fire = 3,
+    Ice = 4,
+    Electric = 5,
+    Wind = 6,
+    Almighty = 7,
+    Light = 8,
+    Dark = 9,
+    Charm = 10,
+    Poison = 11,
+    Distress = 12,
+    Confuse = 13,
+    Fear = 14,
+    Rage = 15,
+    Healing = 16,
+    Support = 17,
+    Fuuka = 18,
+    Passive = 255,
+};
+
 // EnemyData's Attack struct.
 typedef struct
 {
@@ -40,19 +64,6 @@ typedef struct
     ubyte power <name="Power">;
     byte padding8[29] <hidden=true>;
 }attackStruct;
-
-// PersonaGrowthData's SkillEvent struct.
-typedef struct
-{
-    byte padding9[29] <hidden=true>;
-    byte skillEvent[33] <name="SkillEvent">;
-    ubyte level <name="Level">;
-    byte padding10[25] <hidden=true>;
-    short eventId <name="EventID">;
-    byte padding11[25] <hidden=true>;
-    short skillId <name="SkillID">;
-    byte padding12[28] <hidden=true>;
-}skillEventStruct;
 
 // AllyPersonaGrowthData's SkillEvent struct.
 typedef struct
@@ -83,32 +94,3 @@ typedef struct
     ubyte LUK <name="LUK">;
     byte padding20[33] <hidden=true>;
 }paramsUpStruct;
-
-// AllyPersonaGrowthData's Exp struct.
-typedef struct
-{
-    uint exp <name="Exp">;
-    byte padding21[25] <hidden=true>;
-}expStruct;
-
-// AllyPersonaGrowthData's Exp struct.
-typedef struct
-{
-    uint exp <name="Exp">;
-    byte padding22[20] <hidden=true>;
-}expStruct2;
-
-// This enum is for Skill flag data.
-enum<ubyte>FlagList
-{
-    HPto1 = 4,
-    SPto1 = 8,
-    HPSPto1 = 12,
-    Theurgy = 32,
-};
-
-// SkillNormalData's Flag struct.
-typedef struct
-{
-    FlagList flag[4] <name="Flag">;
-}FlagStruct;
