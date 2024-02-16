@@ -3,102 +3,63 @@
 //
 //      File: DatPersonaAffinityDataAsset.uasset
 //   Authors: Light8227
-//   Version: 1.0
+//   Version: 2.0
 //------------------------------------------------
+#include "ue4_iopackage.bt"
+#include "p3re_enums.bt"
+
 LittleEndian();
 
 typedef struct
 {
-    byte unk[699];
+    ubyte unk[98] <name="Unknown">;
 }unk;
 
 typedef struct
 {
-    short attr;
-    byte attr0[25];
-    short attr2;
-    byte attr22[25];
-    short attr3;
-    byte attr32[25];
-    short attr4;
-    byte attr42[25];
-    short attr5;
-    byte attr52[25];
-    short attr6;
-    byte attr62[25];
-    short attr7;
-    byte attr72[25];
-    short attr8;
-    byte attr82[25];
-    short attr9;
-    byte attr92[25];
-    short attr10;
-    byte attr102[25];
-    short attr11;
-    byte attr112[25];
-    short attr12;
-    byte attr122[25];
-    short attr13;
-    byte attr132[25];
-    short attr14;
-    byte attr142[25];
-    short attr15;
-    byte attr152[25];
-    short attr16;
-    byte attr162[25];
-    short attr17;
-    byte attr172[25];
-    short attr18;
-    byte attr182[25];
-    short attr19;
-    byte attr192[33];
+    byte padding[13] <hidden=true>;
+    AffinityStatus attr <name="Slash">;
+    ubyte padding2[25] <hidden=true>;
+    AffinityStatus attr2 <name="Strike">;
+    ubyte padding3[25] <hidden=true>;
+    AffinityStatus attr3 <name="Pierce">;
+    ubyte padding4[25] <hidden=true>;
+    AffinityStatus attr4 <name="Fire">;
+    ubyte padding5[25] <hidden=true>;
+    AffinityStatus attr5 <name="Ice">;
+    ubyte padding6[25] <hidden=true>;
+    AffinityStatus attr6 <name="Electric">;
+    ubyte padding7[25] <hidden=true>;
+    AffinityStatus attr7 <name="Wind">;
+    ubyte padding8[25] <hidden=true>;
+    AffinityStatus attr8 <name="Almighty">;
+    ubyte padding9[25] <hidden=true>;
+    AffinityStatus attr9 <name="Light">;
+    ubyte padding10[25] <hidden=true>;
+    AffinityStatus attr10 <name="Dark">;
+    ubyte padding11[25] <hidden=true>;
+    AffinityStatus attr11 <name="Charm">;
+    ubyte padding12[25] <hidden=true>;
+    AffinityStatus attr12 <name="Poison">;
+    ubyte padding13[25] <hidden=true>;
+    AffinityStatus attr13 <name="Distress">;
+    ubyte padding14[25] <hidden=true>;
+    AffinityStatus attr14 <name="Confuse">;
+    ubyte padding15[25] <hidden=true>;
+    AffinityStatus attr15 <name="Fear">;
+    ubyte padding16[25] <hidden=true>;
+    AffinityStatus attr16 <name="Rage">;
+    ubyte padding17[25] <hidden=true>;
+    AffinityStatus attr17 <name="Healing">;
+    ubyte padding18[25] <hidden=true>;
+    AffinityStatus attr18 <name="Support">;
+    ubyte padding19[25] <hidden=true>;
+    AffinityStatus attr19 <name="Fuuka">;
+    ubyte padding20[20] <hidden=true>;
 }affinityData;
-
-typedef struct
-{
-    short attr;
-    byte attr0[25];
-    short attr2;
-    byte attr22[25];
-    short attr3;
-    byte attr32[25];
-    short attr4;
-    byte attr42[25];
-    short attr5;
-    byte attr52[25];
-    short attr6;
-    byte attr62[25];
-    short attr7;
-    byte attr72[25];
-    short attr8;
-    byte attr82[25];
-    short attr9;
-    byte attr92[25];
-    short attr10;
-    byte attr102[25];
-    short attr11;
-    byte attr112[25];
-    short attr12;
-    byte attr122[25];
-    short attr13;
-    byte attr132[25];
-    short attr14;
-    byte attr142[25];
-    short attr15;
-    byte attr152[25];
-    short attr16;
-    byte attr162[25];
-    short attr17;
-    byte attr172[25];
-    short attr18;
-    byte attr182[25];
-    short attr19;
-    byte attr192[20];
-}affinityData2;
 
 struct
 {
-    unk unknown;
-    affinityData affinitydata[463];
-    affinityData2 affinitydata2;
-}fileData;
+    unk unknown <name="Unknown">;
+    affinityData affinitydata[464] <name="AffinityData">;
+}fileData <name="DatPersonaAffinityDataAsset.uasset">;

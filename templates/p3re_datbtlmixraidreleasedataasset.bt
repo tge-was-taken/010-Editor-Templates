@@ -3,42 +3,33 @@
 //
 //      File: DatBtlMixraidReleaseDataAsset.uasset
 //   Authors: Light8227
-//   Version: 1.0
+//   Version: 3.0
 //------------------------------------------------
+#include "p3re_enums.bt"
+#include "ue4_iopackage.bt"
+
 LittleEndian();
 
 typedef struct
 {
-    byte unk[811];
+    ubyte unk[98] <name="Unknown">;
 }unk;
 
 typedef struct
 {
-    short personaAID;
-    byte personaAID2[25];
-    short personaBID;
-    byte personaBID2[25];
-    long flag;
-    byte flag2[25];
-    short skill;
-    byte skill2[33];
+    byte padding[13] <hidden=true>;
+    PersonaID personaAID <name="PersonaAID">;
+    byte padding2[25] <hidden=true>;
+    PersonaID personaBID <name="PersonaBID">;
+    byte padding3[25] <hidden=true>;
+    uint flag <name="Flag">;
+    byte padding4[25] <hidden=true>;
+    ushort skill <name="Skill">;
+    byte padding5[20] <hidden=true>;
 }mixRaid;
-
-typedef struct
-{
-    short personaAID;
-    byte personaAID2[25];
-    short personaBID;
-    byte personaBID2[25];
-    long flag;
-    byte flag2[25];
-    short skill;
-    byte skill2[20];
-}mixRaid2;
 
 struct
 {
-    unk unknown;
-    mixRaid mixraid[6];
-    mixRaid2 mixraid2;
-}fileData;
+    unk unknown <name="Unknown">;
+    mixRaid mixraid[7] <name="MixRaid">;
+}fileData <name="DatBtlMixraidReleaseDataAsset.uasset">;
