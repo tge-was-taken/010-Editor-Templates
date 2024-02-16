@@ -1316,12 +1316,6 @@ enum<ubyte>TargetTypeList
     MultipleTargets = 1,
 };
 
-enum<ubyte>CostBaseTest
-{
-    Test0 = 0,
-    Test1 = 1,
-};
-
 enum<ushort>SkillList
 {
     Attack = 0,
@@ -2349,4 +2343,27 @@ enum<ushort>SkillList
     UnusedSkill421 = 1022,
     UnusedSkill422 = 1023,
     UnusedSkill423 = 1024,
+};
+
+enum<ubyte>HPTypeList
+{
+    Nothing = 0,
+    NormalDamage = 1,
+    HealHP = 2,
+    SetHP = 3,
+    FixedDamage = 4,
+    HealFixedHP = 5,
+    DmgPercentCurrentHP = 8,
+    HealPercentMaxHP = 11,
+    DrainFixedHP = 13,
+    DmgBasedOnHealthyMembers = 16,
+};
+
+enum<ubyte>SPTypeList
+{
+    Nothing2 = 0,
+    SetSP = 3,
+    HealFixedSP = 5,
+    HealPercentMaxSP = 11,
+    DrainFixedSP = 13,
 };

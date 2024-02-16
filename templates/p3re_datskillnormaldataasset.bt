@@ -63,7 +63,7 @@ typedef struct
     byte padding5[25] <hidden=true>;
     ubyte cost <name="Cost", comment="Skill cost. For SP, exact number required. For HP, number percentage of HP required.">;
     byte padding6[26] <hidden=true>;
-    CostBaseTest costbase <name="CostBase", comment="Needs more testing on its effect.">;
+    ubyte costbase <name="CostBase", comment="Needs more testing on its effect.">;
     byte padding7[34] <hidden=true>;
     TargetTypeList targettype <name="TargetType">;
     byte padding8[33] <hidden=true>;
@@ -79,13 +79,13 @@ typedef struct
     byte padding13[33] <hidden=true>;
     ubyte targetcntmax <name="TargetCntMax" ,comment="Maximum times it can hit.">;
     byte padding14[33] <hidden=true>;
-    ubyte hptype <name="HPType">;
+    HPTypeList hptype <name="HPType", comment="Determines effects a Skill has on HP.">;
     byte padding15[25] <hidden=true>;
-    ushort hpn <name="HPN", comment="Base HP taken from target.">;
+    ushort hpn <name="HPN", comment="Effect on HP depending on HPType.">;
     byte padding16[33] <hidden=true>;
-    ubyte sptype <name="SPType">;
+    SPTypeList sptype <name="SPType", comment="Determines effects a Skill has on SP.">;
     byte padding17[25] <hidden=true>;
-    ushort spn <name="SPN", comment="Base SP taken from target.">;
+    ushort spn <name="SPN", comment="Effect on SP depending on SPType.">;
     byte padding18[33] <hidden=true>;
     EffectType badtype <name="BadType">;
     byte padding19[33] <hidden=true>;
