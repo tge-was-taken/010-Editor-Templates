@@ -23,9 +23,9 @@ typedef struct
     ubyte levelMax <name="LevelMax">;
     byte FProperty3[18] <hidden=true>;
     allySkillEventStruct skillevent[32] <name="SkillEvent">;
-    byte FProperty4[7] <hidden=true>;
+    byte FProperty4[2] <hidden=true>;
     paramsUpStruct paramsup[98] <name="ParamsUp">;
-    ExpStruct expstruct <name="Exp">;
+    ExpStruct expstruct[98] <name="Exp">;
 }allyPersona;
 
 struct
