@@ -1,0 +1,71 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: DatEnemyDataAsset.uasset
+//   Authors: Light8227
+//   Version: 3.0
+//------------------------------------------------
+#include "p3re_enums.bt"
+#include "p3re_structs.bt"
+#include "ue4_iopackage.bt"
+
+LittleEndian();
+
+typedef struct
+{
+    byte unk[98] <name="Unknown">;
+}unk;
+
+typedef struct
+{
+    byte padding[13] <hidden=true>;
+    ubyte flags <name="Flags">;
+    byte padding2[36] <hidden=true>;
+    RaceID race <name="Race">;
+    byte padding3[25] <hidden=true>;
+    ushort level <name="Level">;
+    byte padding4[25] <hidden=true>;
+    ushort maxhp <name="MaxHP">;
+    byte padding5[27] <hidden=true>;
+    ubyte maxsp <name="MaxSP">;
+    byte padding6[36] <hidden=true>;
+    ubyte params <name="ATK">;
+    byte padding7[33] <hidden=true>;
+    ubyte params2 <name="MAT">;
+    byte padding8[33] <hidden=true>;
+    ubyte params3 <name="DEF">;
+    byte padding9[33] <hidden=true>;
+    ubyte params4 <name="SPD">;
+    byte padding10[33] <hidden=true>;
+    ubyte params5 <name="LUK">;
+    byte padding11[25] <hidden=true>;
+    SkillList skill <name="Skill">;
+    byte padding12[25] <hidden=true>;
+    SkillList skill2 <name="Skill">;
+    byte padding13[25] <hidden=true>;
+    SkillList skill3 <name="Skill">;
+    byte padding14[25] <hidden=true>;
+    SkillList skill4 <name="Skill">;
+    byte padding15[25] <hidden=true>;
+    SkillList skill5 <name="Skill">;
+    byte padding16[25] <hidden=true>;
+    SkillList skill6 <name="Skill">;
+    byte padding17[25] <hidden=true>;
+    SkillList skill7 <name="Skill">;
+    byte padding18[25] <hidden=true>;
+    SkillList skill8 <name="Skill">;
+    byte padding19[25] <hidden=true>;
+    ubyte exp <name="EXP">;
+    byte padding20[28] <hidden=true>;
+    ubyte money <name="Money">;
+    byte padding21[52] <hidden=true>;
+    itemStruct item[4] <name="Item">;
+    eventItemStruct eventItem <name="EventItem">;
+    attackStruct attack <name="Attack">;
+}enemyData;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    enemyData enemydata[601] <name="EnemyData">;
+}fileData <name="DatEnemyDataAsset.uasset">;
