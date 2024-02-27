@@ -9,71 +9,72 @@
 #define P3RE_STRUCTS_BT
 #include "p3re_enums.bt"
 
-// EnemyData's Item struct.
+// Enemy's Item struct.
 typedef struct
 {
     byte FProperty[29] <hidden=true>;
     byte item[25] <hidden=true>;
     ItemList id <name="ID">;
-    byte padding[25] <hidden=true>;
+    byte FProperty2[25] <hidden=true>;
     ubyte prob <name="Prob">;
-    byte padding2[29] <hidden=true>;
+    byte FProperty3[29] <hidden=true>;
 }itemStruct;
 
-// EnemyData's EventItem struct.
+// Enemy's EventItem struct.
 typedef struct
 {
     byte eventitem[25] <hidden=true>;
     ubyte event <name="Event">;
-    byte padding3[28] <hidden=true>;
+    byte FProperty[28] <hidden=true>;
     ubyte id <name="ID">;
-    byte padding4[26] <hidden=true>;
+    byte FProperty2[26] <hidden=true>;
     ubyte prob <name="Prob">;
-    byte padding5[58] <hidden=true>;
+    byte FProperty3[58] <hidden=true>;
 }eventItemStruct;
 
-// EnemyData's Attack struct.
+// Enemy's Attack struct.
 typedef struct
 {
     ubyte attack[33] <hidden=true>;
     ElementalType attr <name="Attr">;
-    byte padding6[33] <hidden=true>;
+    byte FProperty[33] <hidden=true>;
     ubyte hit <name="Hit">;
-    byte padding7[25] <hidden=true>;
+    byte FProperty2[25] <hidden=true>;
     ubyte power <name="Power">;
-    byte padding8[29] <hidden=true>;
+    byte FProperty3[29] <hidden=true>;
 }attackStruct;
 
-// AllyPersonaGrowthData's SkillEvent struct.
+// AllyPersona's SkillEvent struct.
 typedef struct
 {
-    byte padding13[31] <hidden=true>;
+    byte FProperty[31] <hidden=true>;
     byte skillevent[33] <hidden=true>;
     ubyte level <name="Level">;
-    byte padding14[25] <hidden=true>;
+    byte FProperty2[25] <hidden=true>;
     ushort eventId <name="EventID">;
-    byte padding15[25] <hidden=true>;
+    byte FProperty3[25] <hidden=true>;
     ushort skillId <name="SkillID">;
-    byte padding16[26] <hidden=true>;
+    byte FProperty4[26] <hidden=true>;
 }allySkillEventStruct;
 
-// AllyPersonaGrowthData's ParamsUp struct.
+// AllyPersona's ParamsUp struct.
 typedef struct
 {
-    byte padding15[29] <hidden=true>;
+    byte FProperty[29] <hidden=true>;
     byte paramsUp[33] <hidden=true>;
     ubyte ATK <name="ATK">;
-    byte padding16[33] <hidden=true>;
+    byte FProperty2[33] <hidden=true>;
     ubyte MAT <name="MAT">;
-    byte padding17[33] <hidden=true>;
+    byte FProperty3[33] <hidden=true>;
     ubyte DEF <name="DEF">;
-    byte padding18[33] <hidden=true>;
+    byte FProperty4[33] <hidden=true>;
     ubyte SPD <name="SPD">;
-    byte padding19[33] <hidden=true>;
+    byte FProperty5[33] <hidden=true>;
     ubyte LUK <name="LUK">;
-    byte padding20[28] <hidden=true>;
+    byte FProperty6[28] <hidden=true>;
 }paramsUpStruct;
 
+// PlayerMaxHPSP's Max HP and Max SP struct.
 typedef struct
 {
     byte FProperty[29] <hidden=true>;
@@ -84,6 +85,7 @@ typedef struct
     byte FProperty3[28] <hidden=true>;
 }MaxHPSPStruct;
 
+// AllyPersona's Exp struct.
 typedef struct
 {
     byte FProperty[5] <hidden=true>;
