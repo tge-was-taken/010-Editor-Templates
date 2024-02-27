@@ -17,31 +17,31 @@ typedef struct
 
 typedef struct
 {
-    byte padding[13] <hidden=true>;
+    byte FProperty[13] <hidden=true>;
     ubyte flag <name="Flag">;
-    byte padding2[34] <hidden=true>;
+    byte FProperty2[34] <hidden=true>;
     RaceID race <name="Race">;
-    byte padding3[33] <hidden=true>;
+    byte FProperty3[33] <hidden=true>;
     ubyte level <name="Level">;
-    byte padding4[33] <hidden=true>;
+    byte FProperty4[33] <hidden=true>;
     ubyte params <name="ATK">;
-    byte padding5[33] <hidden=true>;
+    byte FProperty5[33] <hidden=true>;
     ubyte params2 <name="MAT">;
-    byte padding6[33] <hidden=true>;
+    byte FProperty6[33] <hidden=true>;
     ubyte params3 <name="DEF">;
-    byte padding7[33] <hidden=true>;
+    byte FProperty7[33] <hidden=true>;
     ubyte params4 <name="SPD">;
-    byte padding8[33] <hidden=true>;
+    byte FProperty8[33] <hidden=true>;
     ubyte params5 <name="LUK">;
-    byte padding9[33] <hidden=true>;
+    byte FProperty9[33] <hidden=true>;
     ubyte breakage <name="Breakage">;
-    byte padding10[25] <hidden=true>;
+    byte FProperty10[25] <hidden=true>;
     PersonaInherit succession <name="Succession", comment="Controls what Skill affinities the Persona can inherit.">;
-    byte padding11[34] <hidden=true>;
+    byte FProperty11[34] <hidden=true>;
     ubyte conception <name="Conception">;
-    byte padding12[33] <hidden=true>;
+    byte FProperty12[33] <hidden=true>;
     ubyte message <name="Message">;
-    byte padding13[20] <hidden=true>;
+    byte FProperty13[20] <hidden=true>;
 }personaData;
 
 struct

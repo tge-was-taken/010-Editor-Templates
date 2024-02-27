@@ -17,31 +17,31 @@ typedef struct
 
 typedef struct
 {
-    byte padding[21] <hidden=true>;
+    byte FProperty[21] <hidden=true>;
     ubyte paramsUp <name="ParamsUp">;
-    byte padding2[33] <hidden=true>;
+    byte FProperty2[33] <hidden=true>;
     ubyte paramsUp2 <name="ParamsUp">;
-    byte padding3[33] <hidden=true>;
+    byte FProperty3[33] <hidden=true>;
     ubyte paramsUp3 <name="ParamsUp">;
-    byte padding4[33] <hidden=true>;
+    byte FProperty4[33] <hidden=true>;
     ubyte paramsUp4 <name="ParamsUp">;
-    byte padding5[33] <hidden=true>;
+    byte FProperty5[33] <hidden=true>;
     ubyte paramsUp5 <name="ParamsUp">;
-    byte padding6[20] <hidden=true>;
+    byte FProperty6[20] <hidden=true>;
     struct
     {
-        byte padding9[29] <hidden=true>;
+        byte FProperty9[29] <hidden=true>;
         byte skillEvent[33] <name="SkillEvent">;
         ubyte level <name="Level">;
-        byte padding10[25] <hidden=true>;
+        byte FProperty10[25] <hidden=true>;
         EventIDList eventId <name="EventID">;
-        byte padding11[25] <hidden=true>;
+        byte FProperty11[25] <hidden=true>;
         union
         {
           SkillList skillid <name = "SkillID">;
           ItemList itemid <name = "ItemID">;
         }data <name="SkillID", comment="Can contain IDs for Skills and Items.">;
-        byte padding12[28] <hidden=true>;
+        byte FProperty12[28] <hidden=true>;
     }skillEventStruct[16] <name="SkillEvent">;
 }growthData;
 

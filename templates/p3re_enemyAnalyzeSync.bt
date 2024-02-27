@@ -1,13 +1,12 @@
 //------------------------------------------------
 //--- 010 Editor v13.0.1 Binary Template
 //
-//      File: DatBtlTheurgiaBoostDataAsset.uasset, DatBtlTheurgiaBoostBossDataAsset.uasset
+//      File: DatEnemyAnalyzeSyncDataAsset.uasset
 //   Authors: Light8227
 //   Version: 1.0
 //------------------------------------------------
 #include "ue4_iopackage.bt"
-
-LittleEndian();
+#include "p3re_enums.bt"
 
 typedef struct
 {
@@ -17,30 +16,30 @@ typedef struct
 typedef struct
 {
     byte FProperty[13] <hidden=true>;
-    ushort value <name="Value">;
+    EnemyID enemyID <name="EnemyID">;
     byte FProperty2[25] <hidden=true>;
-    ushort value2 <name="Value">;
+    EnemyID enemyID2 <name="EnemyID">;
     byte FProperty3[25] <hidden=true>;
-    ushort value3 <name="Value">;
+    EnemyID enemyID3 <name="EnemyID">;
     byte FProperty4[25] <hidden=true>;
-    ushort value4 <name="Value">;
+    EnemyID enemyID4 <name="EnemyID">;
     byte FProperty5[25] <hidden=true>;
-    ushort value5 <name="Value">;
+    EnemyID enemyID5 <name="EnemyID">;
     byte FProperty6[25] <hidden=true>;
-    ushort value6 <name="Value">;
+    EnemyID enemyID6 <name="EnemyID">;
     byte FProperty7[25] <hidden=true>;
-    ushort value7 <name="Value">;
+    EnemyID enemyID7 <name="EnemyID">;
     byte FProperty8[25] <hidden=true>;
-    ushort value8 <name="Value">;
-    byte FProperty9[25] <hidden=true>;
-    ushort value9 <name="Value">;
+    EnemyID enemyID8 <name="EnemyID">;
+    byte FProperty0[25] <hidden=true>;
+    EnemyID enemyID9 <name="EnemyID">;
     byte FProperty10[25] <hidden=true>;
-    ushort value10 <name="Value">;
+    EnemyID enemyID10 <name="EnemyID">;
     byte FProperty11[20] <hidden=true>;
-}boostData[17];
+}AnalyzeSync;
 
 struct
 {
     unk unknown <name="Unknown">;
-    boostData boostdata <name="BoostData">;
-}fileData <name="DatBtlTheurgiaBoostDataAsset.uasset">;
+    AnalyzeSync analyzesync[11] <name="AnalyzeSync">;
+}fileData <name="DatEnemyAnalyzeSyncDataAsset.uasset">;

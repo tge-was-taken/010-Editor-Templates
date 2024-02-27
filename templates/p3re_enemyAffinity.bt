@@ -1,9 +1,9 @@
 //------------------------------------------------
 //--- 010 Editor v13.0.1 Binary Template
 //
-//      File: DatPersonaAffinityDataAsset.uasset
-//   Authors: Light8227
-//   Version: 2.0
+//      File: DatEnemyAffinityDataAsset.uasset
+//   Authors: Tekka, Light8227
+//   Version: 1.0
 //------------------------------------------------
 #include "ue4_iopackage.bt"
 #include "p3re_enums.bt"
@@ -61,5 +61,5 @@ typedef struct
 struct
 {
     unk unknown <name="Unknown">;
-    affinityData affinitydata[464] <name="AffinityData">;
-}fileData <name="DatPersonaAffinityDataAsset.uasset">;
+    affinityData affinitydata[601] <name="AffinityData">;
+}fileData <name="DatEnemyAffinityDataAsset.uasset">;

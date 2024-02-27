@@ -20,10 +20,10 @@ typedef struct
     itemStruct item2[5] <name="Item">;
     byte FProperty2[8] <hidden=true>;
     itemStruct item3[5] <name="Item">;
-}calcPanic;
+}PanicDrop;
 
 struct
 {
     unk unknown <name="Unknown">;
-    calcPanic calcPANIC <name="CalcPANIC">;
+    PanicDrop PANICDrop <name="PANICDrop">;
 }fileData <name="DatCalcPANICDropItemDataAsset.uasset">;
