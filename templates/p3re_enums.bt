@@ -5,6 +5,8 @@
 //   Authors: Light8227
 //   Version: 2.0
 //------------------------------------------------
+#ifndef P3RE_ENUMS_BT
+#define P3RE_ENUMS_BT
 
 // Enum for Skill affinities Personas can inherit.
 enum<ubyte>PersonaInherit
@@ -2899,3 +2901,29 @@ enum<ushort>ItemList
     UnusedItem215 = 25085,
     UnusedItem216 = 25086,
 };
+
+enum<ubyte>ElementalType
+{
+    Slash = 0,
+    Strike = 1,
+    Pierce = 2,
+    Fire = 3,
+    Ice = 4,
+    Electric = 5,
+    Wind = 6,
+    Almighty = 7,
+    Light = 8,
+    Dark = 9,
+    Charm = 10,
+    Poison = 11,
+    Distress = 12,
+    Confuse = 13,
+    Fear = 14,
+    Rage = 15,
+    Healing = 16,
+    Support = 17,
+    Fuuka = 18,
+    Passive = 255,
+};
+
+#endif /* P3RE_ENUMS_BT */

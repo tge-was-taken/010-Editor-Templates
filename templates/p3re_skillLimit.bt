@@ -1,9 +1,9 @@
 //------------------------------------------------
 //--- 010 Editor v13.0.1 Binary Template
 //
-//      File: 
-//   Authors: 
-//   Version: 
+//      File: SkillLimitDataAsset.uasset
+//   Authors: Light8227
+//   Version: 1.0
 //------------------------------------------------
 #include "ue4_iopackage.bt"
 
@@ -11,7 +11,7 @@ LittleEndian();
 
 typedef struct
 {
-    byte unk[98];
+    byte unk[98] <name="Unknown">;
 }unk;
 
 typedef struct
@@ -25,6 +25,6 @@ typedef struct
 
 struct
 {
-    unk unknown;
-    limitData limitdata2[10];
-}fileData;
+    unk unknown <name="Unknown">;
+    limitData limitdata2[10] <name="LimitData">;
+}fileData <name="SkillLimitDataAsset.uasset">;

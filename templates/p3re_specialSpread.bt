@@ -12,7 +12,7 @@ LittleEndian();
 
 typedef struct
 {
-    short unk[49];
+    short unk[49] <name="Unknown">;
 }unk;
 
 typedef struct
@@ -38,6 +38,6 @@ typedef struct
 
 struct
 {
-    unk unknown;
-    specialSpread specialspread[23];
-}fileData;
+    unk unknown <name="Unknown">;
+    specialSpread specialspread[23] <name="SpecialSpread">;
+}fileData <name="SpecialSpreadDataAsset.uasset">;

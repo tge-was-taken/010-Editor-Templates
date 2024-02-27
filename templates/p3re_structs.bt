@@ -5,21 +5,25 @@
 //   Authors: Light8227
 //   Version: 3.0
 //------------------------------------------------
+#ifndef P3RE_STRUCTS_BT
+#define P3RE_STRUCTS_BT
+#include "p3re_enums.bt"
 
 // EnemyData's Item struct.
 typedef struct
 {
-    byte item[25] <name="Item">;
-    short id <name="ID">;
+    byte FProperty[29] <hidden=true>;
+    byte item[25] <hidden=true>;
+    ItemList id <name="ID">;
     byte padding[25] <hidden=true>;
     ubyte prob <name="Prob">;
-    byte padding2[58] <hidden=true>;
+    byte padding2[29] <hidden=true>;
 }itemStruct;
 
 // EnemyData's EventItem struct.
 typedef struct
 {
-    byte eventitem[25] <name="EventItem">;
+    byte eventitem[25] <hidden=true>;
     ubyte event <name="Event">;
     byte padding3[28] <hidden=true>;
     ubyte id <name="ID">;
@@ -28,35 +32,10 @@ typedef struct
     byte padding5[58] <hidden=true>;
 }eventItemStruct;
 
-// Enum for Skill elements.
-enum<ubyte>ElementalType
-{
-    Slash = 0,
-    Strike = 1,
-    Pierce = 2,
-    Fire = 3,
-    Ice = 4,
-    Electric = 5,
-    Wind = 6,
-    Almighty = 7,
-    Light = 8,
-    Dark = 9,
-    Charm = 10,
-    Poison = 11,
-    Distress = 12,
-    Confuse = 13,
-    Fear = 14,
-    Rage = 15,
-    Healing = 16,
-    Support = 17,
-    Fuuka = 18,
-    Passive = 255,
-};
-
 // EnemyData's Attack struct.
 typedef struct
 {
-    ubyte attack[33] <name="Attack">;
+    ubyte attack[33] <hidden=true>;
     ElementalType attr <name="Attr">;
     byte padding6[33] <hidden=true>;
     ubyte hit <name="Hit">;
@@ -69,7 +48,7 @@ typedef struct
 typedef struct
 {
     byte padding13[31] <hidden=true>;
-    byte skillevent[33];
+    byte skillevent[33] <hidden=true>;
     ubyte level <name="Level">;
     byte padding14[25] <hidden=true>;
     ushort eventId <name="EventID">;
@@ -82,7 +61,7 @@ typedef struct
 typedef struct
 {
     byte padding15[24] <hidden=true>;
-    byte paramsUp[33] <name="ParamsUp">;
+    byte paramsUp[33] <hidden=true>;
     ubyte ATK <name="ATK">;
     byte padding16[33] <hidden=true>;
     ubyte MAT <name="MAT">;
@@ -294,3 +273,5 @@ typedef struct
     uint exp98 <name="Exp">;
     byte padding102[20] <hidden=true>;
 }ExpStruct;
+
+#endif /* P3RE_STRUCTS_BT */

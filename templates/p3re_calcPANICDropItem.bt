@@ -1,0 +1,29 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: DatCalcPANICDropItemDataAsset.uasset
+//   Authors: Light8227
+//   Version: 1.0
+//------------------------------------------------
+#include "ue4_iopackage.bt"
+#include "p3re_structs.bt"
+
+typedef struct
+{
+    byte unk[106] <name="Unknown">;
+}unk;
+
+typedef struct
+{
+    itemStruct item[5] <name="Item">;
+    byte FProperty[8] <hidden=true>;
+    itemStruct item2[5] <name="Item">;
+    byte FProperty2[8] <hidden=true>;
+    itemStruct item3[5] <name="Item">;
+}calcPanic;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    calcPanic calcPANIC <name="CalcPANIC">;
+}fileData <name="DatCalcPANICDropItemDataAsset.uasset">;
