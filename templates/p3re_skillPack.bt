@@ -1,0 +1,43 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: SkillPackDataAsset.uasset
+//   Authors: Light8227
+//   Version: 1.0
+//------------------------------------------------
+#include "ue4_iopackage.bt"
+#include "p3re_structs.bt"
+
+typedef struct
+{
+    byte unk[286] <name="Unknown">;
+}unk;
+
+typedef struct
+{
+    PackStruct packstruct[200] <name="SkillPack">;
+    byte FProperty[94] <hidden=true>;
+    PackStruct packstruct2[200] <name="SkillPack">;
+    byte FProperty2[94] <hidden=true>;
+    PackStruct packstruct3[200] <name="SkillPack">;
+    byte FProperty3[94] <hidden=true>;
+    PackStruct packstruct4[200] <name="SkillPack">;
+    byte FProperty4[94] <hidden=true>;
+    PackStruct packstruct5[200] <name="SkillPack">;
+    byte FProperty5[94] <hidden=true>;
+    PackStruct packstruct6[200] <name="SkillPack">;
+    byte FProperty6[94] <hidden=true>;
+    PackStruct packstruct7[200] <name="SkillPack">;
+    byte FProperty7[94] <hidden=true>;
+    PackStruct packstruct8[200] <name="SkillPack">;
+    byte FProperty8[94] <hidden=true>;
+    PackStruct packstruct9[200] <name="SkillPack">;
+    byte FProperty9[94] <hidden=true>;
+    PackStruct packstruct10[200] <name="SkillPack">;
+}SkillPack;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    SkillPack skillpack <name="SkillPack">;
+}fileData <name="SkillPackDataAsset.uasset">;

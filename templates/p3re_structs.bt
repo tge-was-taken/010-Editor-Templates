@@ -93,4 +93,85 @@ typedef struct
     byte FProperty2[20] <hidden=true>;
 }ExpStruct;
 
+// ItemSkillCard's Skill Card struct.
+typedef struct
+{
+    byte FProperty[13] <hidden=true>;
+    byte itemdef[42];
+    ushort sortnum <name="SortNum">;
+    byte FProperty2[25] <hidden=true>;
+    uint itemtype <name="ItemType">;
+    byte FProperty3[25] <hidden=true>;
+    ushort rarity <name="Rarity">;
+    byte FProperty4[25] <hidden=true>;
+    ushort tier <name="Tier">;
+    byte FProperty5[25] <hidden=true>;
+    SkillList skillid <name="SkillID">;
+    byte FProperty6[25] <hidden=true>;
+    uint price <name="Price">;
+    byte FProperty7[25] <hidden=true>;
+    uint sellprice <name="SellPrice">;
+    byte FProperty8[25] <hidden=true>;
+    ushort getflg <name="GetFLG">;
+    byte FProperty9[20] <hidden=true>;
+}CardStruct;
+
+// ItemSkillCard's second Skill Card struct.
+typedef struct
+{
+    byte FProperty[13] <hidden=true>;
+    byte itemdef[46];
+    ushort sortnum <name="SortNum">;
+    byte FProperty2[25] <hidden=true>;
+    uint itemtype <name="ItemType">;
+    byte FProperty3[25] <hidden=true>;
+    ushort rarity <name="Rarity">;
+    byte FProperty4[25] <hidden=true>;
+    ushort tier <name="Tier">;
+    byte FProperty5[25] <hidden=true>;
+    SkillList skillid <name="SkillID">;
+    byte FProperty6[25] <hidden=true>;
+    uint price <name="Price">;
+    byte FProperty7[25] <hidden=true>;
+    uint sellprice <name="SellPrice">;
+    byte FProperty8[25] <hidden=true>;
+    ushort getflg <name="GetFLG">;
+    byte FProperty9[20] <hidden=true>;
+}CardStruct2;
+
+// ItemSkillCard's third Skill Card struct.
+typedef struct
+{
+    byte FProperty[13] <hidden=true>;
+    byte itemdef[43];
+    ushort sortnum <name="SortNum">;
+    byte FProperty2[25] <hidden=true>;
+    uint itemtype <name="ItemType">;
+    byte FProperty3[25] <hidden=true>;
+    ushort rarity <name="Rarity">;
+    byte FProperty4[25] <hidden=true>;
+    ushort tier <name="Tier">;
+    byte FProperty5[25] <hidden=true>;
+    SkillList skillid <name="SkillID">;
+    byte FProperty6[25] <hidden=true>;
+    uint price <name="Price">;
+    byte FProperty7[25] <hidden=true>;
+    uint sellprice <name="SellPrice">;
+    byte FProperty8[25] <hidden=true>;
+    ushort getflg <name="GetFLG">;
+    byte FProperty9[20] <hidden=true>;
+}CardStruct3;
+
+// SkillPack's Skill mutation struct.
+typedef struct
+{
+    byte FPropety[5] <hidden=true>;
+    ushort rank <name="Rank">;
+    byte FProperty2[25] <hidden=true>;
+    SkillList skill <name="Skill">;
+    byte FProperty3[25] <hidden=true>;
+    ushort weight <name="Weight">;
+    byte FProperty4[28] <hidden=true>;
+}PackStruct;
+
 #endif /* P3RE_STRUCTS_BT */
