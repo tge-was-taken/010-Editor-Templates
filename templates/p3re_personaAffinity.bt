@@ -5,8 +5,8 @@
 //   Authors: Light8227
 //   Version: 2.0
 //------------------------------------------------
-#include "ue4_iopackage.bt"
 #include "p3re_enums.bt"
+#include "ue4_iopackage.bt"
 
 LittleEndian();
 

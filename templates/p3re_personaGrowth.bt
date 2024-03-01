@@ -6,6 +6,7 @@
 //   Version: 2.0
 //------------------------------------------------
 #include "p3re_enums.bt"
+#include "p3re_structs.bt"
 #include "ue4_iopackage.bt"
 
 LittleEndian();
@@ -18,31 +19,17 @@ typedef struct
 typedef struct
 {
     byte FProperty[21] <hidden=true>;
-    ubyte paramsUp <name="ParamsUp">;
+    ubyte paramsUp <name="ATK">;
     byte FProperty2[33] <hidden=true>;
-    ubyte paramsUp2 <name="ParamsUp">;
+    ubyte paramsUp2 <name="MAT">;
     byte FProperty3[33] <hidden=true>;
-    ubyte paramsUp3 <name="ParamsUp">;
+    ubyte paramsUp3 <name="DEF">;
     byte FProperty4[33] <hidden=true>;
-    ubyte paramsUp4 <name="ParamsUp">;
+    ubyte paramsUp4 <name="SPD">;
     byte FProperty5[33] <hidden=true>;
-    ubyte paramsUp5 <name="ParamsUp">;
+    ubyte paramsUp5 <name="LUK">;
     byte FProperty6[20] <hidden=true>;
-    struct
-    {
-        byte FProperty9[29] <hidden=true>;
-        byte skillEvent[33] <name="SkillEvent">;
-        ubyte level <name="Level">;
-        byte FProperty10[25] <hidden=true>;
-        EventIDList eventId <name="EventID">;
-        byte FProperty11[25] <hidden=true>;
-        union
-        {
-          SkillList skillid <name = "SkillID">;
-          ItemList itemid <name = "ItemID">;
-        }data <name="SkillID", comment="Can contain IDs for Skills and Items.">;
-        byte FProperty12[28] <hidden=true>;
-    }skillEventStruct[16] <name="SkillEvent">;
+    SkillEventStruct skillevent[16] <name="SkillEvent">;
 }growthData;
 
 struct

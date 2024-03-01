@@ -5,8 +5,8 @@
 //   Authors: Light8227
 //   Version: 1.0
 //------------------------------------------------
-#include "ue4_iopackage.bt"
 #include "p3re_enums.bt"
+#include "ue4_iopackage.bt"
 
 LittleEndian();
 
@@ -32,8 +32,8 @@ typedef struct
     byte FProperty7[25] <hidden=true>;
     PersonaID sourceID6 <name="SourceID">;
     byte FProperty8[25] <hidden=true>;
-    ubyte index <name="Index">;
-    byte FProperty9[21] <hidden=true>;
+    ushort index <name="Index">;
+    byte FProperty9[20] <hidden=true>;
 }specialSpread;
 
 struct

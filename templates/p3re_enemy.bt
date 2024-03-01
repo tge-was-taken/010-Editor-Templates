@@ -19,16 +19,16 @@ typedef struct
 typedef struct
 {
     byte FProperty[13] <hidden=true>;
-    ubyte flags <name="Flags">;
-    byte FProperty2[36] <hidden=true>;
+    uint flags <name="Flags">;
+    byte FProperty2[33] <hidden=true>;
     RaceID race <name="Race">;
     byte FProperty3[25] <hidden=true>;
     ushort level <name="Level">;
     byte FProperty4[25] <hidden=true>;
-    ushort maxhp <name="MaxHP">;
-    byte FProperty5[27] <hidden=true>;
-    ubyte maxsp <name="MaxSP">;
-    byte FProperty6[36] <hidden=true>;
+    uint maxhp <name="MaxHP">;
+    byte FProperty5[25] <hidden=true>;
+    uint maxsp <name="MaxSP">;
+    byte FProperty6[33] <hidden=true>;
     ubyte params <name="ATK">;
     byte FProperty7[33] <hidden=true>;
     ubyte params2 <name="MAT">;
@@ -55,11 +55,12 @@ typedef struct
     byte FProperty18[25] <hidden=true>;
     SkillList skill8 <name="Skill">;
     byte FProperty19[25] <hidden=true>;
-    ubyte exp <name="EXP">;
-    byte FProperty20[28] <hidden=true>;
-    ubyte money <name="Money">;
-    byte FProperty21[52] <hidden=true>;
+    uint exp <name="EXP">;
+    byte FProperty20[25] <hidden=true>;
+    uint money <name="Money">;
+    byte FProperty21[20] <hidden=true>;
     itemStruct item[4] <name="Item">;
+    byte FProperty22[29] <hidden=true>;
     eventItemStruct eventItem <name="EventItem">;
     attackStruct attack <name="Attack">;
 }enemyData;

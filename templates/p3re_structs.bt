@@ -16,20 +16,20 @@ typedef struct
     byte item[25] <hidden=true>;
     ItemList id <name="ID">;
     byte FProperty2[25] <hidden=true>;
-    ubyte prob <name="Prob">;
-    byte FProperty3[29] <hidden=true>;
+    ushort prob <name="Prob">;
+    byte FProperty3[28] <hidden=true>;
 }itemStruct;
 
 // Enemy's EventItem struct.
 typedef struct
 {
     byte eventitem[25] <hidden=true>;
-    ubyte event <name="Event">;
-    byte FProperty[28] <hidden=true>;
-    ubyte id <name="ID">;
-    byte FProperty2[26] <hidden=true>;
-    ubyte prob <name="Prob">;
-    byte FProperty3[58] <hidden=true>;
+    uint event <name="Event">;
+    byte FProperty[25] <hidden=true>;
+    ushort id <name="ID">;
+    byte FProperty2[25] <hidden=true>;
+    ushort prob <name="Prob">;
+    byte FProperty3[57] <hidden=true>;
 }eventItemStruct;
 
 // Enemy's Attack struct.
@@ -40,8 +40,8 @@ typedef struct
     byte FProperty[33] <hidden=true>;
     ubyte hit <name="Hit">;
     byte FProperty2[25] <hidden=true>;
-    ubyte power <name="Power">;
-    byte FProperty3[29] <hidden=true>;
+    ushort power <name="Power">;
+    byte FProperty3[28] <hidden=true>;
 }attackStruct;
 
 // AllyPersona's SkillEvent struct.
@@ -173,5 +173,22 @@ typedef struct
     ushort weight <name="Weight">;
     byte FProperty4[28] <hidden=true>;
 }PackStruct;
+
+// PersonaGrowth's SkillEvent struct.
+typedef struct
+{
+    byte FProperty9[29] <hidden=true>;
+    byte skillEvent[33] <hidden=true>;
+    ubyte level <name="Level">;
+    byte FProperty10[25] <hidden=true>;
+    EventIDList eventId <name="EventID">;
+    byte FProperty11[25] <hidden=true>;
+    union
+    {
+        SkillList skillid <name = "SkillID">;
+        ItemList itemid <name = "ItemID">;
+    }data <name="SkillID", comment="Can contain IDs for Skills and Items.">;
+    byte FProperty12[28] <hidden=true>;
+}SkillEventStruct;
 
 #endif /* P3RE_STRUCTS_BT */

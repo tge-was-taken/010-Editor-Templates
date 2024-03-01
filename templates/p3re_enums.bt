@@ -9,7 +9,7 @@
 #define P3RE_ENUMS_BT
 
 // Enum for Skill affinities Personas can inherit.
-enum<ubyte>PersonaInherit
+enum<ushort>PersonaInherit
 {
     InheritAlmighty = 31,
 };

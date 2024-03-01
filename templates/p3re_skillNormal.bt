@@ -5,9 +5,11 @@
 //   Authors: Light8227
 //   Version: 3.0
 //------------------------------------------------
-#include "ue4_iopackage.bt"
 #include "p3re_enums.bt"
 #include "p3re_structs.bt"
+#include "ue4_iopackage.bt"
+
+LittleEndian();
 
 typedef struct
 {

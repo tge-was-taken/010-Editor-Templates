@@ -7,6 +7,8 @@
 //------------------------------------------------
 #include "ue4_iopackage.bt"
 
+LittleEndian();
+
 typedef struct
 {
     byte unk[98] <name="Unknown">;
