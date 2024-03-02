@@ -3,7 +3,7 @@
 //
 //      File: DatEncountTableDataAsset.uasset
 //   Authors: Tekka, Light8227
-//   Version: 1.0
+//   Version: 1.1
 //------------------------------------------------
 #include "p3re_enums.bt"
 #include "ue4_iopackage.bt"

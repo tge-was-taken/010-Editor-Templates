@@ -3,7 +3,7 @@
 //
 //      File: DatPersonaGrowthDataAsset.uasset
 //   Authors: Light8227
-//   Version: 2.0
+//   Version: 2.1
 //------------------------------------------------
 #include "p3re_enums.bt"
 #include "p3re_structs.bt"
