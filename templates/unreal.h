@@ -1221,8 +1221,6 @@ typedef struct
 	            FGuid	PropertyGuid;
             }
         }
-
-        byte Data[Size];
     }
 } FPropertyTag <read=FPropertyTag_ToString>;
 
@@ -1237,6 +1235,81 @@ typedef struct
 {
     local bool IsStaticClass = false;
 } UClass;
+
+typedef struct
+{
+    
+} VersionedTagProperty;
+
+bool SerializeVersionedTaggedProperty()
+{
+    struct
+    {
+        FPropertyTag Tag;
+        if (!FName_Equals(Tag.Name, "None"))
+        {
+            // SerializeTaggedProperty
+            if (FName_Equals(Tag.Type, "ArrayProperty"))
+            {
+                // FScriptArrayHelper
+                struct 
+                {
+                    uint32 Num;
+                    if (GPackageFileUE4Version >= VER_UE4_INNER_ARRAY_TAG_INFO && FName_Equals(Tag.InnerType, "StructProperty"))
+                    {
+                        FPropertyTag InnerTag;
+                        struct UObject Elements[Num] <optimize=false>;
+                    }
+                } Data;
+            }
+            else if (FName_Equals(Tag.Type, "Int8Property"))
+            {
+                int8 Data;                  
+            }
+            else if (FName_Equals(Tag.Type, "ByteProperty"))
+            {
+                byte Data;                  
+            }
+            else if (FName_Equals(Tag.Type, "IntProperty"))
+            {
+                int Data;                  
+            }
+            else if (FName_Equals(Tag.Type, "Int16Property"))
+            {
+                int16 Data;                  
+            }
+            else if (FName_Equals(Tag.Type, "UInt16Property"))
+            {
+                uint16 Data;                  
+            }
+            else if (FName_Equals(Tag.Type, "UInt32Property"))
+            {
+                uint32 Data;                  
+            }
+            else if (FName_Equals(Tag.Type, "UInt64Property"))
+            {
+                uint64 Data;                  
+            }
+            else if (FName_Equals(Tag.Type, "FloatProperty"))
+            {
+                float Data;                  
+            }
+            else if (FName_Equals(Tag.Type, "DoubleProperty"))
+            {
+                double Data;                  
+            }
+            else
+            {
+                struct 
+                {
+                    byte Buffer[Tag.Size];
+                } Data;
+            }
+        }
+    } Property <read=(FPropertyTag_ToString(Tag))>;
+    
+    return !FName_Equals(Property.Tag.Name, "None");
+}
 
 typedef struct
 {
@@ -1283,15 +1356,7 @@ typedef struct
             else
             {
                 // SerializeVersionedTaggedProperties
-                while (true)
-                {
-                    FPropertyTag Tag;
-                    if (FName_Equals(Tag.Name, "None"))
-                        break;
-
-                    // SerializeTaggedProperty
-                    byte Data[Tag.Size];
-                }
+                while (SerializeVersionedTaggedProperty()) ;
             }
             
         }

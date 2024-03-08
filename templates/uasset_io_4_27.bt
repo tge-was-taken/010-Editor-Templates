@@ -315,8 +315,8 @@ void ReadExportBundles()
                     else
                     {
                         struct {
-                            //UObject Object;            
-                            byte Data[CookedSerialSize];
+                            UObject Object;            
+                            //byte Data[CookedSerialSize];
                         } Export <bgcolor=cRed>;
                     }   
                 } ExportBundleEntry;
