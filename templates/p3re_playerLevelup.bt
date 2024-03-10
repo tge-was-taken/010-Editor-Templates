@@ -1,0 +1,28 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: DatPlayerLevelupDataAsset.uasset
+//   Authors: Light8227
+//   Version: 1.1
+//------------------------------------------------
+#include "ue4_iopackage.bt"
+
+LittleEndian();
+
+typedef struct
+{
+    byte unk[98] <name="Unknown">;
+}unk;
+
+typedef struct
+{
+    byte FProperty[13] <hidden=true>;
+    uint exp <name="Exp">;
+    byte FProperty2[20] <hidden=true>;
+}PlayerLevel;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    PlayerLevel playerlevel[99] <name="PlayerLevel">;
+}fileData <name="DatPlayerLevelupDataAsset.uasset">;
