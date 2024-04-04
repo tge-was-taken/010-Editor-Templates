@@ -1,0 +1,322 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#ifndef LOCAL
+#define LOCAL
+#endif
+
+typedef ubyte uint8;
+typedef uint64 size_t;
+typedef enum {
+    False,    
+    True
+} bool;
+
+struct FGuid
+{
+	uint32 A;
+	uint32 B;
+	uint32 C;
+	uint32 D;
+    local bool IsValid = ((A | B | C | D) != 0);
+};
+
+struct FSHAHash 
+{
+    uint8 Hash[20];
+    uint8 Padding[12];
+};
+
+enum <uint8> EIoContainerFlags
+{
+	EIoContainerFlags_None,
+	EIoContainerFlags_Compressed	= (1 << 0),
+	EIoContainerFlags_Encrypted	= (1 << 1),
+	EIoContainerFlags_Signed		= (1 << 2),
+	EIoContainerFlags_Indexed		= (1 << 3),
+};
+
+enum <uint8> EIoStoreTocVersion
+{
+	EIoStoreTocVersion_Invalid = 0,
+	EIoStoreTocVersion_Initial,
+	EIoStoreTocVersion_DirectoryIndex,
+	EIoStoreTocVersion_PartitionSize,
+	EIoStoreTocVersion_LatestPlusOne,
+	EIoStoreTocVersion_Latest = EIoStoreTocVersion_LatestPlusOne - 1
+};
+
+struct FIoContainerId
+{
+	const uint64 InvalidId = -1;
+
+	uint64 Id;
+	local uint64 Value = Id;
+	local bool IsValid = Id != InvalidId;
+	local uint32 TypeHash = (uint32)Id;
+};
+
+struct FIoChunkHash
+{
+	uint8 Hash[32];
+};
+
+enum<uint8> FIoStoreTocEntryMetaFlags
+{
+	FIoStoreTocEntryMetaFlags_None,
+	FIoStoreTocEntryMetaFlags_Compressed		= (1 << 0),
+	FIoStoreTocEntryMetaFlags_MemoryMapped	= (1 << 1)
+};
+
+enum EIoStoreTocReadOptions
+{
+	EIoStoreTocReadOptions_Default,
+	EIoStoreTocReadOptions_ReadDirectoryIndex	= (1 << 0),
+	EIoStoreTocReadOptions_ReadTocMeta			= (1 << 1),
+	EIoStoreTocReadOptions_ReadAll				= EIoStoreTocReadOptions_ReadDirectoryIndex | EIoStoreTocReadOptions_ReadTocMeta
+};
+
+struct FIoStoreTocEntryMeta
+{
+	FIoChunkHash ChunkHash;
+	FIoStoreTocEntryMetaFlags Flags;
+};
+
+enum<uint8> EIoChunkType
+{
+	EIoChunkType_Invalid,
+	EIoChunkType_InstallManifest,
+	EIoChunkType_ExportBundleData,
+	EIoChunkType_BulkData,
+	EIoChunkType_OptionalBulkData,
+	EIoChunkType_MemoryMappedBulkData,
+	EIoChunkType_LoaderGlobalMeta,
+	EIoChunkType_LoaderInitialLoadMeta,
+	EIoChunkType_LoaderGlobalNames,
+	EIoChunkType_LoaderGlobalNameHashes,
+	EIoChunkType_ContainerHeader
+};
+
+typedef struct
+{
+    // uint8 Data[12];
+    uint64 ChunkId;
+    uint16 ChunkIndex;
+    uint8 Reserved;
+    EIoChunkType IoChunkType;
+
+    //local uint64 ChunkId =  ((uint64)Id[0] << 0) | ((uint64)Id[1] << 8) | 
+    //                        ((uint64)Id[2] << 16) | ((uint64)Id[3] << 24) | 
+    //                        ((uint64)Id[4] << 32) | ((uint64)Id[5] << 40) | 
+    //                        ((uint64)Id[6] << 48) | ((uint64)Id[7] << 56);
+    //local uint16 ChunkIndex = ((uint16)Id[8] << 0) | ((uint16)Id[9] << 8);
+    //local EIoChunkType IoChunkType = (EIoChunkType)Id[11];
+} FIoChunkId;
+
+struct FIoStoreTocCompressedBlockEntry
+{
+	const uint32 OffsetBits = 40;
+	const uint64 OffsetMask = (1ull << OffsetBits) - 1ull;
+	const uint32 SizeBits = 24;
+	const uint32 SizeMask = (1 << SizeBits) - 1;
+	const uint32 SizeShift = 8;
+
+
+	/* 5 bytes offset, 3 bytes for size / uncompressed size and 1 byte for compresseion method. */
+	uint8 Data[5 + 3 + 3 + 1];
+
+    local uint64 Offset = ((ulong)Data[0] << 0) | ((ulong)Data[1] << 8) | ((ulong)Data[2] << 16) | ((ulong)Data[3] << 24) | ((ulong)Data[4] << 32);
+    local uint32 CompressedSize = ((uint)Data[5] << 0) | ((uint)Data[6] << 8) | ((uint)Data[7] << 16);
+    local uint UncompressedSize = ((uint)Data[8] << 0) | ((uint)Data[9] << 8) | ((uint)Data[10] << 16);
+    local uint8 CompressionMethodIndex = (byte)(Data[11] & SizeMask);
+};
+
+typedef struct 
+{
+    const char TocMagicImg[] = "-==--==--==--==-";
+
+	uint8	TocMagic[16];
+	EIoStoreTocVersion	Version;
+	uint8	Reserved0;
+	uint16	Reserved1;
+	uint32	TocHeaderSize;
+	uint32	TocEntryCount;
+	uint32	TocCompressedBlockEntryCount;
+	uint32	TocCompressedBlockEntrySize;	// For sanity checking
+	uint32	CompressionMethodNameCount;
+	uint32	CompressionMethodNameLength;
+	uint32	CompressionBlockSize;
+	uint32	DirectoryIndexSize;
+	uint32	PartitionCount;
+	FIoContainerId ContainerId;
+	FGuid	EncryptionKeyGuid;
+	EIoContainerFlags ContainerFlags;
+	uint8	Reserved3;
+	uint16	Reserved4;
+	uint32	Reserved5;
+	uint64	PartitionSize;
+	uint64	Reserved6[6];
+} FIoStoreTocHeader <size=0x90>;
+
+struct FIoOffsetAndLength
+{
+	// We use 5 bytes for offset and size, this is enough to represent
+	// an offset and size of 1PB
+	uint8 OffsetAndLength[5 + 5];
+
+    local uint64 Offset = ((uint64)OffsetAndLength[4] << 0)
+        | ((uint64)OffsetAndLength[3] << 8)
+        | ((uint64)OffsetAndLength[2] << 16)
+        | ((uint64)OffsetAndLength[1] << 24)
+        | ((uint64)OffsetAndLength[0] << 32);
+
+    local uint64 Length = ((uint64)OffsetAndLength[9] << 0)
+        | ((uint64)OffsetAndLength[8] << 8)
+        | ((uint64)OffsetAndLength[7] << 16)
+        | ((uint64)OffsetAndLength[6] << 24)
+        | ((uint64)OffsetAndLength[5] << 32);
+};
+
+typedef struct
+{
+	uint32 Name;
+	uint32 FirstChildEntry;
+	uint32 NextSiblingEntry;
+	uint32 FirstFileEntry;
+} FIoDirectoryIndexEntry <read=FIoDirectoryIndexEntry_ToString>;
+
+string FIoDirectoryIndexEntry_ToString(FIoDirectoryIndexEntry& x)
+{
+    if (x.Name != 0xFFFFFFFF) return FString_ToString(File.DirectoryIndex.StringTable.Data[x.Name]);
+    return "<null>";
+}
+
+typedef struct
+{
+	uint32 Name;
+	uint32 NextFileEntry;
+	uint32 UserData;
+} FIoFileIndexEntry <read=FIoFileIndexEntry_ToString>;
+
+string FIoFileIndexEntry_ToString(FIoFileIndexEntry& x)
+{
+    //string name = x.Name != 0xFFFFFFFF ? FString_ToString(File.DirectoryIndex.StringTable.Data[x.Name]) : "";
+    //string userData = x.UserData != 0xFFFFFFFF ? FString_ToString(File.DirectoryIndex.StringTable.Data[x.UserData]) : "";
+    //string s;
+    //SPrintf(s, "%s (%s)", name, userData);
+    //return s;
+
+    string name = x.Name != 0xFFFFFFFF ? FString_ToString(File.DirectoryIndex.StringTable.Data[x.Name]) : "";
+    string s;
+    SPrintf(s, "%s", name);
+    return s;
+}
+
+typedef struct 
+{
+    int32 SizeNum;
+    local bool bLoadUnicodeChar = SizeNum < 0;
+    local int32 ActualSizeNum = SizeNum;
+    if (bLoadUnicodeChar) 
+    {
+        ActualSizeNum = -SizeNum;
+    }
+    if (ActualSizeNum) 
+    {
+        if (bLoadUnicodeChar)
+        {
+            wchar_t Data[ActualSizeNum*2];
+        }
+        else
+        {
+            char Data[ActualSizeNum];
+        }
+    }
+} FString <read=FString_ToString>;
+
+string FString_ToString(FString& x)
+{
+    if (x.ActualSizeNum) return x.Data;
+    return "";
+}
+
+typedef enum {
+    T_FIoDirectoryIndexEntry,
+    T_FIoFileIndexEntry,
+    T_FString
+} EType;
+
+typedef struct(EType type) {
+    uint32 SerializeNum;
+    if (SerializeNum > 0) {
+        switch (type) {
+            case T_FIoDirectoryIndexEntry: FIoDirectoryIndexEntry Data[SerializeNum] <optimize=false>; break;
+            case T_FIoFileIndexEntry: FIoFileIndexEntry Data[SerializeNum] <optimize=false>; break;
+            case T_FString: FString Data[SerializeNum] <optimize=false>; break;
+            default: Assert(false); break;
+        }
+    }
+} TArray <optimize=false>;
+
+struct FIoDirectoryIndexResource
+{
+	FString MountPoint;
+	TArray DirectoryEntries(T_FIoDirectoryIndexEntry);
+	TArray FileEntries(T_FIoFileIndexEntry);
+	TArray StringTable(T_FString);
+};
+
+struct FIoStoreTocResource
+{
+    FIoStoreTocHeader Header <bgcolor=cPurple>;
+    Assert(Header.TocMagic == Header.TocMagicImg);
+    Assert(Header.TocHeaderSize == sizeof(FIoStoreTocHeader));
+    Assert(Header.TocCompressedBlockEntrySize == 5 + 3 + 3 + 1);
+    Assert(Header.Version >= EIoStoreTocVersion_DirectoryIndex);
+    const uint64 TotalTocSize = FileSize() - sizeof(FIoStoreTocHeader);
+    const uint64 TocMetaSize = Header.TocEntryCount * sizeof(FIoStoreTocEntryMeta);
+    const uint64 DefaultTocSize = TotalTocSize - Header.DirectoryIndexSize - TocMetaSize;
+    
+    FIoChunkId ChunkIds[Header.TocEntryCount] <optimize=false, bgcolor=cRed>;
+    FIoOffsetAndLength ChunkOffsetLengths[Header.TocEntryCount] <optimize=false,bgcolor=cYellow>;
+    FIoStoreTocCompressedBlockEntry CompressionBlocks[Header.TocCompressedBlockEntryCount] <optimize=false,bgcolor=cBlue>;
+    struct { char Name[Header.CompressionMethodNameLength]; } CompressionMethodNames[Header.CompressionMethodNameCount] <optimize=false,bgcolor=cGreen>;
+    
+    local bool bIsSigned = Header.ContainerFlags & EIoContainerFlags_Signed; 
+    if (bIsSigned) 
+    {
+        int32 HashSize;
+        uint8 TocSignature[HashSize];
+        uint8 BlockSignature[HashSize];
+        FSHAHash ChunkBlockSignatures[Header.TocCompressedBlcokEntryCount];
+    }
+    
+    if ((Header.ContainerFlags & EIoContainerFlags_Indexed) &&
+        Header.DirectoryIndexSize > 0)
+    {
+        FIoDirectoryIndexResource DirectoryIndex <bgcolor=cYellow>;
+        //uint8 DirectoryIndexBuffer[Header.DirectoryIndexSize];
+    }
+    
+    FIoStoreTocEntryMeta ChunkMetas[Header.TocEntryCount] <bgcolor=cGreen>;
+    
+    if (Header.Version < EIoStoreTocVersion_PartitionSize) 
+    {
+        local uint64 PartitionCount = 1;
+        local uint64 PartitionSize = 0xFFFFFFFFFFFFFFFF;
+    }
+};
+
+#ifndef HEADLESS
+FIoStoreTocResource File;
+#endif

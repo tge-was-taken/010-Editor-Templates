@@ -1,0 +1,316 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: 
+//   Authors: Tekka
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: *.bin
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "p4g_enums.bt"
+
+LittleEndian();
+
+enum<ushort> AddEffect
+{
+    None = 0,
+    Plus1Strength = 1,
+    Plus2Strength = 2,
+    Plus3Strength = 3,
+    Plus4Strength = 4,
+    Plus5Strength = 5,
+    Plus1Endurance = 6,
+    Plus2Endurance = 7,
+    Plus3Endurance = 8,
+    Plus4Endurance = 9,
+    Plus5Endurance = 10,
+    Plus1Magic = 11,
+    Plus2Magic = 12,
+    Plus3Magic = 13,
+    Plus4Magic = 14,
+    Plus5Magic = 15,
+    Plus1Agility = 16,
+    Plus2Agility = 17,
+    Plus3Agility = 18,
+    Plus4Agility = 19,
+    Plus5Agility = 20,
+    Plus1Luck = 21,
+    Plus2Luck = 22,
+    Plus3Luck = 23,
+    Plus4Luck = 24,
+    Plus5Luck = 25,
+    Plus10HP = 26,
+    Plus20HP = 27,
+    Plus30HP = 28,
+    Plus40HP = 29,
+    Plus50HP = 30,
+    Plus10SP = 31,
+    Plus20SP = 32,
+    Plus30SP = 33,
+    Plus40SP = 34,
+    Plus50SP = 35,
+    PanicLow = 36,
+    PanicMed = 37,
+    PanicHigh = 38,
+    PoisonLow = 39,
+    PoisonMed = 40,
+    PoisonHigh = 41,
+    FearLow = 42,
+    FearMed = 43,
+    FearHigh = 44,
+    RageLow = 45,
+    RageMed = 46,
+    RageHigh = 47,
+    DizzyLow = 48,
+    DizzyMed = 49,
+    DizzyHigh = 50,
+    ExhaustionLow = 51,
+    ExhaustionMed = 52,
+    ExhaustionHigh = 53,
+    EnervateLow = 54,
+    EnervateMed = 55,
+    EnervateHigh = 56,
+    SilenceLow = 57,
+    SilenceMed = 58,
+    SilenceHigh = 59,
+    CritRateUpLow = 60,
+    CritRateUpMed = 61,
+    CritRateUpHigh = 62,
+    Plus1AllStats = 63,
+    Plus2AllStats = 64,
+    Plus3AllStats = 65,
+    Plus4AllStats = 66,
+    Plus5AllStats = 67,
+    FireDamageUp = 68,
+    IceDamageUp = 69,
+    ElecDamageUp = 70,
+    WindDamageUp = 71,
+    CounterPhysLow = 72,
+    CounterPhysMed = 73,
+    CounterPhysHigh = 74,
+    ResPanic = 75,
+    ResPoison = 76,
+    ResFear = 77,
+    ResRage = 78,
+    ResDizziness = 79,
+    ResExhaustion = 80,
+    ResEnervate = 81,
+    ResSilence = 82,
+    AutoTaru = 83,
+    AutoRaku = 84,
+    AutoSuku = 85,
+    Plus10Strength = 86,
+    Plus10Endurance = 87,
+    Plus10Magic = 88,
+    Plus10Agility = 89,
+    Plus10Luck = 90,
+    Plus100HP = 91,
+    AllAilmentsLow = 92,
+    AllAilmentsMed = 93,
+    AllAilmentsHigh = 94,
+    ReducePhysDamageLow = 95,
+    ReducePhysDamageMed = 96,
+    ReducePhysDamageHigh = 97,
+    ReduceFireDamageLow = 98,
+    ReduceFireDamageMed = 99,
+    ReduceFireDamageHigh = 100,
+    ReduceIceDamageLow = 101,
+    ReduceIceDamageMed = 102,
+    ReduceIceDamageHigh = 103,
+    ReduceWindDamageLow = 104,
+    ReduceWindDamageMed = 105,
+    ReduceWindDamageHigh = 106,
+    ReduceElecDamageLow = 107,
+    ReduceElecDamageMed = 108,
+    ReduceElecDamageHigh = 109,
+    ReduceSpellDamageLow = 110,
+    ReduceSpellDamageMed = 111,
+    ReduceSpellDamageHigh = 112,
+    ReduceStumbleMed = 113,
+    ReduceStumbleLow = 114,
+    ReduceStumbleHigh = 115,
+    EvadePhysMed = 116,
+    EvadePhysLow = 117,
+    EvadePhysHigh = 118,
+    EvadeFireMed = 119,
+    EvadeFireLow = 120,
+    EvadeFireHigh = 121,
+    EvadeIceMed = 122,
+    EvadeIceLow = 123,
+    EvadeIceHigh = 124,
+    EvadeWindMed = 125,
+    EvadeWindLow = 126,
+    EvadeWindHigh = 127,
+    EvadeElecMed = 128,
+    EvadeElecLow = 129,
+    EvadeElecHigh = 130,
+    EvadeSpellMed = 131,
+    EvadeSpellLow = 132,
+    EvadeSpellHigh = 133,
+    Plus50Exp = 134,
+    None2 = 135,
+    Charisma = 136,
+    None3 = 137,
+    Plus100SP = 138,
+    Plus10AllStats = 139,
+    None4 = 140,
+    None5 = 141,
+    None6 = 142,
+    None7 = 143,
+    ResFire = 144,
+    ResIce = 145,
+    ResWind = 146,
+    ResElec = 147,
+    RepFire = 148,
+    RepIce = 149,
+    RepWind = 150,
+    RepElec = 151,
+    AbsFire = 152,
+    AbsIce = 153,
+    AbsWind = 154,
+    AbsElec = 155,
+    None8 = 156,
+    None9 = 157,
+    None10 = 158,
+    None11 = 159,
+    None12 = 160,
+    None13 = 161,
+    None14 = 162,
+    None15 = 163,
+    None16 = 164,
+    None17 = 165,
+    None18 = 166,
+    None19 = 167,
+    None20 = 168,
+    None21 = 169,
+    None22 = 170,
+    None23 = 171,
+    None24 = 172,
+    None25 = 173,
+    None26 = 174,
+    None27 = 175,
+    None28 = 176,
+    None29 = 177,
+    None30 = 178,
+    None31 = 179,
+    None32 = 180,
+    None33 = 181,
+    None34 = 182,
+    None35 = 183,
+    None36 = 184,
+    None37 = 185,
+    None38 = 186,
+    None39 = 187,
+    None40 = 188,
+    StrengthenFireAttack = 189,
+    StrengthenIceAttack = 190,
+    StrengthenWindAttack = 191,
+    StrengthenElecAttack = 192,
+    ReduceFireDamage = 193,
+    ReduceIceDamage = 194,
+    ReduceWindDamage = 195,
+    ReduceElecDamage = 196
+
+};
+
+enum<byte>bool
+{
+    False = 0,
+    True = 1,
+};
+
+typedef struct
+{
+    byte : 5;
+    bool Yu : 1 <name = "Equippable by Yu">;
+    bool Yosuke : 1 <name = "Equippable by Yosuke">;
+    bool Yukiko : 1 <name = "Equippable by Yukiko">;
+    bool Chie : 1 <name = "Equippable by Chie">;
+    bool Rise : 1 <name = "Equippable by Rise">;
+    bool Kanji : 1 <name = "Equippable by Kanji">;
+    bool Naoto : 1 <name = "Equippable by Naoto">;
+    bool Teddie : 1 <name = "Equippable by Teddie">;
+    byte : 3;
+} EquippableUsers <name = "Equippable User(s)">;
+
+enum<int> Icon
+{
+    YuSword = 1,
+    YosukeKnives = 2,
+    ChieShoes = 4,
+    YukikoFan = 8,
+    KanjiShield = 16,
+    NaotoGun = 32,
+    TeddieClaws = 64,
+    Armor = 16384,
+    Accessory = 32768,
+    Consumable = 65536,
+    Key = 131072,
+    Material = 262144,
+    SkillCard = 524288,
+    Clothes = 1048576,
+    Bug = 2097152,
+    Fish = 4194304,
+    Vegetable = 8388608,
+    Book = 33554432,
+    Gem = 268435456
+};
+
+// Unsure what the uncommented ones do but they're different for each type of item
+enum<byte> Type
+{
+    WeaponType = 0,
+    ArmorType = 1,
+    AccessoryType = 2,
+    ConsumableOrBugOrFish = 3, // Uses set skill
+    BookOrKeyType = 4,
+    MaterialType = 5,
+    SkillCardType = 6, // Teaches set skill
+    ClothesType = 7,
+    VegetableOrGemType = 8
+};
+
+typedef struct
+{
+    byte ItemSaleMonth <comment="The month the item becomes available in store">;
+    byte ItemSaleDay <comment="The day of the month the item becomes available in store">;
+    byte Unk1[2];
+    byte NumMaterials <comment="The number of materials you need to sell for the item BEFORE this one">;
+    ushort MaterialId <comment="The material you need to sell to Daidara for to unlock the item BEFORE this one">;
+    byte Unk[5];
+    Type ItemSkillType;
+    byte Unk2[3];
+    Icon ItemIcon;
+    ushort Attack; 
+    ushort Accuracy; 
+    byte Unk3[4];
+    ushort Defense;
+    ushort Evade;
+    byte Unk4[16];
+    BattleSkill ItemSkill;
+    byte Unk5[2];
+    AddEffect AddedEffect;
+    byte Unk6[6];
+    EquippableUsers Users; 
+    byte Unk7[2];
+    uint StoreCost;
+} TItemTblEntry;
+
+typedef struct {
+    char Name[24];
+} TItemTblNames;
+
+typedef struct
+{
+  uint EntryCount;
+  TItemTblEntry Entries[EntryCount];
+  byte Unknown[28]; // Looks like an incomplete entry? Maybe missing more headers somewhere?
+  TItemTblNames Names[EntryCount];
+} TItemTbl;
+
+LittleEndian();
+TItemTbl File;

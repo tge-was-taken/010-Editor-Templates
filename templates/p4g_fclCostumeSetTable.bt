@@ -1,0 +1,36 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: p4g's fclCostumeSetTable.ftd found in init_free.bin/init/fclTable.bin
+//   Authors: Pioziomgames
+//   Version: 1.0
+//   Purpose: Editing and creating new costume sets
+//  Category: Persona 4 Golden
+// File Mask: fclCostumeSetTable.ftd
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+LittleEndian();
+
+typedef struct
+{
+    ushort Index;
+    ushort ItemId;
+} costume <optimize=false>;
+
+typedef struct
+{
+    ushort ItemSetItemId;
+    costume Costumes[8];
+} TFtdEntry <optimize = false>;
+
+typedef struct 
+{
+    uint FtdSize;
+    uint FtdEntries;
+    byte Padding[8];
+    TFtdEntry FtdEntry[FtdEntries];
+} TFtd <optimize = false>;
+
+TFtd File;

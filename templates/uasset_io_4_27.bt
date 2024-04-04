@@ -1,0 +1,329 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "unreal.h"
+
+enum <uint8> EExportFilterFlags
+{
+	None,
+	NotForClient,
+	NotForServer
+};
+
+typedef struct 
+{
+	enum FMappedName_EType
+	{
+		Package,
+		Container,
+		Global
+	};
+
+	local uint32 InvalidIndex = ~0;
+	local uint32 IndexBits = 30u;
+	local uint32 IndexMask = (1u << IndexBits) - 1u;
+	local uint32 TypeMask = ~IndexMask;
+	local uint32 TypeShift = IndexBits;
+
+    uint32 Index;
+    uint32 Number;
+
+    local bool IsValid = Index != InvalidIndex && Number != InvalidIndex;
+    local FMappedName_EType Type = (FMappedName_EType)((Index & TypeMask) >> TypeShift);
+    local bool IsGlobal = ((Index & TypeMask) >> TypeShift) != 0;
+    local uint32 RealIndex = Index & IndexMask;
+} FMappedName <read=FMappedName_ToString>;
+#define FMappedName_Size = 8;
+
+string FMappedName_ToString(FMappedName& x) {
+    return FNameSerializedView_ToString(NameMapNames[x.RealIndex]);
+}
+
+struct FPackageSummary
+{
+	FMappedName Name;
+	FMappedName SourceName;
+	uint32 PackageFlags;
+	uint32 CookedHeaderSize;
+	int32 NameMapNamesOffset;
+	int32 NameMapNamesSize;
+	int32 NameMapHashesOffset;
+	int32 NameMapHashesSize;
+	int32 ImportMapOffset;
+	int32 ExportMapOffset;
+	int32 ExportBundlesOffset;
+	int32 GraphDataOffset;
+	int32 GraphDataSize;
+	int32 Pad;
+};
+
+struct FSerializedNameHeader
+{
+	uint8 Data[2];
+    local uint8 IsUtf16 = Data[0] & 0x80u;
+    local uint32 Len = ((Data[0] & 0x7Fu) << 8) + Data[1];
+    local uint32 NumBytes = IsUtf16 ? 2 * Len : 1 * Len;
+};
+
+#define FPackageObjectIndex_Size 8
+typedef struct
+{
+	local uint64 IndexBits = 62ull;
+	local uint64 IndexMask = (1ull << IndexBits) - 1ull;
+	local uint64 TypeMask = ~IndexMask;
+	local uint64 TypeShift = IndexBits;
+	local uint64 Invalid = ~0ull;
+
+	uint64 TypeAndId;
+
+	enum FPackageObjectIndex_EType
+	{
+		Export,
+		ScriptImport,
+		PackageImport,
+		Null,
+		TypeCount = Null,
+	};
+
+	local bool IsNull = TypeAndId == Invalid;
+	local bool IsExport = (TypeAndId >> TypeShift) == Export;
+    local bool IsScriptImport = (TypeAndId >> TypeShift) == ScriptImport;
+    local bool IsPackageImport = (TypeAndId >> TypeShift) == PackageImport;
+    local bool IsImport = IsScriptImport || IsPackageImport;
+    local uint32 Export = (uint32)(TypeAndId);
+    local uint64 Value = TypeAndId & IndexMask;
+    local uint32 TypeHash = (uint)(TypeAndId);
+} FPackageObjectIndex <read=FPackageObjectIndex_ToString>;
+
+string FPackageObjectIndex_ToString(FPackageObjectIndex& x) {
+    if (x.IsExport) {
+        return FMappedName_ToString(ExportMap[x.Export].ObjectName);
+    } else if (x.IsScriptImport) {
+        local string s;
+        SPrintf(s, "<script import %16LX>", x.Value);
+
+        return s;
+    } else if (x.IsNull) {
+        return "<null>";
+    } else if (x.IsPackageImport) {
+        local string s;
+        SPrintf(s, "<package import %16LX>", x.Value);
+        return s;
+    }
+    return "<unknown>";
+}
+
+#define FExportMapEntry_Size 72
+typedef struct
+{
+    local uint64 Start = FTell();
+	uint64 CookedSerialOffset;
+	uint64 CookedSerialSize;
+	FMappedName ObjectName;
+	FPackageObjectIndex OuterIndex;
+	FPackageObjectIndex ClassIndex;
+	FPackageObjectIndex SuperIndex;
+	FPackageObjectIndex TemplateIndex;
+	FPackageObjectIndex GlobalImportIndex;
+	EObjectFlags ObjectFlags;
+	EExportFilterFlags FilterFlags;
+	uint8 Pad[3];
+} FExportMapEntry <read=(FMappedName_ToString(ObjectName))>;
+
+#define FExportBundleEntry_Size = 8;
+typedef struct
+{
+	enum<uint32> EExportCommandType
+	{
+		ExportCommandType_Create,
+		ExportCommandType_Serialize,
+		ExportCommandType_Count
+	};
+	uint32 LocalExportIndex;
+	EExportCommandType CommandType;
+} FExportBundleEntry;
+
+#define FPackageId_Size = 8;
+struct FPackageId
+{
+	local uint64 InvalidId = 0;
+	uint64 Id;
+
+	local bool IsValid = Id != InvalidId;
+    local uint64 Value = Id;
+    local uint64 ValueForDebugging = Id;
+    local uint32 TypeHash = (uint32)Id;
+};
+
+typedef struct {
+    FSerializedNameHeader Header;
+    char Name[Header.Len];
+} FNameSerializedView <optimize=false, read=FNameSerializedView_ToString>;
+
+
+string FNameSerializedView_ToString(FNameSerializedView& name) {
+    if (exists(name.Name)) {
+        return name.Name;
+    } else return "";
+}
+
+#define FExportBundleHeader_Size 8
+typedef struct
+{
+	uint32 FirstEntryIndex;
+	uint32 EntryCount;
+} FExportBundleHeader;
+
+string FNameEntryId_ToString(FNameEntryId& x) 
+{
+    local int32 index = x.Value & 0x7FFFFFFF;
+    if (index < 0 || index > NameMapEntryCount)
+        return "<invalid index>";
+
+    return FNameSerializedView_ToString(NameMapNames[index]);
+}
+
+uint64 CalculateExportBundleHeaderCount(uint64 ExportBundleCount)
+{
+    local uint64 RemainingBundleEntryCount = ExportBundleCount;
+    local uint64 FoundBundlesCount = 0;
+    local uint64 Result = 0;
+    local uint64 Pos = FTell();
+    local int EntryCount;
+    while (FoundBundlesCount < RemainingBundleEntryCount) {
+        RemainingBundleEntryCount--;
+        Pos+=4;
+        EntryCount = ReadInt(Pos);
+        Pos+=4;
+        FoundBundlesCount += EntryCount;
+        Result++;
+    }
+    return Result;
+}
+
+FPackageSummary PackageSummary <bgcolor=cYellow>;
+local uint64 NameMapEntryCount = (PackageSummary.NameMapHashesSize / 8) - 1;
+
+FSeek(PackageSummary.NameMapNamesOffset);
+FNameSerializedView NameMapNames[NameMapEntryCount] <optimize=false,bgcolor=cYellow>;
+
+FSeek(PackageSummary.NameMapHashesOffset);
+uint64 HashVersion <bgcolor=cYellow>;
+uint64 NameMapHashes[NameMapEntryCount] <bgcolor=cYellow>;
+
+FSeek(PackageSummary.ImportMapOffset);
+local uint64 ImportMapEntryCount = (PackageSummary.ExportMapOffset - PackageSummary.ImportMapOffset) / FPackageObjectIndex_Size;
+FPackageObjectIndex ImportMap[ImportMapEntryCount] <optimize=false,bgcolor=cYellow>;
+
+FSeek(PackageSummary.ExportMapOffset);
+local uint64 ExportMapEntryCount = (PackageSummary.ExportBundlesOffset - PackageSummary.ExportMapOffset) / FExportMapEntry_Size;
+FExportMapEntry ExportMap[ExportMapEntryCount] <optimize=false,bgcolor=cYellow>;
+
+// NOTE: the exact export bundle count is stored someplace outside the uasset
+// for rewriting this needs to be figured out
+FSeek(PackageSummary.ExportBundlesOffset);
+local uint64 ExportBundlesSize = PackageSummary.GraphDataOffset - PackageSummary.ExportBundlesOffset;
+local uint64 ExportBundleEntryCount = ExportBundlesSize / 8;
+local uint64 ExportBundleHeaderCount = CalculateExportBundleHeaderCount(ExportBundleEntryCount);
+FExportBundleHeader ExportBundleHeaders[ExportBundleHeaderCount];
+
+ExportBundleEntryCount -= ExportBundleHeaderCount;
+FExportBundleEntry ExportBundleEntries[ExportBundleEntryCount] <optimize=false,bgcolor=cYellow>;
+
+FSeek(PackageSummary.GraphDataOffset);
+int32 ImportedPackagesCount;
+struct {
+    FPackageId ImportedPackageId;
+    int32 ExternalArcCount;
+    struct {
+        int32 FromExportBundleIndex;
+        int32 ToExportBundleIndex;
+        /*
+				uint32 FromNodeIndexBase = FromExportBundleIndex * EEventLoadNode2::ExportBundle_NumPhases;
+				uint32 ToNodeIndexBase = ToExportBundleIndex * EEventLoadNode2::ExportBundle_NumPhases;
+				for (int32 Phase = 0; Phase < EEventLoadNode2::ExportBundle_NumPhases; ++Phase)
+				{
+					uint32 ToNodeIndex = ToNodeIndexBase + Phase;
+					uint32 FromNodeIndex = FromNodeIndexBase + Phase;
+					Data.ExportBundleNodes[ToNodeIndex].DependsOn(&ImportedPackage->Data.ExportBundleNodes[FromNodeIndex]);
+				}
+        */
+    } ExternalArc[ExternalArcCount];
+} ImportedPackage[ImportedPackagesCount];
+
+local uint64 AllExportDataOffset = ExportMap[0].CookedSerialOffset - FTell();
+
+void ReadExports()
+{
+    local uint64 ExportIndex = 0;
+    local uint64 CookedSerialOffset;
+    local uint64 CookedSerialSize;
+    for(ExportIndex = 0; ExportIndex < ExportMapEntryCount; ++ExportIndex)
+    {
+        CookedSerialOffset = ExportMap[ExportIndex].CookedSerialOffset - AllExportDataOffset;
+        CookedSerialSize = ExportMap[ExportIndex].CookedSerialSize;
+        FSeek(CookedSerialOffset);
+    
+        struct(int CookedSerialSize) {
+            UObject Object;            
+            //byte Data[CookedSerialSize];
+        } Export(CookedSerialSize) <bgcolor=cRed>;
+    }
+}
+
+void ReadExportBundles() 
+{
+    local uint64 CurrentExportDataOffset;
+    
+    local uint64 ExportBundleIndex = 0;
+
+    for(ExportBundleIndex = 0; ExportBundleIndex < ExportBundleHeaderCount; ++ExportBundleIndex)
+    {
+        CurrentExportDataOffset = AllExportDataOffset;
+    
+        struct(uint64 ExportBundleIndex, uint64 CurrentExportDataOffset)
+        {
+            local uint64 ExportBundleEntryIndex = 0;
+            local uint64 ExportIndex;
+            local uint64 CookedSerialOffset;
+            local uint64 CookedSerialSize;
+            local uint64 CookedSerialEndOffset;
+
+            for(ExportBundleEntryIndex = 0; ExportBundleEntryIndex < ExportBundleHeaders[ExportBundleIndex].EntryCount; ++ExportBundleEntryIndex)
+            {
+                ExportIndex = ExportBundleEntries[ExportBundleEntryIndex].LocalExportIndex;
+                CookedSerialOffset = ExportMap[ExportIndex].CookedSerialOffset - CurrentExportDataOffset;
+                CookedSerialSize = ExportMap[ExportIndex].CookedSerialSize;
+                FSeek(CookedSerialOffset);
+    
+                struct
+                {
+                    if (ExportBundleEntries[ExportBundleEntryIndex].CommandType == ExportCommandType_Create)
+                    {
+                        // Nothing to do.
+                    }
+                    else
+                    {
+                        struct {
+                            UObject Object;            
+                            //byte Data[CookedSerialSize];
+                        } Export <bgcolor=cRed>;
+                    }   
+                } ExportBundleEntry;
+            }
+        } ExportBundle(ExportBundleIndex, CurrentExportDataOffset);
+    }
+}
+
+ReadExports();
+ReadExportBundles();

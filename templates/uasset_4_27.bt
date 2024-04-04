@@ -1,0 +1,902 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "unreal.h"
+
+string FNameEntryId_ToString(FNameEntryId& x) 
+{
+    local int32 index = x.Value & 0x7FFFFFFF;
+    if (index < 0 || index > File.Summary.NameCount)
+        return "<invalid index>";
+
+    return FNameEntrySerialized_ToString(File.NameMap[index]);
+}
+
+string FPackageIndex_ToString(FPackageIndex& x)
+{
+    if (x.IsImport)
+        return FObjectImport_ToString(File.Imports[x.ImportIndex]);
+    if (x.IsExport)
+        return FObjectExport_ToString(File.Exports[x.ExportIndex]);
+    if (x.IsNull)
+        return "<null>";
+    return "";
+}
+
+struct FCompressedChunk
+{
+	/** Original offset in uncompressed file.	*/
+	int32		UncompressedOffset;
+	/** Uncompressed size in bytes.				*/
+	int32		UncompressedSize;
+	/** Offset in compressed file.				*/
+	int32		CompressedOffset;
+	/** Compressed size in bytes.				*/
+	int32		CompressedSize;
+};
+
+/**
+ * Revision data for an Unreal package file.
+ */
+//@todo: shouldn't need ExportCount/NameCount with the linker free package map; if so, clean this stuff up
+struct FGenerationInfo
+{
+	/**
+	 * Number of exports in the linker's ExportMap for this generation.
+	 */
+	int32 ExportCount;
+
+	/**
+	 * Number of names in the linker's NameMap for this generation.
+	 */
+	int32 NameCount;
+};
+
+/**
+ * Structure to hold unique custom key with its version.
+ */
+struct FCustomVersion
+{
+	/** Unique custom key. */
+	FGuid Key;
+
+	/** Custom version. */
+	int32 Version;
+
+	/** Number of times this GUID has been registered */
+	int32 ReferenceCount;
+
+	/** An optional validator that will be called if a package has a given version that can prevent it from loading */
+	//CustomVersionValidatorFunc Validator;
+
+	/** Friendly name for error messages or whatever. Lazy initialized for serialized versions */
+	//mutable FName FriendlyName;
+};
+
+typedef enum 
+{
+    ECustomVersionSerializationFormat_Unknown,
+    ECustomVersionSerializationFormat_Guids,
+    ECustomVersionSerializationFormat_Enums,
+    ECustomVersionSerializationFormat_Optimized,
+    ECustomVersionSerializationFormat_CustomVersion_Automatic_Plus_One,
+    ECustomVersionSerializationFormat_Latest = ECustomVersionSerializationFormat_CustomVersion_Automatic_Plus_One - 1
+} ECustomVersionSerializationFormat;
+
+ECustomVersionSerializationFormat GetCustomVersionFormatForArchive(int32 LegacyFileVersion)
+{
+    local ECustomVersionSerializationFormat CustomVersionFormat = ECustomVersionSerializationFormat_Unknown;
+	if (LegacyFileVersion == -2)
+	{
+		CustomVersionFormat = ECustomVersionSerializationFormat_Enums;
+	}
+	else if (LegacyFileVersion < -2 && LegacyFileVersion >= -5)
+	{
+		CustomVersionFormat = ECustomVersionSerializationFormat_Guids;
+	}
+	else if (LegacyFileVersion < -5)
+	{
+		CustomVersionFormat = ECustomVersionSerializationFormat_Optimized;
+	}
+	Assert(CustomVersionFormat != ECustomVersionSerializationFormat_Unknown);
+	return CustomVersionFormat;
+}
+
+/**
+ * Container for all available/serialized custom versions.
+ */
+struct FCustomVersionContainer(ECustomVersionSerializationFormat Format)
+{
+	/** Array containing custom versions. */
+	// FCustomVersionArray Versions;
+    TArray Versions(T_FCustomVersion);
+};
+
+struct FEngineVersion 
+{
+	/** Major version number. */
+	uint16 Major;
+
+	/** Minor version number. */
+	uint16 Minor;
+
+	/** Patch version number. */
+	uint16 Patch;
+
+	/** Changelist number. This is used to arbitrate when Major/Minor/Patch version numbers match. Use GetChangelist() instead of using this member directly. */
+	uint32 Changelist;
+
+    /** Branch name. */
+    FString Branch;
+};
+
+/**
+ * A "table of contents" for an Unreal package file.  Stored at the top of the file.
+ */
+struct FPackageFileSummary
+{
+    const int CurrentLegacyFileVersion = -7;
+
+	/**
+	* Magic tag compared against PACKAGE_FILE_TAG to ensure that package is an Unreal package.
+	*/
+	int32		Tag;
+    Assert(Tag == PACKAGE_FILE_TAG);
+
+	/**
+	* The package file version number when this package was saved.
+	*
+	* Lower 16 bits stores the UE3 engine version
+	* Upper 16 bits stores the UE4/licensee version
+	* For newer packages this is -7
+	*		-2 indicates presence of enum-based custom versions
+	*		-3 indicates guid-based custom versions
+	*		-4 indicates removal of the UE3 version. Packages saved with this ID cannot be loaded in older engine versions
+	*		-5 indicates the replacement of writing out the "UE3 version" so older versions of engine can gracefully fail to open newer packages
+	*		-6 indicates optimizations to how custom versions are being serialized
+	*		-7 indicates the texture allocation info has been removed from the summary
+	*/
+    int32 LegacyFileVersion;
+    if (LegacyFileVersion < 0) 
+    {
+        Assert(LegacyFileVersion >= CurrentLegacyFileVersion);
+        if (LegacyFileVersion != -4) 
+        {
+            int32 LegacyUE3Version;
+        }
+    }
+
+	EUnrealEngineObjectUE4Version		FileVersionUE4;
+	int32		FileVersionLicenseeUE4;
+
+    if (LegacyFileVersion <= -2) 
+    {
+	    /* Custom version numbers. Keyed off a unique tag for each custom component. */
+	    FCustomVersionContainer CustomVersionContainer(GetCustomVersionFormatForArchive(LegacyFileVersion));   
+    }
+
+    if (!FileVersionUE4 && !FileVersionLicenseeUE4)
+    {
+        local bool bUnversioned = true;
+    }
+    else
+    {
+        local bool bUnversioned = false;
+        GPackageFileUE4Version = FileVersionUE4;
+        GPackageFileLicenseeUE4Version = FileVersionLicenseeUE4;
+    }
+
+	/**
+	* Total size of all information that needs to be read in to create a FLinkerLoad. This includes
+	* the package file summary, name table and import & export maps.
+	*/
+	int32		TotalHeaderSize;
+
+	/**
+	* The Generic Browser folder name that this package lives in
+	*/
+	FString	FolderName;
+
+	/**
+	* The flags for the package
+	*/
+	EPackageFlags	PackageFlags;
+
+	/**
+	* Number of names used in this package
+	*/
+	int32		NameCount;
+
+	/**
+	* Location into the file on disk for the name data
+	*/
+	int32 	NameOffset;
+
+    if (!(PackageFlags & PKG_FilterEditorOnly) &&
+        (GPackageFileUE4Version >= UVER_UE4_ADED_PACKAGE_SUMMARY_LOCALIZATION_ID))
+    {
+	    /**
+	    * Localization ID of this package
+	    * @note This is copy of the version stored in the package meta-data. It exists here so we can query it without having to load the whole package
+	    */
+	    FString		LocalizationId;   
+    }
+    if (GPackageFileUE4Version >= VER_UE4_SERIALIZE_TEXT_IN_PACKAGES)
+    {
+	    /**
+	    * Number of gatherable text data items in this package
+	    */
+	    int32		GatherableTextDataCount;
+    
+	    /**
+	    * Location into the file on disk for the gatherable text data items
+	    */
+	    int32 		GatherableTextDataOffset;   
+    }
+
+	/**
+	* Number of exports contained in this package
+	*/
+	int32		ExportCount;
+
+	/**
+	* Location into the file on disk for the ExportMap data
+	*/
+	int32		ExportOffset;
+
+	/**
+	* Number of imports contained in this package
+	*/
+	int32		ImportCount;
+
+	/**
+	* Location into the file on disk for the ImportMap data
+	*/
+	int32		ImportOffset;
+
+
+	/**
+	* Location into the file on disk for the DependsMap data
+	*/
+	int32		DependsOffset;
+
+    if (GPackageFileUE4Version >= VER_UE4_OLDEST_LOADABLE_PACKAGE &&
+        GPackageFileUE4Version <= GPackageFileUE4Version)
+    {    
+        if (GPackageFileUE4Version >= VER_UE4_ADD_STRING_ASSET_REFERENCES_MAP)
+        {
+	        /**
+	        * Number of soft package references contained in this package
+	        */
+	        int32		SoftPackageReferencesCount;
+        
+	        /**
+	        * Location into the file on disk for the soft package reference list
+	        */
+	        int32		SoftPackageReferencesOffset;
+        }
+
+        if (GPackageFileUE4Version >= VER_UE4_ADDED_SEARCHABLE_NAMES)
+        {
+	        /**
+	        * Location into the file on disk for the SearchableNamesMap data
+	        */
+	        int32		SearchableNamesOffset;   
+        }
+    
+	    /**
+	    * Thumbnail table offset
+	    */
+	    int32		ThumbnailTableOffset;
+    
+	    /**
+	    * Current id for this package
+	    */
+	    // UE_DEPRECATED(4.27, "UPackage::Guid has not been used by the engine for a long time and FPackageFileSummary::Guid will be removed.")
+	    FGuid	Guid;
+    
+    #ifdef WITH_EDITORONLY_DATA
+        if (GPackageFileUE4Version >= VER_UE4_ADDED_PACKAGE_OWNER)
+        {
+	        /**
+	        * Current persistent id for this package
+	        */
+	        FGuid	PersistentGuid;
+        }
+
+        // The owner persistent guid was added in VER_UE4_ADDED_PACKAGE_OWNER but removed in the next version VER_UE4_NON_OUTER_PACKAGE_IMPORT
+        if (GPackageFileUE4Version >= VER_UE4_ADDED_PACKAGE_OWNER &&
+            GPackageFileUE4Version < VER_UE4_NON_OUTER_PACKAGE_IMPORT)
+        {
+            FGuid OwnerPersistentGuid;
+        }
+    #endif
+
+        // TODO Stream??
+        //int32 GenerationCount;
+        
+    
+	    /**
+	    * Data about previous versions of this package
+	    */
+	    TArray Generations(T_FGenerationInfo);
+
+        if (GPackageFileUE4Version >= VER_UE4_ENGINE_VERSION_OBJECT)
+        {
+	        /**
+	        * Engine version this package was saved with. This may differ from CompatibleWithEngineVersion for assets saved with a hotfix release.
+	        */
+	        FEngineVersion SavedByEngineVersion;   
+        }
+        else
+        {
+            int32 EngineChangelist;
+        }
+
+        if (GPackageFileUE4Version >= VER_UE4_PACKAGE_SUMMARY_HAS_COMPATIBLE_ENGINE_VERSION)
+        {
+	        /**
+	        * Engine version this package is compatible with. Assets saved by Hotfix releases and engine versions that maintain binary compatibility will have
+	        * a CompatibleWithEngineVersion.Patch that matches the original release (as opposed to SavedByEngineVersion which will have a patch version of the new release).
+	        */
+	        FEngineVersion CompatibleWithEngineVersion;   
+        }
+    
+	    /**
+	    * Flags used to compress the file on save and uncompress on load.
+	    */
+	    uint32	CompressionFlags;
+
+        TArray CompressedChunks(T_FCompressedChunk);
+
+        Assert(CompressedChunks.Num == 0);
+    
+	    /**
+	    * Value that is used to determine if the package was saved by Epic (or licensee) or by a modder, etc
+	    */
+	    uint32	PackageSource;
+
+        // No longer used
+        TArray AdditionalPackagesToCook(T_FString);
+
+        if (LegacyFileVersion > -7) 
+        {
+            // No longer used
+            int32 NumTextureAllocations;
+            Assert(NumTextureAllocations == 0);
+        }
+    
+	    /**
+	    * Location into the file on disk for the asset registry tag data
+	    */
+	    int32 	AssetRegistryDataOffset;
+    
+	    /** Offset to the location in the file where the bulkdata starts */
+	    int64	BulkDataStartOffset;
+
+        if (GPackageFileUE4Version >= VER_UE4_WORLD_LEVEL_INFO)
+        {
+	        /**
+	        * Offset to the location in the file where the FWorldTileInfo data starts
+	        */
+	        int32 	WorldTileInfoDataOffset;
+        }
+
+        if (GPackageFileUE4Version >= VER_UE4_CHANGED_CHUNKID_TO_BE_AN_ARRAY_OF_CHUNKIDS)
+        {
+	        /**
+	        * Streaming install ChunkIDs
+	        */
+	        TArray	ChunkIDs(T_Int32);
+        }
+        else if (GPackageFileUE4Version >= VER_UE4_ADDED_CHUNKID_TO_ASSETDATA_AND_UPACKAGE)
+        {
+            int ChunkID;
+        }
+    
+	    int32		PreloadDependencyCount;
+    
+	    /**
+	    * Location into the file on disk for the preload dependency data
+	    */
+	    int32		PreloadDependencyOffset;
+    }
+};
+
+typedef struct
+{
+    int32 StringLen;
+    local bool bIsWide = StringLen < 0;
+    local int CurrentStringLen = StringLen;
+    if (bIsWide) 
+    {
+        CurrentStringLen = -StringLen;
+        wchar_t Data[CurrentStringLen*2];
+    }
+    else
+    {
+        char Data[CurrentStringLen];
+    }
+    if (UE4Ver() >= VER_UE4_NAME_HASHES_SERIALIZED)
+    {
+	    // These are not used anymore but recalculated on save to maintain serialization format
+	    uint16 NonCasePreservingHash;
+	    uint16 CasePreservingHash;
+    }
+} FNameEntrySerialized <optimize=false, read=FNameEntrySerialized_ToString>;
+
+string FNameEntrySerialized_ToString(FNameEntrySerialized& x)
+{
+    return x.Data;
+}
+
+/**
+ * Base class for UObject resource types.  FObjectResources are used to store UObjects on disk
+ * via FLinker's ImportMap (for resources contained in other packages) and ExportMap (for resources
+ * contained within the same package)
+ */
+struct FObjectResource
+{
+	/**
+	 * The name of the UObject represented by this resource.
+	 * Serialized
+	 */
+	FName			ObjectName;
+
+	/**
+	 * Location of the resource for this resource's Outer.  Values of 0 indicate that this resource
+	 * represents a top-level UPackage object (the linker's LinkerRoot).
+	 * Serialized
+	 */
+	FPackageIndex	OuterIndex;
+
+#ifdef WITH_EDITORONLY_DATA
+	/**
+	 * Name of the class this object was serialized with (in case active class redirects have changed it)
+	 * If this is a class and was directly redirected, this is what it was redirected from
+	 */
+	FName			OldClassName;
+#endif
+};
+
+/**
+ * UObject resource type for objects that are contained within this package and can
+ * be referenced by other packages.
+ */
+typedef struct
+{
+	/**
+	 * Location of the resource for this export's class (if non-zero).  A value of zero
+	 * indicates that this export represents a UClass object; there is no resource for
+	 * this export's class object
+	 * Serialized
+	 */
+	FPackageIndex  	ClassIndex;
+
+	/**
+	 * Location of the resource for this export's SuperField (parent).  Only valid if
+	 * this export represents a UStruct object. A value of zero indicates that the object
+	 * represented by this export isn't a UStruct-derived object.
+	 * Serialized
+	 */
+	FPackageIndex 	SuperIndex;
+
+    if (GPackageFileUE4Version >= VER_UE4_TemplateIndex_IN_COOKED_EXPORTS)
+    {
+  	    /**
+	    * Location of the resource for this export's template/archetypes.  Only used
+	    * in the new cooked loader. A value of zero indicates that the value of GetArchetype
+	    * was zero at cook time, which is more or less impossible and checked.
+	    * Serialized
+	    */
+	    FPackageIndex 	TemplateIndex;      
+    }
+
+	/**
+	 * Location of the resource for this resource's Outer.  Values of 0 indicate that this resource
+	 * represents a top-level UPackage object (the linker's LinkerRoot).
+	 * Serialized
+	 */
+	FPackageIndex	OuterIndex;
+
+	/**
+	 * The name of the UObject represented by this resource.
+	 * Serialized
+	 */
+	FName			ObjectName;
+
+	/**
+	 * The object flags for the UObject represented by this resource.  Only flags that
+	 * match the RF_Load combination mask will be loaded from disk and applied to the UObject.
+	 * Serialized
+	 */
+	EObjectFlags	ObjectFlags;
+
+    if (GPackageFileUE4Version < VER_UE4_64BIT_EXPORTMAP_SERIALSIZES)
+    {
+	    /**
+	     * The number of bytes to serialize when saving/loading this export's UObject.
+	     * Serialized
+	     */
+	    int32         	SerialSize;
+    
+	    /**
+	     * The location (into the FLinker's underlying file reader archive) of the beginning of the
+	     * data for this export's UObject.  Used for verification only.
+	     * Serialized
+	     */
+	    int32         	SerialOffset;
+    }
+    else
+    {
+	    /**
+	     * The number of bytes to serialize when saving/loading this export's UObject.
+	     * Serialized
+	     */
+	    int64         	SerialSize;
+    
+	    /**
+	     * The location (into the FLinker's underlying file reader archive) of the beginning of the
+	     * data for this export's UObject.  Used for verification only.
+	     * Serialized
+	     */
+	    int64         	SerialOffset;
+    }
+
+	/**
+	 * Whether the export was forced into the export table via OBJECTMARK_ForceTagExp.
+	 * Serialized
+	 */
+	bool			bForcedExport;   
+
+	/**
+	 * Whether the export should be loaded on clients
+	 * Serialized
+	 */
+	bool			bNotForClient;   
+
+	/**
+	 * Whether the export should be loaded on servers
+	 * Serialized
+	 */
+	bool			bNotForServer;
+
+	/** If this object is a top level package (which must have been forced into the export table via OBJECTMARK_ForceTagExp)
+	 * this is the GUID for the original package file
+	 * Serialized
+	 */
+	//UE_DEPRECATED(4.27, "UPackage::Guid has not been used by the engine for a long time and FObjectExport::PackageGuid will be removed.")
+	FGuid			PackageGuid;
+
+	/** If this object is a top level package (which must have been forced into the export table via OBJECTMARK_ForceTagExp)
+	 * this is the package flags for the original package file
+	 * Serialized
+	 */
+	uint32			PackageFlags;
+
+    if (GPackageFileUE4Version >= VER_UE4_LOAD_FOR_EDITOR_GAME)
+    {
+	    /**
+	     * Whether the export should be always loaded in editor game
+	     * False means that the object is 
+	     * True doesn't means, that the object won't be loaded.
+	     * Serialized
+	     */
+	    bool			bNotAlwaysLoadedForEditorGame;
+    }
+
+    if (GPackageFileUE4Version >= VER_UE4_COOKED_ASSETS_IN_EDITOR_SUPPORT)
+    {
+	    /**
+	     * True if this export is an asset object.
+	     */
+	    bool			bIsAsset;
+    }
+
+    if (GPackageFileUE4Version >= VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS)
+    {
+	    /**
+	     * The export table must serialize as a fixed size, this is use to index into a long list, which is later loaded into the array. -1 means dependencies are not present
+	     * These are contiguous blocks, so CreateBeforeSerializationDependencies starts at FirstExportDependency + SerializationBeforeSerializationDependencies
+	     */
+        
+        // SerializationBeforeSerializationDependencies = PreloadDependencies[FirstExportDependency:FirstExportDependency+SerializationBeforeSerializationDependencies]
+        // etc.
+	    int32 FirstExportDependency;
+	    int32 SerializationBeforeSerializationDependencies;
+	    int32 CreateBeforeSerializationDependencies;
+	    int32 SerializationBeforeCreateDependencies;
+	    int32 CreateBeforeCreateDependencies;   
+    }
+} FObjectExport <optimize=false, read=FObjectExport_ToString>;
+
+string FObjectExport_ToString(FObjectExport& x)
+{
+    return FName_ToString(x.ObjectName);
+}
+
+typedef struct
+{
+	/**
+	 * The name of the package that contains the class of the UObject represented by this resource.
+	 * Serialized
+	 */
+	FName			ClassPackage;
+
+	/**
+	 * The name of the class for the UObject represented by this resource.
+	 * Serialized
+	 */
+	FName			ClassName;
+
+	/**
+	 * Location of the resource for this resource's Outer.  Values of 0 indicate that this resource
+	 * represents a top-level UPackage object (the linker's LinkerRoot).
+	 * Serialized
+	 */
+	FPackageIndex	OuterIndex;
+
+	/**
+	 * The name of the UObject represented by this resource.
+	 * Serialized
+	 */
+	FName			ObjectName;
+
+#ifdef WITH_EDITORONLY_DATA
+	/**
+	 * Package Name this import belongs to. Can be none, in that case follow the outer chain
+	 * until a set PackageName is found or until OuterIndex is null
+	 * Serialized
+	 */
+	FName			PackageName;
+#endif
+} FObjectImport <optimize=false, read=FObjectImport_ToString>;
+
+string FObjectImport_ToString(FObjectImport& x)
+{
+    string s;
+    SPrintf(s, "[%s] %s (%s).%s", 
+        FName_ToString(x.ClassPackage),
+        FName_ToString(x.ClassName),
+        FPackageIndex_ToString(x.OuterIndex),
+        FName_ToString(x.ObjectName));
+    return s;
+}
+
+typedef struct
+{
+    FString Key;
+    FString Value;
+} FAssetDataTag;
+
+typedef struct
+{
+    FString ObjectPath;
+    FString ObjectClassName;
+    TArray Tags(T_FAssetDataTag);    
+} FAssetData;
+
+typedef struct
+{
+    FString AssetClassName;
+    FString ObjectPathWithoutPackageName;
+    int32 FileOffset;
+    FString GroupNames;
+    FString AssetName;
+} FThumbnailAssetData;
+
+typedef struct
+{
+    TBitArray ImportUsedInGame;
+    TBitArray SoftPackageUsedInGame;
+} FPackageDependencyData;
+
+enum<int32> ELocMetadataType
+{
+	ELocMetadataType_None,
+	ELocMetadataType_Boolean,
+	ELocMetadataType_String,
+	ELocMetadataType_Array,
+	ELocMetadataType_Object,
+};
+
+typedef struct
+{
+    int32 ElementCount;
+    struct FLocMetadataValue Value[ElementCount];
+} FLocMetadataValueArray;
+
+typedef struct
+{
+    bool Value;
+} FLocMetadataValueBoolean;
+
+typedef struct
+{
+    // UObject Value;
+    Assert(false);
+} FLocMetadataValueObject;
+
+typedef struct
+{
+    FString Value;
+} FLocMetadataValueString;
+
+typedef struct
+{
+    ELocMetadataType Type;
+    switch (Type)
+    {
+        case ELocMetadataType_Array:
+            FLocMetadataValueArray Value;    
+            break;
+        case ELocMetadataType_Boolean:
+            FLocMetadataValueBoolean Value;
+            break;
+        case ELocMetadataType_String:
+            FLocMetadataValueString Value;
+            break;
+        case ELocMetadataType_Object:
+            FLocMetadataValueObject Value;
+            break;
+        default:
+            Assert(false);
+            break;
+    }
+} FLocMetadataValue;
+
+typedef struct
+{
+    int32 ValueCount;
+    FString Key;
+    
+
+	/** Stores the name/value pairs for the metadata object */
+	// TMap< FString, TSharedPtr<FLocMetadataValue> > Values;
+} FLocMetadataObject;
+
+typedef struct
+{
+	FString SourceString;
+	FLocMetadataObject SourceStringMetaData;
+} FTextSourceData;
+
+typedef struct
+{
+	FString NamespaceName;
+	FTextSourceData SourceData;
+} FGatherableTextData;
+
+
+typedef struct
+{
+    FPackageFileSummary Summary <bgcolor=cRed>;
+    
+    if (Summary.NameCount > 0)
+    {
+        FSeek(Summary.NameOffset);
+        FNameEntrySerialized NameMap[Summary.NameCount] <bgcolor=cYellow>;
+    }
+
+    if (Summary.ImportCount > 0)
+    {
+        FSeek(Summary.ImportOffset);
+        FObjectImport Imports[Summary.ImportCount] <bgcolor=cGreen>;
+    }
+
+    if (GPackageFileUE4Version >= VER_UE4_ADD_STRING_ASSET_REFERENCES_MAP &&
+        Summary.SoftPackageReferencesOffset > 0 &&
+        Summary.SoftPackageReferencesCount > 0)
+    {
+        FSeek(Summary.SoftPackageReferencesOffset);
+        if (Summary.CurrentFileVersionUE4 < VER_UE4_ADDED_SOFT_OBJECT_PATH)
+        {
+            FString SoftPackageReferenceList[Summary.SoftPackageReferencesCount];
+/*
+				if (UE4Ver() < VER_UE4_KEEP_ONLY_PACKAGE_NAMES_IN_STRING_ASSET_REFERENCES_MAP)
+				{
+					PackageName = FPackageName::GetNormalizedObjectPath(PackageName);
+					if (!PackageName.IsEmpty())
+					{
+						PackageName = FPackageName::ObjectPathToPackageName(PackageName);
+					}
+				}
+*/
+        }
+        else
+        {
+            FName SoftPackageReferenceList[Summary.SoftPackageReferencesCount];
+        }
+    }
+
+    if (Summary.ThumbnailTableOffset != 0)
+    {
+        TArray ThumbnailTable(T_FThumbnailAssetData);
+    }
+
+    if (GPackageFileUE4Version >= VER_UE4_ADDED_SEARCHABLE_NAMES && Summary.SearchableNamesOffset != 0)
+    {
+        FSeek(Summary.SearchableNamesOffset);
+        TMap SearchableNamesMap(T_FPackageIndex, T_TArray | T_FName);
+    }
+
+    if (Summary.GatherableTextDataOffset > 0)
+    {
+        FSeek(Summary.GathertableTextDataOffset);
+        FGatherableTextData GathertableTextDataArray[Summary.GatherableTextDataCount];
+    }
+
+    if (Summary.ExportCount > 0)
+    {
+        FSeek(Summary.ExportOffset);
+        FObjectExport Exports[Summary.ExportCount] <bgcolor=cPurple>;
+    }
+
+    if (Summary.DependsOffset != 0)
+    {
+        FSeek(Summary.DependsOffset);
+        TArray Depends(T_FPackageIndex)[Summary.ExportCount] <bgcolor=cBlue>;
+    }
+
+    if (Summary.AssetRegistryDataOffset != 0)
+    {
+        FSeek(Summary.AssetRegistryDataOffset);
+        local bool bIsMapPackage = (Summary.PackageFlags & PKG_ContainsMap) != 0;
+        local bool bPreDependencyFormat = GPackageFileUE4Version < VER_UE4_ASSETREGISTRY_DEPENDENCYFLAGS || 
+                                          !!(Summary.PackageFlags & PKG_FilterEditorOnly);
+        if (!bPreDependencyFormat)
+        {
+            int64 AssetRegistryDependencyDataOffset;
+        }
+        else
+        {
+            local int64 AssetRegistryDependencyDataOffset = INDEX_NONE;
+        }
+
+        int32 ObjectCount;
+        FAssetData AssetDataList[ObjectCount];
+
+
+        if (AssetRegistryDependencyDataOffset != INDEX_NONE)
+        {
+            FSeek(Summary.AssetRegistryDependencyDataOffset);
+            FPackageDependencyData DependencyData;
+        }
+    }
+
+    if (Summary.PreloadDependencyCount > 0)
+    {
+        FSeek(Summary.PreloadDependencyOffset);
+        FPackageIndex PreloadDependencies[Summary.PreloadDependencyCount] <optimize=false, bgcolor=cRed>;
+    }
+
+    if (FTell() != FileSize())
+    {
+        local int ExportIndex;
+        for(ExportIndex = 0; ExportIndex < Summary.ExportCount; ++ExportIndex) 
+        {
+            FSeek(Exports[ExportIndex].SerialOffset);
+            struct 
+            {
+                local int64 StartOffset = FTell();
+                UObject Object;
+                local int64 EndOffset = FTell();
+                local int64 RemainderSize = EndOffset - StartOffset;
+                byte Remainder[RemainderSize];
+            } ExportObject <optimize=false, bgcolor=cYellow>;
+        }
+    }
+    
+} FPackage;
+
+FPackage File;

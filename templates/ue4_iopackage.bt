@@ -1,0 +1,106 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: 
+//   Authors: Rirurin, Light8227
+//   Version: 1.1
+//------------------------------------------------
+LittleEndian();
+#include "common/include.h"
+
+typedef struct {
+    u32 NameIndex;
+    u32 ExtraIndex;
+} FMappedName<read=Str("%d, %d", NameIndex, ExtraIndex)>; // FName
+
+typedef struct {
+    u64 val; // Full Import path CityHashed
+} FPackageObjectIndex<read=ReadFPackageObjectIndex>;
+
+typedef struct {
+    u64 val;
+} FPackageId<read=Str("0x%Lx", val)>;
+
+string ReadFPackageObjectIndex(FPackageObjectIndex& self) {
+    string out = "";
+    u64 index_bits = self.val & 0x3FFFFFFFFFFFFFFF;
+    u64 type_bits = (self.val & 0xC000000000000000) >> 62;
+    SPrintf(out, "index 0x%Lx, type %d", index_bits, type_bits);
+    return out;
+}
+
+typedef struct {
+    SetRandomBackColor();
+    FMappedName Name;
+	FMappedName SourceName;
+	uint32 PackageFlags;
+	uint32 CookedHeaderSize;
+	int32 NameMapNamesOffset;
+	int32 NameMapNamesSize;
+	int32 NameMapHashesOffset;
+	int32 NameMapHashesSize;
+	int32 ImportMapOffset;
+	int32 ExportMapOffset;
+	int32 ExportBundlesOffset;
+	int32 GraphDataOffset;
+	int32 GraphDataSize;
+	int32 Pad;
+} FPackageSummary;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 field00;
+    u8 len;
+    char text[len];
+} FString<optimize=false, read=text>;
+
+typedef struct
+{
+    u64 CookedSerialOffset;
+    u64 CookedSerialSize;
+    FMappedName ObjectName;
+    FPackageObjectIndex OuterIndex;
+    FPackageObjectIndex ClassIndex;
+    FPackageObjectIndex SuperIndex;
+    FPackageObjectIndex TemplateIndex;
+    FPackageObjectIndex GlobalImportIndex;
+    u32 ObjectFlags;
+    u8 FilterFlags;
+    u8 data[3];
+} FExportMapEntry;
+
+typedef struct {
+    u32 FirstEntryIndex;
+    u32 EntryCount;
+} FExportBundleHeader;
+typedef struct {
+    u32 LocalExportIndex;
+    u32 CommandType;
+} FExportBundleEntry;
+typedef struct {
+    u32 FromExportBundleIndex;
+    u32 ToExportBundleIndex;
+} FGraphExternalArc;
+typedef struct {
+    FPackageId ImportedPackageId;
+    u32 ExternalArcCount;
+    FGraphExternalArc Arcs[ExternalArcCount];
+} FGraphPackage<optimize=false>;
+
+struct {
+FPackageSummary Header;
+FString names[Header.NameMapHashesSize / 8 - 1]; // Names
+SetRandomBackColor();
+FAlign(8);
+u64 name_hashes[Header.NameMapHashesSize / 8]<format=hex>; // Name Hashes
+SetRandomBackColor();
+FPackageObjectIndex imports[(Header.ExportMapOffset - Header.ImportMapOffset) / 8]<format=hex>; // Imports
+SetRandomBackColor();
+FExportMapEntry exports[(Header.ExportBundlesOffset - Header.ExportMapOffset) / sizeof(FExportMapEntry)]; // Exports
+SetRandomBackColor();
+FExportBundleHeader export_bundle_header;  // Export Bundles
+if (export_bundle_header.EntryCount > 0) FExportBundleEntry export_bundles[export_bundle_header.EntryCount];
+SetRandomBackColor();
+u32 imported_packages_count; // Graph Data
+if (imported_packages_count > 0) FGraphPackage graph_packages[imported_packages_count];
+}fileData;

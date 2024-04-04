@@ -1,0 +1,35 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: DatAllyPersonaGrowthDataAsset.uasset
+//   Authors: Light8227
+//   Version: 2.0
+//------------------------------------------------
+#include "ue4_iopackage.bt"
+#include "p3re_structs.bt"
+
+LittleEndian();
+
+typedef struct
+{
+    byte unk[98] <name="Unknown">;
+}unk;
+
+typedef struct
+{
+    byte padding[21] <hidden=true>;
+    ubyte playerId <name="PlayerID">;
+    byte padding2[33] <hidden=true>;
+    ubyte levelMax <name="LevelMax">;
+    byte padding3[18] <hidden=true>;
+    allySkillEventStruct skillevent[32] <name="SkillEvent">;
+    byte padding4[7] <hidden=true>;
+    paramsUpStruct paramsup[98] <name="ParamsUp">;
+    ExpStruct expstruct <name="Exp">;
+}allyPersona;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    allyPersona allypersona[17] <name="AllyPersona">;
+}fileData <name="DatAllyPersonaGrowthDataAsset.uasset">;

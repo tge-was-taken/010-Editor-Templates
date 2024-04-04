@@ -1,0 +1,206 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+enum bool {
+    False,    
+    True,
+};
+
+typedef byte uint8;
+
+
+typedef struct
+{
+	uint32 Value;
+} FNameEntryId <read=FNameEntryId_ToString>;
+
+string FNameEntryId_ToString(FNameEntryId& x) 
+{
+    return ReadNameMapName(LoaderGlobalNames.NameData[x.Value&0x7FFFFFFF]);
+}
+
+typedef struct
+{
+
+	/** Index into the Names array (used to find String portion of the string/number pair) */
+	FNameEntryId	Index;
+	/** Number portion of the string/number pair (stored internally as 1 more than actual, so zero'd memory will be the default, no-instance case) */
+	int32			Number;
+} FMinimalName <read=FMinimalName_ToString>;
+
+string FMinimalName_ToString(FMinimalName& x)
+{
+    string s;
+    if (x.Number != 0) {
+        SPrintf(s, "%s (%d)", FNameEntryId_ToString(x.Index), x.Number);
+    } else {
+        SPrintf(s, "%s", FNameEntryId_ToString(x.Index));
+    }
+    return s;
+}
+
+#define FPackageObjectIndex_Size 8
+typedef struct
+{
+	local uint64 IndexBits = 62ull;
+	local uint64 IndexMask = (1ull << IndexBits) - 1ull;
+	local uint64 TypeMask = ~IndexMask;
+	local uint64 TypeShift = IndexBits;
+	local uint64 Invalid = ~0ull;
+
+	uint64 TypeAndId;
+
+	enum FPackageObjectIndex_EType
+	{
+		Export,
+		ScriptImport,
+		PackageImport,
+		Null,
+		TypeCount = Null,
+	};
+
+	local bool IsNull = TypeAndId == Invalid;
+	local bool IsExport = (TypeAndId >> TypeShift) == Export;
+    local bool IsScriptImport = (TypeAndId >> TypeShift) == ScriptImport;
+    local bool IsPackageImport = (TypeAndId >> TypeShift) == PackageImport;
+    local bool IsImport = IsScriptImport || IsPackageImport;
+    local uint32 Export = (uint32)(TypeAndId);
+    local uint64 Value = TypeAndId & IndexMask;
+    local uint32 TypeHash = (uint)(TypeAndId);
+} FPackageObjectIndex <read=FPackageObjectIndex_ToString>;
+
+string FPackageObjectIndex_ToString(FPackageObjectIndex& x) {
+    if (x.IsExport) {
+        return ReadFMappedName(ExportMap[x.Export].ObjectName);
+    } else if (x.IsScriptImport) {
+        local string s;
+        SPrintf(s, "<script import %16LX> %s", x.Value, GetScriptObjectName(x));
+        return s;
+    } else if (x.IsNull) {
+        return "<null>";
+    } else if (x.IsPackageImport) {
+        local string s;
+        SPrintf(s, "<package import %16LX>", x.Value);
+        return s;
+    }
+    return "<unknown>";
+}
+
+string FPackageObjectIndex_ToString2(FPackageObjectIndex& x) {
+    if (x.IsExport) {
+        return ReadFMappedName(ExportMap[x.Export].ObjectName);
+    } else if (x.IsScriptImport) {
+        local string s;
+        SPrintf(s, "%s", GetScriptObjectName(x));
+        return s;
+    } else if (x.IsNull) {
+        return "<null>";
+    } else if (x.IsPackageImport) {
+        local string s;
+        SPrintf(s, "<package import %16LX>", x.Value);
+        return s;
+    }
+    return "<unknown>";
+}
+
+typedef struct
+{
+	FMinimalName ObjectName;
+	FPackageObjectIndex GlobalIndex;
+	FPackageObjectIndex OuterIndex;
+	FPackageObjectIndex CDOClassIndex;
+} FScriptObjectEntry<read=FScriptObjectEntry_ToString>;
+
+string FScriptObjectEntry_ToString(FScriptObjectEntry& x)
+{
+    string s;
+    if (x.CDOClassIndex.IsNull) {
+        SPrintf(s, "%s %s", 
+            FPackageObjectIndex_ToString2(x.OuterIndex), 
+            FMinimalName_ToString(x.ObjectName));
+    }
+    else {
+        SPrintf(s, "%s %s (%s)", 
+            FPackageObjectIndex_ToString2(x.OuterIndex), 
+            FMinimalName_ToString(x.ObjectName),
+            FPackageObjectIndex_ToString2(x.CDOClassIndex));
+    }
+    return s;
+}
+
+string GetScriptObjectName(FPackageObjectIndex& GlobalIndex) 
+{
+    local int i = 0;
+    for (i = 0; i < LoaderInitialMeta.NumScriptObjects; ++i) 
+    {
+        if (LoaderInitialMeta.ScriptObjectEntries[i].GlobalIndex.TypeAndId == GlobalIndex.TypeAndId) {
+            return FNameEntryId_ToString(LoaderInitialMeta.ScriptObjectEntries[i].ObjectName.Index);
+        }
+    }
+}
+
+struct FSerializedNameHeader
+{
+	uint8 Data[2];
+    local uint8 IsUtf16 = Data[0] & 0x80u;
+    local uint32 Len = ((Data[0] & 0x7Fu) << 8) + Data[1];
+    local uint32 NumBytes = IsUtf16 ? 2 * Len : 1 * Len;
+};
+
+typedef struct {
+    FSerializedNameHeader Header;
+    char Name[Header.Len];
+} FNameSerializedView <optimize=false, read=ReadNameMapName>;
+
+const uint64 FNameHash_AlgorithmId = 0xC1640000;
+
+string ReadNameMapName(FNameSerializedView& name) {
+    if (exists(name.Name)) {
+        return name.Name;
+    } else return "";
+}
+
+void Align(int bits) 
+{
+    local uint64 address = FTell();
+    local uint64 offset = bits - (address & (bits-1));
+    local uint64 aligned_address = address + offset;
+    FSeek(aligned_address);
+}
+
+// from Pikmin 4 global.utoc
+local uint64 LoaderInitialMeta_Offset = 0;
+local uint64 LoaderGlobalNames_Offset = 0xB0000;
+local uint64 LoaderGlobalNameHashes_Offset = 0x130000;
+local uint64 LoaderGlobalNameHashes_Length = 0x28648; 
+
+//FSeek(LoaderInitialMeta_Offset);
+struct {
+    int32 NumScriptObjects;
+    FScriptObjectEntry ScriptObjectEntries[NumScriptObjects] <optimize=false>;
+} LoaderInitialMeta <bgcolor=cGreen>;
+
+//FSeek(LoaderGlobalNames_Offset);
+Align(16);
+local int NumNames = LoaderGlobalNameHashes_Length / sizeof(uint64) - 1;
+struct {
+    FNameSerializedView NameData[NumNames];
+} LoaderGlobalNames <bgcolor=cBlue>;
+
+//FSeek(LoaderGlobalNameHashes_Offset);
+Align(16);
+struct {
+    uint64 HashVersion;
+    uint64 HashData[NumNames];
+    local bool CanUseSavedHashes = HashVersion == FNameHash_AlgorithmId;
+} LoaderGlobalNameHashes <bgcolor=cRed>;
