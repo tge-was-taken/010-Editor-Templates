@@ -558,7 +558,7 @@ enum<ushort>BGMID
     MemoriesoftheCity = 80,
     tartarus_0d03 = 81,
     PeaceReload = 85,
-    StrengthofHeart = 86
+    StrengthofHeart = 86,
     Everyoneloves1989 = 87,
     DuringtheExams = 89,
     BadFeeling = 90,

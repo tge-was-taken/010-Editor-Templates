@@ -103,4 +103,4 @@ if (export_bundle_header.EntryCount > 0) FExportBundleEntry export_bundles[expor
 SetRandomBackColor();
 u32 imported_packages_count; // Graph Data
 if (imported_packages_count > 0) FGraphPackage graph_packages[imported_packages_count];
-}fileData;
+}fileData <name="Header">;
