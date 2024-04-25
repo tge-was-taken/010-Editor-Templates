@@ -29,27 +29,31 @@ typedef struct {
   Vec4f Light;
 
   uint  LightRGBA;
+
+  local int ID<hidden=true>;
+  local int BlockID<hidden=true>;
+  ID = count_;
+  BlockID = count_;
+  SetBackColor( ( ID % 2 ) * 0x440000 + 0x880000 );
+  count_ += 1;
 } PDD <size=0x4c,optimize=false>;
 
 SetBackColor( 0x880000 );
 
-local uint i = 0;
-local int j = 0;
+local int count_ = 0;
 
-for ( i = 0; i <= 209; i++ )
-{
-  SetBackColor( ( i % 2 ) * 0x440000 + 0x880000 );
-  PDD pdd<read="use ID - 141">;
-  j++;
-}
+typedef struct {
 
-int numOfBlocks;
-int R_unk1;
-int R_unk2;
-int R_unk3;
+  PDD pdd[210]<read=Str("Enemy ID %03d - block %03d", 141 + this.ID, this.BlockID) >;
 
-for ( i = 0; i < numOfBlocks; i++ )
-{
-  SetBackColor( ( i % 2 ) * 0x440000 + 0x880000 );
-  PDD pdd<read="use ID - 259">;
-}
+  int numOfBlocks;
+  int R_unk1;
+  int R_unk2;
+  int R_unk3;
+
+  PDD pddR[numOfBlocks]<read=Str("Enemy ID %03d - block %03d", 254 + this.ID, this.BlockID) >;
+} PDDFile;
+
+PDDFile File;
+
+Printf("");

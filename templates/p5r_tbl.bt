@@ -743,7 +743,7 @@ typedef struct()
     u8 CritChance <name = "Crit Chance", comment = "Only works for Physical or Gun skills">;
     u8 ForItem <name = "For Item?", comment = "Not sure what this does since it has 20 value on Firecracker, Magatama item">;
     u8 Unknown <name = "Unknown">;
-} TSkill_ActiveSkillData <name="Active Skill Data">;
+} TSkill_ActiveSkillData <name="Active Skill Data", read=Str("Base Damage - %03d", this.BaseDamage)>;
 
 typedef struct
 {
