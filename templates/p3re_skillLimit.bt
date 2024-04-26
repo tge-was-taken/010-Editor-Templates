@@ -1,0 +1,30 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: SkillLimitDataAsset.uasset
+//   Authors: Light8227
+//   Version: 1.0
+//------------------------------------------------
+#include "ue4_iopackage.bt"
+
+LittleEndian();
+
+typedef struct
+{
+    byte unk[98] <name="Unknown">;
+}unk;
+
+typedef struct
+{
+    byte FProperty[21] <hidden=true>;
+    ubyte totalskillnum <name="TotalSkillNum">;
+    byte FProperty2[33] <hidden=true>;
+    ubyte inheritanceskillnum <name="InheritanceSkillNum">;
+    byte FProperty3[20] <hidden=true>;
+}limitData;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    limitData limitdata2[10] <name="LimitData">;
+}fileData <name="SkillLimitDataAsset.uasset">;

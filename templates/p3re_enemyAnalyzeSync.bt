@@ -1,0 +1,47 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: DatEnemyAnalyzeSyncDataAsset.uasset
+//   Authors: Light8227
+//   Version: 1.1
+//------------------------------------------------
+#include "p3re_enums.bt"
+#include "ue4_iopackage.bt"
+
+LittleEndian();
+
+typedef struct
+{
+    byte unk[98] <name="Unknown">;
+}unk;
+
+typedef struct
+{
+    byte FProperty[13] <hidden=true>;
+    EnemyID enemyID <name="EnemyID">;
+    byte FProperty2[25] <hidden=true>;
+    EnemyID enemyID2 <name="EnemyID">;
+    byte FProperty3[25] <hidden=true>;
+    EnemyID enemyID3 <name="EnemyID">;
+    byte FProperty4[25] <hidden=true>;
+    EnemyID enemyID4 <name="EnemyID">;
+    byte FProperty5[25] <hidden=true>;
+    EnemyID enemyID5 <name="EnemyID">;
+    byte FProperty6[25] <hidden=true>;
+    EnemyID enemyID6 <name="EnemyID">;
+    byte FProperty7[25] <hidden=true>;
+    EnemyID enemyID7 <name="EnemyID">;
+    byte FProperty8[25] <hidden=true>;
+    EnemyID enemyID8 <name="EnemyID">;
+    byte FProperty0[25] <hidden=true>;
+    EnemyID enemyID9 <name="EnemyID">;
+    byte FProperty10[25] <hidden=true>;
+    EnemyID enemyID10 <name="EnemyID">;
+    byte FProperty11[20] <hidden=true>;
+}AnalyzeSync;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    AnalyzeSync analyzesync[11] <name="AnalyzeSync">;
+}fileData <name="DatEnemyAnalyzeSyncDataAsset.uasset">;

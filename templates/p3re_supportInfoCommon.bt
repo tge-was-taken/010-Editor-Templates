@@ -1,0 +1,41 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: DatSupportInfoCommonDataAsset.uasset
+//   Authors: Light8227
+//   Version: 1.1
+//------------------------------------------------
+#include "p3re_enums.bt"
+#include "ue4_iopackage.bt"
+
+LittleEndian();
+
+typedef struct
+{
+    byte unk[98] <name="Unknown">;
+}unk;
+
+typedef struct
+{
+    byte FProperty[13] <hidden=true>;
+    uint defineId <name="DefineID">;
+    byte FProperty2[25] <hidden=true>;
+    uint majorId <name="MajorID">;
+    byte FProperty3[25] <hidden=true>;
+    uint minorId <name="MinorID">;
+    byte FProperty4[25] <hidden=true>;
+    uint characterId <name="CharacterID">;
+    byte FProperty5[33] <hidden=true>;
+    ubyte show <name="Show">;
+    byte FProperty6[33] <hidden=true>;
+    ubyte face <name="Face">;
+    byte FProperty7[33] <hidden=true>;
+    ubyte window <name="Window">;
+    byte FProperty8[20] <hidden=true>;
+}InfoCommon;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    InfoCommon infocommon[193] <name="InfoCommon">;
+}fileData <name="DatSupportInfoCommonDataAsset.uasset">;

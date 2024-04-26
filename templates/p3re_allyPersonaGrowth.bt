@@ -3,10 +3,10 @@
 //
 //      File: DatAllyPersonaGrowthDataAsset.uasset
 //   Authors: Light8227
-//   Version: 2.0
+//   Version: 3.0
 //------------------------------------------------
-#include "ue4_iopackage.bt"
 #include "p3re_structs.bt"
+#include "ue4_iopackage.bt"
 
 LittleEndian();
 
@@ -17,15 +17,15 @@ typedef struct
 
 typedef struct
 {
-    byte padding[21] <hidden=true>;
+    byte FProperty[21] <hidden=true>;
     ubyte playerId <name="PlayerID">;
-    byte padding2[33] <hidden=true>;
+    byte FProperty2[33] <hidden=true>;
     ubyte levelMax <name="LevelMax">;
-    byte padding3[18] <hidden=true>;
+    byte FProperty3[18] <hidden=true>;
     allySkillEventStruct skillevent[32] <name="SkillEvent">;
-    byte padding4[7] <hidden=true>;
+    byte FProperty4[2] <hidden=true>;
     paramsUpStruct paramsup[98] <name="ParamsUp">;
-    ExpStruct expstruct <name="Exp">;
+    ExpStruct expstruct[98] <name="Exp">;
 }allyPersona;
 
 struct

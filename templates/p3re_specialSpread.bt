@@ -1,0 +1,43 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: SpecialSpreadDataAsset.uasset
+//   Authors: Light8227
+//   Version: 1.1
+//------------------------------------------------
+#include "p3re_enums.bt"
+#include "ue4_iopackage.bt"
+
+LittleEndian();
+
+typedef struct
+{
+    short unk[49] <name="Unknown">;
+}unk;
+
+typedef struct
+{
+    byte FProperty[13] <hidden=true>;
+    PersonaID resultID <name="ResultID">;
+    byte FProperty2[25] <hidden=true>;
+    PersonaID sourceID <name="SourceID">;
+    byte FProperty3[25] <hidden=true>;
+    PersonaID sourceID2 <name="SourceID">;
+    byte FProperty4[25] <hidden=true>;
+    PersonaID sourceID3 <name="SourceID">;
+    byte FProperty5[25] <hidden=true>;
+    PersonaID sourceID4 <name="SourceID">;
+    byte FProperty6[25] <hidden=true>;
+    PersonaID sourceID5 <name="SourceID">;
+    byte FProperty7[25] <hidden=true>;
+    PersonaID sourceID6 <name="SourceID">;
+    byte FProperty8[25] <hidden=true>;
+    ushort index <name="Index">;
+    byte FProperty9[20] <hidden=true>;
+}specialSpread;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    specialSpread specialspread[23] <name="SpecialSpread">;
+}fileData <name="SpecialSpreadDataAsset.uasset">;

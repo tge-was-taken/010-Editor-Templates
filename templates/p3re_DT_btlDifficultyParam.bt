@@ -1,0 +1,150 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: DT_BtlDIfficultyParam.uasset
+//   Authors: Light8227
+//   Version: 1.0
+//------------------------------------------------
+#include "ue4_iopackage.bt"
+
+LittleEndian();
+
+typedef struct
+{
+    byte unk[62] <name="Unknown">;
+}unk;
+
+typedef struct
+{
+    byte FProperty0[16] <hidden=true>;
+    float DamageRateToEnemy <name="DamageRateToEnemy_8_E8218A1045468EDA04CAF1877EF40D95", comment="Damage scaling for enemy attacks.">;
+    byte FProperty[25] <hidden=true>;
+    float DamageRateToPlayer <name="DamageRateToPlayer_9_3F89DD1840E814EF751C94B12778160A", comment="Damage scaling for player and ally attacks.">;
+    byte FProperty2[25] <hidden=true>;
+    float ExpRate <name="ExpRate_10_8CBA31F0430A7FDD116509A4E1A38463", comment="EXP scaling for battles.">;
+    byte FProperty3[25] <hidden=true>;
+    float DamageRateToEnemyWeak <name="DamageRateToEnemyWeak_13_FED8996D4C318E5C24CCDB89FE4E9987", comment="Weak damage scaling for enemy attacks.">;
+    byte FProperty4[25] <hidden=true>;
+    float DamageRateToPlayerWeak <name="DamageRateToPlayerWeak_15_169FC07B488454B06DC341ABC603184B", comment="Weak damage scaling for player and ally attacks.">;
+    byte FProperty5[25] <hidden=true>;
+    float DamageRateToEnemyCritical <name="DamageRateToEnemyCritical_20_73619B7847B5C5E49E6A28BAB66D4E36", comment="Critical damage scaling for enemy attacks.">;
+    byte FProperty6[25] <hidden=true>;
+    float DamageRateToPlayerCritical <name="DamageRateToPlayerCritical_19_EF7B592D4EF6129C9D0BBC863F113AE8", comment="Critical damage scaling for player and ally attacks.">;
+    byte FProperty7[25] <hidden=true>;
+    float MoneyRateToMaterials <name="MoneyRateToMaterials_23_9F2533D24722C44FC66CDCA2316CC834">;
+    byte FProperty8[25] <hidden=true>;
+    float BadStatusHitRateFromEnemy <name="BadStatusHitRateFromEnemy_29_11445CCC4D2C7BD007323DB8A81F4D72", comment="Effect rate scaling for enemy attacks.">;
+    byte FProperty9[25] <hidden=true>;
+    float BadStatusHitRateFromPlayer <name="BadStatusHitRateFromPlayer_30_AB45C786458F332999054899683026E2", comment="Effect rate scaling for player and ally attacks.">;
+    byte FProperty10[25] <hidden=true>;
+}diffParam1;
+
+typedef struct
+{
+    byte FProperty0[16] <hidden=true>;
+    float DamageRateToEnemy <name="DamageRateToEnemy_8_E8218A1045468EDA04CAF1877EF40D95", comment="Damage scaling for enemy attacks.">;
+    byte FProperty[25] <hidden=true>;
+    float DamageRateToPlayer <name="DamageRateToPlayer_9_3F89DD1840E814EF751C94B12778160A", comment="Damage scaling for player and ally attacks.">;
+    byte FProperty2[25] <hidden=true>;
+    float ExpRate <name="ExpRate_10_8CBA31F0430A7FDD116509A4E1A38463", comment="EXP scaling for battles.">;
+    byte FProperty3[25] <hidden=true>;
+    float DamageRateToEnemyWeak <name="DamageRateToEnemyWeak_13_FED8996D4C318E5C24CCDB89FE4E9987", comment="Weak damage scaling for enemy attacks.">;
+    byte FProperty4[25] <hidden=true>;
+    float DamageRateToPlayerWeak <name="DamageRateToPlayerWeak_15_169FC07B488454B06DC341ABC603184B", comment="Weak damage scaling for player and ally attacks.">;
+    byte FProperty5[25] <hidden=true>;
+    float DamageRateToEnemyCritical <name="DamageRateToEnemyCritical_20_73619B7847B5C5E49E6A28BAB66D4E36", comment="Critical damage scaling for enemy attacks.">;
+    byte FProperty6[25] <hidden=true>;
+    float DamageRateToPlayerCritical <name="DamageRateToPlayerCritical_19_EF7B592D4EF6129C9D0BBC863F113AE8", comment="Critical damage scaling for player and ally attacks.">;
+    byte FProperty7[25] <hidden=true>;
+    float MoneyRateToMaterials <name="MoneyRateToMaterials_23_9F2533D24722C44FC66CDCA2316CC834">;
+    byte FProperty8[25] <hidden=true>;
+    float BadStatusHitRateFromEnemy <name="BadStatusHitRateFromEnemy_29_11445CCC4D2C7BD007323DB8A81F4D72", comment="Effect rate scaling for enemy attacks.">;
+    byte FProperty9[25] <hidden=true>;
+    float BadStatusHitRateFromPlayer <name="BadStatusHitRateFromPlayer_30_AB45C786458F332999054899683026E2", comment="Effect rate scaling for player and ally attacks.">;
+    byte FProperty10[25] <hidden=true>;
+}diffParam2;
+
+typedef struct
+{
+    byte FProperty0[16] <hidden=true>;
+    float DamageRateToEnemy <name="DamageRateToEnemy_8_E8218A1045468EDA04CAF1877EF40D95", comment="Damage scaling for enemy attacks.">;
+    byte FProperty[25] <hidden=true>;
+    float DamageRateToPlayer <name="DamageRateToPlayer_9_3F89DD1840E814EF751C94B12778160A", comment="Damage scaling for player and ally attacks.">;
+    byte FProperty2[25] <hidden=true>;
+    float ExpRate <name="ExpRate_10_8CBA31F0430A7FDD116509A4E1A38463", comment="EXP scaling for battles.">;
+    byte FProperty3[25] <hidden=true>;
+    float DamageRateToEnemyWeak <name="DamageRateToEnemyWeak_13_FED8996D4C318E5C24CCDB89FE4E9987", comment="Weak damage scaling for enemy attacks.">;
+    byte FProperty4[25] <hidden=true>;
+    float DamageRateToPlayerWeak <name="DamageRateToPlayerWeak_15_169FC07B488454B06DC341ABC603184B", comment="Weak damage scaling for player and ally attacks.">;
+    byte FProperty5[25] <hidden=true>;
+    float DamageRateToEnemyCritical <name="DamageRateToEnemyCritical_20_73619B7847B5C5E49E6A28BAB66D4E36", comment="Critical damage scaling for enemy attacks.">;
+    byte FProperty6[25] <hidden=true>;
+    float DamageRateToPlayerCritical <name="DamageRateToPlayerCritical_19_EF7B592D4EF6129C9D0BBC863F113AE8", comment="Critical damage scaling for player and ally attacks.">;
+    byte FProperty7[25] <hidden=true>;
+    float MoneyRateToMaterials <name="MoneyRateToMaterials_23_9F2533D24722C44FC66CDCA2316CC834">;
+    byte FProperty8[25] <hidden=true>;
+    float BadStatusHitRateFromEnemy <name="BadStatusHitRateFromEnemy_29_11445CCC4D2C7BD007323DB8A81F4D72", comment="Effect rate scaling for enemy attacks.">;
+    byte FProperty9[25] <hidden=true>;
+    float BadStatusHitRateFromPlayer <name="BadStatusHitRateFromPlayer_30_AB45C786458F332999054899683026E2", comment="Effect rate scaling for player and ally attacks.">;
+    byte FProperty10[25] <hidden=true>;
+}diffParam3;
+
+typedef struct
+{
+    byte FProperty0[16] <hidden=true>;
+    float DamageRateToEnemy <name="DamageRateToEnemy_8_E8218A1045468EDA04CAF1877EF40D95", comment="Damage scaling for enemy attacks.">;
+    byte FProperty[25] <hidden=true>;
+    float DamageRateToPlayer <name="DamageRateToPlayer_9_3F89DD1840E814EF751C94B12778160A", comment="Damage scaling for player and ally attacks.">;
+    byte FProperty2[25] <hidden=true>;
+    float ExpRate <name="ExpRate_10_8CBA31F0430A7FDD116509A4E1A38463", comment="EXP scaling for battles.">;
+    byte FProperty3[25] <hidden=true>;
+    float DamageRateToEnemyWeak <name="DamageRateToEnemyWeak_13_FED8996D4C318E5C24CCDB89FE4E9987", comment="Weak damage scaling for enemy attacks.">;
+    byte FProperty4[25] <hidden=true>;
+    float DamageRateToPlayerWeak <name="DamageRateToPlayerWeak_15_169FC07B488454B06DC341ABC603184B", comment="Weak damage scaling for player and ally attacks.">;
+    byte FProperty5[25] <hidden=true>;
+    float DamageRateToEnemyCritical <name="DamageRateToEnemyCritical_20_73619B7847B5C5E49E6A28BAB66D4E36", comment="Critical damage scaling for enemy attacks.">;
+    byte FProperty6[25] <hidden=true>;
+    float DamageRateToPlayerCritical <name="DamageRateToPlayerCritical_19_EF7B592D4EF6129C9D0BBC863F113AE8", comment="Critical damage scaling for player and ally attacks.">;
+    byte FProperty7[25] <hidden=true>;
+    float MoneyRateToMaterials <name="MoneyRateToMaterials_23_9F2533D24722C44FC66CDCA2316CC834">;
+    byte FProperty8[25] <hidden=true>;
+    float BadStatusHitRateFromEnemy <name="BadStatusHitRateFromEnemy_29_11445CCC4D2C7BD007323DB8A81F4D72", comment="Effect rate scaling for enemy attacks.">;
+    byte FProperty9[25] <hidden=true>;
+    float BadStatusHitRateFromPlayer <name="BadStatusHitRateFromPlayer_30_AB45C786458F332999054899683026E2", comment="Effect rate scaling for player and ally attacks.">;
+    byte FProperty10[25] <hidden=true>;
+}diffParam4;
+
+typedef struct
+{
+    byte FProperty0[16] <hidden=true>;
+    float DamageRateToEnemy <name="DamageRateToEnemy_8_E8218A1045468EDA04CAF1877EF40D95", comment="Damage scaling for enemy attacks.">;
+    byte FProperty[25] <hidden=true>;
+    float DamageRateToPlayer <name="DamageRateToPlayer_9_3F89DD1840E814EF751C94B12778160A", comment="Damage scaling for player and ally attacks.">;
+    byte FProperty2[25] <hidden=true>;
+    float ExpRate <name="ExpRate_10_8CBA31F0430A7FDD116509A4E1A38463", comment="EXP scaling for battles.">;
+    byte FProperty3[25] <hidden=true>;
+    float DamageRateToEnemyWeak <name="DamageRateToEnemyWeak_13_FED8996D4C318E5C24CCDB89FE4E9987", comment="Weak damage scaling for enemy attacks.">;
+    byte FProperty4[25] <hidden=true>;
+    float DamageRateToPlayerWeak <name="DamageRateToPlayerWeak_15_169FC07B488454B06DC341ABC603184B", comment="Weak damage scaling for player and ally attacks.">;
+    byte FProperty5[25] <hidden=true>;
+    float DamageRateToEnemyCritical <name="DamageRateToEnemyCritical_20_73619B7847B5C5E49E6A28BAB66D4E36", comment="Critical damage scaling for enemy attacks.">;
+    byte FProperty6[25] <hidden=true>;
+    float DamageRateToPlayerCritical <name="DamageRateToPlayerCritical_19_EF7B592D4EF6129C9D0BBC863F113AE8", comment="Critical damage scaling for player and ally attacks.">;
+    byte FProperty7[25] <hidden=true>;
+    float MoneyRateToMaterials <name="MoneyRateToMaterials_23_9F2533D24722C44FC66CDCA2316CC834">;
+    byte FProperty8[25] <hidden=true>;
+    float BadStatusHitRateFromEnemy <name="BadStatusHitRateFromEnemy_29_11445CCC4D2C7BD007323DB8A81F4D72", comment="Effect rate scaling for enemy attacks.">;
+    byte FProperty9[25] <hidden=true>;
+    float BadStatusHitRateFromPlayer <name="BadStatusHitRateFromPlayer_30_AB45C786458F332999054899683026E2", comment="Effect rate scaling for player and ally attacks.">;
+    byte FProperty10[8] <hidden=true>;
+}diffParam5;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    diffParam1 safety <name="Safety">;
+    diffParam2 easy <name="Easy">;
+    diffParam3 normal <name="Normal">;
+    diffParam4 hard <name="Hard">;
+    diffParam5 risky <name="Risky">;
+}fileData <name="DT_BtlDIfficultyParam.uasset">;
