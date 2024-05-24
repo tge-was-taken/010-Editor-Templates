@@ -148,6 +148,48 @@ void FAlign( u32 alignment )
 // Define structures
 //---------------------------------------------
 
+// MODEL.TBL
+
+typedef struct
+{
+	s16 Hitreg <name = "Effect Frame", comment = "The frame where damage is dealt, the frame where the card break effect plays, the frame where the item use effect plays, etc.">;
+	s16 Animation_speed <name = "Animation Speed">;
+	s16 Airtime <name = "Time in the air">;
+	s16 Animation_Distance <name = "Animation Distance from Enemy">;
+	s16 Unknown2;
+} TVisual_Animation_Data <name = "Animation Data">;
+
+typedef struct
+{
+    s16 Field000 <name = "s16 Field000 - Unknown">;
+	s16 Field001 <name = "s16 Field001 - Unknown">;
+	s16 Field002 <name = "[Magic - Single] Y-Axis Camera Position/Tilt">;
+	s16 Field003 <name = "[Phys - Single?] Camera Zoom/Distance from Enemy">;
+	s16 Field004 <name = "[Phys - Multi] Y-Axis Camera Position/Tilt">;
+	s16 Field005 <name = "[All but Phys Multi] Player distance from enemy">;
+	s16 Field006;
+	s16 Field007;
+	s16 PhysLocation <name = "Model location for Physical Animation">;
+	s16 Field009 <name = "[Magic] X-Axis Model Position">;
+	s16 Field010 <name = "[Magic] Y-Axis Model Position">;
+	s16 MagLocation <name = "[Magic] Z-Axis Model Position">;
+	s16 Model_Size <name = "Model Scale (Percentage)">;
+	TVisual_Animation_Data Anim_Data [6];
+	s16 Field043 <name = "Model Alpha">;
+} TVisual_PersonaVisualVariablesA <name = "Persona Visual Variables">;
+
+// EFFECT.TBL
+
+typedef struct
+{
+    u8 Unknown4[ 28 ];
+} TEffect <name = "Skill Effects">;
+
+typedef struct
+{
+    u8 Unknown5[ 48 ];
+} Ttesting <name = "Testin">;
+
 // ENCOUNT.TBL
 
 typedef struct
@@ -219,7 +261,7 @@ typedef struct
         BattleSkill Skill <name = "Skill">;
     } PersonaSkill[ 32 ] <name = "Persona Skills">;
 
-    PersonaStats StatGain[ 98 ] <name = "Persona Stat Gain by Level">;
+    PersonaStats StatGain[ 98 ] <name = "Persona Stat Gain by Level", comment = "Add 2 for the level (0 is level 2)" >;
 
 } TPersonaPartyPersonas <name = "Party Member Personas">;
 
@@ -356,7 +398,7 @@ typedef struct
 
 typedef struct
 {
-    Skill_CostTypeType skill_CostTypeType <name = "Skill's Cost Type">;
+    Skill_Type skill_Type <name = "Skill Type">;
 	
     struct
         {
@@ -379,11 +421,12 @@ typedef struct
             byte : 6;
         } ValidTargets <name = "Valid Targets">;
 
-    TargetStatus Status<name = "Target Status", comment = "for revival skills">;
+    TargetStatus Status<name = "Target Status">;
     u8 Unknown <name = "Unknown">; // 0 on all skills
     Skill_AilmentTargetType AilmentTargetType <name = "Ailment Target Type">; //Skill_TargetRestrictions TargetRestrictions <name = "Additional Target Restrictions">;
     Skill_AilmentTargets AilmentTargets <name = "Ailment Target", comment = "seems to check if there are any available targets with ailments in conjuction with above variable. Needs testing">;
     u8 SkillAccuracy <name = "Skill's Accuracy">;
+    u8 SkillAccuracy <name = "Accuracy (%)">;
     u8 MinHit <name = "Minimum Amount of Hits">;
     u8 MaxHit <name = "Maximum Amount of Hits">;
     Skill_HPEffect Healing1 <name = "Health Change Type">;
@@ -391,59 +434,20 @@ typedef struct
     Skill_SPEffect SPGain <name = "Type of SP Gain">;
     u8 Unknown <name = "Unknown">; // 0 on all skills
     u16 Sp2 <name = "SP Amount">;
+
     Skill_EnableAilment EnableAilment <name = "Enable Ailment", comment = "AilmentOn also applies to insta-kill spells (light/dark)">;
-    u8 AilmentChance <name = "Ailments Hit Chance">;
+    u8 AlimentChance <name = "Ailments Effect Chance (%)">;
     u8 Unknown <name = "Unknown">; // 0 on all skills
     u8 Unknown <name = "Unknown">; // 0 on all skills
-
-	struct
-        {
-            bool Charm : 1 <name = "Charm">;
-            bool Distress : 1 <name = "Distress">;
-            bool Panic : 1 <name = "Panic">;
-            bool Fear : 1 <name = "Fear">;
-            bool Rage : 1 <name = "Rage	">;
-            bool Freeze : 1 <name = "Freeze">;
-            bool Shock : 1 <name = "Shock">;
-            bool Poison : 1 <name = "Poison">;
-        } Effect2 <name = "Ailments">;
-
-    struct
-        {
-             bool Unconscious : 1 <name = "Unconscious">;
-             bool KnockDown : 1 <name = "Knocked Down">;
-        } Effect4 <name = "Member Status", comment = "I think this is unused but idk keeping just in case -Phoenix">;
-	 
+    Skill_Ailments Ailments <name = "Ailments">;
+    u8 Unknown <name = "Unknown">;
     Skill_SpecialAilments SpecialAil <name = "Special Ailments">;
     u8 Unknown <name = "Unknown">; // 0 on all skills
+
     Skill_BuffDebuff BuffDebuff <name = "Buffs/Debuffs", comment = "Heat Riser is used for a fusion spell, Debilitate is unused">;
-    Skill_SpecialEffects1 SpecialEff <name = "Special Effects">;
-	
-    struct
-        {
-            bool AttackUp1 : 1 <name = "Phys Shield">;
-            bool AttackDown1 : 1 <name = "Magic Shield">;
-            bool AttackUp2 : 1 <name = "Fire Break">;
-            bool AttackDown2 : 1 <name = "Ice Break">;
-            bool HitEvasionUp : 1 <name = "Wind Break">;
-            bool HitEvasionDown : 1 <name = "Elec Break">;
-            bool DefenseUp : 1 <name = "Ailment Susceptibility Up">;
-            bool DefenseDown : 1 <name = "Block Damage (1 turn)", comment = "used by infinity">;
-        } BuffDebuff1 <name = "Support Skills 1">;
-		
-   struct
-        {
-            bool RemoveDebuffs : 1 <name = "Block Damage But HP&SP=1", comment = "used by valhalla, makes hp and sp go to 1 after 1 turn">;
-            bool EvasionUp : 1 <name = "EvasionUp">;
-            bool PowerCharge : 1 <name = "Moonless Gown">;
-            bool MindCharge : 1 <name = "Unknown">;
-            bool MagicShield : 1 <name = "Unknown">;
-            bool PhysicalShield : 1 <name = "Unknown">;
-            bool CritUp : 1 <name = "Unknown">;
-            bool CritWayUp : 1 <name = "Unknown">;
-        } BuffDebuff2 <name = "Support Skills 2">;
     Skill_Bonus Bonus <name = "Damage Bonuses">;
-    u8 CritChance <name = "Crit Chance (%)">;
+    u8 CritChance <name = "Critical Hit Chance (%)">;
+
     u8 Unknown <name = "Unknown">; // needs testing
     u8 Unknown <name = "Unknown">; // 0 on all skills
     u8 Unknown <name = "Unknown">; // 1 on all skills
@@ -720,7 +724,9 @@ enum TableSegmentType
     TableSegmentType_AICalc_Segment7,
 	TableSegmentType_AICalc_Segment8,
 	TableSegmentType_AICalc_Segment9,
-	TableSegmentType_AICalc_Generic_Enemy_AI,
+   	TableSegmentType_AICalc_Generic_Enemy_AI,
+    TableSegmentType_Effect,
+    TableSegmentType_testing,
 };
 
 typedef struct( TableSegmentType _type )
@@ -730,6 +736,14 @@ typedef struct( TableSegmentType _type )
 
     switch ( type )
     {
+        case TableSegmentType_Effect:
+            TEffect TEffects[ Size / sizeof( TEffect ) ];
+            break;
+
+        case TableSegmentType_testing:
+            Ttesting Ttestings[ Size / sizeof( Ttesting ) ];
+            break;
+
         case TableSegmentType_Encounter:
             TEncounter TEncounters[ Size / sizeof( TEncounter ) ];
             break;
@@ -881,7 +895,7 @@ typedef struct( TableSegmentType _type )
 		case TableSegmentType_AICalc_Segment9:
             TAICalc_Segment8 Entries[ 188 / sizeof( TAICalc_Segment9 ) ];
             break;
-			
+
 		case TableSegmentType_AICalc_Generic_Enemy_AI:
             TAICalc_Generic_Enemy_AI Entries[ Size / sizeof( TAICalc_Generic_Enemy_AI ) ];
             break;
@@ -1035,7 +1049,15 @@ typedef struct( string tableName, u16 endOffset )
 				case 8: segmentType = TableSegmentType_AICalc_Segment9; break;
 				case 9: segmentType = TableSegmentType_AICalc_Generic_Enemy_AI; break;
             }
-        } 
+        }
+        else if ( !Stricmp( tableName, "effect" ) )
+        {
+            switch ( segmentIndex )
+            {
+                case 0: segmentType = TableSegmentType_Effect; break;
+                case 1: segmentType = TableSegmentType_testing; break;
+            }
+        }  
 
         Printf( "%s\n", EnumToString( segmentType ) );
         SetBackColor( MyRandom( 0xFFFFFFFF ) );
