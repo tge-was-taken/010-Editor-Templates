@@ -425,7 +425,6 @@ typedef struct
     u8 Unknown <name = "Unknown">; // 0 on all skills
     Skill_AilmentTargetType AilmentTargetType <name = "Ailment Target Type">; //Skill_TargetRestrictions TargetRestrictions <name = "Additional Target Restrictions">;
     Skill_AilmentTargets AilmentTargets <name = "Ailment Target", comment = "seems to check if there are any available targets with ailments in conjuction with above variable. Needs testing">;
-    u8 SkillAccuracy <name = "Skill's Accuracy">;
     u8 SkillAccuracy <name = "Accuracy (%)">;
     u8 MinHit <name = "Minimum Amount of Hits">;
     u8 MaxHit <name = "Maximum Amount of Hits">;
