@@ -120,6 +120,23 @@
 #define SDF_SHAPE_FLAG_FACEDIV (0x80000)
 #define SDF_SHAPE_UV_CHANNEL_MAX (2)
 
+enum<u32> FLD_RES
+{
+    FLD_RES_PORTAL = 0,
+    FLD_RES_BLOCK_RANGE = 1,
+    FLD_RES_DRAW_OBJ = 2,
+    FLD_RES_COL_OBJ = 3,
+    FLD_RES_CAMERA = 4,
+    FLD_RES_TEXLIST = 5,
+    FLD_RES_EVENT = 6,
+    FLD_RES_RENGE = 7,
+    FLD_RES_MATERIAL = 8,
+    FLD_RES_MOTION = 9,
+    FLD_RES_POSITION = 10,
+    FLD_RES_EFFECT = 11,
+    FLD_RES_LIGHT = 12,
+};
+
 BitfieldDisablePadding();
 
 local u32 gBaseOffset = 0;
@@ -1506,7 +1523,7 @@ typedef struct
 typedef struct
 {
     SetRandomBackColor();
-    u32 Type;
+    FLD_RES Type;
     u32 Count;
     u32 Offset;
     local u32 next = FTell();
@@ -1524,7 +1541,7 @@ typedef struct
 {
     SetRandomBackColor();
     u32 Id;
-    u32 Type;
+    FLD_RES Type;
     TStringOffset Name( gBaseOffset );
     u32 Field0C;
     u32 TransformOffset;
