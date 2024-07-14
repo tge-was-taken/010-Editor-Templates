@@ -1889,8 +1889,8 @@ typedef struct( u32 version )
 {
     f32 Field24;
     f32 Field28;
-    struct TEplLeafCommonData5 Field2C;
-    struct TEplLeafCommonData5 Field90;
+    struct TEplLeafCommonData6 Field2C;
+    struct TEplLeafCommonData6 Field90;
     f32 FieldF4;
     f32 FieldF8;
     f32 FieldFC;
