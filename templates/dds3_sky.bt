@@ -1,0 +1,82 @@
+//------------------------------------------------
+//--- 010 Editor v15.0beta2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef unsigned int u32;
+typedef unsigned short u16;
+typedef unsigned char u8;
+typedef int s32;
+typedef short s16;
+typedef char s8;
+typedef float f32;
+
+typedef struct
+{
+    s32 FilterID;
+    s32 FilterAlp;
+    s32 FilterMode;
+    s32 FilterAnm;
+    s32 FilterPad0;
+    s32 FilterPad1;
+    s32 FilterPad2;
+    s32 FogMax;
+    s32 FogNear;
+    s32 FogMin;
+    s32 FogFar;
+    s32 FogR;
+    s32 FogG;
+    s32 FogB;
+    f32 sr0;
+    f32 sg0;
+    f32 sb0;
+    f32 sx0;
+    f32 sy0;
+    f32 sz0;
+    f32 sr1;
+    f32 sg1;
+    f32 sb1;
+    f32 sx1;
+    f32 sy1;
+    f32 sz1;
+    f32 sr2;
+    f32 sg2;
+    f32 sb2;
+    f32 sx2;
+    f32 sy2;
+    f32 sz2;
+    f32 sr3;
+    f32 sg3;
+    f32 sb3;
+    f32 pr0;
+    f32 pg0;
+    f32 pb0;
+    f32 px0;
+    f32 py0;
+    f32 pz0;
+    f32 pr1;
+    f32 pg1;
+    f32 pb1;
+    f32 px1;
+    f32 py1;
+    f32 pz1;
+    f32 pr2;
+    f32 pg2;
+    f32 pb2;
+    f32 px2;
+    f32 py2;
+    f32 pz2;
+    f32 pr3;
+    f32 pg3;
+    f32 pb3;
+} typeSKYTBL <style=sSection1>;
+
+typeSKYTBL file[256];

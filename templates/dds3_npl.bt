@@ -1,0 +1,34 @@
+//------------------------------------------------
+//--- 010 Editor v15.0beta2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef unsigned int u32;
+typedef unsigned short u16;
+typedef unsigned char u8;
+typedef int s32;
+typedef short s16;
+typedef char s8;
+typedef float f32;
+
+typedef struct 
+{
+    u8 r0;
+    u8 g0;
+    u8 b0;
+    u8 r1;
+    u8 g1;
+    u8 b1;
+    u8 sb;
+    u8 dir;
+} fldNpcLightTbl_tag <style=sSection1>;
+
+fldNpcLightTbl_tag fldNpcLightTbl[32];

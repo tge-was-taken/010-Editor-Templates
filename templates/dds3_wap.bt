@@ -1,0 +1,63 @@
+//------------------------------------------------
+//--- 010 Editor v15.0beta2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef unsigned int u32;
+typedef unsigned short u16;
+typedef unsigned char u8;
+typedef int s32;
+typedef short s16;
+typedef char s8;
+typedef float f32;
+
+typedef struct
+{
+    s32 area;
+    s16 se;
+    s16 floormax;
+    s16 floor[6];
+    s16 sblock[6];
+} warp_elvtbl_s;
+
+typedef struct {
+    u8 movetype;
+    u8 flagmode;
+    u16 flag;
+    u16 union01;
+    u8 union02[12];
+    u16 union03;
+    u16 union04;
+    u16 union05;
+    u8 union06[12];
+    u8 union07[12];
+    u8 warptype;
+    u8 warp_attr;
+    u16 union08;
+    u16 union09;
+    u16 union10;
+    char warp_pos[12];
+    u8 warp_cammode;
+    u8 warp_camtbl;
+    char warp_camname[12];
+    u8 warp_bgm;
+    u8 warp_foot;
+    u8 after_flag;
+    u8 after_scr[15];
+} doormovetbl_s;
+
+typedef struct
+{  
+    warp_elvtbl_s elvtbl[5] <style=sSection1>;
+    doormovetbl_s door_buff[256] <style=sSection2>;
+} fldwarp_s;
+
+fldwarp_s file;

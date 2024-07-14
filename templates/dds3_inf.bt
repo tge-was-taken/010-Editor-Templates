@@ -1,0 +1,90 @@
+//------------------------------------------------
+//--- 010 Editor v15.0beta2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef unsigned int u32;
+typedef unsigned short u16;
+typedef unsigned char u8;
+typedef int s32;
+typedef short s16;
+typedef char s8;
+typedef float f32;
+
+typedef struct
+{
+    u8 Area;
+    char EveName[15];
+} FLD_INF_PACK2_t;
+
+typedef struct
+{
+    s32 Idx;
+    FLD_INF_PACK2_t EveHit[5];
+} FLD_INF_PACK_t;
+
+typedef struct
+{
+    s32 PlayerOn;
+    s32 PlayerMot;
+    char PlayerPos[12];
+    char Cam[12];
+} FLD_INF_VIEW_t;
+
+typedef struct
+{
+    s32 Id;
+    s32 Param1;
+    s32 Param2;
+    s32 Param3;
+    s32 Param4;
+} FLD_INF_EX_t;
+
+typedef struct
+{
+    s16 Type;
+    u8 Area;
+    u8 Action;
+    u8 EveHit[12];
+} FLD_INF_START_t;
+
+typedef struct
+{
+    s16 Flg;
+    u8 GoOffOn[2];
+} FLD_INF_FLG_t;
+
+typedef struct
+{
+    s16 Type;
+    s16 Msg;
+    u8 Go[4];
+    u16 FlgOffOn[2];
+    u8 View;
+    u8 Ex;
+} FLD_INF_MSG_t;
+
+typedef struct
+{
+    FLD_INF_START_t st;
+    FLD_INF_FLG_t fl;
+    FLD_INF_MSG_t ms;
+} FLD_INF_SET_t;
+
+typedef struct 
+{
+    FLD_INF_PACK_t pack[8] <style=sSection1>;
+    FLD_INF_VIEW_t view[40] <style=sSection2>;
+    FLD_INF_EX_t ex[40] <style=sSection3>;
+    FLD_INF_SET_t set[40] <style=sSection4>;
+} FLD_INF_ALL_T;
+
+FLD_INF_ALL_T file;

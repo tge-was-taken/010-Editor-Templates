@@ -11,6 +11,22 @@
 //   History: 
 //------------------------------------------------
 
+#include "common/include.h"
+
+BitfieldLeftToRight();
+
+typedef enum {
+    ePlatform_Wii,
+    ePlatform_PC
+} ePlatform;
+local ePlatform PLATFORM = ePlatform_PC;
+local bool g_isMergedFile = false;
+local u32 g_zigFileOffset = 0;
+local u32 g_zigBaseOffset = 0;
+
+bool IsPC() { return PLATFORM == ePlatform_PC; };
+bool IsWii() { return PLATFORM == ePlatform_Wii; };
+
 //---------------------------------------------
 // Script global variables & functions
 //---------------------------------------------
@@ -27,14 +43,14 @@ void PushBaseOffset()
     local long base = FTell();
     gBaseOffset[++gBaseOffsetIndex] = base;
 
-    Printf( "push base -> %08X\n", base );
+   // Printf( "push base -> %08X\n", base );
 }
 
 void PopBaseOffset()
 {
     gBaseOffsetIndex--;
 
-    Printf( "pop base -> %08X\n", gBaseOffset[gBaseOffsetIndex] );
+    //Printf( "pop base -> %08X\n", gBaseOffset[gBaseOffsetIndex] );
 }
 
 void SeekToOffsetValue( uint offset )
@@ -67,6 +83,77 @@ void PopFPos()
     FSeek( gSavedPos[gSavedPosIndex--] );
 }
 
+// Hash
+#define BLOCK_SIZE 12
+#define SALT 0x9E3779B9u;
+
+void ComputeBlockHash(u32& result, u32& a2, u32& a3) {
+    a2 -= a3;
+    a2 = a2 - result ^ (result >> 13);
+    a3 -= result;
+    a3 = a3 - a2 ^ (a2 << 8);
+    result -= a2;
+    result = result - a3 ^ (a3 >> 13);
+    a2 -= a3;
+    a2 = a2 - result ^ (result >> 12);
+    a3 -= result;
+    a3 = a3 - a2 ^ (a2 << 16);
+    result -= a2;
+    result = result - a3 ^ (a3 >> 5);
+    a2 -= a3;
+    a2 = a2 - result ^ (result >> 3);
+    a3 -= result;
+    a3 = a3 - a2 ^ (a2 << 10);
+    result -= a2;
+    result = result - a3 ^ (a3 >> 15);
+}
+
+u32 sumohash(string value) {
+    local u32 key = 0x04C11DB7;
+    local u32 v4 = key;
+    local u32 v3 = SALT;
+    local u32 v7 = SALT; 
+    local u32 v14 = SALT; 
+    local u32 v15 = SALT;
+    local int lengthRemainder = Strlen(value), offset = 0;
+
+    if (lengthRemainder >= BLOCK_SIZE) {
+        local int blockCount = lengthRemainder / BLOCK_SIZE;
+        local int blockIndex;
+        for (blockIndex = 0; blockIndex < blockCount; blockIndex++, lengthRemainder -= BLOCK_SIZE, offset += BLOCK_SIZE) {
+            v15 += (u32)((unsigned char)value[1 + offset] + ((unsigned char)value[2 + offset] + ((unsigned char)value[3 + offset] << 8) << 8) + (unsigned char)value[0 + offset]);
+            v14 = (u32)((unsigned char)value[5 + offset] + ((unsigned char)value[6 + offset] + ((unsigned char)value[7 + offset] << 8) << 8) + v3 + (unsigned char)value[4 + offset]);
+            key = (u32)((unsigned char)value[9 + offset] + ((unsigned char)value[10 + offset] + ((unsigned char)value[11 + offset] << 8) << 8) + v4 + (unsigned char)value[8 + offset]);
+            ComputeBlockHash(key, v15, v14);
+            v3 = v14;
+            v4 = key;
+        }
+
+        v7 = v15;
+    }
+
+    local u32 v12 = (u32)(Strlen(value) + v4);
+    key = v12;
+
+    // Similar adjustments for handling the final bytes as in the original code
+
+    ComputeBlockHash(key, v15, v14);
+
+    return key;
+}
+
+u32 xpachash(string value) {
+    local u32 hash = 0;
+    local int len = strlen(value);
+    local int i = 0;
+    for (i = len - 1; i >= 0; --i) {
+        char c = toupper(value[i]);
+        if (c == '/') c = '\\';
+        hash = c + 0x83 * hash;
+    }
+    return hash;
+}
+
 //------------------------------------------------
 // Types
 //------------------------------------------------
@@ -77,7 +164,12 @@ typedef struct
 {
     local uint32 Base = gBaseOffset[gBaseOffsetIndex];
     uint32 Value;
-
+    if (Value != 0) {
+        local u64 returnPos = FTell();
+        FSeek(Value + Base);
+        u8 marker <fgcolor=cRed>;
+        FSeek(returnPos);
+    } 
 } Offset_t <read=ReadOffset>;
 
 typedef struct( uint32 base )
@@ -86,167 +178,1903 @@ typedef struct( uint32 base )
     uint32 Value;
 } VarOffset_t;
 
+typedef struct {
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        string data;
+        FSeek(returnPos);
+    }   
+} StringPtr <read=(data)>;
+
 typedef struct
 {
-	// 0x00
-	char FourCC[4];
-	
-	// 0x04
-	uint32 ChunkSize; // including chunk header and alignment
-	
-	// 0x08
-	uint32 ContentSize; // excluding chunk header and alignment
-	
-	// 0x0C
-	uint32 Field0C; // always 0x44332211	
-} ForestChunkHeader_t <bgcolor=0x602c25>;
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        s8 data;
+        FSeek(returnPos);
+    }   
+} Int8Ptr <optimize=false>;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        u8 data;
+        FSeek(returnPos);
+    }   
+} UInt8Ptr <optimize=false>;
+
+typedef UInt8Ptr UInt8PtrPtr;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        u16 data;
+        FSeek(returnPos);
+    }   
+} UInt16Ptr <optimize=false>;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        float data;
+        FSeek(returnPos);
+    }   
+} FloatPtr <optimize=false>;
+
+typedef struct {
+    float x,y,z,pad;
+} SuVector3;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuVector3 value[count];
+        FSeek(returnPos);
+    }
+} SuVector3ArrayPtr <optimize=false>;
+
+typedef struct {
+    float x,y,z,w;
+} SuVector4;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuVector4 data;
+        FSeek(returnPos);
+    }   
+} SuVector4Ptr <optimize=false>;
+
+typedef struct {
+    float x,y,z,w;
+} SuQuaternion;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuQuaternion data;
+        FSeek(returnPos);
+    }   
+} SuQuaternionPtr <optimize=false>;
+
+typedef struct
+{
+    SuVector4 m[4];
+} SuMatrix44;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuMatrix44 data;
+        FSeek(returnPos);
+    }   
+} SuMatrix44Ptr <optimize=false>;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        u32 data;
+        FSeek(returnPos);
+    }   
+} UInt32Ptr <optimize=false>;
+
+// ChunkHeader
+typedef struct
+{
+    // u32 id;
+    char id[4];
+    u32 chunk_size;
+    u32 data_size;
+    u32 endian_indicator;
+} ChunkHeader <bgcolor=0x602c25>;
 
 struct ForestEntry_t;
+//
+//typedef struct
+//{
+//    u32 _0; 
+//    u32 _4; 
+//    u32 _8; 
+//    u32 _C; 
+//    u32 _10; 
+//    u32 _14;
+//    u32 _18;
+//    u32 _1C;
+//    u32 _20; 
+//    u32 _24;
+//    u32 _28;
+//    u32 _2C;
+//    u32 _30;
+//} PCTextureInfo;
+
+//typedef struct
+//{
+//    local u32 base = gBaseOffset[gBaseOffsetIndex];
+//    u32 offset;
+//    if (offset != 0) {
+//        local u64 returnPos = FTell();
+//        FSeek(offset + base);
+//        PCTextureInfo data;
+//        FSeek(returnPos);
+//    }   
+//} PCTextureInfoPtr <optimize=false>;
+
+typedef enum
+{
+  _GXTexFmt_GX_TF_I4 = 0x0,
+  _GXTexFmt_GX_TF_I8 = 0x1,
+  _GXTexFmt_GX_TF_IA4 = 0x2,
+  _GXTexFmt_GX_TF_IA8 = 0x3,
+  _GXTexFmt_GX_TF_RGB565 = 0x4,
+  _GXTexFmt_GX_TF_RGB5A3 = 0x5,
+  _GXTexFmt_GX_TF_RGBA8 = 0x6,
+  _GXTexFmt_GX_TF_CMPR = 0xE,
+  _GXTexFmt_GX_CTF_R4 = 0x20,
+  _GXTexFmt_GX_CTF_RA4 = 0x22,
+  _GXTexFmt_GX_CTF_RA8 = 0x23,
+  _GXTexFmt_GX_CTF_YUVA8 = 0x26,
+  _GXTexFmt_GX_CTF_A8 = 0x27,
+  _GXTexFmt_GX_CTF_R8 = 0x28,
+  _GXTexFmt_GX_CTF_G8 = 0x29,
+  _GXTexFmt_GX_CTF_B8 = 0x2A,
+  _GXTexFmt_GX_CTF_RG8 = 0x2B,
+  _GXTexFmt_GX_CTF_GB8 = 0x2C,
+  _GXTexFmt_GX_TF_Z8 = 0x11,
+  _GXTexFmt_GX_TF_Z16 = 0x13,
+  _GXTexFmt_GX_TF_Z24X8 = 0x16,
+  _GXTexFmt_GX_CTF_Z4 = 0x30,
+  _GXTexFmt_GX_CTF_Z8M = 0x39,
+  _GXTexFmt_GX_CTF_Z8L = 0x3A,
+  _GXTexFmt_GX_CTF_Z16L = 0x3C,
+  _GXTexFmt_GX_TF_A8 = 0x27,
+} _GXTexFmt;
+
+typedef enum
+{
+  _GXTexWrapMode_GX_CLAMP = 0x0,
+  _GXTexWrapMode_GX_REPEAT = 0x1,
+  _GXTexWrapMode_GX_MIRROR = 0x2,
+  _GXTexWrapMode_GX_MAX_TEXWRAPMODE = 0x3,
+} _GXTexWrapMode;
+
+typedef enum
+{
+  _GXTexFilter_GX_NEAR = 0x0,
+  _GXTexFilter_GX_LINEAR = 0x1,
+  _GXTexFilter_GX_NEAR_MIP_NEAR = 0x2,
+  _GXTexFilter_GX_LIN_MIP_NEAR = 0x3,
+  _GXTexFilter_GX_NEAR_MIP_LIN = 0x4,
+  _GXTexFilter_GX_LIN_MIP_LIN = 0x5,
+} _GXTexFilter;
+
+typedef enum
+{
+  _GXAnisotropy_GX_ANISO_1 = 0x0,
+  _GXAnisotropy_GX_ANISO_2 = 0x1,
+  _GXAnisotropy_GX_ANISO_4 = 0x2,
+  _GXAnisotropy_GX_MAX_ANISOTROPY = 0x3,
+} _GXAnisotropy;
 
 typedef struct
 {
-	// 0x00 
-	uint32 ForestCount;
-	ForestEntry_t Entries[ForestCount];
-} ForestList_t <bgcolor=0x823931, optimize=false>;
+  u8 dummy[8];
+} _GXTexObj;
+
+typedef struct {
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        _GXTexObj data;
+        FSeek(returnPos);
+    }   
+} _GXTexObjPtr <optimize=false>;
+
+typedef struct
+{
+  u8 mipmap;
+  u8 cubemap;
+  u8 normalmap;
+  u8 unused0;
+  u8 unused1;
+  u8 unused2;
+  u8 isRenderTarget;
+  u8 bias_clamp;
+  u8 do_edge_lod;
+  u16 width;
+  u16 height;
+  _GXTexFmt format;
+  _GXTexWrapMode wrap_s;
+  _GXTexWrapMode wrap_t;
+  _GXTexFilter min_filt;
+  _GXTexFilter mag_filt;
+  float min_lod;
+  float max_lod;
+  float lod_bias;
+  _GXAnisotropy max_aniso;
+  u8 ConstantAlphaValue;
+  u8 punch;
+  u8 alpha;
+  u8 pad;
+  u32 alpha_map_offset;
+  _GXTexObjPtr pHWTexture;
+  _GXTexObjPtr pHWAlphaTexture;
+  UInt8Ptr pAlphaData;
+} WiiTextureInfo;
+
+typedef struct
+{
+  UInt8Ptr m_pData;
+  u16 m_Width;
+  u16 m_Height;
+} WiiMipInfo;
+
+typedef struct {
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        WiiMipInfo data;
+        FSeek(returnPos);
+    }   
+} WiiMipInfoPtr <optimize=false>;
+
+typedef struct {
+  DWORD dwSize;
+  DWORD dwFlags;
+  DWORD dwFourCC;
+  DWORD dwRGBBitCount;
+  DWORD dwRBitMask;
+  DWORD dwGBitMask;
+  DWORD dwBBitMask;
+  DWORD dwABitMask;
+} DDS_PIXELFORMAT;
+
+#define DDPF_FOURCC 0x00000004 // Flag to indicate pixel format is specified by a FourCC code
+
+typedef struct {
+  DWORD           dwSize;
+  DWORD           dwFlags;
+  DWORD           dwHeight;
+  DWORD           dwWidth;
+  DWORD           dwPitchOrLinearSize;
+  DWORD           dwDepth;
+  DWORD           dwMipMapCount;
+  DWORD           dwReserved1[11];
+  DDS_PIXELFORMAT ddspf;
+  DWORD           dwCaps;
+  DWORD           dwCaps2;
+  DWORD           dwCaps3;
+  DWORD           dwCaps4;
+  DWORD           dwReserved2;
+} DDS_HEADER;
+
+u32 calculateMipmapSize(u32 width, u32 height, u32 bytesPerPixel, bool isCompressed) {
+    if (isCompressed) {
+        // For compressed formats (e.g., DXT1, DXT3, DXT5), the size is calculated based on blocks of 4x4 pixels
+        local u32 blockCount = ((width + 3) / 4) * ((height + 3) / 4);
+        return blockCount * bytesPerPixel; // bytesPerPixel is block size for compressed formats
+    } else {
+        // For uncompressed formats
+        return width * height * bytesPerPixel;
+    }
+}
+
+// Main function to calculate DDS file size
+u32 calculateDDSDataSize(DDS_HEADER& header) {
+    local u32 totalSize = 0;
+    local int isCompressed = (header.ddspf.dwFlags & DDPF_FOURCC) != 0; // Check if texture is compressed
+    local u32 bytesPerPixel = isCompressed ? (header.ddspf.dwFourCC == 0x31545844 ? 8 : 16) : 4; 
+
+    local u32 width = header.dwWidth;
+    local u32 height = header.dwHeight;
+    local u32 level = 0;
+    for (level = 0; level < header.dwMipMapCount; ++level) {
+        totalSize += calculateMipmapSize(width, height, bytesPerPixel, isCompressed);
+
+        if (width > 1) width /= 2;
+        if (height > 1) height /= 2;
+    }
+
+    return totalSize;
+}
+
+typedef struct
+{
+    u32 offset;
+    if (offset != 0) {
+        if (g_isMergedFile)
+        {
+            local u64 returnPos = FTell();
+            FSeek(4 + g_zigFileOffset + g_zigBaseOffset + offset);
+            char fourCC[4];
+            DDS_HEADER header;
+            local u32 size = calculateDDSDataSize(header);
+            u8 data[size];
+            FSeek(returnPos);
+        }
+    }   
+} ImageDataPtr;
+
+typedef struct
+{
+  StringPtr m_pName;
+  WiiTextureInfo m_texinfo;
+  UInt8Ptr m_pImageData;
+  UInt8Ptr m_pAllocatedImageData;
+  WiiMipInfoPtr m_pMipImages;
+  WiiMipInfoPtr m_pMipAlphaImages;
+} SuRenderTextureResourceWii;
+
+typedef struct
+{
+  StringPtr m_pName;
+  u32 _04;
+  ImageDataPtr m_pImageData;
+  u32 _0C;
+  local u32 hash = sumohash(m_pName.data);
+} SuRenderTextureResourcePC;
+
+typedef struct {
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        if (IsWii())
+        { 
+            SuRenderTextureResourceWii data;     
+        }
+        else if (IsPC())
+        {
+            SuRenderTextureResourcePC data;
+        }
+        FSeek(returnPos);
+    }   
+} SuRenderTextureResourcePtr <optimize=false, read=(data.m_pName.data)>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuRenderTextureResourcePtr value[count];
+        FSeek(returnPos);
+    }
+} SuRenderTextureResourcePtrArrayPtr <optimize=false>;
+
+typedef struct
+{
+  u32 index;
+  float data;
+} DataArrayElement;
+
+typedef struct
+{
+  DataArrayElement dataArray[3];
+} SuAnimatedFloatData_2;
+
+typedef enum
+{
+    TextureType_Diffuse = 1,
+    TextureType_Alpha = 2,
+    TextureType_Normal = 3,
+    TextureType_Specular = 4,
+    TextureType_Inc = 9,
+    TextureType_Bloom = 10,
+    TextureType_Environment = 11
+} TextureType;
+
+typedef struct
+{
+  struct {
+    u32 _ : 14;
+    u32 m_hasMipmapBias : 1;
+    u32 m_IsReplaceable : 1;
+    u32 m_OrigTexHadAlphaTex : 1;
+    u32 m_Type : 8;
+    u32 m_Filter : 2;
+    u32 m_uIsAnimated : 1;
+    u32 m_AddressModeV : 2;
+    u32 m_AddressModeU : 2;
+  } m_flags;
+  SuRenderTextureResourcePtr m_pTextureResource;
+  union {
+      u32 m_uRenderTargetHash;
+      float m_fMipmapBias;
+  } _;
+  SuAnimatedFloatData_2 m_animatedData;
+  if (  m_flags.m_Type != 1 && 
+        m_flags.m_Type != 2 && 
+        m_flags.m_Type != 3 && 
+        m_flags.m_Type != 4 && 
+        m_flags.m_Type != 9 && 
+        m_flags.m_Type != 10 && 
+        m_flags.m_Type != 11)
+    Printf("%s type:%d\n", m_pTextureResource.data.m_pName.data, m_flags.m_Type);
+    //Printf("%s type:%d\n", m_pTextureResource.data.m_pName.data, m_flags.m_Type);
+} SuRenderTexture <bgcolor=cRed, optimize=false>;
+
+typedef struct {
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuRenderTexture data;
+        FSeek(returnPos);
+    }   
+} SuRenderTexturePtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        if (count) SuRenderTexturePtr data[count];
+        FSeek(returnPos);
+    }   
+} SuRenderTexturePtrArrayPtr <optimize=false>;
 
 struct ForestHeader_t;
 
 struct StringOffset_t;
 
-typedef struct
-{		
-	// 0x00
-	uint32 Hash; // hash maybe?
-	
-	// 0x04
-	StringOffset_t Name;
-	
-	// 0x08
-    struct
-    {
-        Offset_t Offset;
-        
-        PushFPos();
-        SeekToOffset( Offset );
-
-        PushBaseOffset();
-        ForestHeader_t Value;
-        PopBaseOffset();
-
-        PopFPos();
-        
-    } Forest;
-	
-	// sometimes 0
-	uint32 Field0C;
-} ForestEntry_t <bgcolor=0xa3473c, optimize=false>;
-
 struct ForestContentType0Header_t;
 struct Texture_t;
 struct ForestContentType2Header_t;
 
+typedef struct
+{
+  u32 m_elementQty;
+} SuBlindData <optimize=false>;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuBlindData data;
+        FSeek(returnPos);
+    }   
+} SuBlindDataPtr <optimize=false>;
+
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        DataArrayElement data;
+        FSeek(returnPos);
+    }   
+} DataArrayElementPtr <optimize=false>;
+
+typedef struct
+{
+  DataArrayElementPtr m_pData;
+} SuAnimatedFloatArrayData;
+
+typedef struct
+{
+  DataArrayElement dataArray[25];
+} SuAnimatedFloatData;
+
+typedef struct
+{
+  u8 r;
+  u8 g;
+  u8 b;
+  u8 a;
+} _GXColor;
+
+typedef struct
+{ 
+  SuAnimatedFloatData m_animData;
+  _GXColor m_Ambient;
+  _GXColor m_Emissive;
+  int m_BloomTextureID;
+  float m_Power;
+  byte m_uTextureIDRemap[8];
+  u32 m_uPixelFlags;
+  u32 m_uVertexFlags;
+  u32 m_uUnused;
+  u32 m_uFillType;
+  u32 m_AlphaFlags;
+  u32 m_uNumTextures;
+  SuRenderTexturePtrArrayPtr m_ppTextures(m_uNumTextures);
+  StringPtr m_pName;
+  u32 m_uBackFaceCull;
+} SuRenderMaterialWii;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        if (IsWii())
+            struct SuRenderMaterialWii data;
+        else if (IsPC())
+            struct SuRenderMaterialPC data;
+        FSeek(returnPos);
+    }   
+} SuRenderMaterialPtr <optimize=false>;
+
+typedef struct
+{
+  u32 _passflags;
+  u16 _texID;
+  u8 _uvSet;
+  u8 _reg_Color_CHAN;
+  u8 _matTexID;
+  u8 _reg_CC_A;
+  u8 _reg_CC_B;
+  u8 _reg_CC_C;
+  u8 _reg_CC_D;
+  u8 _reg_CC_OP;
+  u8 _reg_CC_BIAS;
+  u8 _reg_CC_SCALE;
+  u8 _reg_CC_CLAMP;
+  u8 _reg_CC_DEST;
+  u8 _reg_CA_A;
+  u8 _reg_CA_B;
+  u8 _reg_CA_C;
+  u8 _reg_CA_D;
+  u8 _reg_CA_OP;
+  u8 _reg_CA_BIAS;
+  u8 _reg_CA_SCALE;
+  u8 _reg_CA_CLAMP;
+  u8 _reg_CA_DEST;
+  u8 _constAlpha;
+  u8 _constRed;
+  u8 _constGreen;
+  u8 _constBlue;
+  u8 _ind_stage;
+  u8 _ind_format;
+  u8 _ind_bias_sel;
+  u8 _ind_matrix_sel;
+  u8 _ind_wrap_s;
+  u8 _ind_wrap_t;
+  u8 _ind_add_prev;
+  u8 _ind_utc_lod;
+  u8 _ind_alpha_sel;
+} HWMaterialPass;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        HWMaterialPass data;
+        FSeek(returnPos);
+    }   
+} HWMaterialPassPtr <optimize=false>;
+
+typedef struct
+{
+  u16 _tex_map;
+  u8 _tex_coord;
+  u8 _scale_S;
+  u8 _scale_T;
+} HWMaterialIndiectStage;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        HWMaterialIndiectStage data;
+        FSeek(returnPos);
+    }   
+} HWMaterialIndiectStagePtr <optimize=false>;
+
+typedef struct
+{
+  u8 m_Usage;
+  u8 m_IndexSizeBytes;
+  u8 m_GXIndexSize;
+  u8 m_DataUnitSizeBytes;
+  u8 m_DataSubUnitSizeBytes;
+  u8 m_DataSubUnitsNum;
+  u8 m_GXDataType;
+  u8 m_GXDataSizeType;
+  u8 m_DataStride;
+  u8 m_AttributeOffset;
+  u8 m_DataFractShift;
+  u8 m_pad;
+  Int8Ptr m_pAttributeStream;
+} VtxAttributeInfo;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        VtxAttributeInfo data;
+        FSeek(returnPos);
+    }   
+} VtxAttributeInfoPtr <optimize=false>;
+
+typedef struct
+{
+  u32 m_uVertexFlags;
+  VtxAttributeInfoPtr m_pAttributeStreamsInfo;
+  u32 m_uNumExtraVertexStreams;
+  UInt32Ptr m_pStreamNameHashes;
+  UInt8PtrPtr m_ppStreamData;
+} SuRenderVertexStreamWii;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        if (IsWii())
+        {
+            struct SuRenderVertexStreamWii data;
+        }
+        else if (IsPC())
+        {
+            struct SuRenderVertexStreamPC data;
+        }
+        FSeek(returnPos);
+    }   
+} SuRenderVertexStreamPtr <optimize=false>;
+
+typedef struct
+{
+  u32 m_PNMatID;
+  u32 m_VtxFormat;
+  u32 m_Resrved0;
+  u32 m_Resrved1;
+  u32 m_uNumStrips;
+  u32 m_uNumVertices;
+  u32 m_RunTimePrimFlags;
+  int m_nInstanceUseCount;
+  UInt8Ptr m_pMaterialDList;
+  u32 m_MaterialDListSize;
+  UInt8Ptr m_pBloomMaterialDList;
+  u32 m_BloomMaterialDListSize;
+  UInt8Ptr m_pShadowMaterialDList;
+  u32 m_ShadowMaterialDListSize;
+  SuMatrix44 m_ObbTransform;
+  SuVector4 m_Extents;
+  SuVector4 m_CullSphere;
+  u8 m_uTextureMatrixIndices[8];
+  SuRenderMaterialPtr m_pMaterial;
+  u32 m_uNumPasses;
+  HWMaterialPassPtr m_pHWMaterialPasses;
+  u32 m_uNumBloomPasses;
+  HWMaterialPassPtr m_pBloomHWMaterialPasses;
+  u32 m_uNumIndirectStages;
+  HWMaterialIndiectStagePtr m_pHWMaterialIndirectStages;
+  u32 m_uNumIndirectPasses;
+  u8 m_IndirectPasses[16];
+  u32 m_uNumDXT1Passes;
+  u8 m_DXT1Passes[16];
+  u32 m_uNumBloomDXT1Passes;
+  u8 m_BloomDXT1Passes[16];
+  u32 m_StrippedIndexedDisplayListSize;
+  UInt8Ptr m_pStrippedIndexedDisplayList;
+  u32 m_ShadowStrippedIndexedDisplayListSize;
+  UInt8Ptr m_pShadowStrippedIndexedDisplayList;
+  u32 m_BloomStrippedIndexedDisplayListSize;
+  UInt16Ptr m_pBloomStrippedIndexedDisplayList;
+  SuRenderVertexStreamPtr m_pVertexStream;
+  u32 m_layer;
+  u32 m_uPrimFlags;
+  SuRenderTextureResourcePtr m_pSpecularLightTexture;
+  u32 m_usedAlphaConsts;
+  u32 m_usedColorConsts;
+  u32 m_materialColrSource0;
+  u32 m_Initialised;
+  u8 m_GainIDMap[16];
+  int m_HasSkin;
+  u32 m_uNoBlendWeights;
+  u32 m_uNumBlendVerts;
+  u32 m_uBlendDataInstanceOffset;
+  FloatPtr m_pVertexBlendData;
+  SuAnimatedFloatArrayData m_blendShapeWeights;
+} SuRenderPrimitiveWii;
+
+typedef struct(u32 stride, u32 count)
+{
+    u32 offset;
+    if (offset != 0) {
+        if (g_isMergedFile)
+        {
+            local u64 returnPos = FTell();
+            FSeek(4 + g_zigFileOffset + g_zigBaseOffset + offset);
+            struct(u32 stride) {
+                u8 data[stride];
+            } vertices(stride)[count] <optimize=false>;
+            FSeek(returnPos);
+        }
+    }   
+}  VertexBufferPtr <optimize=false>;
+
+typedef enum<u8>  { 
+  D3DDECLTYPE_FLOAT1     = 0,
+  D3DDECLTYPE_FLOAT2     = 1,
+  D3DDECLTYPE_FLOAT3     = 2,
+  D3DDECLTYPE_FLOAT4     = 3,
+  D3DDECLTYPE_D3DCOLOR   = 4,
+  D3DDECLTYPE_UBYTE4     = 5,
+  D3DDECLTYPE_SHORT2     = 6,
+  D3DDECLTYPE_SHORT4     = 7,
+  D3DDECLTYPE_UBYTE4N    = 8,
+  D3DDECLTYPE_SHORT2N    = 9,
+  D3DDECLTYPE_SHORT4N    = 10,
+  D3DDECLTYPE_USHORT2N   = 11,
+  D3DDECLTYPE_USHORT4N   = 12,
+  D3DDECLTYPE_UDEC3      = 13,
+  D3DDECLTYPE_DEC3N      = 14,
+  D3DDECLTYPE_FLOAT16_2  = 15,
+  D3DDECLTYPE_FLOAT16_4  = 16,
+  D3DDECLTYPE_UNUSED     = 17
+} D3DDECLTYPE;
+
+typedef enum<u8> { 
+  D3DDECLMETHOD_DEFAULT           = 0,
+  D3DDECLMETHOD_PARTIALU          = 1,
+  D3DDECLMETHOD_PARTIALV          = 2,
+  D3DDECLMETHOD_CROSSUV           = 3,
+  D3DDECLMETHOD_UV                = 4,
+  D3DDECLMETHOD_LOOKUP            = 5,
+  D3DDECLMETHOD_LOOKUPPRESAMPLED  = 6
+} D3DDECLMETHOD;
+
+typedef enum<u8> { 
+  D3DDECLUSAGE_POSITION      = 0,
+  D3DDECLUSAGE_BLENDWEIGHT   = 1,
+  D3DDECLUSAGE_BLENDINDICES  = 2,
+  D3DDECLUSAGE_NORMAL        = 3,
+  D3DDECLUSAGE_PSIZE         = 4,
+  D3DDECLUSAGE_TEXCOORD      = 5,
+  D3DDECLUSAGE_TANGENT       = 6,
+  D3DDECLUSAGE_BINORMAL      = 7,
+  D3DDECLUSAGE_TESSFACTOR    = 8,
+  D3DDECLUSAGE_POSITIONT     = 9,
+  D3DDECLUSAGE_COLOR         = 10,
+  D3DDECLUSAGE_FOG           = 11,
+  D3DDECLUSAGE_DEPTH         = 12,
+  D3DDECLUSAGE_SAMPLE        = 13
+} D3DDECLUSAGE;
+
+typedef struct
+{
+    u16 Stream;
+    u16 Offset;
+    D3DDECLTYPE Type;
+    D3DDECLMETHOD Method;
+    D3DDECLUSAGE Usage;
+    u8 UsageIndex;
+} D3DVERTEXELEMENT9;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        while (true)
+        {
+            D3DVERTEXELEMENT9 data;
+            if (data.Stream == 255)
+                break;
+        }
+        FSeek(returnPos);
+    }   
+} D3DVERTEXELEMENT9ArrayPtr;
+
+typedef struct
+{
+	D3DVERTEXELEMENT9ArrayPtr m_pVertexElements;
+	uint32 _04;
+	uint32 _08; 
+	uint32 m_uDataStride; 
+	uint32 m_uNumData;
+	
+    VertexBufferPtr m_pData(m_uDataStride, m_uNumData);
+	
+	uint32 _18;
+	uint32 _1C;
+	Offset_t _20; 
+	uint32 _24; 
+	Offset_t _28; 
+	uint32 _2C;
+	uint32 _30; 
+	uint32 _34; 
+} SuRenderVertexStreamPC <bgcolor=0x17c1c4>;
+
+typedef struct(u32 count)
+{
+    u32 offset;
+    if (offset != 0) {
+        if (g_isMergedFile)
+        {
+            local u64 returnPos = FTell();
+            FSeek(4 + g_zigFileOffset + g_zigBaseOffset + offset);
+            struct {
+                u16 a,b,c;
+            } faces[count] <optimize=false>;
+            FSeek(returnPos);
+        }
+    }   
+}  IndexBufferPtr <optimize=false>;
+
+typedef struct
+{
+    u32 _00;
+    u32 _04;
+    u32 _08;
+    u32 _0C;
+    u32 _10;
+    float _14;
+    u32 _18;
+} SurenderPrimitivePC_88_30;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SurenderPrimitivePC_88_30 data;
+        FSeek(returnPos);
+    }   
+} SurenderPrimitivePC_88_30Ptr;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        Offset_t data;
+        FSeek(returnPos);
+    }   
+} OffsetPtr;
+
+typedef struct
+{
+    u32 _00;
+    Offset_t _04;
+    // TODO
+} SuRenderPrimitivePC_88_78;
+
+typedef struct
+{
+    u32 pName;
+    u32 pHWTexture;
+} DirectXTextureInfo;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        DirectXTextureInfo data;
+        FSeek(returnPos);
+    }   
+} DirectXTextureInfoPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        if (count) UInt32Ptr data[count];
+        FSeek(returnPos);
+    }   
+} UInt32PtrArrayPtr <optimize=false>;
+
+typedef struct
+{
+    u32 m_uFlags;
+    SuRenderTexturePtr m_pTexInfo;
+} DirectXSamplerState;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        DirectXSamplerState data;
+        FSeek(returnPos);
+    }   
+} DirectXSamplerStatePtr <optimize=false>;
+
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        if (count) DirectXSamplerStatePtr data[count];
+        FSeek(returnPos);
+    }   
+} DirectXSamplerStatePtrArrayPtr <optimize=false>;
+
+typedef struct(int in_capacity)
+{
+    local int capacity = in_capacity;
+    local int count = 0;
+    local u32 items[capacity];
+} SetUInt32;
+
+local SetUInt32 _seenHashes(1000);
+
+bool SetUInt32_AddItem(SetUInt32& self, u32 item)
+{
+    local int i;
+    local bool add = true;
+    for(i = 0; i < self.capacity; ++i)
+    {
+        if (self.items[i] == item)
+        {
+            add = false;
+            break;
+        }
+    }
+    if (add)
+    {
+        self.items[self.count++] = item;
+    }
+    return add;
+}
+
+typedef struct
+{
+    u32 _00;
+    u32 _04; 
+    u32 _08; 
+    u32 _0C; // maybe tex index
+    FloatPtr _10;
+    u32 _14; 
+    u32 _18; 
+    u32 _1C; 
+    u32 _20;
+    u32 _24; 
+    u32 _28; 
+    UInt32Ptr _2C;
+    SurenderPrimitivePC_88_30Ptr _30;
+    UInt32Ptr _34;
+    UInt32Ptr _38;
+    Offset_t _3C;
+    Offset_t _40;
+    u32 _44;
+    u32 _48;
+    u32 _4C;
+    u32 _50;
+    u32 _54;
+    u32 _58;
+    u32 _5C;
+    Offset_t _60;
+    u32 _64;
+    u32 _68;
+    u32 _6C;
+    u32 _70;
+    u32 m_uNumTextures;
+    if (m_uNumTextures > 1)
+    {
+        do {} while (false);
+    }
+    SuRenderTexturePtrArrayPtr m_ppTextures(m_uNumTextures);
+    StringPtr m_pName;
+    
+    if (SetUInt32_AddItem(_seenHashes, _04))
+    {
+        local int i = 0;
+        local string texNames="";
+        for (i=0; i < m_uNumTextures;++i)
+        {
+            texNames = Str("%s %s", texNames, m_ppTextures.data[i].data.m_pTextureResource.data.m_pName.data);
+        }
+        
+        Printf("%08X %s\n", _04, texNames);   
+    }
+} SuRenderMaterialPC <optimize=false>;
+
+typedef struct
+{
+	SuMatrix44 _00;
+    SuVector4 _40;
+    u32 _50;
+    u32 _54;
+    u32 _58;
+    u32 _5C;
+	uint32 _60[8];
+	uint32 _80;
+	uint32 _84;
+	SuRenderMaterialPtr m_pMaterial; 
+	uint32 m_uNumTriangles;
+    IndexBufferPtr m_pTriangles(m_uNumTriangles);
+	uint32 _94;
+    SuRenderVertexStreamPtr m_pVertexStream;
+	uint32 _9C; 
+	uint32 _A0; 
+	uint32 _A4;
+} SuRenderPrimitivePC;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        if (IsWii() )
+        {
+            struct SuRenderPrimitiveWii data;
+        }
+        else if (IsPC())
+        {
+            struct SuRenderPrimitivePC data;
+        }
+        FSeek(returnPos);
+    }   
+} SuRenderPrimitivePtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        if (count) SuRenderPrimitivePtr data[count];
+        FSeek(returnPos);
+    }   
+} SuRenderPrimitivePtrArrayPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        if (count) u32 data[count];
+        FSeek(returnPos);
+    }   
+} UInt32ArrayPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        if (count) SuMatrix44 data[count];
+        FSeek(returnPos);
+    }   
+} SuMatrix44ArrayPtr <optimize=false>;
+
+typedef struct
+{
+  SuVector4 m_boundingSphere;
+  u32 m_uNumPrimitives;
+  SuRenderPrimitivePtrArrayPtr m_ppPrimitives(m_uNumPrimitives);
+  u32 m_uNumBones;
+  UInt32ArrayPtr m_pBoneMatrixIndices(m_uNumBones);
+  SuMatrix44ArrayPtr m_pBoneInverseMatrices(m_uNumBones);
+  StringPtr m_pName;
+} SuRenderMesh;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuRenderMesh data;
+        FSeek(returnPos);
+    }   
+} SuRenderMeshPtr <optimize=false>;
+
+typedef struct
+{
+  float m_fThresholdDistance;
+  SuRenderMeshPtr m_pMesh;
+  u16 m_uChildBranch;
+  u16 m_Padding;
+} SuLodThreshold <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuLodThreshold data[count];
+        FSeek(returnPos);
+    }   
+} SuLodThresholdArrayPtr <optimize=false>;
+
 typedef struct 
 {
-	// 0x00
-	uint32 ContentType0Count; // count
-	
-	// 0x04
-    struct
-    {
-        // Read array offset
-	    Offset_t Offset; // offset to array of offsets to ForestContentType0Header_t       
-        PushFPos();
+  // SuBranch base;
+  u32 m_uNumThresholds;
+  SuLodThresholdArrayPtr m_pThresholds(m_uNumThresholds);
+  u32 pad;
+  SuMatrix44 m_ObbTransform;
+  SuVector4 m_Extents;
+} SuLodBranch;
 
-        // Read array
-        SeekToOffset( Offset );
-        local int i = 0;
-        for ( i = 0; i < ContentType0Count; i++ )
-        {
-            struct
-            {
-                // Read offset
-                SetBackColor( 0xb25c98 );
-                Offset_t Offset;
-                PushFPos();
-                
-                // Read value at offset
-                SeekToOffset( Offset );
-                ForestContentType0Header_t Value;
-                
-                // Restore file position to read next offset
-                PopFPos();
-            } Item;
-        }
-        
-        // Restore file position
-        PopFPos();
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuLodBranch data;
+        FSeek(returnPos);
+    }   
+} SuLodBranchPtr <optimize=false>;
 
-    } ContentType0Array;
-	
-	// 0x08
-	uint32 TextureCount; // count
-	
-	// 0x0C
-    struct
-    {
-	    Offset_t Offset; // offset to array of offsets to Texture_t
-        PushFPos();
+typedef struct
+{
+  u16 m_uParent;
+  u16 m_uChild;
+  u16 m_uSibling;
+  u16 m_uBranchFlags;
+  u32 m_uHashValue;
+  StringPtr m_pName;
+  SuBlindDataPtr m_pBlindData;
+  if (m_uBranchFlags & 0x10) {
+      SuLodBranch derived;
+  }
+  if (m_uBranchFlags & 0x8) {
+      SuRenderMeshPtr m_pMesh;
+  }
+} SuBranch <optimize=false>;
 
-        // Read array
-        SeekToOffset( Offset );
-        local int i = 0;
-        for ( i = 0; i < TextureCount; i++ )
-        {
-            struct
-            {
-                // Read offset
-                SetBackColor( 0x5c5c84 );
-                Offset_t Offset;
-                PushFPos();
-                
-                // Read value at offset
-                SeekToOffset( Offset );
-                Texture_t Value;
-                
-                // Restore file position to read next offset
-                PopFPos();
-            } Item;
-        }
-        
-        // Restore file position
-        PopFPos();
-    } Textures;
-	
-	// 0x10
-	uint32 ContentType2Count; // count
-	
-	// 0x14
-    struct
-    {
-	    Offset_t Offset; // offset to array of ForestContentType2Header_t
-        PushFPos();
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuBranch data;
+        FSeek(returnPos);
+    }   
+} SuBranchPtr <optimize=false>;
 
-        // Read array
-        SeekToOffset( Offset );
-        ForestContentType2Header_t Value[ ContentType2Count ];
-        
-        // Restore file position
-        PopFPos();
-    } ContentType2Array;
-	
-	// 0x18
-	uint32 ContentType3Count; // count
-	
-	// 0x1C
-    struct
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuBranchPtr data[count];
+        FSeek(returnPos);
+    }   
+} SuBranchPtrArrayPtr <optimize=false>;
+
+typedef struct
+{
+  SuVector4 m_A;
+  SuVector4 m_B;
+  SuVector4 m_C;
+} SuCollisionTriangle;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuCollisionTriangle data;
+        FSeek(returnPos);
+    }   
+} SuCollisionTrianglePtr <optimize=false>;
+
+typedef struct
+{
+  SuMatrix44 m_OBBTransform;
+  SuVector4 m_Extents;
+  SuVector4 m_Sphere;
+  u32 m_uHash;
+  u16 m_uType;
+  u16 m_uBranchIndex;
+  u32 m_uNumTriangles;
+  // TODO?
+  //UInt32Ptr m_pBlindData;
+  //SuCollisionTrianglePtr m_pTriangles;
+} SuCollisionMesh <optimize=false>;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuCollisionMesh data;
+        FSeek(returnPos);
+    }   
+} SuCollisionMeshPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        if (count) SuCollisionMeshPtr data[count];
+        FSeek(returnPos);
+    }   
+} SuCollisionMeshPtrPtr <optimize=false>;
+
+typedef enum
+{
+  eFallOffType_FT_NONE = 0x0,
+  eFallOffType_FT_LINEAR = 0x1,
+  eFallOffType_FT_QUADRATIC = 0x2,
+  eFallOffType_FT_CUBIC = 0x3,
+} eFallOffType;
+
+typedef enum
+{
+  eSharedLightType_SLT_Unknown = 0x0,
+  eSharedLightType_SLT_Point = 0x1,
+  eSharedLightType_SLT_Spot = 0x2,
+  eSharedLightType_SLT_Directional = 0x3,
+  eSharedLightType_SLT_Ambient = 0x4,
+  eSharedLightType_SLT_3DSMaxPoint = 0x5,
+  eSharedLightType_eLightTypeCount = 0x6,
+} eSharedLightType;
+
+typedef struct
+{
+  DataArrayElement dataArray[5];
+} SuAnimatedFloatData_1;
+
+typedef struct
+{
+  eSharedLightType m_type;
+  float m_innerConeAngle;
+  float m_outerConeAngle;
+  eFallOffType m_falloff;
+  SuVector4 m_ShadowColour;
+  u32 m_uIsShadowLight;
+  u32 m_uBranchIndex;
+  SuRenderTexturePtr m_pTexture;
+  SuAnimatedFloatData_1 m_animatedData;
+} SuLightData;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuLightData data;
+        FSeek(returnPos);
+    }   
+} SuLightDataPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        if (count) SuLightDataPtr data[count];
+        FSeek(returnPos);
+    }   
+} SuLightDataPtrPtr <optimize=false>;
+
+typedef struct
+{
+  DataArrayElement dataArray[2];
+} SuAnimatedFloatData_0;
+
+typedef struct
+{
+  int m_Branch;
+  int m_Type;
+  float m_FOV;
+  SuAnimatedFloatData_0 m_animatedData;
+} SuCameraData;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuCameraData data;
+        FSeek(returnPos);
+    }   
+} SuCameraDataPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        if (count) SuCameraDataPtr data[count];
+        FSeek(returnPos);
+    }   
+} SuCameraDataPtrPtr <optimize=false>;
+
+typedef struct
+{
+  u32 m_uBranchIndex;
+  u32 m_type;
+  float m_magnitude;
+  float m_attenuation;
+  SuVector4 m_direction;
+} SuField;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuField data;
+        FSeek(returnPos);
+    }   
+} SuFieldPtr <optimize=false>;
+
+typedef struct
+{
+  u32 m_Shift;
+} SuRamp;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuRamp data;
+        FSeek(returnPos);
+    }   
+} SuRampPtr <optimize=false>;
+
+typedef struct
+{
+  u32 m_BranchId;
+  u32 m_Degree;
+  u32 m_NumControlPoints;
+  u32 m_NumKnots;
+} SuCurve;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuCurve data;
+        FSeek(returnPos);
+    }   
+} SuCurvePtr <optimize=false>;
+
+typedef struct
+{
+  u32 m_uBranchIndex;
+  int m_type;
+  float m_speedMin;
+  float m_speedMax;
+  float m_lifeMin;
+  float m_lifeMax;
+  int m_maxCount;
+  float m_spread;
+  SuVector4 m_direction;
+  float m_randomDirection;
+  float m_directionalSpeed;
+  u32 m_faceVelocity;
+  float m_inheritFactor;
+  float m_conserveFactor;
+  float m_convertorFactor;
+  u32 m_reserved0;
+  u32 m_reserved1;
+  int m_iParticleBranch;
+  float m_curviness;
+  u32 m_useFog;
+  u32 m_refraction;
+  int m_volumeShape;
+  float m_volumeSweep;
+  float m_awayFromCenter;
+  float m_alongAxis;
+  float m_aroundAxis;
+  float m_awayFromAxis;
+  float m_tangentSpeed;
+  float m_normalSpeed;
+  float m_rotation;
+  float m_rotateSpeed;
+  u32 m_colour;
+  u32 m_randomColour;
+  float m_width;
+  float m_height;
+  float m_randomScale;
+  float m_scrollSpeedU;
+  float m_scrollSpeedV;
+  int m_layer;
+  u32 m_ePlaneMode;
+  float m_fPlaneConst;
+  SuVector3 m_vPlaneNormal;
+  u32 m_flags;
+  int m_numFields;
+  SuFieldPtr m_pFields;
+  SuRampPtr m_pColourRamp;
+  SuRampPtr m_pWidthRamp;
+  SuRampPtr m_pHeightRamp;
+  SuCurvePtr m_pCurve;
+  SuRenderMaterialPtr m_pMaterial;
+  SuRenderTexturePtr m_pTexture;
+  SuAnimatedFloatData_0 m_animatedData;
+} SuEmitterData;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuEmitterData data;
+        FSeek(returnPos);
+    }   
+} SuEmitterDataPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        if (count) SuEmitterDataPtr data[count];
+        FSeek(returnPos);
+    }   
+} SuEmitterDataPtrPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        if (count) SuCurvePtr data[count];
+        FSeek(returnPos);
+    }   
+} SuCurvePtrPtr <optimize=false>;
+
+typedef struct
+{
+  float PosU;
+  float PosV;
+  float Angle;
+  float ScaleU;
+  float ScaleV;
+} SuTextureTransform;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuTextureTransform data;
+        FSeek(returnPos);
+    }   
+} SuTextureTransformPtr <optimize=false>;
+
+typedef struct
+{
+  u8 gap0[4];
+  int m_noFrames;
+  int m_noBones;
+  int m_noUVBones;
+  int m_noFloatStreams;
+} SuAnimation;
+
+typedef struct 
+{
+  float minimum;
+  float delta;
+} SuCubicAnimationReduced2QuantizedParamData;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuCubicAnimationReduced2QuantizedParamData data;
+        FSeek(returnPos);
+    }   
+} SuCubicAnimationReduced2QuantizedParamDataPtr <optimize=false>;
+
+typedef struct
+{
+    SuAnimation base;
+    SuCubicAnimationReduced2QuantizedParamDataPtr m_pParamData;
+} SuCubicAnimationReduced2Quantized;
+
+typedef struct 
+{
+    SuAnimation base;
+    FloatPtr m_pParamData;
+} SuCubicAnimation16Reduced2;
+
+typedef struct 
+{
+    SuAnimation base;
+    FloatPtr m_pParamData;
+} SuCubicAnimation16Reduced;
+
+typedef struct
+{
+    SuAnimation base;
+    SuVector4Ptr m_pParamData;
+} SuCubicAnimation8;
+
+typedef struct 
+{
+    SuAnimation base;
+    SuVector4Ptr m_pParamData;
+} SuCubicAnimation16;
+
+typedef struct
+{
+    SuAnimation base;
+    int m_poseStride;
+} SuSimpleAnimation;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuAnimation data;
+        FSeek(returnPos);
+    }   
+} SuAnimationPtr <optimize=false>;
+
+typedef struct
+{
+  SuAnimationPtr m_pAnimData;
+  StringPtr m_pAnimName;
+  u32 m_Hash;
+} SuAnimationEntry;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        //SuAnimationEntry data;
+        FSeek(returnPos);
+    }   
+} SuAnimationEntryPtr <optimize=false>;
+
+typedef struct
+{
+  u32 hash;
+  int index;
+} StreamOveride;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        StreamOveride data;
+        FSeek(returnPos);
+    }   
+} StreamOveridePtr <optimize=false>;
+
+typedef struct
+{
+  int m_uNoWeights;
+  u16 m_BranchIndexes[4];
+  float m_Weights[4];
+} SuMatrixWeightInfo;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuMatrixWeightInfo data;
+        FSeek(returnPos);
+    }   
+} SuMatrixWeightInfoPtr <optimize=false>;
+
+typedef struct
+{
+  u32 m_blendShapeBufferSize;
+} SuPlatformInstanceDataInfo;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0) {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuPlatformInstanceDataInfo data;
+        FSeek(returnPos);
+    }   
+} SuPlatformInstanceDataInfoPtr <optimize=false, bgcolor=cRed>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
     {
-	    Offset_t Offset; // offset to ?
-    } ContentType3Array;
-	
-	// 0x20 
-	uint32 Field20; // 0?
-} ForestHeader_t <bgcolor=0xc64649, optimize=false>;
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuVector4 value[count];
+        FSeek(returnPos);
+    }
+} SuVector4ArrayPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuQuaternion value[count];
+        FSeek(returnPos);
+    }
+} SuQuaternionArrayPtr <optimize=false>;
+
+typedef struct
+{
+  SuBlindDataPtr m_pBlindData;
+  u32 m_uHashValue;
+  u32 m_uNumBranches;
+  SuBranchPtrArrayPtr m_ppBranches(m_uNumBranches);
+  SuVector4ArrayPtr m_pTranslations(m_uNumBranches);
+  SuQuaternionArrayPtr m_pRotations(m_uNumBranches);
+  SuVector4ArrayPtr m_pScales(m_uNumBranches);
+  u32 m_NumTextureMatrices;
+  u32 m_uNumCollisionMeshes;
+  SuCollisionMeshPtrPtr m_ppCollisionMeshes(m_uNumCollisionMeshes);
+  u32 m_uNumLights;
+  SuLightDataPtrPtr m_ppLights(m_uNumLights);
+  u32 m_uNumCameras;
+  SuCameraDataPtrPtr m_ppCameras(m_uNumCameras);
+  u32 m_uNumEmitters;
+  SuEmitterDataPtrPtr m_ppEmitters(m_uNumEmitters);
+  u32 m_uNumCurves;
+  SuCurvePtrPtr m_ppCurves(m_uNumCurves);
+  SuTextureTransformPtr m_pDefaultTextureTrans;
+  u32 m_uNumAnimations; 
+  // TODO doesnt load
+  SuAnimationEntryPtr m_pAnimationEntrys;
+  u32 m_uNoFloatStreams;
+  FloatPtr m_pDefaultAnimFloats;
+  u32 m_uNoSreamOverideIndexes;
+  //Offset_t unk;
+  
+  // TODO this probably doesnt match with wii at all
+  //StreamOveridePtr m_pStreamOverideIndexes;
+  //u32 m_uNoMatrixWeights;
+  //SuMatrixWeightInfoPtr m_pMatrixWeights;
+  //SuMatrix44Ptr m_pWeightInversMatrices;
+  //SuPlatformInstanceDataInfoPtr m_pPlatformInstanceDataInfo;
+} SuRenderTree <bgcolor=cYellow>;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuRenderTree value;
+        FSeek(returnPos);
+    }
+} SuRenderTreePtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuRenderTreePtr value[count];
+        FSeek(returnPos);
+    }
+} SuRenderTreePtrArrayPtr <optimize=false>;
+
+typedef struct
+{
+  u32 m_hash;
+  u32 m_uNumTreeHashes;
+  UInt32ArrayPtr m_pTreeHashes(m_uNumTreeHashes);
+} SuTreeGroup <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuTreeGroup value[count];
+        FSeek(returnPos);
+    }
+} SuTreeGroupArrayPtr <optimize=false>;
+
+typedef struct 
+{
+    u32 m_uNumTrees;
+    SuRenderTreePtrArrayPtr m_ppTrees(m_uNumTrees);
+    u32 m_uNumTextureResources;
+    SuRenderTextureResourcePtrArrayPtr m_ppTextureResources(m_uNumTextureResources);
+    u32 m_uNumGroups;
+    SuTreeGroupArrayPtr m_pGroups(m_uNumGroups);
+    u32 m_uNumTextures;
+    SuRenderTexturePtrArrayPtr m_ppTextures(m_uNumTextures);
+    SuBlindDataPtr m_pBlindData;
+} SuRenderForest <bgcolor=0xc64649, optimize=false>;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        PushBaseOffset();
+        SuRenderForest value;
+        PopBaseOffset();
+        FSeek(returnPos);
+    }
+} SuRenderForestPtr <optimize=false>;
+
+typedef struct
+{		
+    g_zigBaseOffset = ReadInt(FTell() + 12); // m_iGpuData
+    
+	u32 m_iName;
+	StringPtr m_pName;
+    SuRenderForestPtr m_pForest;
+	u32 m_iGpuData;
+} ForestHeader <bgcolor=0xa3473c, optimize=false>;
+
+typedef struct
+{ 
+	u32 count;
+	struct ForestHeader data[count];
+} ForestHeaderArray <bgcolor=0x823931, optimize=false>;
 
 struct Node_t;
 struct ForestContentType9_t;
@@ -260,281 +2088,6 @@ typedef struct
     float Z;
     float W;
 } Vector4_t;
-
-typedef struct
-{
-	// 0x00 
-	uint32 Field00; // 0?
-	
-	// 0x04
-	uint32 Hash; // hash?
-	
-	// 0x08
-	uint32 NodeCount; // count
-	
-	// 0x0C
-    struct
-    {
-	    Offset_t Offset; // offset to array of offsets to Node_t
-        PushFPos();
-
-        // Read array
-        SeekToOffset( Offset );
-        local int i = 0;
-        for ( i = 0; i < NodeCount; i++ )
-        {
-            struct
-            {
-                // Read offset
-                SetBackColor( 0x7f467c );
-                Offset_t Offset;
-                PushFPos();
-                
-                // Read value at offset
-                SeekToOffset( Offset );
-                Node_t Value;
-                
-                // Restore file position to read next offset
-                PopFPos();
-            } Item;
-        }
-        
-        // Restore file position
-        PopFPos();
-    } Nodes;
-	
-	// 0x10
-    struct 
-    {
-       	Offset_t Offset;
-
-        PushFPos();
-        SeekToOffset( Offset );
-
-        SetBackColor( 0xd389cf );     
-        Vector4_t Value[ NodeCount ];
-
-        PopFPos();
-
-    } NodeTranslations;
-	
-	// 0x14
-    struct 
-    {
-       	Offset_t Offset; 
-
-        PushFPos();
-        SeekToOffset( Offset );
-
-        SetBackColor( 0xbc7ab9 );
-        Vector4_t Value[ NodeCount ];
-
-        PopFPos();
-
-    } NodeRotations;
-	
-	// 0x18
-    struct 
-    {
-       	Offset_t Offset; 
-
-        PushFPos();
-        SeekToOffset( Offset );
-
-        SetBackColor( 0xb791b5 );
-        Vector4_t Value[ NodeCount ];
-
-        PopFPos();
-
-    } NodeScales;
-	
-	// 0x1C
-	uint32 Field1C; // count
-	
-	// 0x20
-	uint32 ContentType9Count; // count
-	
-	// 0x24
-    struct
-    {
-	    Offset_t Offset; // offset to array of offsets to Camera_t
-        PushFPos();
-
-        // Read array
-        SeekToOffset( Offset );
-        local int i = 0;
-        for ( i = 0; i < ContentType9Count; i++ )
-        {
-            struct
-            {
-                // Read offset
-                SetBackColor( 0x9c9e53 );
-                Offset_t Offset;
-                PushFPos();
-                
-                // Read value at offset
-                SeekToOffset( Offset );
-                ForestContentType9_t Value;
-                
-                // Restore file position to read next offset
-                PopFPos();
-            } Item;
-        }
-        
-        // Restore file position
-        PopFPos();
-    } ContentType9;
-	
-	// 0x28
-	uint32 Field28; // count
-	
-	// 0x2C
-	Offset_t Field2C; // offset to ?
-	
-	// 0x30
-	uint32 CameraCount; // count
-	
-	// 0x34
-    struct
-    {
-	    Offset_t Offset; // offset to array of offsets to Camera_t
-        PushFPos();
-
-        // Read array
-        SeekToOffset( Offset );
-        local int i = 0;
-        for ( i = 0; i < CameraCount; i++ )
-        {
-            struct
-            {
-                // Read offset
-                SetBackColor( 0x9c9e53 );
-                Offset_t Offset;
-                PushFPos();
-                
-                // Read value at offset
-                SeekToOffset( Offset );
-                Camera_t Value;
-                
-                // Restore file position to read next offset
-                PopFPos();
-            } Item;
-        }
-        
-        // Restore file position
-        PopFPos();
-    } Cameras;
-	
-	// 0x38
-	uint32 Field38; // count
-	
-	// 0x3C
-	Offset_t Field3C; // offset to ?
-	
-	// 0x40
-	uint32 Field40; // count
-	
-	// 0x44
-	Offset_t Field44; // offset to ?
-	
-	// 0x48
-	Offset_t Field48; // offset to ?
-	
-	// 0x4C
-	uint32 AnimationCount; // count
-	
-	// 0x50
-    struct
-    {
-	    Offset_t Offset; // offset to array of AnimationEntry_t
-        PushFPos();
-
-        // Read array
-        SeekToOffset( Offset );
-        AnimationEntry_t Value[ AnimationCount ];
-        
-        // Restore file position
-        PopFPos();
-    } Animations;
-	
-	// 0x54
-	uint32 Field54; // count
-	
-	// 0x58
-    struct
-    {
-	    Offset_t Offset;
-        PushFPos();
-
-        SeekToOffset( Offset );
-        uint32 Value[Field54];
-        
-        // Restore file position
-        PopFPos();
-    } Field58;
-	
-	// 0x5C
-	uint32 Field5C; // count
-	
-	// 0x60
-    struct
-    {
-	    Offset_t Offset;
-        PushFPos();
-
-        SeekToOffset( Offset );
-        uint32 Value[Field54 * 3];
-        
-        // Restore file position
-        PopFPos();
-    } Field60;
-
-} ForestContentType0Header_t <bgcolor=0x8c3271>;
-
-typedef struct 
-{
-	// 0x00
-	StringOffset_t Name; // offset to a string
-	
-	// 0x04
-	uint32 Field04; // 0
-	
-	// 0x08
-	ZIGOffset_t Offset; // offset into .zig file
-	
-	// 0x0C
-	uint32 Field0C; // 0
-} Texture_t <bgcolor=0x1f1f60>;
-
-typedef struct 
-{
-	// 0x00
-	uint32 Hash;
-	
-	// 0x04
-	uint32 Count;
-	
-	// 0x08
-    struct
-    {
-        Offset_t Offset; // array of uint32 hashes?
-        
-        PushFPos();
-
-        SeekToOffset( Offset );
-        uint32 Value[Count];
-
-        PopFPos();
-
-    } Hashes;
-    
-
-} ForestContentType2Header_t <bgcolor=0x1e4760, optimize=false>;
-
-typedef struct ForestContentType3Header_t
-{
-	// reserved
-};
 
 typedef struct
 {
@@ -556,71 +2109,6 @@ typedef struct
 } Group_t;
 
 struct Shape_t;
-
-typedef struct 
-{
-	// 0x02
-	uint16 ParentId;
-	
-	// 0x00
-	uint16 Id;
-	
-	// 0x04
-	uint16 Field04; // number of children?
-	
-	// 0x06
-	uint16 Type; 
-	
-	// 0x08
-	uint32 Hash;
-	
-	// 0x0C
-	StringOffset_t Name;
-	
-	// 0x10
-	uint32 Field10; // 0
-
-    SetBackColor( 0x107211 );
-    if ( Type == 8 )
-    {
-        struct
-        {
-            Offset_t Offset;
-            
-            PushFPos();
-    
-            SeekToOffset( Offset );
-            Shape_t Value;
-    
-            PopFPos();
-    
-        } Shape;
-    }
-    else if ( Type == 0x10 ) // group
-    {
-        // 0x14
-        uint32 Field14;
-
-        if ( Field14 > 0 )
-        {
-            struct
-            {
-                Offset_t Offset;
-                
-                PushFPos();
-        
-                SeekToOffset( Offset );
-                Group_t Value;
-        
-                PopFPos();
-        
-            } Group;
-           
-            float Field1C[21];
-        }
-    }
-
-} Node_t <bgcolor=0x34540b>;
 
 typedef struct
 {
@@ -773,164 +2261,6 @@ typedef struct
     uint16 KeyFrameTimes[ KeyFrameCount ];
 } NodeAnimationTrack_t <optimize=false>;
 
-struct Mesh_t;
-
-typedef struct
-{
-	// 0x00
-	float Field00[4];
-	
-	// 0x10
-	uint32 MeshCount; // count
-	
-	// 0x14
-    struct
-    {
-	    Offset_t Offset; // offset to array of offsets to Mesh_t
-        PushFPos();
-
-        // Read array
-        SeekToOffset( Offset );
-        local int i = 0;
-        for ( i = 0; i < MeshCount; i++ )
-        {
-            struct
-            {
-                // Read offset
-                SetBackColor( 0x9c9e53 );
-                Offset_t Offset;
-                PushFPos();
-                
-                // Read value at offset
-                SeekToOffset( Offset );
-                Mesh_t Value;
-                
-                // Restore file position to read next offset
-                PopFPos();
-            } Mesh;
-        }
-        
-        // Restore file position
-        PopFPos();
-    } Meshes;
-	
-	// 0x18
-	uint32 Field18; // 0?
-	
-	// 0x1C
-	Offset_t Field1C; // offset
-	
-	// 0x20
-	Offset_t Field20; // offset
-	
-	// 0x24
-	StringOffset_t Name; // offset
-} Shape_t <bgcolor=0x107172>;
-
-struct MeshVertexBufferDescriptor_t;
-
-typedef struct
-{
-	// 0x00
-	float Field00[24];
-	
-	// 0x60
-	uint32 Field60[8];
-	
-	// 0x80
-	uint32 Field80;
-	
-	// 0x84
-	uint32 Field84;
-	
-	// 0x88
-	Offset_t Field88; // offset
-	
-	// 0x8C
-	uint32 ElementCount; // count
-
-    //local int hasExternalData = ReadUInt( startof(this) + 0xA0 ) == 3;
-    local int hasExternalData = true;
-	
-	// 0x90
-    if ( hasExternalData )
-	    ZIGOffset_t ElementBufferOffset; // offset into .zig
-    else
-        Offset_t ElementBufferOffset;
-	
-	// 0x94
-	uint32 Field94; // 0
-	
-	// 0x98
-    struct
-    {
-	    Offset_t Offset; // offset to array of offsets to Mesh_t
-        PushFPos();
-
-        SeekToOffset( Offset );
-        MeshVertexBufferDescriptor_t Value( hasExternalData );
-        
-        // Restore file position
-        PopFPos();
-    } VertexBufferDescriptor;
-	
-	// 0x9C
-	uint32 Field9C; // count
-	
-	// 0x100
-	uint32 Field100; // count
-	
-	// 0x104
-	uint32 Field104; // -1?
-} Mesh_t <bgcolor=0x16a0a3>;
-
-typedef struct( int hasExternalData )
-{
-	// 0x00
-	Offset_t Field00; // offset
-	
-	// 0x04
-	uint32 Field04; // 0?
-	
-	// 0x08
-	uint32 Field08; // count
-	
-	// 0x0C
-	uint32 VertexStride; // count
-	
-	// 0x10
-	uint32 VertexCount;
-	
-	// 0x14
-    if ( hasExternalData )
-	    ZIGOffset_t VertexBufferOffset;
-    else
-        Offset_t VertexBufferOffset;
-	
-	// 0x18 
-	uint32 Field18; // 0?
-	
-	// 0x1C
-	uint32 Field1C; // 0?
-	
-	// 0x20
-	Offset_t Field20; // offset
-	
-	// 0x24
-	uint32 Field24; // count
-	
-	// 0x28
-	Offset_t Field28; // offset
-	
-	// 0x2C
-	uint32 Field2C; // 0?
-	
-	// 0x30
-	uint32 Field30; // 0?
-	
-	// 0x34
-	uint32 Field34; // 0?
-}  MeshVertexBufferDescriptor_t <bgcolor=0x17c1c4>;
 
 //------------------------------------------------
 // Display-time read functions
@@ -968,36 +2298,688 @@ string ReadStringOffset( StringOffset_t& stringOffset )
     return stringOffset.String;
 }
 
-//---------------------------------------------
-// Parse file structure
-//---------------------------------------------
+typedef struct { float x,y,z,w; } float4;
 
-SetBackColor( 0x4f2520 );
-uint32 FileSize;
-
-struct
+typedef struct(u32 count)
 {
-    while ( !FEof() )
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
     {
-        PushBaseOffset();
-
-        struct
-        {
-            ForestChunkHeader_t Header;
-            
-            PushBaseOffset();
-            switch ( Header.FourCC )
-            {
-                case "FORE":
-                ForestList_t Contents;
-                break;
-            }
-            PopBaseOffset();
-
-            SeekToOffsetValue( Header.ChunkSize );
-        }
-        Chunk;
-
-        PopBaseOffset();
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        float4 value[count];
+        FSeek(returnPos);
     }
-} Chunks;
+} float4ArrayPtr <optimize=false>;
+
+typedef struct
+{
+  u32 m_nameHash;
+  int m_numPoints;
+  float4ArrayPtr m_pPoints;
+} TrailDataHeader;
+
+typedef struct
+{
+  u32 m_nameHash;
+  union { 
+      int m_iVal;
+      float m_fVal;
+      u32 m_uVal;
+  } m_value;
+} TriggerAttribute;
+
+typedef struct
+{
+  u32 m_nameHash;
+  int m_numAttributes;
+  int m_attributeStartIndex;
+  u32 m_uFlags;
+  float4 m_position;
+  float4 m_normal;
+  float4 m_vertices[4];
+} Trigger;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        Trigger value[count];
+        FSeek(returnPos);
+    }
+} TriggerArrayPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        TriggerAttribute value[count];
+        FSeek(returnPos);
+    }
+} TriggerAttributeArrayPtr <optimize=false>;
+
+typedef struct
+{
+  u32 m_uGroupNameHash;
+  u32 m_uLocatorNameHash;
+  u32 m_uMeshForestNameHash;
+  u32 m_uMeshTreeNameHash;
+  u32 m_uSetupObjectNameHash;
+  u32 m_uAnimatedInstanceNameHash;
+  u32 m_uSubDataHash;
+  u32 m_uFlags;
+  u32 m_uHealth;
+  float m_fSequenceStartFrameMultiplier;
+  float m_fSequenceInterSpawnMultiplier;
+  float m_fAnimatedInstancePlaybackSpeed;
+  float4 m_fPositionAsFloats;
+  float4 m_fRotationAsFloats;
+} Locator;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        Locator value[count];
+        FSeek(returnPos);
+    }
+} LocatorArrayPtr <optimize=false>;
+
+typedef struct
+{
+  u32 m_nameHash;
+  u32 m_logicVersion;
+  u32 m_numTriggers;
+  u32 m_numLocators;
+  TriggerArrayPtr m_pTriggers(m_numTriggers);
+  TriggerAttributeArrayPtr m_pAttributes(m_numTriggers);
+  LocatorArrayPtr m_pLocators(m_numLocators);
+} LogicHeader;
+
+typedef struct
+{
+  u32 m_numTriangles;
+  u32 m_triangleBaseIndex;
+  u16 m_childIndices[8];
+} OctreeNode_V1_1;
+
+typedef struct
+{
+  u16 v[3];
+  u16 flags;
+  int surfaceType;
+} Triangle;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        Triangle value[count];
+        FSeek(returnPos);
+    }
+} TriangleArrayPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        OctreeNode_V1_1 value[count];
+        FSeek(returnPos);
+    }
+} OctreeNode_V1_1ArrayPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        u16 value[count];
+        FSeek(returnPos);
+    }
+} UInt16ArrayPtr <optimize=false>;
+
+typedef struct
+{
+  u32 m_nameHash;
+  u32 m_collisionVersion;
+  u32 m_numVertices;
+  u32 m_numTriangles;
+  u32 m_numOctreeNodes;
+  u32 m_numOctreeTriangleIndices;
+  float minx;
+  float miny;
+  float minz;
+  float maxx;
+  float maxy;
+  float maxz;
+  float4ArrayPtr m_pVertices(m_numVertices);
+  TriangleArrayPtr m_pTriangles(m_numTriangles);
+  float4ArrayPtr m_pTriangleNormals(m_numTriangles);
+  OctreeNode_V1_1ArrayPtr m_pOctreeNodes(m_numOctreeNodes);
+  UInt16ArrayPtr m_pOctreeTriangleIndices(m_numOctreeNodes);
+  StringPtr m_pName;
+} CollisionMeshHeader_V1_1;
+
+typedef struct
+{
+  u32 m_nameHash;
+  u32 m_collisionVersion;
+} CollisionHeader;
+
+typedef struct
+{
+  SuVector3 m_axesXs;
+  SuVector3 m_axesYs;
+  SuVector3 m_axesZs;
+  SuVector4 m_center;
+  SuVector3 m_extents;
+} Volume_t;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        Volume_t value[count];
+        FSeek(returnPos);
+    }
+} Volume_tArrayPtr <optimize=false>;
+
+typedef struct
+{
+  u32 m_volumeQty;
+  Volume_tArrayPtr m_pVolumes(m_volumeQty);
+} VolumeVec_t;
+
+typedef struct
+{
+  u32 m_staticTreeQty;
+  u32 m_skydomeTreeQty;
+  u32 m_animatedTreeQty;
+  u32 m_totalTreeQty;
+  Offset_t /*void **/m_pVolumeVisDataPtrs;
+  UInt32ArrayPtr m_pTreeHashes(m_totalTreeQty);
+  VolumeVec_t m_cameraVolumes;
+  VolumeVec_t m_itemVolumes;
+} VisData_t;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        SuVector3 value;
+        FSeek(returnPos);
+    }
+} SuVector3Ptr <optimize=false>;
+
+typedef struct
+{
+  SuVector3 m_vCentre;
+  SuVector3Ptr m_apVerts[3];
+  struct NavTriPtr m_apLinks[3];
+  SuVector3Ptr m_apEdgeNormals[3];
+  u32 m_uiFlags;
+  SuVector3Ptr m_pvFaceNormal;
+  u32 m_uiSearchMarker;
+} NavTri;
+
+typedef Offset_t NavRacingLineTrackerArrayPtr;
+typedef Offset_t NavRacingLineRefArrayPtr;
+typedef Offset_t NavSpatialGroupPtr;
+
+typedef struct
+{
+  SuVector3 m_vNormal;
+  float m_fConst;
+  int padding[3];
+} Plane3;
+
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        struct NavWaypoint value;
+        FSeek(returnPos);
+    }
+} NavWaypointPtr <optimize=false>;
+
+typedef struct
+{
+  SuVector3 m_vFromToNormal;
+  SuVector3 m_vRight;
+  SuVector3 m_vLeft;
+  SuVector3 m_vRacingLineLimitLeft;
+  SuVector3 m_vRacingLineLimitRight;
+  Plane3 m_Plane;
+  float m_fRacingLineLimitLeft;
+  float m_fRacingLineLimitRight;
+  struct NavWaypointPtr m_pFrom;
+  struct NavWaypointPtr m_pTo;
+  float m_fLength;
+  float m_fWidth;
+  u32 m_uiCrossSection;
+  SuVector3ArrayPtr m_avCrossSection(m_uiCrossSection);
+  NavRacingLineTrackerArrayPtr m_pTrackers;
+  NavRacingLineRefArrayPtr m_aRacingLines;
+  u32 m_uiRacingLines;
+  NavSpatialGroupPtr m_pSpatialGroup;
+} NavWaypointLink;
+
+typedef struct
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        NavWaypointLink value;
+        FSeek(returnPos);
+    }
+} NavWaypointLinkPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        //NavWaypointLink value[count];
+        FSeek(returnPos);
+    }
+} NavWaypointLinkArrayPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        //NavWaypointLinkPtr value[count];
+        FSeek(returnPos);
+    }
+} NavWaypointLinkPtrArrayPtr <optimize=false>;
+
+typedef Offset_t NavWaypointSHSampleSetPtr;
+typedef Offset_t NavTrackMarkerPtrArrayPtr;
+
+typedef struct
+{
+  SuVector3 m_vPos;
+  SuVector3 m_vDir;
+  SuVector3 m_vUp;
+  char m_szName[64];
+  float m_fTrackDist;
+  u32 m_uiFlags;
+  u32 m_uiToLinks;
+  u32 m_uiFromLinks;
+  NavWaypointLinkPtrArrayPtr m_ppToLinks(m_uiFlags);
+  NavWaypointLinkArrayPtr m_pFromLinks(m_uiFromLinks);
+  float m_fTargetSpeed;
+  NavWaypointSHSampleSetPtr m_pSHSampleSet;
+  NavTrackMarkerPtrArrayPtr m_apTrackMarkers;
+  u32 m_uiTrackMarkers;
+  float m_fSnowLevel;
+  u8 m_aucFogBlend[4];
+  u8 m_aucBloomBlend[4];
+  u8 m_aucExposureBlend[4];
+  int padding[2];
+} NavWaypoint <optimize=false>;
+
+typedef enum
+{
+  eType__NOT_SET_0 = 0x0,
+  eType__START_LINE_0 = 0x1,
+  eType__FINISH_LINE_0 = 0x2,
+  eType__CHECKPOINT_0 = 0x3,
+  eType__GRIDPOSITION_0 = 0x4,
+  eType__DRIFT_0 = 0x5,
+  eType__PINCH_RACING_LINE_0 = 0x6,
+  eType__STICKY_TRACK_0 = 0x7,
+  eType__AUDIO_REVERB_0 = 0x8,
+  eType__RESPOTTING_0 = 0x9,
+  eType__RESPOT_FORWARDS_0 = 0xA,
+  eType__PODIUM_0 = 0xB,
+  eType__JUMP_START_0 = 0xC,
+  eType__JUMP_END_0 = 0xD,
+  eType__TARGET_0 = 0xE,
+  eType__STICKY_WEAK_TRACK_0 = 0xF,
+  eType__EXTRA_GRID_0 = 0x10,
+  eType__DRIFT_CANCEL_0 = 0x11,
+  eType__BOOST_REQUIRED_0 = 0x12,
+  eType__WEAPON_REQUIRED_0 = 0x13,
+  eType__BOOST_FIRE_0 = 0x14,
+  eType__WEAPON_FIRE_0 = 0x15,
+  eType__DOUBLE_GRAVITY_0 = 0x16,
+  eType__SPACE_WARP_0 = 0x17,
+  eType__AUDIO_AMBIENCE_1_0 = 0x18,
+  eType__AUDIO_AMBIENCE_2_0 = 0x19,
+  eType__AUDIO_AMBIENCE_3_0 = 0x1A,
+  eType__SNOWING_0 = 0x1B,
+  eType__LIGHTING_FOG_1_0 = 0x1C,
+  eType__LIGHTING_FOG_2_0 = 0x1D,
+  eType__LIGHTING_FOG_3_0 = 0x1E,
+  eType__LIGHTING_FOG_4_0 = 0x1F,
+  eType__LIGHTING_BLOOM_1_0 = 0x20,
+  eType__LIGHTING_BLOOM_2_0 = 0x21,
+  eType__LIGHTING_BLOOM_3_0 = 0x22,
+  eType__LIGHTING_BLOOM_4_0 = 0x23,
+  eType__LIGHTING_EXPOSURE_1_0 = 0x24,
+  eType__LIGHTING_EXPOSURE_2_0 = 0x25,
+  eType__LIGHTING_EXPOSURE_3_0 = 0x26,
+  eType__LIGHTING_EXPOSURE_4_0 = 0x27,
+  eType__NO_CATCHUP_0 = 0x28,
+  eType__NO_STUNTS_0 = 0x29,
+  eType__NO_BOOST_0 = 0x2A,
+} eType;
+
+typedef struct 
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        struct NavTrackMarker value;
+        FSeek(returnPos);
+    }
+} NavTrackMarkerPtr <optimize=false>;
+
+typedef struct
+{
+  SuVector3 m_vPos;
+  SuVector3 m_vDir;
+  SuVector3 m_vUp;
+  eType m_eType;
+  float m_fRadius;
+  NavWaypointPtr m_pWaypoint;
+  int m_iValue;
+  float m_fTrackDist;
+  NavTrackMarkerPtr m_pLinkedTrackMarker;
+  float m_fJumpSpeedPercentage;
+  u32 m_uiFlags;
+  char m_szText[16];
+} NavTrackMarker <optimize=false>;
+
+typedef struct 
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        NavTri value;
+        FSeek(returnPos);
+    }
+} NavTriPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        NavTri value[count];
+        FSeek(returnPos);
+    }
+} NavTriArrayPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        NavWaypoint value[count];
+        FSeek(returnPos);
+    }
+} NavWaypointArrayPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        //NavTri value[count];
+        FSeek(returnPos);
+    }
+} NavRacingLineArrayPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        NavTrackMarker value[count];
+        FSeek(returnPos);
+    }
+} NavTrackMarkerArrayPtr <optimize=false>;
+
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        //NavTri value[count];
+        FSeek(returnPos);
+    }
+} NavTrafficRouteArrayPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        //NavTri value[count];
+        FSeek(returnPos);
+    }
+} NavTrafficSpawnArrayPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        //NavTri value[count];
+        FSeek(returnPos);
+    }
+} NavBlockerMeshArrayPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        //NavTri value[count];
+        FSeek(returnPos);
+    }
+} NavErrorArrayPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        //NavTri value[count];
+        FSeek(returnPos);
+    }
+} NavSpatialGroupArrayPtr <optimize=false>;
+
+typedef struct(u32 count)
+{
+    local u32 base = gBaseOffset[gBaseOffsetIndex];
+    u32 offset;
+    if (offset != 0)
+    {
+        local u64 returnPos = FTell();
+        FSeek(offset + base);
+        //NavTri value[count];
+        FSeek(returnPos);
+    }
+} NavBuild3DRacingLineArrayPtr <optimize=false>;
+
+
+typedef struct
+{
+  u32 m_uiNameHash;
+  u32 m_uiVersion;
+  u32 m_bRemapped;
+  u32 m_uiVerts;
+  u32 m_uiNormals;
+  u32 m_uiTris;
+  u32 m_uiWaypoints;
+  u32 m_uiRacingLines;
+  u32 m_uiTrackMarkers;
+  u32 m_uiTrafficRoutes;
+  u32 m_uiTrafficSpawn;
+  u32 m_uiBlockers;
+  u32 m_uiErrors;
+  u32 m_uiSpatialGroups;
+  SuVector3ArrayPtr m_avVerts(m_uiVerts);
+  SuVector3ArrayPtr m_avNormals(m_uiNormals);
+  NavTriArrayPtr m_aTris(m_uiTris);
+  NavWaypointArrayPtr m_aWaypoints(m_uiWaypoints);
+  NavRacingLineArrayPtr m_aRacingLines(m_uiRacingLines);
+  NavTrackMarkerArrayPtr m_aTrackMarkers(m_uiTrackMarkers);
+  NavTrafficRouteArrayPtr m_aTrafficRoutes(m_uiTrafficRoutes);
+  NavTrafficSpawnArrayPtr m_aTrafficSpawn(m_uiTrafficSpawn);
+  NavBlockerMeshArrayPtr m_aBlockers(m_uiBlockers);
+  NavErrorArrayPtr m_aErrors(m_uiErrors);
+  NavSpatialGroupArrayPtr m_aSpatialGroups(m_uiSpatialGroups);
+  float m_fTotalTrackDist;
+  float m_fLowestPoint;
+  float m_fTrackBottomLeftX;
+  float m_fTrackBottomLeftZ;
+  float m_fTrackTopRightX;
+  float m_fTrackTopRightZ;
+  NavBuild3DRacingLineArrayPtr m_p3DracingLines(m_uiRacingLines);
+  float m_fHighestPoint;
+  u32 m_auiSettingsFogNameHash[4];
+  u32 m_auiSettingsBloomNameHash[4];
+  u32 m_auiSettingsExposureNameHash[4];
+  int padding[8];
+} Navigation;
+
+typedef struct
+{
+    SetBackColor( 0x4f2520 );
+    uint32 fileSize;
+    
+    struct
+    {
+        local uint64 endOffset = fileSize;
+        if (FileSize() > fileSize + 4) {
+            g_isMergedFile = true;
+            g_zigFileOffset = fileSize + 4;
+        }
+        
+        while ( FTell() < endOffset )
+        {
+            PushBaseOffset();
+    
+            struct
+            {
+                ChunkHeader header;
+                
+                PushBaseOffset();
+                switch ( header.id )
+                {
+                    case "TRAK":
+                        Navigation data;
+                        break;
+                    case "FORE":
+                        ForestHeaderArray data;
+                        break;
+                    case "PVD4":
+                        VisData_t data;
+                        break;
+                    case "COLI":
+                        CollisionMeshHeader_V1_1 data;
+                        break;
+                    case "LOGC":
+                        break;
+                    case "LF 2":
+                        break;
+                }
+                PopBaseOffset();
+    
+                SeekToOffsetValue( header.chunk_size );
+            }
+            chunk;
+    
+            PopBaseOffset();
+        }
+    } chunks;
+} ZIF;
+
+#ifndef HEADLESS
+ZIF file;
+#endif

@@ -1,0 +1,73 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h"
+#include "sasr_xpac_hashes.bt"
+
+#ifdef HEADLESS
+    #include "sasr_params.bt"
+    #include "sasr_zif.bt"
+#else
+    #define HEADLESS
+    #include "sasr_params.bt"
+    #include "sasr_zif.bt"
+    #undef HEADLESS
+#endif
+
+typedef struct
+{
+    u32 Field00;
+    u32 Field04;
+    u32 Alignment;
+    u32 FileCount;
+    u32 Field10;
+} XPACHeader <bgcolor=cRed>;
+
+typedef struct
+{
+    u32 Field00;
+    xpachash_t Hash;
+    u32 Offset;
+    u32 CompressedSize;
+    u32 UncompressedSize;
+    FPushRel(Offset);
+    if (ReadInt(FTell()) == 0x54525353)
+    {
+        FPushBase();
+        ExcelData Data;
+        FPopBase();
+    }
+    else if (ReadInt(FTell()+4) == 0x45524F46)
+    {
+        FPushBase();
+        ZIF Data;
+        FPopBase();
+    } 
+    else
+    {
+        u8 Data[CompressedSize];
+    }
+    FPop();
+} XPACFile <bgcolor=cBlue, optimize=false, read=(xpachash_t_ToString(Hash))>;
+
+typedef struct
+{
+    XPACHeader Header;
+    XPACFile Files[Header.FileCount];
+} XPAC;
+
+#ifndef HEADLESS
+FPushBase();
+XPAC File;
+FPopBase();
+#endif

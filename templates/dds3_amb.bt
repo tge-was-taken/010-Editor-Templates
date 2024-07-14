@@ -1,0 +1,189 @@
+//------------------------------------------------
+//--- 010 Editor v15.0beta2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#define HEADLESS
+#include "dds3_model.bt"
+#undef HEADLESS
+
+/*
+typedef unsigned int u32;
+typedef unsigned short u16;
+typedef unsigned char u8;
+typedef int s32;
+typedef short s16;
+typedef char s8;
+typedef float f32;
+*/
+typedef u32 ptr_t;
+
+typedef struct
+{
+    ptr_t ptr;
+    if (ptr != 0) 
+    {
+        local u32 temp = FTell();
+        FSeek(ptr);
+        string data;
+        FSeek(temp);
+    }
+} ptr_char_t <optimize=false, read=(data)>;
+
+typedef struct { float x,y,z,w; } sdfVector4_t;
+
+typedef struct
+{
+    u32 id;
+    u16 flags;
+    u16 parmBits;
+} sdfMatDef_t <style=sSection3>;
+
+typedef struct
+{
+    u16 format;
+    u16 pad0;
+    u32 pad1;
+    u32 id;
+    s32 parentIndex;
+    sdfVector4_t rotate;
+    sdfVector4_t pos;
+    sdfVector4_t scale;
+    ptr_t bounds; // sdfVector4*
+    ptr_t shape[3]; // void*
+} sdfModelNodeDef_t <style=sSection2>;
+
+typedef struct
+{
+    ptr_t ptr;
+    if (ptr != 0) 
+    {
+        local u32 temp = FTell();
+        FSeek(ptr);
+        sdfModelDef_t data;
+        FSeek(temp);
+    }
+} ptr_sdfModelDef_t <optimize=false>;
+
+typedef struct
+{
+    f32 x;
+    f32 y;
+    f32 z;
+} fldAmXYZ_t <style=sSection4>;
+
+typedef struct
+{
+    ptr_t ptr;
+    if (ptr) 
+    {
+        local u32 temp = FTell();
+        FSeek(ptr);
+        fldAmXYZ_t data;
+        FSeek(temp);
+    }
+} ptr_fldAmXYZ_t <optimize=false>;
+
+typedef struct
+{
+    u32 type;
+    ptr_fldAmXYZ_t pPos;
+} fldAmIcon_t <optimize=false,style=sSection3>;
+
+typedef struct
+{
+    ptr_char_t pName;
+    u32 nodeIdx;
+    ptr_t _pIcon; // fldAmIcon_t*
+    u32 nIcon;
+    s32 floor;
+    ptr_fldAmXYZ_t pPos0; // fldAmXYZ_t*
+    ptr_fldAmXYZ_t pPos1; // fldAmXYZ_t*
+    
+    if (_pIcon && nIcon) 
+    {
+        local u32 temp = FTell();
+        FSeek(_pIcon);
+        fldAmIcon_t pIcon;
+        FSeek(temp);
+    }
+} fldAmSBlock_t <optimize=false, read=(pName.data),style=sSection2>;
+
+typedef ptr_sdfModelDef_t ptr_fldAmMdl_t;
+
+typedef struct
+{
+    ptr_char_t pName;
+    ptr_t _pSB; // fldAmSBlock_t*
+    u32 nSB;
+    ptr_fldAmMdl_t pMdl; // fldAmMdl_t*
+    ptr_fldAmXYZ_t pPos; // fldAmXYZ_t*
+    
+    if (_pSB && nSB) 
+    {
+        local u32 temp = FTell();
+        FSeek(_pSB);
+        fldAmSBlock_t pSB[nSB];
+        FSeek(temp);
+    }
+} fldAmAreaData_t <optimize=false, read=(pName.data), style=sSection4>;
+
+typedef struct
+{
+    ptr_t ptr;
+    if (ptr) 
+    {
+        local u32 temp = FTell();
+        FSeek(ptr);
+        fldAmAreaData_t data;
+        FSeek(temp);
+    }
+} ptr_fldAmAreaData_t <optimize=false>;
+
+typedef struct
+{
+    u32 Version;
+    u8 MagCode[4];
+} fldAmFileHeader_t <style=sSection3>;
+
+typedef struct
+{
+    ptr_t pAmInfo; // u32*
+    ptr_t _pArea; // fldAmAreaData_t*
+    u32 nArea;
+    
+    if (_pArea && nArea) {
+        local u32 temp = FTell();
+        FSeek(_pArea);
+        fldAmAreaData_t pArea[nArea];
+        FSeek(temp);
+    }
+} fldAmFileHeader2_t <optimize=false,style=sSection2>;
+
+typedef struct 
+{
+    fldAmFileHeader_t header;
+    u32 fileSize;
+    u32 relocationTableOffset;
+    u32 relocationTableSize;
+    fldAmFileHeader2_t header2;
+    
+    if (relocationTableOffset)
+    {
+        // Read relocation table
+        FSeek( relocationTableOffset );
+        u8 relocationTable[ relocationTableSize ];
+        local int decodedAddressLocations[10000];
+        local int decodedAddressLocationCount = DecodeRelocationTable(relocationTable, relocationTableSize, 0, decodedAddressLocations);
+    }
+} fldAmFile <style=sSection1>;
+
+fldAmFile file;

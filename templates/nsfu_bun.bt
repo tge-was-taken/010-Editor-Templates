@@ -1,0 +1,170 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h"
+
+void ReadChunkList(u64 end) {
+    while (FTell() < end) {
+        struct bChunk Chunks;
+    }
+}
+
+typedef struct
+{
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    u32 Flags;
+    u32 MaterialCount;
+    u32 Field14;
+    u32 Field18;
+    u32 Field1C;
+    u32 Field20;
+    u32 FaceCount;
+    u32 Field28;
+    u32 Field2C;
+    u32 Field30;
+    u16 VertexCount;
+    u16 Field38;
+    u32 Field3C;
+    u32 Field40;
+} SolidPlatInfo_PC;
+
+typedef struct
+{
+    TVector3 Min;
+    u32 IndexCount;
+    TVector3 Max;
+    u32 TextureIndex;
+    u32 LightMaterialIndex;
+    u32 Field24;
+    u32 Field28;
+    u32 Field2C;
+    u32 Field30;
+    u32 IndexOffset;
+    u32 Flags;
+} SolidPlatMesh_PC;
+
+typedef enum<u32>
+{
+    Null = 0,
+    
+    //Test,
+    TrackGeometry = 0x34146,
+    
+    TrackInfo = 0x34201,
+    
+    TexturePack = 0xB3300000,
+    TextureAnimPack = 0xB0300100, // handled by TexturePack loader
+    
+    FEngFont = 0x30201,
+    
+    SolidList = 0x80134000,
+    SolidHeaderChunks = 0x80134001,
+    SolidHeaderChunk_1 = 0x134002,
+    SolidHeaderChunk_3 = 0x134003,
+    SolidHeaderChunk_4 = 0x134004,
+    SolidListPlatChunks = 0x80134008,
+    SolidChunks = 0x80134010,
+    SolidChunks_Header = 0x134011,
+    SolidChunks_Textures = 0x134012,
+    SolidChunks_LightMaterials = 0x134013,
+    SolidChunks_PlatNormalSmoother = 0x134017,
+    SolidChunks_PlatSmoothVertices = 0x134018,
+    SolidChunks_PlatSmoothVertices2 = 0x134019,
+    SolidChunks_B = 0x13401B,
+    SolidChunks_PositionMarkers = 0x13401A,
+    SolidPlatChunks = 0x80134100,
+    SolidPlatChunk_PC_Info = 0x134900,
+    SolidPlatChunk_PC_VertexBuffer = 0x134B01,
+    SolidPlatChunk_PC_MeshList = 0x134B02,
+    SolidPlatChunk_PC_IndexBuffer = 0x134B03,
+    SolidPlatChunk_GC_0 = 0x134800,
+    SolidPlatChunk_GC_1 = 0x134801,
+    SolidPlatChunk_GC_2 = 0x134802,
+    
+    
+    
+    LightList = 0x135200,
+    
+    AcidFx_Emitter = 0x35020,
+    AcidFx_Emitter2 = 0x35021,
+    
+    EventManager = 0x80036000,
+    EventManager_1 = 0x36001,
+    EventManager_AABBTree = 0x36002,
+    EventManager_3 = 0x36003,
+    
+    CollisionVolumes = 0x80034020,
+    CollisionVolumes_Info = 0x39200,
+    CollisionVolumes_VertexBuffer = 0x39201,
+    CollisionVolumes_IndexBuffer = 0x39202,
+    
+    Scenery = 0x80034100,
+    Scenery_Section = 0x34101,
+    Scenery_2 = 0x34102,
+    Scenery_3 = 0x34103,
+    Scenery_4 = 0x34104,
+    
+    HasSubChunks = 0x80000000,
+} bChunkType;
+
+typedef struct
+{
+    bChunkType Id;
+    u32 DataSize;
+    local u32 NextChunkOffset = FTell() + DataSize;
+    
+    if (DataSize > 0) 
+    {
+        if (Id & 0x80000000) 
+        {
+            ReadChunkList(FTell()+DataSize);
+        } 
+        else 
+        {
+            switch (Id) 
+            {
+                case SolidPlatChunk_PC_Info:
+                    SolidPlatInfo_PC Data;
+                    break;
+                    
+                case SolidPlatChunk_PC_VertexBuffer:
+                    FAlign(128);
+                    u8 Data[(NextChunkOffset - FTell())];
+                    break;
+                    
+                case SolidPlatChunk_PC_MeshList:
+                    FAlign(16);
+                    SolidPlatMesh_PC Data[(NextChunkOffset - FTell()) / 60];
+                    break;
+                    
+               case SolidPlatChunk_PC_IndexBuffer:
+                    FAlign(16);
+                    u16 Data[(NextChunkOffset - FTell()) / 2];
+                    break;
+                
+                default:
+                    u8 Data[DataSize];
+                    break;
+            }
+        }
+    }
+} bChunk <read=bChunk_ToString>;
+
+string bChunk_ToString(bChunk& chunk)
+{
+    return Str("%s [0x%08X] (0x%08X)", EnumToString(chunk.Id), chunk.Id, chunk.DataSize);
+}
+
+ReadChunkList(FileSize()); 

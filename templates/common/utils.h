@@ -169,6 +169,11 @@ local u64 gBasePosition = 0;
 local u64 gPositionStack[32];
 local u32 gPositionStackIndex = 0;
 
+u64 FTellBase()
+{
+    return gBasePosition;
+}
+
 void FPushBase()
 {
     gBasePosition = gBasePositionStack[ ++gBasePositionStackIndex ] = FTell();

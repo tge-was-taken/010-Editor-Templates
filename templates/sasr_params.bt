@@ -1,0 +1,121 @@
+//------------------------------------------------
+//--- 010 Editor v14.0 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "sasr_hashes.bt"
+
+typedef struct
+{
+    local u32 base = FTellBase();
+    u32 offset;
+    if (offset != 0 && offset < FileSize()) {
+        FPushRel(offset);
+        string data;
+        FPop();
+    } 
+} StringPtr <optimize=false, read=StringPtr_ToString>;
+
+string StringPtr_ToString(StringPtr& p)
+{
+    if (p.offset == 0)
+        return "<NULL>";
+    if (p.offset >= FileSize())
+        return "<INVALID>";
+    return p.data;
+}
+
+typedef struct
+{
+  sumohash_t name;
+  sumohash_t type;
+  union {
+      u32 ui32;
+      long i32;
+      float _f32;
+      StringPtr szString;
+  } value;
+} ExcelCellData <optimize=false, read=ExcelCellData_ToString>;
+
+string ExcelCellData_ToString(ExcelCellData& cell)
+{
+    string name_str = sumohash_t_ToString(cell.name);
+    string type_str = sumohash_t_ToString(cell.type);
+    string value_str = "<unknown value>";
+    if (Strcmp(type_str, "string") == 0)
+    {
+        value_str = cell.value.szString.data;
+    }
+    else if (Strcmp(type_str, "float") == 0)
+    {
+        value_str = Str("%f", cell.value._f32);
+    }
+    else if (Strcmp(type_str, "int") == 0)
+    {
+        value_str = Str("%d", cell.value.i32);
+    }
+    else if (Strcmp(type_str, "uint") == 0)
+    {
+        value_str = Str("%d", cell.value.ui32);
+    }
+    return Str("%s %s = %s", type_str, name_str, value_str);
+}
+
+typedef struct
+{
+  u32 num_values;
+  sumohash_t hash_name;
+  char name[64];
+  ExcelCellData values[num_values];
+} Column <read=(name)>;
+
+typedef struct
+{
+    local u32 base = FTellBase();
+    u32 offset;
+    if (offset != 0) {
+        FPushRel(offset);
+        Column data;
+        FPop();
+    } 
+} ColumnPtr <optimize=false, read=(data.name)>;
+
+typedef struct
+{
+  sumohash_t hash_name;
+  char name[64];
+  u32 num_columns;
+  ColumnPtr columns[num_columns];
+} Worksheet <bgcolor=cYellow, read=(name)>;
+
+typedef struct
+{
+    local u32 base = FTellBase();
+    u32 offset;
+    if (offset != 0) {
+        FPushRel(offset);
+        Worksheet data;
+        FPop();
+    } 
+} WorksheetPtr <optimize=false, read=(data.name)>;
+
+typedef struct
+{
+    u32 id;
+    u32 m_iNumWorksheets;
+    WorksheetPtr m_ppWorksheets[m_iNumWorksheets];
+} ExcelData <optimize=false, bgcolor=cRed>;
+
+#ifndef HEADLESS
+FPushBase();
+ExcelData file;
+FPopBase();
+#endif
