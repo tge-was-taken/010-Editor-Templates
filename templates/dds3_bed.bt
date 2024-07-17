@@ -1,0 +1,428 @@
+//------------------------------------------------
+//--- 010 Editor v15.0beta2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+typedef unsigned int u32;
+typedef unsigned short u16;
+typedef unsigned char u8;
+typedef int s32;
+typedef short s16;
+typedef char s8;
+typedef float f32;
+
+typedef u32 ptr_t;
+
+local u32 _baseOffsetStack[100];
+local u32 _baseOffset = 0;
+local u32 _baseOffsetIndex = 0;
+
+void PushBaseOffset()
+{
+    _baseOffset = FTell();
+    _baseOffsetStack[++_baseOffsetIndex] = _baseOffset;
+}
+
+void PopBaseOffset()
+{
+    _baseOffset = _baseOffsetStack[--_baseOffsetIndex];
+}
+
+// PCF/PCP
+
+enum<u32> PCPKATEG
+{
+    PCPKATEG_ThunderPoly = 0,
+    PCPKATEG_ThunderRadiatePoly = 1,
+    PCPKATEG_Hama01 = 2,
+    PCPKATEG_Hama02 = 3,
+    PCPKATEG_Hamaon = 4,
+    PCPKATEG_Mudo = 5,
+    PCPKATEG_Hwave01 = 6,
+    PCPKATEG_ThunderPolyLow = 7,
+    PCPKATEG_Ziodin01 = 8,
+    PCPKATEG_MultiBlurExp = 9,
+    PCPKATEG_MHanma01 = 10,
+    PCPKATEG_MZiodin01 = 11,
+    PCPKATEG_SparkleSphere = 12,
+    PCPKATEG_Flash_FlashPolySphere = 13,
+    PCPKATEG_Flash_FlashPolySpherePCF = 14,
+    PCPKATEG_Flash_FlashPolyRingPCF = 15,
+    PCPKATEG_Flash_FlashPolyPipePCF = 16,
+    PCPKATEG_Flash_FlashPolySphere2PCF = 17,
+    PCPKATEG_Flash_FlashPolyRingExpPCF = 18,
+    PCPKATEG_MZiodin02 = 19,
+    PCPKATEG_Ziodin02 = 20,
+    PCPKATEG_Ziodin03 = 21,
+    PCPKATEG_Ziodin04 = 22,
+    PCPKATEG_ShockWave01 = 23,
+    PCPKATEG_Houden01 = 24,
+    PCPKATEG_MultiFilterExp = 25,
+    PCPKATEG_MultiFilterExpPCF = 26,
+    PCPKATEG_ShockWave02 = 28,
+    PCPKATEG_FilterExpPCF = 29,
+    PCPKATEG_BlurExpPCF = 30,
+    PCPKATEG_DistortionBlurExpPCF = 31,
+    PCPKATEG_MultiBlurExp2PCF = 32,
+    PCPKATEG_Megidora01 = 33,
+    PCPKATEG_Megidoraon01 = 34,
+    PCPKATEG_BreathPCF = 35,
+    PCPKATEG_Scatter_HamaCardSpiralPCF = 36,
+    PCPKATEG_Scatter_HamaCardSpherePCF = 37,
+    PCPKATEG_AgiraoFirePCF = 38,
+    PCPKATEG_BufuIce = 39,
+    PCPKATEG_BufuraIce = 40,
+    PCPKATEG_BufudnIce = 41,
+    PCPKATEG_BufuLight = 42,
+    PCPKATEG_AgiFireballPCF = 43,
+    PCPKATEG_Needle_NeedleSpiralPCF = 44,
+    PCPKATEG_EyeThunder00_0 = 45,
+    PCPKATEG_EyeThunder00_1 = 46,
+    PCPKATEG_EyeThunder01_0 = 47,
+    PCPKATEG_EyeThunder01_1 = 48,
+    PCPKATEG_EyeThunder02_0 = 49,
+    PCPKATEG_EyeThunder02_1 = 50,
+    PCPKATEG_EyeThunder03_0 = 51,
+    PCPKATEG_EyeThunder03_1 = 52,
+    PCPKATEG_EyeThunder04_0 = 53,
+    PCPKATEG_EyeThunder04_1 = 54,
+    PCPKATEG_RippleBlurExpPCF = 55,
+    PCPKATEG_ThunderSphereExpPCF = 56,
+    PCPKATEG_RingPolyExpPCF = 57,
+    PCPKATEG_Scatter_WhirlwindPolyPCF = 58,
+    PCPKATEG_EyeThunder05_0 = 59,
+    PCPKATEG_EyeThunder05_1 = 60,
+    PCPKATEG_RadiateThunderPCF = 61,
+    PCPKATEG_Scatter_WwSpherePolyPCF = 62,
+    PCPKATEG_Flash_FlashPolySphereExpPCF = 63,
+    PCPKATEG_Flash_FlashPolySphere2ExpPCF = 64,
+    PCPKATEG_Flash_FlashPolySphere3PCF = 65,
+    PCPKATEG_Flash_FlashPolyRingExp2PCF = 66,
+    PCPKATEG_Scatter_Whirlwind2PolyPCF = 67,
+    PCPKATEG_MakkaCreat = 68,
+    PCPKATEG_RingPolyExp2PCF = 69,
+    PCPKATEG_AgiFireball2PCF = 70,
+    PCPKATEG_RadiateBEDPCF = 71,
+    PCPKATEG_effEvent_effAPPoint4PCF = 72,
+    PCPKATEG_RadiateTBPCF = 73,
+    PCPKATEG_Scatter_Whirlwind3PolyPCF = 74,
+    PCPKATEG_ThunderSpherePolyPCF = 75,
+    PCPKATEG_ThunderSpherePolyLowPCF = 76,
+    PCPKATEG_SpiralBEDPCF = 77,
+    PCPKATEG_AgiFireballSpPCF = 78,
+    PCPKATEG_AgiFireballSp2PCF = 79,
+    PCPKATEG_Bezier_BezierBillPCF = 80,
+    PCPKATEG_CrackPCF = 81,
+    PCPKATEG_HelperBEDPCF = 82,
+    PCPKATEG_Flash_FlashPolyCirclePCF = 83,
+    PCPKATEG_Flash_FlashPolyRingExpHPCF = 84,
+    PCPKATEG_BossBaelPCF = 85,
+    PCPKATEG_BossDengekiPCF = 86,
+    PCPKATEG_AnalyzeBEDPCF = 87,
+    PCPKATEG_BossThunderboltPCF = 88,
+    PCPKATEG_BossKAGUInvokePCF = 89,
+    PCPKATEG_BossKAGUAttackPCF = 90,
+    PCPKATEG_BossKAGUThunderboltPCF = 91,
+    PCPKATEG_BossKAGU2AttackPCF = 92,
+    PCPKATEG_BossKAGUThunderboltPCF_2 = 93,
+    PCPKATEG_FLEACHBlurPCF = 94,
+    PCPKATEG_Crack2PCF = 95,
+    PCPKATEG_BossMETATOBeamPCF = 96,
+    PCPKATEG_ScreenCrackModelPCF = 97,
+    PCPKATEG_MuzzleFlashPCF = 98,
+    PCPKATEG_DANTE_Thunder_PCF = 99,
+    PCPKATEG_DANTE_Damage_PCF = 100,
+    PCPKATEG_PBCamera_PCF = 101,
+    PCPKATEG_DANTE_ShowTime_PCF = 102,
+    PCPKATEG_BED_PCF = 103,
+    PCPKATEG_HBED2_PCF = 104,
+};
+
+typedef struct
+{
+    s32 pm[2];
+} sdfIVector2_t;
+
+typedef struct
+{
+    u32 abgr;
+    s32 blend;
+    f32 rotate;
+    f32 scale;
+    sdfIVector2_t center;
+    sdfIVector2_t xy[2];
+} dds3Effect_Blur_t;
+
+typedef struct
+{
+    s32 area;
+    dds3Effect_Blur_t Blur;
+} dds3Effect_PartialMultiBlurParam_t;
+
+typedef struct
+{
+    u8 type;
+    u8 pad[3];
+    s32 life;
+    s32 fade_in;
+    s32 fade_out;
+    s32 area_s;
+    s32 area_e;
+    dds3Effect_PartialMultiBlurParam_t MultiBlur;
+} effPCPMultiBlurExp2Param_t;
+
+typedef struct(PCPKATEG kateg)
+{
+    u32 size;
+    u32 offset;
+    u32 type;
+    u32 reserve;
+    
+    if (size && offset)
+    {
+        local u32 temp = FTell();
+        FSeek(_baseOffset+offset);
+        local u32 start = FTell();
+        switch (kateg)
+        {
+            case PCPKATEG_MultiBlurExp2PCF:
+                switch (type)
+                {
+                    case 0:
+                        effPCPMultiBlurExp2Param_t param;
+                        break;
+                    default:
+                        u8 data[size];
+                        break;  
+                }
+                break;
+            default:
+                u8 data[size];
+                break;
+        }
+        local u32 end = FTell();
+        local u32 readSize = end-start;
+        Assert(readSize == size);
+        FSeek(temp);
+    }
+} dds3EffectPCPData_Part_t;
+
+typedef struct
+{
+    PCPKATEG kateg;
+    u32 param;
+    u32 part;
+    u32 reserve;
+    dds3EffectPCPData_Part_t pcpData(kateg)[part] <optimize=false>;
+} dds3EffectPCPData_t;
+
+// BED
+
+enum<u16> DDS3EFFPART_TYPE
+{
+    DDS3EFFPART_TYPE_D3P = 0,
+    DDS3EFFPART_TYPE_P2A = 1,
+    DDS3EFFPART_TYPE_TMX = 2,
+    DDS3EFFPART_TYPE_MODEL = 3,
+    DDS3EFFPART_TYPE_PCP = 4,
+    DDS3EFFPART_TYPE_P2APOLY = 5,
+    DDS3EFFPART_TYPE_PCF = 6,
+    DDS3EFFPART_TYPE_MAX = 7,
+    DDS3EFFPART_TYPE_BED = 65533,
+    DDS3EFFPART_TYPE_EMPTY = 65534,
+    DDS3EFFPART_TYPE_COPY = 65535,
+};
+
+enum<u8> EFFBTL_POSPTR_D
+{
+    EFFBTL_POSPTR_D_FRONT = 0,
+    EFFBTL_POSPTR_D_R45 = 1,
+    EFFBTL_POSPTR_D_R90 = 2,
+    EFFBTL_POSPTR_D_R135 = 3,
+    EFFBTL_POSPTR_D_BACK = 4,
+    EFFBTL_POSPTR_D_L135 = 5,
+    EFFBTL_POSPTR_D_L90 = 6,
+    EFFBTL_POSPTR_D_L45 = 7,
+    EFFBTL_POSPTR_D_CENTER = 8,
+    EFFBTL_POSPTR_D_CAMERA = 9,
+    EFFBTL_POSPTR_D_CENTER2 = 10,
+    EFFBTL_POSPTR_D_MAX = 11,
+};
+
+enum<u8> EFFBTL_POSPTR_H
+{
+    EFFBTL_POSPTR_H_BOTTOM = 0,
+    EFFBTL_POSPTR_H_MIDDLE = 1,
+    EFFBTL_POSPTR_H_PEAK = 2,
+    EFFBTL_POSPTR_H_TOP = 3,
+    EFFBTL_POSPTR_H_CAMERA = 4,
+    EFFBTL_POSPTR_H_GROUND = 5,
+    EFFBTL_POSPTR_H_MAX = 6,
+};
+
+enum<u8> EFFBTL_POSPTR_T
+{
+    EFFBTL_POSPTR_T_MODEL = 0,
+    EFFBTL_POSPTR_T_PARTY_I = 1,
+    EFFBTL_POSPTR_T_PARTY_T = 2,
+    EFFBTL_POSPTR_T_WORLD = 3,
+    EFFBTL_POSPTR_T_MARK = 4,
+    EFFBTL_POSPTR_T_MARK2 = 5,
+    EFFBTL_POSPTR_T_MAX = 6,
+};
+
+enum<u32> EFFBTL_FIELDCOLOR_P
+{
+    EFFBTL_FIELDCOLOR_P_STOP = 0,
+    EFFBTL_FIELDCOLOR_P_FADE_IN_BASE = 1,
+    EFFBTL_FIELDCOLOR_P_FADE_IN = 2,
+    EFFBTL_FIELDCOLOR_P_WAIT = 3,
+    EFFBTL_FIELDCOLOR_P_FADE_OUT = 4,
+    EFFBTL_FIELDCOLOR_P_FADE_OUT_WAIT = 5,
+};
+
+typedef struct
+{
+    u16 number;
+    u16 timing;
+    u16 life;
+} effBTL_SkillCameraShake_t;
+
+typedef struct
+{
+    u16 restriction;
+    effBTL_SkillCameraShake_t shake;
+} effBTL_SkillCamera_t;
+
+typedef struct
+{
+    u32 fade_in_frame;
+    EFFBTL_FIELDCOLOR_P fade_in_pattern;
+    u32 fade_out_frame;
+    EFFBTL_FIELDCOLOR_P fade_out_pattern;
+    EFFBTL_FIELDCOLOR_P anim_pattern;
+} effBTL_SkillColorAnim_t;
+
+typedef struct
+{
+    EFFBTL_POSPTR_T target;
+    EFFBTL_POSPTR_H height;
+    EFFBTL_POSPTR_D direction;
+    u8 dmy;
+    u32 radius;
+} effBTL_SkillPositionPtr_t;
+
+typedef struct
+{
+    effBTL_SkillPositionPtr_t pos_ptr; // effBTL_SkillPositionPtr_t*
+    u32 diffuse;
+    u32 ambient;
+    effBTL_SkillColorAnim_t color_anim;
+} effBTL_SkillLight_t;
+
+typedef struct
+{
+    u32 color;
+    effBTL_SkillColorAnim_t color_anim;
+    u32 motion_timing;
+} effBTL_SkillModel_t;
+
+typedef struct
+{
+    u32 color;
+    effBTL_SkillColorAnim_t color_anim;
+} effBTL_SkillField_t;
+
+typedef struct
+{
+    u16 reserve;
+    u16 dmy;
+    u32 timing;
+} effBTL_SkillSE_t;
+
+typedef struct
+{
+    DDS3EFFPART_TYPE type;
+    u16 pad;
+    u32 offset;
+    effBTL_SkillPositionPtr_t pos_ptr; // effBTL_SkillPositionPtr_t*
+    u32 timing;
+    u8 reverberations;
+    u8 pad2[3];
+    
+    if (offset)
+    {
+        local u32 temp = FTell();
+        FSeek(_baseOffset+offset);
+        PushBaseOffset();
+        switch (type)
+        {
+            case DDS3EFFPART_TYPE_D3P:
+                // effManager__dds3EffectLoad
+                break;
+            case DDS3EFFPART_TYPE_P2A:
+                // effPart__dds3EffectPartP2ABillboardCreate
+                break;
+            case DDS3EFFPART_TYPE_TMX:
+                // effPart_dds3EffectPartTMXBillboardCreate
+                break;
+            case DDS3EFFPART_TYPE_MODEL:
+                // effPart_dds3EffectPartModelCreate
+                break;
+            case DDS3EFFPART_TYPE_PCP:
+                dds3EffectPCPData_t data;
+                break;
+            case DDS3EFFPART_TYPE_P2APOLY:
+                // billManager_dds3P2APolygonCreate
+                break;
+            case DDS3EFFPART_TYPE_PCF:
+                dds3EffectPCPData_t data;
+                break;
+            case DDS3EFFPART_TYPE_BED:
+                struct effBtl_SkillData_t data;
+                break;
+        }
+        PopBaseOffset();
+        FSeek(temp);
+    }
+} effBTL_SkillPartsList_t <optimize=false>;
+
+typedef struct
+{
+    u16 number;
+    u16 dmy0;
+    u32 life;
+    u8 scaling;
+    u8 dmy1;
+    u8 dmy2;
+    u8 dmy3;
+    effBTL_SkillPartsList_t list[60] <optimize=false>;
+} effBTL_SkillParts_t;
+
+typedef struct
+{
+    u32 frame;
+    effBTL_SkillCamera_t camera;
+    effBTL_SkillLight_t light;
+    effBTL_SkillModel_t model;
+    effBTL_SkillField_t field;
+    effBTL_SkillSE_t se;
+    effBTL_SkillParts_t parts;
+} effBTL_SkillCutTable_t;
+
+typedef struct
+{
+    char version[6];
+    u8 padding[2];
+    effBTL_SkillCutTable_t cut[2] <optimize=false>;
+} effBtl_SkillData_t <bgcolor=sSection1>;
+
+effBtl_SkillData_t file;
