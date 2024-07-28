@@ -24,24 +24,24 @@ enum<byte> ArcanaID
     Aeon = 22,
 };
 
-enum<short> FusionType
-{
-    NormalFusion = 0,
-    Placeholder = 8,
-    NonFusion = 24,
-    PartyPersona = 48,
-    UnknownFusion = 128,
-    Universe = 166,
-    SpecialFusion = 130,
-    MaxLinkNormal = 192,
-    MaxLinkSpecial = 194,
-};
-
-enum<short> HeartItem
-{
-    NoHeartItem = 0,
-    HeartItem = 9984,
-};
+enum<short> FusionType 
+{ 
+    NormalFusion = 0, 
+    Placeholder = 8, 
+    NonFusion = 24, 
+    PartyPersona = 48, 
+    UnknownFusion = 128, 
+    Universe = 166, 
+    SpecialFusion = 130, 
+    MaxLinkNormal = 192, 
+    MaxLinkSpecial = 194, 
+}; 
+ 
+enum<short> HeartItem 
+{ 
+    NoHeartItem = 0, 
+    HeartItem = 9984, 
+}; 
 
 enum<short> AffinityStatus
 {
@@ -65,25 +65,25 @@ enum<short> AffinityStatus
     WeakResist = 10240,
 };
 
-enum<ubyte>PersonaInherit
-{
-    InheritNone = 0,
-    InheritFire = 1,
-    InheritIce = 2,
-    InheritElec = 3,
-    InheritWind = 4,
-    InheritLight = 5,
-    InheritDark = 6,
-    InheritParty = 7,
-    InheritParty2 = 8,
-    InheritHealing = 9,
-    InheritStrike = 11,
-    InheritSlash = 12,
-    InheritPierce = 13,
-    InheritAilment = 15,
-    InheritDarkLight = 16,
-    InheritAll = 17
-};
+enum<ubyte>PersonaInherit 
+{ 
+    InheritNone = 0, 
+    InheritFire = 1, 
+    InheritIce = 2, 
+    InheritElec = 3, 
+    InheritWind = 4, 
+    InheritLight = 5, 
+    InheritDark = 6, 
+    InheritParty = 7, 
+    InheritParty2 = 8, 
+    InheritHealing = 9, 
+    InheritStrike = 11, 
+    InheritSlash = 12, 
+    InheritPierce = 13, 
+    InheritAilment = 15, 
+    InheritDarkLight = 16, 
+    InheritAll = 17 
+}; 
 
 enum<ubyte> ElementalType
 {
@@ -98,77 +98,77 @@ enum<ubyte> ElementalType
     Almighty = 7,
     Light = 8,
     Dark = 9,
-    Charm = 10,
-    Poison = 11,
-    Distress = 12,
-    Panic = 13,
-    Fear = 14,
-    Rage = 15,
+    CharmA = 10,
+    PoisonA = 11,
+    DistressA = 12,
+    PanicA = 13,
+    FearA = 14,
+    RageA = 15,
     Healing = 16,
     Support = 17,
     Special2 = 18,
-    Fire2 = 19,
-    Ice2 = 20,
-    Elec2 = 21,
-    Wind2 = 22,
-    Almighty2 = 23, //cannot crit
-    Light2 = 24,
-    Dark2 = 25,
-    Charm2 = 26,
-    Poison2 = 27,
-    Distress2 = 28,
-    Panic2 = 29,
-    Fear2 = 30,
-    Rage2 = 31,
-};
+    Fire2 = 19, 
+    Ice2 = 20, 
+    Elec2 = 21, 
+    Wind2 = 22, 
+    Almighty2 = 23, //cannot crit 
+    Light2 = 24, 
+    Dark2 = 25, 
+    Charm2 = 26, 
+    Poison2 = 27, 
+    Distress2 = 28, 
+    Panic2 = 29, 
+    Fear2 = 30, 
+    Rage2 = 31, 
+}; 
 
-enum<ushort>AttackType
-{
-    SlashDamage = 0,
-    ReaperDamageType = 1, // unknown
-    PierceDamage2 = 304, // used by Takaya exclusively
-    FireDamage2 = 305, // used by Jin exclusively
-    IceDamage = 346,
-    WindDamage = 347,
-    ElecDamage = 348,
-    FireDamage = 349,
-    PierceDamage = 350,
-    StrikeDamage = 351,
-    AlmightyDamage = 395, // used by Nyx, multitarget
-};
-
-enum<ushort>FuukaScan
-{
-    NoResistance = 0,
-    Arcana = 88,
-    NoNavi = 90,
-    GoldHand = 96,
-    Elizabeth = 120,
-    Guardian = 122,
-};
-
-enum<ushort>ItemDrop
-{
-    CupOfQueen = 4058,
-    Amethyst = 4096,
-    Aquamarine = 4097,
-    Emerald = 4098,
-    Onyx = 4099,
-    Opal = 4100,
-    Garnet = 4101,
-    Sapphire = 4102,
-    Diamond = 4103,
-    Turquoise = 4104,
-    Topaz = 4105,
-    Pearl = 4106,
-    Ruby = 4107,
-    WealthCoin = 4144,
-    TreasureCoin = 4145,
-    SupremeCoin = 4146,
-    OpulentCoin = 4147,
-    LuxuryCoin = 4148,
-    GloriousCoin = 4149,
-};
+enum<ushort>AttackType 
+{ 
+    SlashDamage = 0, 
+    ReaperDamageType = 1, // unknown 
+    PierceDamage2 = 304, // used by Takaya exclusively 
+    FireDamage2 = 305, // used by Jin exclusively 
+    IceDamage = 346, 
+    WindDamage = 347, 
+    ElecDamage = 348, 
+    FireDamage = 349, 
+    PierceDamage = 350, 
+    StrikeDamage = 351, 
+    AlmightyDamage = 395, // used by Nyx, multitarget 
+}; 
+ 
+enum<ushort>FuukaScan 
+{ 
+    NoResistance = 0, 
+    Arcana = 88, 
+    NoNavi = 90, 
+    GoldHand = 96, 
+    Elizabeth = 120, 
+    Guardian = 122, 
+}; 
+ 
+enum<ushort>ItemDrop 
+{ 
+    CupOfQueen = 4058, 
+    Amethyst = 4096, 
+    Aquamarine = 4097, 
+    Emerald = 4098, 
+    Onyx = 4099, 
+    Opal = 4100, 
+    Garnet = 4101, 
+    Sapphire = 4102, 
+    Diamond = 4103, 
+    Turquoise = 4104, 
+    Topaz = 4105, 
+    Pearl = 4106, 
+    Ruby = 4107, 
+    WealthCoin = 4144, 
+    TreasureCoin = 4145, 
+    SupremeCoin = 4146, 
+    OpulentCoin = 4147, 
+    LuxuryCoin = 4148, 
+    GloriousCoin = 4149, 
+}; 
 
 enum<ubyte>Skill_ApplyOrCureEffect
 {
@@ -215,30 +215,40 @@ enum<ubyte>Skill_SPEffect
     DrainSP = 13,
 };
 
-enum<ubyte>Skill_BuffDebuff
+enum <uint> Skill_BuffDebuff
 {
+    NoBuffOrDebuff = 0,
+    AttackPhysUp = 1,
+    AttackPhysDown = 2,
+    AttackMagicUp = 4,
     AttackUp = 5,
+    AttackMagicDown = 8,
     AttackDown = 10,
     HitUp = 16,
     HitDown = 32,
     DefenceUp = 64,
     DefenceDown = 128,
-    HeatRiser = 85,
-    Debilitate = 170,
-    NoBuffOrDebuff = 0,
-};
-
-enum<ubyte>Skill_SpecialEffects1
-{
-    EvasionUp = 1,
-    EvasionDown = 2,
-    PhysCharge = 4,
-    MagicCharge = 8,
-    RemoveBuffs = 16,
-    RemoveDebuffs = 32,
-    RebellionCritUp = 64,
-    RevolutionCritUp = 128,
-    NoSpecialEff = 0,
+    EvasionUp = 256,
+    HitAndEvasionUp = 272,
+    HeatRiser = 341,
+    EvasionDown = 512,
+    HitAndEvasionDown = 544,
+    Debilitate = 682,
+    PowerChargeBuff = 1024,
+    MindChargeBuff = 2048,
+    RebellionBuff = 16384,
+    RevolutionBuff = 32768,
+    TetrakarnBuff = 65536,
+    MakarakarnBuff = 131072,
+    FireBreakDebuff = 262144,
+    IceBreakDebuff = 524288,
+    WindBreakDebuff = 1048576,
+    ElecBreakDebuff = 2097152,
+    AilmentSusceptibility = 4194304,
+    InfinityBlock = 8388608,
+    ValhallaBlock = 16777216,
+    CadenzaEvasion = 33554432,
+    MoonlessGown = 67108864,
 };
 
 enum<ubyte>Skill_ValidTargets
@@ -255,21 +265,34 @@ enum<ubyte>Skill_NumberOfTargets
     Everyone = 2, // might be redundant with Multi + SelfNotAllowed
 };
 
-enum<ubyte>Skill_AilmentTargetType
+enum<ubyte>Skill_Ailments
 {
-    PoisonedTarget = 127,
-    PatraTarget = 145, // has Panic, Fear, Distress, Shock, Freeze
-    EnragedTarget = 239,
-    FearfulTarget = 247, 
-    CharmedTarget = 254,
-    KnockedOrDeadTarget = 255,
+    None = 0,
+    Charm = 1,
+    Despair = 2,
+    Panic = 4,
+    Fear = 8,
+    Rage = 16,
+    Freeze = 32,
+    Shock = 64,
+    Poison = 128,
 };
 
-enum<ubyte>Skill_AilmentTargets
-{
-    NonAilmentTarget = 0,
-    AilmentTarget = 255,
-};
+enum<ubyte>Skill_AilmentTargetType 
+{ 
+    PoisonedTarget = 127, 
+    PatraTarget = 145, // has Panic, Fear, Distress, Shock, Freeze 
+    EnragedTarget = 239, 
+    FearfulTarget = 247,  
+    CharmedTarget = 254, 
+    KnockedOrDeadTarget = 255, 
+}; 
+ 
+enum<ubyte>Skill_AilmentTargets 
+{ 
+    NonAilmentTarget = 0, 
+    AilmentTarget = 255, 
+}; 
 
 enum<ubyte>Skill_SpecialAilments
 {
@@ -291,17 +314,17 @@ enum<ubyte>Skill_CostType
     SPCost = 2,
 };
 
-enum<ubyte>Skill_CostTypeType
+enum<ubyte>Skill_Type
 {
-    NormalSPCost = 0,
-    KillUser = 1,
-    BasicAttack = 2,
-    HealingSkills = 8,
-    SPPercentage = 16,
-    HealNonUser = 25,
-    BossCostType = 32,
-    FleeBattle = 40,
-    SummerDreamCost = 48,
+    StandardSkills = 0,
+    KillUser = 1, 
+    BasicAttack = 2, 
+    HealingSkills = 8, 
+    FusionSkills = 16, 
+    HealNonUser = 25, 
+    BossCostType = 32, 
+    FleeBattle = 40, 
+    SummerDreamCost = 48, 
 };
 
 enum<ubyte>Skill_PhysicalOrMagicSkill
@@ -327,21 +350,21 @@ enum<ubyte>Skill_SkillType
 {
     ActiveSkill = 0,
     PassiveSkill = 1, // MUST be enabled for passive skills to function properly
-    SupportSkill = 255
+    SupportSkill = 255,
 };
 
 enum<ubyte>Skill_Bonus
 {
-    GhastlyWailCheck = 1,
+    GhastlyWailCheck = 1, 
     FullMoon = 2,
     NewMoon = 3,
     Great = 4,
     Tired = 5,
-    TrafuriCheck = 6,
-    Charmed = 7,
-    Downed = 8,
-    GigaSparkCheck = 9,
-    GreatSealCheck = 10,
+    TrafuriCheck = 6, 
+    Charmed = 7, 
+    DownTarget = 8,
+    GigaSparkCheck = 9, 
+    GreatSealCheck = 10, 
 };
 
 enum<ushort>BattleSkill
@@ -1605,12 +1628,12 @@ enum<ubyte>SkillProgression
 
 enum<ubyte>TargetStatus
 {
-    NormalStatus = 0,
-    TargetStatus1 = 1, // used by skills 220,221,228,368,414, unknown function
-    TargetStatus2 = 2, // mostly basic attacks but also boss uniques, used by 0,40,95,236,304,305,350,351,356,357,359,360,395
-    Unconscious = 4,
-    KnockedDown = 8,
-    Poisoned = 127, 
+    NormalStatus = 0, 
+    TargetStatus1 = 1, // used by skills 220,221,228,368,414, unknown function 
+    TargetStatus2 = 2, // mostly basic attacks but also boss uniques, used by 0,40,95,236,304,305,350,351,356,357,359,360,395 
+    Unconscious = 4, 
+    KnockedDown = 8, 
+    Poisoned = 127,  
 };
 enum<ubyte>AIFunctions
 {
