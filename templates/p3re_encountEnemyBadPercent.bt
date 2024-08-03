@@ -1,0 +1,36 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: DatEncountEnemyBadPercentDataAsset.uasset
+//   Authors: Light8227
+//   Version: 1.1
+//------------------------------------------------
+#include "ue4_iopackage.bt"
+
+LittleEndian();
+
+typedef struct
+{
+    byte unk[98] <name="Unknown">;
+}unk;
+
+typedef struct
+{
+    byte FProperty[21] <hidden=true>;
+    ubyte Num1 <name="Num1">;
+    byte FProperty2[33] <hidden=true>;
+    ubyte Num2 <name="Num2">;
+    byte FProperty3[33] <hidden=true>;
+    ubyte Num3 <name="Num3">;
+    byte FProperty4[33] <hidden=true>;
+    ubyte Num4 <name="Num4">;
+    byte FProperty5[33] <hidden=true>;
+    ubyte NumOver5 <name="NumOver5">;
+    byte FProperty6[20] <hidden=true>;
+}EnemyBad;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    EnemyBad enemybad[9] <name="EnemyBad">;
+}fileData <name="DatEncountEnemyBadPercentDataAsset.uasset">;
