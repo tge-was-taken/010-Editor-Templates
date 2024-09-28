@@ -1,0 +1,28 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: DatPlayerMaxHPSPDataAsset.Uasset
+//   Authors: Light8227
+//   Version: 1.1
+//------------------------------------------------
+#include "p3re_structs.bt"
+#include "ue4_iopackage.bt"
+
+LittleEndian();
+
+typedef struct
+{
+    byte unk[98] <name="Unknown">;
+}unk;
+
+typedef struct
+{
+    byte FProperty[8] <hidden=true>;
+    MaxHPSPStruct maxhpsp[11] <name="MaxHPSP">;
+}PlayerMax;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    PlayerMax playermax[99] <name="PlayerMax">;
+}fileData <name="DatPlayerMaxHPSPDataAsset.uasset">;
