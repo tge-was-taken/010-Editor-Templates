@@ -25,12 +25,12 @@ typedef struct
     ubyte Unk2;
     
     int16 LightRotation;
-    ubyte Unk4; <comment="Unused alpha value?">;
+    ubyte Unk4 <comment="Unused alpha value?">;
     ubyte PersonaColorB;
     ubyte PersonaColorG;
     ubyte PersonaColorR;
 
-    ubyte Unk6; <comment="Unused alpha value?">;
+    ubyte Unk6 <comment="Unused alpha value?">;
     ubyte PersonaColorB2;
     ubyte PersonaColorG2;
     ubyte PersonaColorR2;

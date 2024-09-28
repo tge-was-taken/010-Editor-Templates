@@ -14,7 +14,7 @@ LittleEndian();
 
 typedef struct
 {
-  short CostumeId[;
+  short CostumeId[0];
 } CostumeSet;
 
 typedef struct
