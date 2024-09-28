@@ -1,0 +1,39 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: DatPersonaGrowthDataAsset.uasset
+//   Authors: Light8227
+//   Version: 2.1
+//------------------------------------------------
+#include "p3re_enums.bt"
+#include "p3re_structs.bt"
+#include "ue4_iopackage.bt"
+
+LittleEndian();
+
+typedef struct
+{
+    byte unk[98] <name="Unknown">;
+}unk;
+
+typedef struct
+{
+    byte FProperty[21] <hidden=true>;
+    ubyte paramsUp <name="ATK">;
+    byte FProperty2[33] <hidden=true>;
+    ubyte paramsUp2 <name="MAT">;
+    byte FProperty3[33] <hidden=true>;
+    ubyte paramsUp3 <name="DEF">;
+    byte FProperty4[33] <hidden=true>;
+    ubyte paramsUp4 <name="SPD">;
+    byte FProperty5[33] <hidden=true>;
+    ubyte paramsUp5 <name="LUK">;
+    byte FProperty6[20] <hidden=true>;
+    SkillEventStruct skillevent[16] <name="SkillEvent">;
+}growthData;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    growthData growthdata[464] <name="GrowthData">;
+}fileData <name="DatPersonaGrowthDataAsset.uasset">;

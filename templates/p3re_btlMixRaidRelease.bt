@@ -17,15 +17,15 @@ typedef struct
 
 typedef struct
 {
-    byte padding[13] <hidden=true>;
+    byte FProperty[13] <hidden=true>;
     PersonaID personaAID <name="PersonaAID">;
-    byte padding2[25] <hidden=true>;
+    byte FProperty2[25] <hidden=true>;
     PersonaID personaBID <name="PersonaBID">;
-    byte padding3[25] <hidden=true>;
+    byte FProperty3[25] <hidden=true>;
     uint flag <name="Flag">;
-    byte padding4[25] <hidden=true>;
+    byte FProperty4[25] <hidden=true>;
     ushort skill <name="Skill">;
-    byte padding5[20] <hidden=true>;
+    byte FProperty5[20] <hidden=true>;
 }mixRaid;
 
 struct

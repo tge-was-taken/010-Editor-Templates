@@ -1,0 +1,65 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: DatEnemyAffinityDataAsset.uasset
+//   Authors: Tekka, Light8227
+//   Version: 1.1
+//------------------------------------------------
+#include "p3re_enums.bt"
+#include "ue4_iopackage.bt"
+
+LittleEndian();
+
+typedef struct
+{
+    ubyte unk[98] <name="Unknown">;
+}unk;
+
+typedef struct
+{
+    byte FProperty[13] <hidden=true>;
+    AffinityStatus attr <name="Slash">;
+    ubyte FProperty2[25] <hidden=true>;
+    AffinityStatus attr2 <name="Strike">;
+    ubyte FProperty3[25] <hidden=true>;
+    AffinityStatus attr3 <name="Pierce">;
+    ubyte FProperty4[25] <hidden=true>;
+    AffinityStatus attr4 <name="Fire">;
+    ubyte FProperty5[25] <hidden=true>;
+    AffinityStatus attr5 <name="Ice">;
+    ubyte FProperty6[25] <hidden=true>;
+    AffinityStatus attr6 <name="Electric">;
+    ubyte FProperty7[25] <hidden=true>;
+    AffinityStatus attr7 <name="Wind">;
+    ubyte FProperty8[25] <hidden=true>;
+    AffinityStatus attr8 <name="Almighty">;
+    ubyte FProperty9[25] <hidden=true>;
+    AffinityStatus attr9 <name="Light">;
+    ubyte FProperty10[25] <hidden=true>;
+    AffinityStatus attr10 <name="Dark">;
+    ubyte FProperty11[25] <hidden=true>;
+    AffinityStatus attr11 <name="Charm">;
+    ubyte FProperty12[25] <hidden=true>;
+    AffinityStatus attr12 <name="Poison">;
+    ubyte FProperty13[25] <hidden=true>;
+    AffinityStatus attr13 <name="Distress">;
+    ubyte FProperty14[25] <hidden=true>;
+    AffinityStatus attr14 <name="Confuse">;
+    ubyte FProperty15[25] <hidden=true>;
+    AffinityStatus attr15 <name="Fear">;
+    ubyte FProperty16[25] <hidden=true>;
+    AffinityStatus attr16 <name="Rage">;
+    ubyte FProperty17[25] <hidden=true>;
+    AffinityStatus attr17 <name="Healing">;
+    ubyte FProperty18[25] <hidden=true>;
+    AffinityStatus attr18 <name="Support">;
+    ubyte FProperty19[25] <hidden=true>;
+    AffinityStatus attr19 <name="Fuuka">;
+    ubyte FProperty20[20] <hidden=true>;
+}affinityData;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    affinityData affinitydata[601] <name="AffinityData">;
+}fileData <name="DatEnemyAffinityDataAsset.uasset">;

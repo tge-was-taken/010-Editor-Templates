@@ -16,27 +16,27 @@ typedef struct
 
 typedef struct
 {
-    byte padding[13] <hidden=true>;
+    byte FProperty[13] <hidden=true>;
     ushort value <name="Value">;
-    byte padding2[25] <hidden=true>;
+    byte FProperty2[25] <hidden=true>;
     ushort value2 <name="Value">;
-    byte padding3[25] <hidden=true>;
+    byte FProperty3[25] <hidden=true>;
     ushort value3 <name="Value">;
-    byte padding4[25] <hidden=true>;
+    byte FProperty4[25] <hidden=true>;
     ushort value4 <name="Value">;
-    byte padding5[25] <hidden=true>;
+    byte FProperty5[25] <hidden=true>;
     ushort value5 <name="Value">;
-    byte padding6[25] <hidden=true>;
+    byte FProperty6[25] <hidden=true>;
     ushort value6 <name="Value">;
-    byte padding7[25] <hidden=true>;
+    byte FProperty7[25] <hidden=true>;
     ushort value7 <name="Value">;
-    byte padding8[25] <hidden=true>;
+    byte FProperty8[25] <hidden=true>;
     ushort value8 <name="Value">;
-    byte padding9[25] <hidden=true>;
+    byte FProperty9[25] <hidden=true>;
     ushort value9 <name="Value">;
-    byte padding10[25] <hidden=true>;
+    byte FProperty10[25] <hidden=true>;
     ushort value10 <name="Value">;
-    byte padding11[20] <hidden=true>;
+    byte FProperty11[20] <hidden=true>;
 }boostData[17];
 
 struct

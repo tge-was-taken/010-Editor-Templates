@@ -1,0 +1,29 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: DatCalcPANICUseItemDataAsset.uasset
+//   Authors: Light8227
+//   Version: 1.1
+//------------------------------------------------
+#include "p3re_enums.bt"
+#include "ue4_iopackage.bt"
+
+LittleEndian();
+
+typedef struct
+{
+    byte unk[98] <name="Unknown">;
+}unk;
+
+typedef struct
+{
+    byte FProperty[13] <hidden=true>;
+    ItemList itemID <name="ItemID">;
+    byte FProperty2[20] <hidden=true>;
+}PanicUse;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    PanicUse PANICUse[20] <name="PANICUse">;
+}fileData <name="DatCalcPANICUseItemDataAsset.uasset">;

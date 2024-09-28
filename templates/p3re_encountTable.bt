@@ -3,10 +3,10 @@
 //
 //      File: DatEncountTableDataAsset.uasset
 //   Authors: Tekka, Light8227
-//   Version: 1.0
+//   Version: 1.1
 //------------------------------------------------
-#include "ue4_iopackage.bt"
 #include "p3re_enums.bt"
+#include "ue4_iopackage.bt"
 
 LittleEndian();
 
@@ -17,35 +17,35 @@ typedef struct
 
 typedef struct
 {
-    byte padding[20] <hidden=true>;
+    byte FProperty[20] <hidden=true>;
     uint flags <name="Flags">;
-    ubyte padding2[25] <hidden=true>;
+    ubyte FProperty2[25] <hidden=true>;
     ushort party_item <name="Party_Item">;
-    ubyte padding3[25] <hidden=true>;
+    ubyte FProperty3[25] <hidden=true>;
     ushort party_item_num <name="Party_Item_Num">;
-    ubyte padding4[25] <hidden=true>;
+    ubyte FProperty4[25] <hidden=true>;
     EnemyID id <name="ID">;
-    ubyte padding5[25] <hidden=true>;
+    ubyte FProperty5[25] <hidden=true>;
     EnemyID id2 <name="ID">;
-    ubyte padding6[25] <hidden=true>;
+    ubyte FProperty6[25] <hidden=true>;
     EnemyID id3 <name="ID">;
-    ubyte padding7[25] <hidden=true>;
+    ubyte FProperty7[25] <hidden=true>;
     EnemyID id4 <name="ID">;
-    ubyte padding8[25] <hidden=true>;
+    ubyte FProperty8[25] <hidden=true>;
     EnemyID id5 <name="ID">;
-    ubyte padding9[25] <hidden=true>;
+    ubyte FProperty9[25] <hidden=true>;
     ushort major <name="Major">;
-    ubyte padding10[25] <hidden=true>;
+    ubyte FProperty10[25] <hidden=true>;
     ushort minor <name="Minor">;
-    ubyte padding11[25] <hidden=true>;
+    ubyte FProperty11[25] <hidden=true>;
     BGMID sound <name="Sound">;
-    ubyte padding12[25] <hidden=true>;
+    ubyte FProperty12[25] <hidden=true>;
     ushort shuffleLevel <name="ShuffleLevel">;
-    ubyte padding13[13] <hidden=true>;
+    ubyte FProperty13[13] <hidden=true>;
 }encountData;
 
 struct
 {
     unk unknown <name="Unknown">;
     encountData encountdata[1201] <name="Encounter">;
-}fileData;
+}fileData <name="DatEncountTableDataAsset.uasset">;

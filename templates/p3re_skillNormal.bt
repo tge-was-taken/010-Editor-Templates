@@ -1,0 +1,178 @@
+//------------------------------------------------
+//--- 010 Editor v13.0.1 Binary Template
+//
+//      File: DatSkillNormalDataAsset.uasset
+//   Authors: Light8227
+//   Version: 3.1
+//------------------------------------------------
+#include "p3re_enums.bt"
+#include "p3re_structs.bt"
+#include "ue4_iopackage.bt"
+
+LittleEndian();
+
+typedef struct
+{
+    byte unk[98] <name="Unknown">;
+}unk;
+
+typedef struct
+{
+    byte FProperty[13] <hidden=true>;
+    struct
+    {
+        Bool unkFlag : 1 <name="Unknown">;
+        Bool BasicAttackAnim : 1 <name="BasicAttackAnim">;
+        Bool Summon : 1 <name="Summon", comment="Flag used for Summon Skill, softlocks game.">;
+        Bool unkFlag4 : 1 <name="Unknown">;
+        Bool unkFlag5 : 1 <name="Unknown">;
+        Bool unkFlag6 : 1 <name="Unknown">;
+        Bool unkFlag7 : 1 <name="Unknown">;
+        Bool unkFlag8 : 1 <name="Unknown">;
+        Bool UsePastHP : 1 <name="UsePastHP", comment="Lets you use the Skill even if you don't have enough HP.">;
+        Bool unkFlag10 : 1 <name="Unknown">;
+        Bool Hpto1 : 1 <name="HPto1">;
+        Bool SPto1 : 1 <name="SPto1">;
+        Bool unkFlag13 : 1 <name="Unknown">;
+        Bool unkFlag14 : 1 <name="Unknown">;
+        Bool unkFlag15 : 1 <name="Unknown">;
+        Bool unkFlag16 : 1 <name="Unknown">;
+        Bool unkFlag17 : 1 <name="Unknown">;
+        Bool unkFlag18 : 1 <name="Unknown">;
+        Bool unkFlag19 : 1 <name="Unknown">;
+        Bool unkFlag20 : 1 <name="Unknown">;
+        Bool unkFlag21 : 1 <name="Unknown">;
+        Bool Thuergy : 1 <name="Theurgy", comment="Sets Skill as a Theurgy Skill. (Will break if not a Thuergy Skill already)">;
+        Bool HPtoFull : 1 <name="HPtoFull">;
+        Bool unkFlag24 : 1 <name="Unknown">;
+        Bool unkFlag25 : 1 <name="Unknown">;
+        Bool unkFlag26 : 1 <name="Unknown">;
+        Bool unkFlag27 : 1 <name="Unknown">;
+        Bool unkFlag28 : 1 <name="Unknown">;
+        Bool unkFlag29 : 1 <name="Unknown">;
+        Bool unkFlag30 : 1 <name="Unknown">;
+        Bool unkFlag31 : 1 <name="Unknown">;
+        Bool unkFlag32 : 1 <name="Unknown">;
+    }FlagList <name="Flag">;
+    byte FProperty2[25] <hidden=true>;
+    ushort use <name="Use">;
+    byte FProperty3[33] <hidden=true>;
+    ubyte koukatype <name="KoukaType">;
+    byte FProperty4[33] <hidden=true>;
+    CostType costtype <name="CostType">;
+    byte FProperty5[25] <hidden=true>;
+    ushort cost <name="Cost", comment="Skill cost. For SP, exact number required. For HP, number percentage of HP required.">;
+    byte FProperty6[25] <hidden=true>;
+    ushort costbase <name="CostBase", comment="Needs more testing on its effect.">;
+    byte FProperty7[33] <hidden=true>;
+    TargetTypeList targettype <name="TargetType">;
+    byte FProperty8[33] <hidden=true>;
+    SkillTargets targetarea <name="TargetArea", comment="Determines who the Skill can target.">;
+    byte FProperty9[33] <hidden=true>;
+    ubyte targetrule <name="TargetRule">;
+    byte FProperty10[25] <hidden=true>;
+    uint untargetbadstat <name="UntargetBadStat">;
+    byte FProperty11[33] <hidden=true>;
+    ubyte hitratio <name="HitRatio">;
+    byte FProperty12[33] <hidden=true>;
+    ubyte targetcntmin <name="TargetCntMin", comment="Minimum times it can hit.">;
+    byte FProperty13[33] <hidden=true>;
+    ubyte targetcntmax <name="TargetCntMax" ,comment="Maximum times it can hit.">;
+    byte FProperty14[33] <hidden=true>;
+    HPTypeList hptype <name="HPType", comment="Determines effects a Skill has on HP.">;
+    byte FProperty15[25] <hidden=true>;
+    ushort hpn <name="HPN", comment="Effect on HP depending on HPType.">;
+    byte FProperty16[33] <hidden=true>;
+    SPTypeList sptype <name="SPType", comment="Determines effects a Skill has on SP.">;
+    byte FProperty17[25] <hidden=true>;
+    ushort spn <name="SPN", comment="Effect on SP depending on SPType.">;
+    byte FProperty18[33] <hidden=true>;
+    EffectType badtype <name="BadType">;
+    byte FProperty19[33] <hidden=true>;
+    ubyte badratio <name="BadRatio", comment="Chance for effect or healing of effect to hit.">;
+    byte FProperty20[25] <hidden=true>;
+    struct
+    {
+        Bool Dizzy : 1 <name="Dizzy">;
+        Bool CharmEffect : 1 <name="Charm">;
+        Bool DistressEffect : 1 <name="Distress">;
+        Bool ConfuseEffect : 1 <name="Confuse">;
+        Bool FearEffect : 1 <name="Fear">;
+        Bool RageEffect : 1 <name="Rage">;
+        Bool FreezeEffect : 1 <name="Freeze">;
+        Bool ShockEffect : 1 <name="Shock">;
+        Bool PoisonEffect : 1 <name="Poison">;
+        Bool unkEffect10 : 1 <name="Unknown">;
+        Bool unkEffect11 : 1 <name="Unknown">;
+        Bool unkEffect12 : 1 <name="Unknown">;
+        Bool unkEffect13 : 1 <name="Unknown">;
+        Bool unkEffect14 : 1 <name="Unknown">;
+        Bool unkEffect15 : 1 <name="Unknown">;
+        Bool unkEffect16 : 1 <name="Unknown">;
+        Bool unkEffect17 : 1 <name="Unknown">;
+        Bool unkEffect18 : 1 <name="Unknown">;
+        Bool unkEffect19 : 1 <name="Unknown">;
+        Bool KO : 1 <name="KO">;
+        Bool Down : 1 <name="Down">;
+        Bool unkEffect22 : 1 <name="Unknown">;
+        Bool unkEffect23 : 1 <name="Unknown">;
+        Bool unkEffect24 : 1 <name="Unknown">;
+        Bool unkEffect25 : 1 <name="Unknown">;
+        Bool unkEffect26 : 1 <name="Unknown">;
+        Bool unkEffect27 : 1 <name="Unknown">;
+        Bool unkEffect28 : 1 <name="Unknown">;
+        Bool unkEffect29 : 1 <name="Unknown">;
+        Bool unkEffect30 : 1 <name="Unknown">;
+        Bool unkEffect31 : 1 <name="Unknown">;
+        Bool unkEffect32 : 1 <name="Unknown">;
+    }EffectList <name="BadStatus", comment="List of possible effects.">;
+    byte FProperty21[25] <hidden=true>;
+    struct
+    {
+        Bool unkSupport : 1 <name="Atk Up">;
+        Bool unkSupport2 : 1 <name="Atk Down">;
+        Bool unkSupport3 : 1 <name="Ev Up">;
+        Bool unkSupport4 : 1 <name="Ev Down">;
+        Bool unkSupport5 : 1 <name="Def Up">;
+        Bool unkSupport6 : 1 <name="Def Down">;
+        Bool unkSupport7 : 1 <name="Acc Up">;
+        Bool unkSupport8 : 1 <name="Acc Down">;
+        Bool unkSupport9 : 1 <name="Charge">;
+        Bool unkSupport10 : 1 <name="Concentrate">;
+        Bool unkSupport11 : 1 <name="Dekaja">;
+        Bool unkSupport12 : 1 <name="Dekunda">;
+        Bool unkSupport13 : 1 <name="Rebellion">;
+        Bool unkSupport14 : 1 <name="Revolution">;
+        Bool unkSupport15 : 1 <name="Tetrakarn">;
+        Bool unkSupport16 : 1 <name="Makarakarn">;
+        Bool unkSupport17 : 1 <name="Fire Break">;
+        Bool unkSupport18 : 1 <name="Ice Break">;
+        Bool unkSupport19 : 1 <name="Wind Break">;
+        Bool unkSupport20 : 1 <name="Elec Break">;
+        Bool unkSupport21 : 1 <name="Unknown">;
+        Bool unkSupport22 : 1 <name="Unknown">;
+        Bool unkSupport23 : 1 <name="Ailment Chance Up">;
+        Bool unkSupport24 : 1 <name="Unknown">;
+        Bool unkSupport25 : 1 <name="Unknown">;
+        Bool unkSupport26 : 1 <name="Unknown">;
+        Bool unkSupport27 : 1 <name="Unknown">;
+        Bool unkSupport28 : 1 <name="Unknown">;
+        Bool unkSupport29 : 1 <name="Unknown">;
+        Bool unkSupport30 : 1 <name="Unknown">;
+        Bool unkSupport31 : 1 <name="Unknown">;
+        Bool unkSupport32 : 1 <name="Unknown">;
+    }SupportList <name="Support">;
+    byte FProperty22[33] <hidden=true>;
+    ProgramEffect program <name="Program">;
+    byte FProperty23[33] <hidden=true>;
+    ubyte criticalratio <name="CriticalRatio">;
+    byte FProperty24[33] <hidden=true>;
+    ubyte swoonratio <name="SwoonRatio">;
+    byte FProperty25[20] <hidden=true>;
+}skillData;
+
+struct
+{
+    unk unknown <name="Unknown">;
+    skillData skilldata[700] <name="SkillData">;
+}fileData <name="DatSkillNormalDataAsset.uasset">;
