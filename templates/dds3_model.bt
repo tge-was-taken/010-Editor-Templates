@@ -485,12 +485,14 @@ typedef struct( u32 hasHeader )
 
 } TModel;
 
+// sdfModelNodeDef_t
 typedef struct 
 {
     SetRandomBackColor();
-    u32 Field00; // not 0 in hansya01.MB
-    u32 Field04; Assert( Field04 == 0, "Node Field04 isnt 0" );
-    s32 Index;
+    u16 Format;
+    u16 Pad0;
+    u32 Pad1;
+    s32 Id;
     s32 ParentIndex;
     TVector4 Rotation;
     TVector4 Position;
@@ -1259,7 +1261,7 @@ typedef struct
     }
 } TMotionPack;
 
-enum<u16> TControllerType
+enum<u32> TControllerType
 {
     TControllerType_Translation = 0,
     TControllerType_Scale = 2,
@@ -1273,13 +1275,9 @@ typedef struct
 {
     SetRandomBackColor();
     TControllerType Type;
-    u16 Field02;
-    u16 NodeIndex;
-    u16 Field06;
+    u32 NodeIndex;
 
     if ( EnumToString( Type ) == "" ) Printf( "TController: unknown type: %d\n", Type ); 
-    if ( Field02 != 0 ) Printf( "TController: %s %d Field02 is not 0: %d\n", EnumToString( Type ), NodeIndex, Field02 ); 
-    if ( Field06 != 0 ) Printf( "TController: %s %d Field06 is not 0: %d\n", EnumToString( Type ), NodeIndex, Field06 ); 
 } TController <optimize=false>;
 
 // A motion represents the entire array of per-node tracks containing modifications of properties over time
@@ -1425,6 +1423,34 @@ typedef struct( u32 controllerIndex )
                             Assert( false );
                             break;
                     }
+                    break;
+                    
+                case 0x10004:
+                    switch ( KeyFrameSize )
+                    {
+                        case 4:
+                            u32 Value;
+                            break;
+                        default:
+                            Assert( false );
+                            break;
+                    }
+                    break;
+                    
+                case 0x20000:
+                    switch ( KeyFrameSize )
+                    {
+                        case 8:
+                            f32 Values[2];
+                            break;
+                        default:
+                            Assert( false );
+                            break;
+                    }
+                    break;
+                    
+                default:
+                    Assert( false );
                     break;
             }
         } KeyFrameValues;
