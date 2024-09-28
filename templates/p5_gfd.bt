@@ -1231,13 +1231,10 @@ typedef struct(u32 version)
 typedef struct( EMeshFlags meshFlags, EVertexAttributeFlags vertexAttributeFlags, u32 version )
 {
     if ( vertexAttributeFlags & EVertexAttributeFlags_Position )  TVector3 Position;
-    if ( vertexAttributeFlags & EVertexAttributeFlags_Normal )    TVector3 Normal;
-    if ( vertexAttributeFlags & EVertexAttributeFlags_Tangent )   TVector3 Tangent;
-    if ( vertexAttributeFlags & EVertexAttributeFlags_Binormal )  TVector3 Binormal;
-    if ( vertexAttributeFlags & EVertexAttributeFlags_Color0 )    u32 Color0;
     if ( vertexAttributeFlags & EVertexAttributeFlags_TexCoord0 ) {
         if ( vertexAttributeFlags & 0x800 ) {
-            TVector2 TexCoord0;
+            f16 TexCoord0X;
+            f16 TexCoord0Y;
         } else {
             u16 TexCoord0X;
             u16 TexCoord0Y;
@@ -1245,7 +1242,8 @@ typedef struct( EMeshFlags meshFlags, EVertexAttributeFlags vertexAttributeFlags
     }
     if ( vertexAttributeFlags & EVertexAttributeFlags_TexCoord1 ) {
         if ( vertexAttributeFlags & 0x1000 ) {
-            TVector2 TexCoord1;
+            f16 TexCoord1X;
+            f16 TexCoord1Y;
         } else {
             u16 TexCoord1X;
             u16 TexCoord1Y;
@@ -1253,12 +1251,19 @@ typedef struct( EMeshFlags meshFlags, EVertexAttributeFlags vertexAttributeFlags
     }
     if ( vertexAttributeFlags & EVertexAttributeFlags_TexCoord2 ) {
         if ( vertexAttributeFlags & 0x2000 ) {
-            TVector2 TexCoord2;
+            f16 TexCoord2X;
+            f16 TexCoord2Y;
         } else {
             u16 TexCoord2X;
             u16 TexCoord2Y;
         }    
     }
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Normal )    TVector3 Normal;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Tangent )   TVector3 Tangent;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Binormal )  TVector3 Binormal;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Color0 )    u32 Color0;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Color1 )    u32 Color1;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Color2 )    u32 Color2;
     if ( meshFlags & EMeshFlags_HasVertexWeights )
     {
         if (version < 0x2040001) {

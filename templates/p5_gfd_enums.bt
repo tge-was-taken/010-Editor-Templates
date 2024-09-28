@@ -283,16 +283,18 @@ typedef enum<u32>
 
 typedef enum<u32>
 {
+    EVertexAttributeFlags_Flag1        = 1 << 0,
     EVertexAttributeFlags_Position     = 1 << 1,
     EVertexAttributeFlags_Flag4        = 1 << 2,
     EVertexAttributeFlags_Flag8        = 1 << 3,
     EVertexAttributeFlags_Normal       = 1 << 4, // might be normals. maybe normal should be position
+    EVertexAttributeFlags_Flag20       = 1 << 5,
     EVertexAttributeFlags_Color0       = 1 << 6,
     EVertexAttributeFlags_Flag40       = 1 << 7,
     EVertexAttributeFlags_TexCoord0    = 1 << 8,
     EVertexAttributeFlags_TexCoord1    = 1 << 9,
     EVertexAttributeFlags_TexCoord2    = 1 << 10,
-    EVertexAttributeFlags_TexCoord3    = 1 << 11,
+    EVertexAttributeFlags_Color2       = 1 << 11, // used in Metaphor, comes after normals, binormals
     EVertexAttributeFlags_TexCoord4    = 1 << 12,
     EVertexAttributeFlags_TexCoord5    = 1 << 13,
     EVertexAttributeFlags_TexCoord6    = 1 << 14,
