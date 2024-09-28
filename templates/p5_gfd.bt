@@ -21,7 +21,13 @@
 #include "p5_gfd_enums.bt"
 #include "p5_gfd_enum_functions.bt"
 
-// These files are always big endian
+// Catherine Full Body uses features from GAP version > 0x1105100, 
+// but the version in the file is listed as 0x1105090.
+// GAP files from the game will not work without this enabled.
+local bool CFBHack = false;
+
+// These files are usually big endian
+// Metaphor: Refantazio's files are little endian however.
 BigEndian();
 
 //
@@ -145,19 +151,40 @@ typedef struct(u32 version)
 
     if ( version > 0x01080000 )
     {
-
-#ifdef CFB_GAP
-      if ( version >= 0x01105100 )
-      {
-        u8 CFBOnlyPaddingByte;
-      }
-#endif
-
-      // hash
       u32 Hash;
     }
   }
 } THashString <optimize=false, read=THashStringToString>;
+
+typedef struct(u32 version)
+{
+  u16 Length;
+
+  if ( Length )
+  {
+    char Str[Length];
+
+    if ( version > 0x01080000 )
+    {
+      if ( version > 0x01105100 || CFBHack )
+      {
+        u8 Padding;
+      }
+      u32 Hash;
+    }
+  }
+} THashStringGap <optimize=false, read=THashStringGapToString>;
+
+string THashStringGapToString( THashStringGap& value )
+{
+    if ( value.Length == 0 )
+        return "<empty string>";
+
+    string buffer;
+    SPrintf( buffer, "%s (%08X) [%08X]", value.Str, value.Hash, GenerateStringHash( value.Str ) );
+
+    return buffer;
+}
 
 string THashStringToString( THashString& value )
 {
@@ -323,8 +350,13 @@ typedef enum<u16>
 typedef struct(u32 version)
 {
     SetRandomBackColor();
+    local u16 MaterialParameterVersion = 1;
+    if (version >= 0x2000000) {
+        u16 _MaterialParameterVersion;
+        MaterialParameterVersion = _MaterialParameterVersion;
+    }
     THashString Name( version );
-    local EMaterialFlags Flags;
+    local EMaterialFlags Flags = ReadInt();
     EMaterialFlags MaterialFlags;
 
     if ( version < 0x1104000 )
@@ -332,12 +364,124 @@ typedef struct(u32 version)
         local EMaterialFlags RuntimeFlags = ( EMaterialFlags )( ( u32 )Flags & 0x7FFFFFFF );
     }
     
-    TVector4 AmbientColor;
-    TVector4 DiffuseColor;
-    TVector4 SpecularColor;
-    TVector4 EmissiveColor;
-    f32 matReflectivity; // reflectivity
-    f32 matOutlineIndex; // diffiusivity
+    if (version < 0x2000000) {
+        TVector4 AmbientColor;
+        TVector4 DiffuseColor;
+        TVector4 SpecularColor;
+        TVector4 EmissiveColor;
+        f32 matReflectivity; // reflectivity
+        f32 matOutlineIndex; // diffiusivity
+    } else {
+        switch (MaterialParameterVersion) {
+            case 0:
+                TVector4 Diffuse;
+                f32 Reflectivity;
+                f32 Diffusivity;
+                f32 Unk1;
+                if (version >= 0x2000004) {
+                    f32 Unk2;
+                }
+                if (version >= 0x2030001) {
+                    f32 Unk3;
+                }
+                if (version > 0x2110040) {
+                    u32 Unk4;
+                }
+                if (version == 0x2110140) {
+                    f32 Unk5;
+                }
+                break;
+            case 1:
+                TVector4 AmbientColor;
+                TVector4 DiffuseColor;
+                TVector4 SpecularColor;
+                TVector4 EmissiveColor;
+                f32 matReflectivity; // reflectivity
+                f32 matOutlineIndex; // diffiusivity
+                break;
+            case 2:
+            case 3:
+            case 0xd:
+                TVector4 BaseColor;
+                TVector4 P2_1;
+                TVector4 EdgeColor;
+                TVector4 EmissiveColor;
+                TVector3 P2_4;
+                f32 P2_5[6];
+                u32 P2_6;
+                if ( version >= 0x200ffff ) {
+                    f32 P2_7;
+                    TVector3 P2_8;
+                }
+                if ( version >= 0x2030001 )
+                    f32 P2_9;
+                if ( version >= 0x2090000 )
+                    f32 P2_10;
+                if ( version >= 0x2094001 )
+                    f32 P2_11;
+                if ( version >= 0x2109501 )
+                    f32 P2_12[3];
+                if ( version >= 0x2109601 )
+                    f32 P2_14;
+                if ( version >= 0x2110197 )
+                    f32 P2_15;
+                if ( version >= 0x2110203 )
+                    f32 P2_16;
+                if ( version >= 0x2110209 )
+                    f32 P2_17;
+                break;
+            case 4:
+                TVector4 P4_0;
+                TVector4 P4_1;
+                TVector3 P4_2;
+                u32 P4_3;
+                if ( version >= 0x2110184 )
+                    f32 P4_4;
+                if ( version >= 0x2110203 )
+                    f32 P4_5;
+                if ( version >= 0x2110217 )
+                    f32 P4_6;
+                break;
+            case 12:
+                TVector4 P12_0;
+                TVector4 P12_1;
+                TVector4 P12_2;
+                f32 P12_3;
+                f32 P12_4;
+                f32 P12_5;
+                u32 P12_6;
+                f32 P12_7;
+                TVector3 P12_8;
+                f32 P12_9;
+                f32 P12_10;
+                if ( version >= 0x2109501 )
+                {
+                    f32 P12_11;
+                    f32 P12_12;
+                    f32 P12_13;
+                }
+                if ( version >= 0x2109601 )
+                    f32 P12_14;
+                if ( version >= 0x2109701 )
+                {
+                    TVector3 P12_15;
+                    f32 P12_16;
+                    f32 P12_17;
+                    f32 P12_18;
+                    f32 P12_19;
+                }
+                if ( version >= 0x2110070 )
+                {
+                    TVector4 P12_20;
+                    f32 P12_21;
+                    f32 P12_22;
+                }
+                break;
+            default:
+                Assert(false, "Unimplemented material parameter version");
+                break;
+        }
+    }
 
     if ( version <= 0x1103040 )
     {
@@ -348,7 +492,8 @@ typedef struct(u32 version)
         s16 Field4B; // blendSrcAlpha
         s16 Field4C; // blendDstAlpha
 
-        if ( version > 0x108011B )
+        // verification needed: previously 0x108011B
+        if ( version > 0x1080004 )
         {
             s16 Field4D; // blendMultiple
         }
@@ -369,7 +514,8 @@ typedef struct(u32 version)
     if ( version <= 0x1104800 )
     {
         local s16 Field94 = 1;
-        s16 Field96;
+        // verification needed: previously s16
+        s32 Field96;
     }
     else
     {
@@ -380,13 +526,15 @@ typedef struct(u32 version)
     EShaderType ShaderType;
     TMaterialMapsTexcoord TexcoordFlags0;
     TMaterialMapsTexcoord TexcoordFlags1;
-	if ( version <= 0x01104800 )
-	{
-		u16 Field74;
-	}
     TBool16 DisableBackfaceCulling;
-    u32 Field98<format=hex>;
-
+    if ( version > 0x1103040) 
+    {
+        u32 Field98<format=hex>;
+    }
+    if (version >= 0x2110160) 
+    {
+        f32 Unk7;
+    }
     if (MaterialFlags & EMaterialFlags_HasDiffuseMap    ) struct TTextureMap DiffuseMap( version );
     if (MaterialFlags & EMaterialFlags_HasNormalMap     ) struct TTextureMap NormalMap( version );
     if (MaterialFlags & EMaterialFlags_HasSpecularMap   ) struct TTextureMap SpecularMap( version );
@@ -411,18 +559,58 @@ typedef struct(u32 version)
         {
             attributeStart = FTell();
             attributeHeader = ReadInt( attributeStart );
-            
+
             switch ( ( enum EMaterialAttributeType )( attributeHeader & 0xFFFF ) )
             {
-                case EMaterialAttributeType_ToonShading: struct TMaterialAttributeToonShading Attribute( version, shaderFlag ); break;
-                case EMaterialAttributeType_InnerGlow: struct TMaterialAttributeInnerGlow Attribute( version, shaderFlag ); break;
-                case EMaterialAttributeType_Outline: struct TMaterialAttributeOutline Attribute( version, shaderFlag ); break;
-                case EMaterialAttributeType_Type3: struct TMaterialAttributeType3 Attribute( version, shaderFlag ); break;
-                case EMaterialAttributeType_Type4: struct TMaterialAttributeScrollingTexture Attribute( version, shaderFlag ); break;
+                case EMaterialAttributeType_ToonShading: {
+                    struct TMaterialAttributeToonShading Attribute( version, shaderFlag );
+                    // if (Attribute.MaterialFlags & EMaterialAttributeToonShadingFlags_Bit0 && MaterialFlags & EMaterialFlags_HasNormalMap  ) 
+                    //     shaderFlag.FLAG2 |= 0x2000;
+                    // if (Attribute.MaterialFlags & EMaterialAttributeToonShadingFlags_Bit1 ) 
+                    //     shaderFlag.FLAG2 |= 0x100000;
+                    // if (Attribute.MaterialFlags & EMaterialAttributeToonShadingFlags_Bit2 && MaterialFlags & EMaterialFlags_HasNormalMap  )   
+                    //     shaderFlag.FLAG2 |= 0x200000;
+                    // if (Attribute.MaterialFlags & EMaterialAttributeToonShadingFlags_Bit3 )
+                    //     shaderFlag.FLAG2 |= 0x400000;
+                    // if (Attribute.MaterialFlags & EMaterialAttributeToonShadingFlags_Bit4 && MaterialFlags & EMaterialFlags_HasNormalMap  )
+                    //     shaderFlag.FLAG2 |= 0x4000000;
+                    // if (Attribute.MaterialFlags & EMaterialAttributeToonShadingFlags_Bit5 )
+                    //     shaderFlag.FLAG2 |= 0x8000000; 
+                    // if (Attribute.MaterialFlags & EMaterialAttributeToonShadingFlags_Bit6 && MaterialFlags & EMaterialFlags_HasShadowMap  )
+                    //     shaderFlag.FLAG1 |= 0x10000;
+                    break;
+                }
+                case EMaterialAttributeType_InnerGlow: {
+                    struct TMaterialAttributeInnerGlow Attribute( version, shaderFlag );
+                    /*
+                    if (Attribute.Flags.EMaterialAttributeInnerGlowFlags_Bit31 && MaterialFlags.TMaterialFlags_HasNormalMap) shaderFlag.FLAG2 |= 0x2000;
+                    if (Attribute.Flags.EMaterialAttributeInnerGlowFlags_Bit30) shaderFlag.FLAG2 |= 0x80000;
+                    if (Attribute.Flags.EMaterialAttributeInnerGlowFlags_Bit29) shaderFlag.FLAG2 |= 0x100000;
+                    if (Attribute.Flags.EMaterialAttributeInnerGlowFlags_Bit28 && MaterialFlags.TMaterialFlags_HasHighlightMap) shaderFlag.FLAG2 |= 0x800000;
+                    if (Attribute.Flags.EMaterialAttributeInnerGlowFlags_Bit27 && MaterialFlags.TMaterialFlags_HasNormalMap) shaderFlag.FLAG2 |= 0x4000000;
+                    if (Attribute.Flags.EMaterialAttributeInnerGlowFlags_Bit25) shaderFlags.FLAG2 |= 0x8000000;
+                    if (Attribute.Flags.EMaterialAttributeInnerGlowFlags_Bit24 && MaterialFlags.TMaterialFlags_HasShadowMap) shaderFlag.FLAG1 |= 0x10000;
+                    */
+                    break;
+                }
+                case EMaterialAttributeType_Outline: {
+                    struct TMaterialAttributeOutline Attribute( version, shaderFlag ); 
+                    // if (/*ENVFlags & CharacterOutline*/ MaterialFlags.TMaterialFlags_HasOutline && DrawMethod == EMaterialDrawMethod_Opaque
+                    //     && DiffuseColor.W == 1.0 && (Field98 == -1 || Field94 & Bit7)) {
+                    // shaderFlag.FLAG0 |= 0x40000000;
+                    // }
+                    break;
+                }
+                case EMaterialAttributeType_Type3: struct TMaterialAttributeWater Attribute( version, shaderFlag ); break;
+                case EMaterialAttributeType_Type4: {
+                    struct TMaterialAttributeScrollingTexture Attribute( version, shaderFlag );
+                    //if (Attribute.MaterialFlags.TMaterialAttributeScrolingTexture
+                    break;
+                }
                 case EMaterialAttributeType_Type5: struct TMaterialAttributeType5 Attribute( version, shaderFlag ); break;
                 case EMaterialAttributeType_Type6: struct TMaterialAttributeType6 Attribute( version, shaderFlag ); break;
                 case EMaterialAttributeType_Type7: struct TMaterialAttributeType7 Attribute( version, shaderFlag ); break;
-                case EMaterialAttributeType_Type8: struct TMaterialAttributeType8 Attribute( version, shaderFlag ); break;
+                case EMaterialAttributeType_Type8: struct TMaterialAttributeAlphaCrunch Attribute( version, shaderFlag ); break;
                 default:
                     local string buffer;
                     SPrintf( buffer, "Unknown material attribute type %01d", ( attributeHeader & 0xFFFF ) );
@@ -665,7 +853,8 @@ typedef struct(u32 version, ShaderFlags& shaderFlag )
         TVector4 Color;
         f32 toonLightThrehold;
         f32 toonLightFactor;
-        local f32 toonLightBrightness = 1.0f;
+        // verification needed: previously a local, not read frm file
+        f32 toonLightBrightness;
         f32 toonShadowThreshold;
         f32 toonShadowFactor;
     }
@@ -831,6 +1020,11 @@ typedef struct(u32 version, ShaderFlags& shaderFlags)
     TMaterialAttributeHeader Header;
     Assert( Header.Type == EMaterialAttributeType_Type8 );
 
+// POSSIBLE COMPAT ISSUE
+// #ifndef CFB_GFS
+//     f32 Field00;
+//     u32 Field04;
+// #else
     TVector3 Field00;
     f32 Field0C;
     f32 Field10;
@@ -843,6 +1037,8 @@ typedef struct(u32 version, ShaderFlags& shaderFlags)
     s32 Field34;
     s32 Field38;
     EMaterialAttributeType8Flags Flags;
+//#endif
+
 } TMaterialAttributeAlphaCrunch;
 
 //
@@ -868,6 +1064,9 @@ typedef struct
 
         SetBackColorToShadeOfLastColor(0x20);
         u16 BoneToNodeIndices[BoneCount];
+        if ( Header.Version >= 0x2040001) {
+            u8 Unk0;
+        }
     }
 
     if ( Flags & EModelFlags_HasBoundingBox )
@@ -973,12 +1172,24 @@ typedef struct(u32 version)
 
     u32 VertexCount;
 
+    if ( version >= 0x2110205 ) {
+        u8 TriangleStrideType;
+    }
+
     if ( version > 0x1103020 )
     {
         u32 InvisibleShadowCaster;
     }
     
-    struct TVertex Vertices( Flags, VertexAttributeFlags )[VertexCount];
+    if ( version >= 0x2110205 ) {
+        struct TVertexMetaphor Vertices(Flags,VertexAttributeFlags,version)[VertexCount];
+    } else {
+        struct TVertex Vertices( Flags, VertexAttributeFlags )[VertexCount];
+    }
+    
+    if (Flags & EMeshFlags_HasVertexWeights && version >= 0x2110213) {
+        u8 Unk1;
+    }
 
     if ( Flags & EMeshFlags_HasMorphTargets )
     {
@@ -1016,6 +1227,54 @@ typedef struct(u32 version)
         f32 FieldD8;
     }
 } TMesh <optimize=false>;
+
+typedef struct( EMeshFlags meshFlags, EVertexAttributeFlags vertexAttributeFlags, u32 version )
+{
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Position )  TVector3 Position;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Normal )    TVector3 Normal;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Tangent )   TVector3 Tangent;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Binormal )  TVector3 Binormal;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_Color0 )    u32 Color0;
+    if ( vertexAttributeFlags & EVertexAttributeFlags_TexCoord0 ) {
+        if ( vertexAttributeFlags & 0x800 ) {
+            TVector2 TexCoord0;
+        } else {
+            u16 TexCoord0X;
+            u16 TexCoord0Y;
+        }    
+    }
+    if ( vertexAttributeFlags & EVertexAttributeFlags_TexCoord1 ) {
+        if ( vertexAttributeFlags & 0x1000 ) {
+            TVector2 TexCoord1;
+        } else {
+            u16 TexCoord1X;
+            u16 TexCoord1Y;
+        }    
+    }
+    if ( vertexAttributeFlags & EVertexAttributeFlags_TexCoord2 ) {
+        if ( vertexAttributeFlags & 0x2000 ) {
+            TVector2 TexCoord2;
+        } else {
+            u16 TexCoord2X;
+            u16 TexCoord2Y;
+        }    
+    }
+    if ( meshFlags & EMeshFlags_HasVertexWeights )
+    {
+        if (version < 0x2040001) {
+            struct
+            {
+                f32 Weights[4];
+                u8 Indices[4];
+            } VertexWeights;
+        } else {
+            struct {
+                u16 Weights[8];
+                u16 Indices[8];
+            } VertexWeightsMetaphor;
+        }
+    }
+} TVertexMetaphor <optimize=false>;
 
 typedef struct( EMeshFlags meshFlags, EVertexAttributeFlags vertexAttributeFlags )
 {
@@ -1063,6 +1322,11 @@ typedef struct ( u32 version )
     if ( version > 0x1104060 )
     {
         f32 Field190;
+    }
+    if ( version >= 0x2110050 ) {
+        u8 Field198;
+        f32 Field19C;
+        f32 Field1A0;
     }
 } TCamera;
 
@@ -1154,6 +1418,12 @@ typedef struct
             struct TAnimationExtraData ExtraData( Header.Version );
         }
     }
+    if ( Header.Version > 0x2109900 ) 
+    {
+        u32 AnimArray3Count;
+        if ( AnimArray3Count > 0 )
+            struct TAnimation AnimArray3( Header.Version )[ AnimArray3Count ];   
+    }
 } TAnimationPack <optimize=false>;
 
 typedef struct( u32 version )
@@ -1167,14 +1437,14 @@ typedef struct( u32 version )
 
     f32 Duration;
     u32 ControllerCount;
-#ifdef CFB_GAP
-    if ( version >= 0x01105100 )
+    if ( version > 0x01105100 || CFBHack )
     {
         s32 Unknown1;
         s32 Unknown2;
-        Assert( Unknown1 == ControllerCount );
+        // Fails in CFB blend animation (c02_03_36030.GAP)
+        // Has 2 layers, maybe sum of layers?
+        // Assert( Unknown1 == ControllerCount );
     }
-#endif
 
     if ( ControllerCount )
     {
@@ -1244,7 +1514,7 @@ typedef struct( u32 version )
 
     ETargetKind TargetKind;
     s32 TargetId<format=hex>;
-    THashString TargetName( version );
+    THashStringGap TargetName( version );
     u32 LayerCount;
     struct TAnimationLayer Layers( version )[ LayerCount ];
 } TAnimationController <optimize=false>;
@@ -1304,6 +1574,7 @@ typedef struct( u32 version )
             case EKeyType_Single5:
             case EKeyType_Single5_2:
             case EKeyType_Single5Alt:
+            case EKeyType_36P5R:
                 struct TSingle5Key Keys[ KeyCount ];
                 break;
 
@@ -1314,17 +1585,20 @@ typedef struct( u32 version )
 
             case EKeyType_Type31:
                 {
-                    #ifndef CFB_GAP
-                        struct TKeyType31Dancing Keys[ KeyCount ];
-                    #else
+                    if ( version > 0x01105100 || CFBHack )
+                    {
                         struct TKeyType31FullBody Keys[ KeyCount ];
-                    #endif
+                    }
+                    else
+                    {
+                        struct TKeyType31Dancing Keys[ KeyCount ];
+                    }
                 }
                 break;
 
 			// P5R keys
 			case 34: struct TKeyType34P5R Keys [ KeyCount ]; break;
-			//case 34: byte UnkKeyType [ KeyCount*12 ]; break;
+
 			case 35: struct TKeyType35P5R Keys [ KeyCount ]; break;
 
             default:
@@ -1340,9 +1614,7 @@ typedef struct( u32 version )
 			 KeyType == EKeyType_34P5R        || KeyType == EKeyType_35P5R      )
         {
             TVector3 PositionScale;
-            #ifdef CFB_GAP
-            if ( version < 0x01105100 || KeyType != EKeyType_Type31)
-            #endif
+            if ( ( version <= 0x01105100 || CFBHack ) && KeyType != EKeyType_Type31 )
                 TVector3 ScaleScale;
         }
     }
@@ -1518,6 +1790,11 @@ typedef struct( u32 version, u32 keyCounts[] )
 typedef struct( u32 version )
 {
     SetRandomBackColor();
+    if ( version > 0x2110060 )
+    {
+        TVector2 Field34;
+        TVector2 Field3C;
+    }
     EEplLeafFlags Flags; // 0x2C
     THashString Name( version ); // 0x30
     local u32 type = ReadInt( FTell() + 0 );
@@ -1525,24 +1802,24 @@ typedef struct( u32 version )
     // 0x40
     switch ( type )
     {
-        case 0: struct TEplDummy Data( version );                break;
-        case 1: struct TEplParticle Data( version );             break;
-        case 2: struct TEplFlashPolygon Data( version );         break;
-        case 3: struct TEplCirclePolygon Data( version );        break;
-        case 4: struct TEplLightningPolygon Data( version );     break;
-        case 5: struct TEplTrajectoryPolygon Data( version );    break;
-        case 6: struct TEplWindPolygon Data( version );          break;
-        case 7: struct TEplModel Data( version );                break;
-        case 8: struct TEplTrajectoryPolygon Data( version );    break; // TEplSoulPolygon
-        case 9: struct TEplBoardPolygon Data( version );         break;
-        case 10:struct TEplObjectParticles Data( version );      break;
-        case 11:struct TEplGlitterPolygon Data( version );       break;
-        case 12:struct TEplGlitterPolygon Data( version );       break; // TEplBrightLightPolygon
-        case 13:struct TEplDirectionalParticles Data( version ); break;
-        case 14:struct TEplCamera Data( version );               break;
-        case 15:struct TEplLight Data( version );                break;
-        case 16:struct TEplPostEffect Data( version );           break;
-        case 17:struct TEplHelper Data( version );               break;
+        case 0:  struct TEplDummy Data( version );                break;
+        case 1:  struct TEplParticle Data( version );             break;
+        case 2:  struct TEplFlashPolygon Data( version );         break;
+        case 3:  struct TEplCirclePolygon Data( version );        break;
+        case 4:  struct TEplLightningPolygon Data( version );     break;
+        case 5:  struct TEplTrajectoryPolygon Data( version );    break;
+        case 6:  struct TEplWindPolygon Data( version );          break;
+        case 7:  struct TEplModel Data( version );                break;
+        case 8:  struct TEplTrajectoryPolygon Data( version );    break; 
+        case 9:  struct TEplBoardPolygon Data( version );         break;
+        case 10: struct TEplObjectParticles Data( version );      break;
+        case 11: struct TEplGlitterPolygon Data( version );       break;
+        case 12: struct TEplGlitterPolygon Data( version );       break;
+        case 13: struct TEplDirectionalParticles Data( version ); break;
+        case 14: struct TEplCamera Data( version );               break;
+        case 15: struct TEplLight Data( version );                break;
+        case 16: struct TEplPostEffect Data( version );           break;
+        case 17: struct TEplHelper Data( version );               break;
         default: Assert(false, "Not implemented"); break;
     }
 } TEplLeaf  <optimize=false>;
@@ -1556,17 +1833,21 @@ typedef struct
 typedef struct( u32 version )
 {
     SetRandomBackColor();
-
     THashString FileName( version );
-    u32 Field18;
+    if ( version < 0x2000002) {
+        u32 FileEmbedType; // 1 - get a file embedded in the exe (e.g <Smoke00>)
+    } else {
+        u16 FileEmbedType;
+        u16 Field0;        
+    }
 
-    if ( Field18 == 2 )
+    if ( FileEmbedType == 2 )
     {
-        u32 Filetype; // filetype vtable - 0x14226adf0, P5R.exe v1.01
+        u32 FileType; // filetype vtable - 0x14226adf0, P5R.exe v1.01
         u32 DataLength;
         //u8 Data[ DataLength ];
 
-        switch ( Filetype )
+        switch ( FileType )
         {
             case 0: break;
             case 1: u8 TextureData[ DataLength ]; break; // texture
@@ -1578,10 +1859,6 @@ typedef struct( u32 version )
             default: Assert( false );
         }
     }
-    //else if ( Field18 != 1 )
-    //{
-    //    Assert( false );
-    //}
 } TEplEmbeddedFile <optimize=false>;
 
 typedef struct( u32 version, u32 in_type )
@@ -1598,6 +1875,10 @@ typedef struct( u32 version, u32 in_type )
     u32 AngleSeed; 
     f32 DespawnTimer; 
     TVector2 SpawnChoker;
+    if ( version > 0x2107001 ) 
+        TVector2 Field4C;
+    if ( version > 0x2110193 ) 
+        TVector2 Field54;
     f32 ColorOverLifeOffset; 
     u32 FieldC4; 
     TVector2 OpacityOverLife; 
@@ -1615,6 +1896,8 @@ typedef struct( u32 version, u32 in_type )
 
     f32 Field12C; //Nothing
     f32 Field130;
+    if ( version > 0x2107001 )
+        TVector2 Field140;
     if ( version >= 0x1104041 ) { // 0x146f0f478
         TVector2 SpawnerAngles;
         TVector2 CycleRate_FromBirth;
@@ -1735,6 +2018,9 @@ typedef struct(u32 version)
 
     TVector4 ValueKeyframes;
     u16 TimeShift[23]<read=Str("%d (%.4f)", this, (f32)this / (1 * 65535))>;
+    if (version > 0x2110186) {
+        u16 Field62;
+    }
 } TEplLeafCommonData6 <optimize=false>;
 
 // verified
@@ -2191,6 +2477,15 @@ typedef struct( u32 version )
         s32 Field24;
         f32 Field28;
         f32 Field2C;
+    }
+
+    if ( version > 0x2110031 ) {
+        f32 Unk0;
+        u32 Unk1;
+        TVector2 Unk2;
+        TVector2 Unk3;
+        f32 Unk4;
+        u32 Unk5;
     }
 
     switch ( Type )
@@ -2890,6 +3185,9 @@ typedef struct
 typedef struct
 {
     SetRandomBackColor();
+    
+    if (ReadUInt() == 0x30534647) 
+        LittleEndian();
 
     TFileHeader Header;
 
