@@ -1,14 +1,14 @@
 //------------------------------------------------
-//--- 010 Editor v8.0 Binary Template
+//--- 010 Editor v12.0 Binary Template
 //
 //      File: p5_gfd.bt
-//   Authors: 
-//   Version: 
+//   Authors:
+//   Version:
 //   Purpose: GFD
 //  Category: Persona 5
 // File Mask: *.gmd, *.gap, *.epl, *.bed, *.gfs
 //  ID Bytes: GFS0
-//   History: 
+//   History:
 //------------------------------------------------
 
 //
@@ -19,6 +19,7 @@
 
 #include "common/include.h"
 #include "p5_gfd_enums.bt"
+#include "p5_gfd_enum_functions.bt"
 
 // These files are always big endian
 BigEndian();
@@ -62,7 +63,7 @@ string TChunkHeaderToString( TChunkHeader& value )
 typedef struct
 {
     u16 Length;
-    char Str[Length];  
+    char Str[Length];
 } TString <optimize=false, read=TStringToString>;
 
 string TStringToString( TString& value )
@@ -174,14 +175,14 @@ typedef struct(u32 version)
     u16 Length;
     if ( Length )
     {
-        char Str[Length];  
-    
+        char Str[Length];
+
         if ( version > 0x1080000 )
         {
             // hash
             u32 Hash;
-        }    
-    } 
+        }
+    }
 } THashStringNoPad <optimize=false>;
 
 typedef struct(u32 version)
@@ -259,7 +260,7 @@ typedef struct
     u8 Field1C;
     u8 Field1D;
     u8 Field1E;
-    u8 Field1F; 
+    u8 Field1F;
 } TTexture <optimize=false, read=TTextureToString>;
 
 string TTextureToString( TTexture& value )
@@ -274,12 +275,12 @@ typedef struct
     SetRandomBackColor();
 
     TChunkHeader Header;
-    Assert( Header.Type == EChunkType_TextureDictionary ); 
+    Assert( Header.Type == EChunkType_TextureDictionary );
 
     u32 TextureCount;
     if ( TextureCount > 0 )
         TTexture Textures[TextureCount];
-} TTextureDictionary <optimize=false>;
+} TTextureDictionary <optimize=false, read=Str("%d textures", TextureCount)>;
 
 //
 // -- End Texture types --
@@ -294,109 +295,77 @@ typedef struct
     SetRandomBackColor();
 
     TChunkHeader Header;
-    Assert( Header.Type == EChunkType_MaterialDictionary ); 
+    Assert( Header.Type == EChunkType_MaterialDictionary );
 
     u32 MaterialCount;
     struct TMaterial Materials( Header.Version )[MaterialCount];
-} TMaterialDictionary <optimize=false>;
+} TMaterialDictionary <optimize=false, read=Str("%d materials", MaterialCount)>;
 
-typedef struct
+typedef enum<u8>
 {
-    TBool32 TMaterialFlags_Bit31            : 1;
-    TBool32 TMaterialFlags_Bit30            : 1;
-    TBool32 TMaterialFlags_Bit29            : 1;
-    TBool32 TMaterialFlags_HasShadowMap     : 1;
-    TBool32 TMaterialFlags_HasDetailMap     : 1;
-    TBool32 TMaterialFlags_HasNightMap      : 1;
-    TBool32 TMaterialFlags_HasGlowMap       : 1;
-    TBool32 TMaterialFlags_HasHighlightMap  : 1;
-    TBool32 TMaterialFlags_HasReflectionMap : 1;
-    TBool32 TMaterialFlags_HasSpecularMap   : 1;
-    TBool32 TMaterialFlags_HasNormalMap     : 1;
-    TBool32 TMaterialFlags_HasDiffuseMap    : 1;
-    TBool32 TMaterialFlags_DisableBloom     : 1;
-    TBool32 TMaterialFlags_Bit18            : 1;
-    TBool32 TMaterialFlags_HasOutline       : 1;
-    TBool32 TMaterialFlags_HasAttributes    : 1;
-    TBool32 TMaterialFlags_CastShadow       : 1;
-    TBool32 TMaterialFlags_ReceiveShadow    : 1;
-    TBool32 TMaterialFlags_OpaqueAlpha2     : 1;
-    TBool32 TMaterialFlags_PurpleWireframe  : 1;
-    TBool32 TMaterialFlags_EnableLight2     : 1;
-    TBool32 TMaterialFlags_Bit10            : 1;
-    TBool32 TMaterialFlags_Bit9             : 1;
-    TBool32 TMaterialFlags_Bit8             : 1;
-    TBool32 TMaterialFlags_EnableLight      : 1;
-    TBool32 TMaterialFlags_Bit6             : 1;
-    TBool32 TMaterialFlags_OpaqueAlpha1     : 1;
-    TBool32 TMaterialFlags_HasVertexColors  : 1;
-    TBool32 TMaterialFlags_Bit3             : 1;
-    TBool32 TMaterialFlags_Bit2             : 1;
-    TBool32 TMaterialFlags_Bit1             : 1;
-    TBool32 TMaterialFlags_Bit0             : 1;
-} TMaterialFlags;
+    HighlightMaterialLerp = 1,
+    HighlightMaterialAddition = 2,
+    HighlightMaterialSubtract = 3,
+    HighlightMaterialModulate = 4,
+} EHighlightMapModulationMode;
 
-typedef struct
-{ 
-    EMaterialMapsTexcoord Filler           : 5<hidden=true>;
-    EMaterialMapsTexcoord ShadowMap        : 3;
-    EMaterialMapsTexcoord DetailMap        : 3;
-    EMaterialMapsTexcoord NightMap         : 3;
-    EMaterialMapsTexcoord GlowMap          : 3;
-    EMaterialMapsTexcoord HighlightMap     : 3;
-    EMaterialMapsTexcoord ReflectionMap    : 3;
-    EMaterialMapsTexcoord SpecularMap      : 3;
-    EMaterialMapsTexcoord NormalMap        : 3;
-    EMaterialMapsTexcoord DiffuseMap       : 3;
-} TMaterialMapsTexcoord;
+typedef enum<u16>
+{
+    AlphaTest0 = 0,
+    AlphaTestLessThan = 1,
+    AlphaTest1 = 2,
+    AlphaTestLessThan2 = 3,
+    AlphaTestGreaterThan = 4,
+    AlphaTest2 = 5,
+    AlphaTestGreatherThan2 = 6,
+} EAlphaColorsTest;
 
 typedef struct(u32 version)
 {
     SetRandomBackColor();
-
     THashString Name( version );
-    local u32 Flags;
-	TMaterialFlags MaterialFlags;
-    
+    local EMaterialFlags Flags;
+    EMaterialFlags MaterialFlags;
+
     if ( version < 0x1104000 )
     {
-        local u32 RuntimeFlags = ( u32 )( ( u32 )Flags & 0x7FFFFFFF );
+        local EMaterialFlags RuntimeFlags = ( EMaterialFlags )( ( u32 )Flags & 0x7FFFFFFF );
     }
-
+    
     TVector4 AmbientColor;
     TVector4 DiffuseColor;
     TVector4 SpecularColor;
     TVector4 EmissiveColor;
-    f32 matReflectivity;
-    f32 matOutlineIndex;
+    f32 matReflectivity; // reflectivity
+    f32 matOutlineIndex; // diffiusivity
 
     if ( version <= 0x1103040 )
     {
-        s16 _DrawMethod;
+        s16 _DrawMethod; // blendType
         local EMaterialDrawMethod DrawMethod = (EMaterialDrawMethod)_DrawMethod;
-        s16 Field49;
-        s16 Field4A;
-        s16 Field4B;
-        s16 Field4C;
-        
+        s16 Field49; // blendSrcColor
+        s16 Field4A; // blendDstColor
+        s16 Field4B; // blendSrcAlpha
+        s16 Field4C; // blendDstAlpha
+
         if ( version > 0x108011B )
         {
-           s16 Field4D; 
+            s16 Field4D; // blendMultiple
         }
     }
     else
     {
-        EMaterialDrawMethod DrawMethod <name = "Draw Method">;
+        EMaterialDrawMethod DrawMethod;
         u8 Field49;
         u8 Field4A;
         u8 Field4B;
         u8 Field4C;
-        EMaterialHighlightMapBlendMode HighlightMap_BlendMode <name = "Highlight map blend mode">;
+        EHighlightMapModulationMode HighlightMapModulationMode;
     }
 
-    s16 AlphaThreshold;
-    s16 Field92;
-    
+    s16 AlphaClipThresholdTest;
+    EAlphaColorsTest envColorsAlphaTest;
+
     if ( version <= 0x1104800 )
     {
         local s16 Field94 = 1;
@@ -404,31 +373,33 @@ typedef struct(u32 version)
     }
     else
     {
-        s16 Field94<format=hex>;
+        EMaterialFlags2 Field94;
         s16 Field96;
     }
 
-    s16 Field5C;
-    TMaterialMapsTexcoord TexcoordFlags <name = "Texcoords flags">;
-    TMaterialMapsTexcoord TexcoordFlags <name = "Texcoords flags">;
+    EShaderType ShaderType;
+    TMaterialMapsTexcoord TexcoordFlags0;
+    TMaterialMapsTexcoord TexcoordFlags1;
 	if ( version <= 0x01104800 )
 	{
 		u16 Field74;
 	}
-    TBool16 DisableBackfaceCulling <name = "Disable backface culling">;
+    TBool16 DisableBackfaceCulling;
     u32 Field98<format=hex>;
 
-    if (MaterialFlags.TMaterialFlags_HasDiffuseMap    ) struct TTextureMap DiffuseMap( version );
-    if (MaterialFlags.TMaterialFlags_HasNormalMap     ) struct TTextureMap NormalMap( version );
-    if (MaterialFlags.TMaterialFlags_HasSpecularMap   ) struct TTextureMap SpecularMap( version );
-    if (MaterialFlags.TMaterialFlags_HasReflectionMap ) struct TTextureMap ReflectionMap( version );
-    if (MaterialFlags.TMaterialFlags_HasHighlightMap  ) struct TTextureMap HighlightMap( version );
-    if (MaterialFlags.TMaterialFlags_HasGlowMap       ) struct TTextureMap GlowMap( version );
-    if (MaterialFlags.TMaterialFlags_HasNightMap      ) struct TTextureMap NightMap( version );
-    if (MaterialFlags.TMaterialFlags_HasDetailMap     ) struct TTextureMap DetailMap( version );
-    if (MaterialFlags.TMaterialFlags_HasShadowMap     ) struct TTextureMap ShadowMap( version );
+    if (MaterialFlags & EMaterialFlags_HasDiffuseMap    ) struct TTextureMap DiffuseMap( version );
+    if (MaterialFlags & EMaterialFlags_HasNormalMap     ) struct TTextureMap NormalMap( version );
+    if (MaterialFlags & EMaterialFlags_HasSpecularMap   ) struct TTextureMap SpecularMap( version );
+    if (MaterialFlags & EMaterialFlags_HasReflectionMap ) struct TTextureMap ReflectionMap( version );
+    if (MaterialFlags & EMaterialFlags_HasHighlightMap  ) struct TTextureMap HighlightMap( version );
+    if (MaterialFlags & EMaterialFlags_HasGlowMap       ) struct TTextureMap GlowMap( version );
+    if (MaterialFlags & EMaterialFlags_HasNightMap      ) struct TTextureMap NightMap( version );
+    if (MaterialFlags & EMaterialFlags_HasDetailMap     ) struct TTextureMap DetailMap( version );
+    if (MaterialFlags & EMaterialFlags_HasShadowMap     ) struct TTextureMap ShadowMap( version );
 
-    if (MaterialFlags.TMaterialFlags_HasAttributes )
+    local ShaderFlags shaderFlag;
+
+    if (MaterialFlags & EMaterialFlags_HasAttributes )
     {
         u32 AttributeCount;
 
@@ -443,15 +414,15 @@ typedef struct(u32 version)
             
             switch ( ( enum EMaterialAttributeType )( attributeHeader & 0xFFFF ) )
             {
-                case EMaterialAttributeType_ToonShading: struct TMaterialAttributeToonShading Attribute( version ); break;
-                case EMaterialAttributeType_InnerGlow: struct TMaterialAttributeInnerGlow Attribute( version ); break;
-                case EMaterialAttributeType_Outline: struct TMaterialAttributeOutline Attribute( version ); break;
-                case EMaterialAttributeType_Type3: struct TMaterialAttributeType3 Attribute( version ); break;
-                case EMaterialAttributeType_Type4: struct TMaterialAttributeScrollingTexture Attribute( version ); break;
-                case EMaterialAttributeType_Type5: struct TMaterialAttributeType5 Attribute( version ); break;
-                case EMaterialAttributeType_Type6: struct TMaterialAttributeType6 Attribute( version ); break;
-                case EMaterialAttributeType_Type7: struct TMaterialAttributeType7 Attribute( version ); break;
-                case EMaterialAttributeType_Type8: struct TMaterialAttributeType8 Attribute( version ); break;
+                case EMaterialAttributeType_ToonShading: struct TMaterialAttributeToonShading Attribute( version, shaderFlag ); break;
+                case EMaterialAttributeType_InnerGlow: struct TMaterialAttributeInnerGlow Attribute( version, shaderFlag ); break;
+                case EMaterialAttributeType_Outline: struct TMaterialAttributeOutline Attribute( version, shaderFlag ); break;
+                case EMaterialAttributeType_Type3: struct TMaterialAttributeType3 Attribute( version, shaderFlag ); break;
+                case EMaterialAttributeType_Type4: struct TMaterialAttributeScrollingTexture Attribute( version, shaderFlag ); break;
+                case EMaterialAttributeType_Type5: struct TMaterialAttributeType5 Attribute( version, shaderFlag ); break;
+                case EMaterialAttributeType_Type6: struct TMaterialAttributeType6 Attribute( version, shaderFlag ); break;
+                case EMaterialAttributeType_Type7: struct TMaterialAttributeType7 Attribute( version, shaderFlag ); break;
+                case EMaterialAttributeType_Type8: struct TMaterialAttributeType8 Attribute( version, shaderFlag ); break;
                 default:
                     local string buffer;
                     SPrintf( buffer, "Unknown material attribute type %01d", ( attributeHeader & 0xFFFF ) );
@@ -460,12 +431,146 @@ typedef struct(u32 version)
             }
         }
     }
-} TMaterial <optimize=false, read=TMaterialToString>;
+} TMaterial <optimize=false, read=TMaterialToString(this, shaderFlag)>;
 
-string TMaterialToString( TMaterial& value )
+u32 TexcoordFlagToInt(TMaterialMapsTexcoord& val)
+{
+    u32 texcoordValue = val.DiffuseMap;
+    texcoordValue += val.NormalMap << 3;
+    texcoordValue += val.SpecularMap << 6;
+    texcoordValue += val.ReflectionMap << 9;
+    texcoordValue += val.HighlightMap << 12;
+    texcoordValue += val.GlowMap << 15;
+    texcoordValue += val.NightMap << 18;
+    texcoordValue += val.DetailMap << 21;
+    texcoordValue += val.ShadowMap << 24;
+    texcoordValue += val.Filler << 27;
+    return texcoordValue;
+}
+
+string TMaterialToString( TMaterial& value, ShaderFlags& attributeFlags )
 {
     string buffer;
-    SPrintf( buffer, "%s", THashStringToString( value.Name ) );
+    SPrintf(buffer, "%s", value.Name.Str);
+    return buffer;
+    u32 shaderFlags[4] = 0;
+    // get shader data
+    // this assumes that the scene contains one directional light (FLAG0_LIGHT0_DIRECTION)
+    shaderFlags[1] |= 0x2;
+    if (value.MaterialFlags & EMaterialFlags_EnableGlobalLight) {
+        shaderFlags[0] |= 0x10; // FLAG0_LIGHT0_DIRECTION
+        if (value.DrawMethod == EMaterialDrawMethod_Opaque && value.DiffuseColor.W >= 1.0 && (value.Field98 == -1 || value.Field94 & Bit7) 
+            && (value.Field94 & Bit12 || value.SpecularColor.W >= 1.0) /*&& value.Field94 & Bit3*/) {
+            shaderFlags[0] |= 0x20000000; // FLAG0_DEFERRED
+        }
+        if (value.MaterialFlags & EMaterialFlags_HasShadowMap)    {
+            shaderFlags[1] |= 0x802; // FLAG1_MATERIAL_LIGHT
+            if (value.Field94 & LightMapModulate2) {
+                if (value.Field94 & LightMapModulate2) shaderFlags[1] |= 0x20802; // FLAG1_LIGHTMAP_MODULATE2, FLAG1_MATERIAL_LIGHT
+            } else {
+                shaderFlags[2] |= 0x4; // FLAG2_LIGHTMAP_MODULATE
+            }
+        }
+    }
+    shaderFlags[0] |= 0x4000;
+    if (value.MaterialFlags & EMaterialFlags_AlphaTest)   {
+        switch (value.envColorsAlphaTest)   {
+            case 0:         shaderFlags[2] |= 0x8; break;
+            case 1: case 3: shaderFlags[2] |= 0x40; break;
+            case 2:         shaderFlags[2] |= 0x10; break;
+            case 4: case 6: shaderFlags[2] |= 0x80; break;
+            case 5:         shaderFlags[2] |= 0x20; break;
+            default: {
+                local string buffer;
+                SPrintf( buffer, "Unknown envColorsAlphaTest value %d", value.envColorsAlphaTest);
+                Assert(false, "Unknown envColorsAlphaTest value"); 
+                break;
+            }
+        }
+    }
+    if (value.MaterialFlags & EMaterialFlags_MaterialAmbient && value.EmissiveColor.W > 0) shaderFlags[1] |= 0x10; // FLAG1_MATERIAL_EMISSIVE
+    if (value.MaterialFlags & EMaterialFlags_HasVertexColors) shaderFlags[1] |= 0x100;
+    //if (value.Field94 & Bit8) shaderFlags[1] |= 0x4;
+    if (value.MaterialFlags & EMaterialFlags_MaterialSpecular) shaderFlags[1] |= 0x4; // FLAG1_MATERIAL_SPECULAR
+
+    if (value.MaterialFlags & EMaterialFlags_Bit5) {
+        /*if (ENVFlags.Fog)*/ shaderFlags[1] |= 0x20;
+        /*if (ENVFlags.FloorFog)*/ shaderFlags[1] |= 0x8000;
+        if (value.DrawMethod == EMaterialDrawMethod_BlackAsAlpha) shaderFlags[2] |= 0x1000;
+    }
+
+    if (value.MaterialFlags & EMaterialFlags_HasHighlightMap) {
+        switch (value.HighlightMapModulationMode) {
+            case HighlightMaterialLerp: shaderFlags[2] |= 0x200;
+            case HighlightMaterialAddition: shaderFlags[2] |= 0x400;
+            case HighlightMaterialSubtract: shaderFlags[2] |= 0x800;
+            case HighlightMaterialModulate: shaderFlags[3] |= 0x2;
+        }
+    }
+
+    if (value.MaterialFlags & EMaterialFlags_HasReflectionMap && value.MaterialFlags & EMaterialFlags_Bit9) {
+        shaderFlags[1] |= 0x40; // FLAG1_MATERIAL_REFLECTION
+        /* if (value.ReflectionMap.Texture->textureContents->shaderInstance->Field10 > 9 && */shaderFlags[2] |= 0x100;/* && FakeReflectionType == 1) {
+            shaderFlags[3] |= 0x1; // FLAG3_REFLECT_TYPE1
+        } */
+        if (value.matReflectivity < 1) shaderFlags[1] |= 0x80; // FLAG1_MATERIAL_REFLECTION_LERP
+        if (value.Field94 & Bit8) shaderFlags[1] |= 0x40000; // FLAG1_MATERIAL_REFLECTION_ADD
+    }
+
+    if (/*ENVFlags.FieldShadow && */value.MaterialFlags & EMaterialFlags_ReceiveShadow) {
+        shaderFlags[1] |= 0x1; // FLAG1_MATERIAL_SHADOW
+        // if (shadowRenderType == 3) {
+            shaderFlags[2] |= 0x40000000; // FLAG2_CSM (probably)
+            //if (PCFMode == 1) {
+                shaderFlags[2] |= 0x1000000; // FLAG2_PCF_4x4 (probably)
+            //}
+        //}
+        // if (ShadowConst2 & 4 != 0) {
+            shaderFlags[2] |= 0x20000000; // FLAG2_PCF (probably)
+        //}
+    }
+
+    // TextureMaps
+    if (value.MaterialFlags & EMaterialFlags_HasDiffuseMap    ) { shaderFlags[1] |= 0x400000;    shaderFlags[0] |= 0x80000 << value.TexcoordFlags0.DiffuseMap | 0x10000 << value.TexcoordFlags1.DiffuseMap;        }  // FLAG1_TEXTURE1
+    if (value.MaterialFlags & EMaterialFlags_HasNormalMap     ) { shaderFlags[1] |= 0x800000;    shaderFlags[0] |= 0x80000 << value.TexcoordFlags0.NormalMap | 0x10000 << value.TexcoordFlags1.NormalMap;          }// FLAG1_TEXTURE2
+    if (value.MaterialFlags & EMaterialFlags_HasSpecularMap   ) { shaderFlags[1] |= 0x1000000;   shaderFlags[0] |= 0x80000 << value.TexcoordFlags0.SpecularMap | 0x10000 << value.TexcoordFlags1.SpecularMap;      } // FLAG1_TEXTURE3
+    if (value.MaterialFlags & EMaterialFlags_HasReflectionMap ) { shaderFlags[1] |= 0x2000000;   shaderFlags[0] |= 0x80000 << value.TexcoordFlags0.ReflectionMap | 0x10000 << value.TexcoordFlags1.ReflectionMap;  } // FLAG1_TEXTURE4
+    if (value.MaterialFlags & EMaterialFlags_HasHighlightMap  ) { shaderFlags[1] |= 0x4000000;   shaderFlags[0] |= 0x80000 << value.TexcoordFlags0.HighlightMap | 0x10000 << value.TexcoordFlags1.HighlightMap;    } // FLAG1_TEXTURE5
+    if (value.MaterialFlags & EMaterialFlags_HasGlowMap       ) { shaderFlags[1] |= 0x8000000;   shaderFlags[0] |= 0x80000 << value.TexcoordFlags0.GlowMap | 0x10000 << value.TexcoordFlags1.GlowMap;              } // FLAG1_TEXTURE6
+    if (value.MaterialFlags & EMaterialFlags_HasNightMap      ) { shaderFlags[1] |= 0x10000000;  shaderFlags[0] |= 0x80000 << value.TexcoordFlags0.NightMap | 0x10000 << value.TexcoordFlags1.NightMap;            }// FLAG1_TEXTURE7
+    if (value.MaterialFlags & EMaterialFlags_HasDetailMap     ) { shaderFlags[1] |= 0x20000000;  shaderFlags[0] |= 0x80000 << value.TexcoordFlags0.DetailMap | 0x10000 << value.TexcoordFlags1.DetailMap;          } // FLAG1_TEXTURE8
+    if (value.MaterialFlags & EMaterialFlags_HasShadowMap     ) { shaderFlags[1] |= 0x40000000;  shaderFlags[0] |= 0x80000 << value.TexcoordFlags0.ShadowMap | 0x10000 << value.TexcoordFlags1.ShadowMap;          } // FLAG1_TEXTURE9
+
+    if (value.MaterialFlags & EMaterialFlags_UVTransform) {
+        if (value.DiffuseMap.HasUVTransform)       shaderFlags[1] |= 0x1000 << value.TexcoordFlags1.DiffuseMap;
+        if (value.NormalMap.HasUVTransform)        shaderFlags[1] |= 0x1000 << value.TexcoordFlags1.NormalMap;
+        if (value.SpecularMap.HasUVTransform)      shaderFlags[1] |= 0x1000 << value.TexcoordFlags1.SpecularMap;
+        if (value.ReflectionMap.HasUVTransform)    shaderFlags[1] |= 0x1000 << value.TexcoordFlags1.ReflectionMap;
+        if (value.HighlightMap.HasUVTransform)     shaderFlags[1] |= 0x1000 << value.TexcoordFlags1.HighlightMap;
+        if (value.GlowMap.HasUVTransform)          shaderFlags[1] |= 0x1000 << value.TexcoordFlags1.GlowMap;
+        if (value.NightMap.HasUVTransform)         shaderFlags[1] |= 0x1000 << value.TexcoordFlags1.NightMap;
+        if (value.DetailMap.HasUVTransform)        shaderFlags[1] |= 0x1000 << value.TexcoordFlags1.DetailMap;
+        if (value.ShadowMap.HasUVTransform)        shaderFlags[1] |= 0x1000 << value.TexcoordFlags1.ShadowMap;
+    }
+
+    if (value.MaterialFlags & EMaterialFlags_Bit18) shaderFlags[2] |= 0x4000;
+
+    shaderFlags[0] |= attributeFlags.FLAG0;
+    shaderFlags[1] |= attributeFlags.FLAG1;
+    shaderFlags[2] |= attributeFlags.FLAG2;
+    shaderFlags[3] |= attributeFlags.FLAG3;
+
+    if (value.Field94 & Bit7 || value.DrawMethod == EMaterialDrawMethod_Opaque || value.DiffuseColor.W < 1.0f 
+        || (value.Field98 != -1 && value.Field94 & Bit7 == 0) || value.Field94 & Bit12) {
+        if (value.MaterialFlags & EMaterialFlags_UVTransform || /*ENVFlags & 0x20000000 */ true) shaderFlags[0] |= 0x8000;
+    }
+
+    if (value.MaterialFlags & EMaterialFlags_DisableBloom) shaderFlags[2] |= 0x8000;
+    if (value.Field94 & Bit9) shaderFlags[0] |= 0x2000000;
+    
+
+    SPrintf( buffer, "%x_%x_%x_%x_%x_%x_%x \t %s", value.ShaderType, shaderFlags[0], shaderFlags[1], shaderFlags[2], shaderFlags[3], TexcoordFlagToInt(value.TexcoordFlags0), TexcoordFlagToInt(value.TexcoordFlags1), THashStringToString( value.Name ));
+    //SPrintf( buffer, "%s", THashStringToString( value.Name ) );
     return buffer;
 }
 
@@ -475,26 +580,11 @@ typedef struct( u32 version )
 
     THashString Name( version );
     s32 Field44;
-    u8 Field48;
+    TBool8 HasUVTransform;
     TBool8 HasTextureFiltering <name = "Has Texture Filtering">;
     u8 Field4A;
     u8 Field4B;
-    f32 Field4C;
-    f32 Field50;
-    f32 Field54;
-    f32 Field58;
-    f32 Field5C;
-    f32 Field60;
-    f32 Field64;
-    f32 Field68;
-    f32 Field6C;
-    f32 Field70;
-    f32 Field74;
-    f32 Field78;
-    f32 Field7C;
-    f32 Field80;
-    f32 Field84;
-    f32 Field88;
+    TMatrix4x4 UVTransform;
 } TTextureMap <optimize=false, read=TTextureMapToString>;
 
 string TTextureMapToString( TTextureMap& value )
@@ -510,43 +600,7 @@ typedef struct
     EMaterialAttributeType Type : 16;
 } TMaterialAttributeHeader;
 
-typedef struct
-{
-    TBool32 TMaterialAttributeToonShadingFlags_Bit31 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit30 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit29 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit28 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit27 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit26 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit25 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit24 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit23 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit22 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit21 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit20 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit19 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit18 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit17 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit16 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit15 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit14 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit13 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit12 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit11 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit10 : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit9  : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit8  : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit7  : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit6  : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit5  : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit4  : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit3  : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit2  : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit1  : 1;
-    TBool32 TMaterialAttributeToonShadingFlags_Bit0  : 1;
-} TMaterialAttributeToonShadingFlags;
-
-typedef struct(u32 version)
+typedef struct(u32 version, ShaderFlags& shaderFlag )
 {
     TMaterialAttributeHeader Header;
     Assert( Header.Type == EMaterialAttributeType_ToonShading );
@@ -559,8 +613,18 @@ typedef struct(u32 version)
         f32 toonLightBrightness;
         f32 toonShadowThreshold;
         f32 toonShadowFactor;
-        local EMaterialAttributeToonShadingFlags Flags;
-        TMaterialAttributeToonShadingFlags MaterialFlags;
+        //local EMaterialAttributeToonShadingFlags Flags;
+        EMaterialAttributeToonShadingFlags MaterialFlags;
+        /*
+        if (MaterialFlags.TMaterialAttributeToonShadingFlags_Bit0)   shaderFlag.FLAG2 |= 0x2000; // If there's a normal map
+        if (MaterialFlags.TMaterialAttributeToonShadingFlags_Bit1)   shaderFlag.FLAG2 |= 0x100000;
+        if (MaterialFlags.TMaterialAttributeToonShadingFlags_Bit2)   shaderFlag.FLAG2 |= 0x200000; // If there's a normal map
+        if (MaterialFlags.TMaterialAttributeToonShadingFlags_Bit3)   shaderFlag.FLAG2 |= 0x400000;
+        if (MaterialFlags.TMaterialAttributeToonShadingFlags_Bit4)   shaderFlag.FLAG2 |= 0x4000000; // If there's a normal map
+        if (MaterialFlags.TMaterialAttributeToonShadingFlags_Bit5)   shaderFlag.FLAG2 |= 0x8000000; 
+        if (MaterialFlags.TMaterialAttributeToonShadingFlags_Bit6)   shaderFlag.FLAG1 |= 0x10000; // If there's a shadow map
+        */
+        
     }
     else if ( version > 0x1104220 )
     {
@@ -575,7 +639,7 @@ typedef struct(u32 version)
         bool Flag1;
         bool Flag2;
         bool Flag4;
-        
+
         if ( Version > 0x1102460 )
         {
             bool Flag8;
@@ -607,7 +671,7 @@ typedef struct(u32 version)
     }
 } TMaterialAttributeToonShading <optimize=false>;
 
-typedef struct(u32 version)
+typedef struct(u32 version, ShaderFlags& shaderFlag )
 {
     SetBackColorToShadeOfLastColor( 0x10 );
 
@@ -653,10 +717,20 @@ typedef struct(u32 version)
     else
     {
         EMaterialAttributeInnerGlowFlags Flags;
+        /*
+        if (Flags.EMaterialAttributeInnerGlowFlags_Bit6) shaderFlags.FLAG2 |= 0x8000000;
+        if (Flags.EMaterialAttributeInnerGlowFlags_Bit0) shaderFlag.FLAG2 |= 0x2000; // If there's a normal map
+        if (Flags.EMaterialAttributeInnerGlowFlags_Bit4) shaderFlag.FLAG2 |= 0x4000000; // If there's a normal map
+        if (Flags.EMaterialAttributeInnerGlowFlags_Bit7) shaderFlag.FLAG1 |= 0x10000; // If there's a shadow map
+        if (Flags.EMaterialAttributeInnerGlowFlags_Bit1) shaderFlag.FLAG2 |= 0x80000;
+        if (Flags.EMaterialAttributeInnerGlowFlags_Bit2) shaderFlag.FLAG2 |= 0x100000;
+        if (Flags.EMaterialAttributeInnerGlowFlags_Bit3) shaderFlag.FLAG2 |= 0x800000; // If there's a highlight map
+        */
+        
     }
 } TMaterialAttributeInnerGlow <optimize=false>;
 
-typedef struct(u32 version)
+typedef struct(u32 version, ShaderFlags& shaderFlags )
 {
     SetBackColorToShadeOfLastColor( 0x10 );
 
@@ -667,29 +741,26 @@ typedef struct(u32 version)
     s32 Color;
 } TMaterialAttributeOutline;
 
-typedef struct(u32 version)
+typedef struct(u32 version, ShaderFlags& shaderFlag)
 {
     SetBackColorToShadeOfLastColor( 0x10 );
 
     TMaterialAttributeHeader Header;
     Assert( Header.Type == EMaterialAttributeType_Type3 );
+    TVector3 waterWaveLength;
+    f32 waterTime;
+    TVector3 waterAmplitude;
+    f32 reflectAlpha;
+    TVector3 waterSpeed;
+    f32 refractRatio;
+    EMaterialAttributeWaterFlags waterFlags;
+    if (waterFlags & EMaterialAttributeWaterFlags_WaterReflection) shaderFlags.FLAG2 |= 0x10000;
+    if (waterFlags & EMaterialAttributeWaterFlags_Bit1) shaderFlags.FLAG2 |= 0x20000;
+    if (waterFlags & EMaterialAttributeWaterFlags_WaterFresnel) shaderFlags.FLAG2 |= 0x40000;
+    
+} TMaterialAttributeWater;
 
-    f32 Field0C;
-    f32 Field10;
-    f32 Field14;
-    f32 Field18;
-    f32 Field1C;
-    f32 Field20;
-    f32 Field24;
-    f32 Field28;
-    f32 Field2C;
-    f32 Field30;
-    f32 Field34;
-    f32 Field38;
-    s32 Field3C;
-} TMaterialAttributeType3;
-
-typedef struct(u32 version)
+typedef struct(u32 version, ShaderFlags& shaderFlags)
 {
     SetBackColorToShadeOfLastColor( 0x10 );
 
@@ -710,10 +781,10 @@ typedef struct(u32 version)
     u8 Field50;
     f32 Field54;
     f32 Field58;
-    s32 Field5C;
+    EMaterialAttributeScrollingTextureFlags ScrollTexFlags;
 } TMaterialAttributeScrollingTexture;
 
-typedef struct(u32 version)
+typedef struct(u32 version, ShaderFlags& shaderFlags)
 {
     SetBackColorToShadeOfLastColor( 0x10 );
 
@@ -733,7 +804,7 @@ typedef struct(u32 version)
     TVector4 Field48;
 } TMaterialAttributeType5;
 
-typedef struct(u32 version)
+typedef struct(u32 version, ShaderFlags& shaderFlags)
 {
     SetBackColorToShadeOfLastColor( 0x10 );
 
@@ -745,7 +816,7 @@ typedef struct(u32 version)
     u32 Field14;
 } TMaterialAttributeType6;
 
-typedef struct(u32 version)
+typedef struct(u32 version, ShaderFlags& shaderFlags)
 {
     SetBackColorToShadeOfLastColor( 0x10 );
 
@@ -753,7 +824,7 @@ typedef struct(u32 version)
     Assert( Header.Type == EMaterialAttributeType_Type7 );
 } TMaterialAttributeType7;
 
-typedef struct(u32 version)
+typedef struct(u32 version, ShaderFlags& shaderFlags)
 {
     SetBackColorToShadeOfLastColor( 0x10 );
 
@@ -772,7 +843,7 @@ typedef struct(u32 version)
     s32 Field34;
     s32 Field38;
     EMaterialAttributeType8Flags Flags;
-} TMaterialAttributeType8;
+} TMaterialAttributeAlphaCrunch;
 
 //
 // -- End Material types --
@@ -788,7 +859,7 @@ typedef struct
 
     TChunkHeader Header;
     EModelFlags Flags;
-    
+
     if ( Flags & EModelFlags_HasSkinning )
     {
         SetBackColorToShadeOfLastColor(0x20);
@@ -803,14 +874,14 @@ typedef struct
     {
         SetBackColorToShadeOfLastColor(0x20);
         TExtents3D BoundingBox;
-    }   
+    }
 
     if ( Flags & EModelFlags_HasBoundingSphere )
     {
         SetBackColorToShadeOfLastColor(0x20);
         TSphere3D BoundingSphere;
     }
-    
+
     struct TNode RootNode( Header.Version );
 } TModel <optimize=false>;
 
@@ -822,7 +893,7 @@ typedef struct( u32 version )
     TVector3 Translation;
     TQuaternion Rotation;
     TVector3 Scale;
-    
+
     if ( version <= 0x1090000 )
     {
         u8 Unknown1;
@@ -845,7 +916,7 @@ typedef struct( u32 version )
     {
         f32 FieldE0;
     }
-    
+
     u32 ChildCount;
     if ( ChildCount > 0 )
         struct TNode Children( version )[ChildCount];
@@ -891,9 +962,9 @@ typedef struct
 
 typedef struct(u32 version)
 {
-    EMeshFlags Flags;
-    EVertexAttributeFlags VertexAttributeFlags;
-    
+    EMeshFlags Flags<format=hex>;
+    EVertexAttributeFlags VertexAttributeFlags<format=hex>;
+
     if ( Flags & EMeshFlags_HasTriangles )
     {
         u32 TriangleCount;
@@ -901,7 +972,7 @@ typedef struct(u32 version)
     }
 
     u32 VertexCount;
-    
+
     if ( version > 0x1103020 )
     {
         u32 InvisibleShadowCaster;
@@ -1001,15 +1072,15 @@ typedef struct( u32 version )
     {
         ELightFlags Flags;
     }
-    
+
     ELightType Type;
     TVector4 AmbientColor;
     TVector4 DiffuseColor;
     TVector4 SpecularColor;
-    
+
     switch ( Type )
     {
-        case ELightType_Type1:
+        case ELightType_Type1: // Directional
             f32 Field20; // 0
             f32 Field04; // 0
             f32 Field08; // 1
@@ -1022,12 +1093,12 @@ typedef struct( u32 version )
             f32 AngleInnerCone; // 0.08377809
             f32 AngleOuterCone; // 0.245575309
             // fallthrough
-    
+
         case ELightType_Point:
             f32 Field10; // 0
             f32 Field04; // 0
             f32 Field08; // 0
-    
+
             if ( Flags & ELightFlags_Bit2 )
             {
                 f32 AttenuationStart; // attenuation start?
@@ -1063,7 +1134,7 @@ typedef struct
     SetRandomBackColor();
 
     TChunkHeader Header;
-    
+
     if ( Header.Version > 0x1104950 )
     {
         EAnimationPackFlags Flags;
@@ -1085,49 +1156,13 @@ typedef struct
     }
 } TAnimationPack <optimize=false>;
 
-typedef struct
-{
-    TBool32 TAnimationFlags_80000000Data     : 1;
-    TBool32 TAnimationFlags_HasBoundingBox   : 1;
-    TBool32 TAnimationFlags_ExtraData        : 1;
-    TBool32 TAnimationFlags_10000000Data_EPL : 1;
-    TBool32 TAnimationFlags_Bit27            : 1;
-    TBool32 TAnimationFlags_Bit26            : 1;
-    TBool32 TAnimationFlags_HasSpeed         : 1;
-    TBool32 TAnimationFlags_Bit24            : 1;
-    TBool32 TAnimationFlags_HasProperties    : 1;
-    TBool32 TAnimationFlags_Bit22            : 1;
-    TBool32 TAnimationFlags_Bit21            : 1;
-    TBool32 TAnimationFlags_Bit20            : 1;
-    TBool32 TAnimationFlags_Bit19            : 1;
-    TBool32 TAnimationFlags_Bit18            : 1;
-    TBool32 TAnimationFlags_Bit17            : 1;
-    TBool32 TAnimationFlags_Bit16            : 1;
-    TBool32 TAnimationFlags_Bit15            : 1;
-    TBool32 TAnimationFlags_Bit14            : 1;
-    TBool32 TAnimationFlags_Bit13            : 1;
-    TBool32 TAnimationFlags_Bit12            : 1;
-    TBool32 TAnimationFlags_Bit11            : 1;
-    TBool32 TAnimationFlags_Bit10            : 1;
-    TBool32 TAnimationFlags_Bit9             : 1;
-    TBool32 TAnimationFlags_Bit8             : 1;
-    TBool32 TAnimationFlags_Bit7             : 1;
-    TBool32 TAnimationFlags_Bit6             : 1;
-    TBool32 TAnimationFlags_Bit5             : 1;
-    TBool32 TAnimationFlags_Bit4             : 1;
-    TBool32 TAnimationFlags_Bit3             : 1;
-    TBool32 TAnimationFlags_Bit2             : 1;
-    TBool32 TAnimationFlags_Bit1             : 1;
-    TBool32 TAnimationFlags_Bit0             : 1;
-} TAnimationFlags;
-
 typedef struct( u32 version )
 {
     SetRandomBackColor();
 
     if ( version > 0x1104110 )
     {
-        TAnimationFlags AnimationFlags;
+        EAnimationFlags Flags;
     }
 
     f32 Duration;
@@ -1140,7 +1175,7 @@ typedef struct( u32 version )
         Assert( Unknown1 == ControllerCount );
     }
 #endif
-    
+
     if ( ControllerCount )
     {
         struct( u32 version )
@@ -1148,23 +1183,23 @@ typedef struct( u32 version )
             struct TAnimationController Controllers( version )[ ControllerCount ];
         } Controllers( version );
     }
-    
-    if (AnimationFlags.TAnimationFlags_10000000Data_EPL)
+
+    if ( Flags & EAnimationFlags_Flag10000000 )
         struct TAnimationFlagsFlag10000000Data Flag10000000Data( version );
 
-    if (AnimationFlags.TAnimationFlags_ExtraData)
-        struct TAnimationExtraData Field14( version );
+    if ( Flags & EAnimationFlags_Flag20000000 )
+        struct TAnimationExtraData ExtraAnimData( version );
 
-    if (AnimationFlags.TAnimationFlags_80000000Data)
+    if ( Flags & EAnimationFlags_Flag80000000 )
         struct TAnimationFlag80000000Data Field1C( version );
 
-    if (AnimationFlags.TAnimationFlags_HasBoundingBox )
+    if ( Flags & EAnimationFlags_HasBoundingBox )
         struct TExtents3D BoundingBox;
 
-    if (AnimationFlags.TAnimationFlags_HasSpeed )
+    if ( Flags & EAnimationFlags_HasSpeed )
         f32 Speed;
 
-    if (AnimationFlags.TAnimationFlags_HasProperties )
+    if ( Flags & EAnimationFlags_HasProperties )
         struct TUserPropertyDictionary Properties( version );
 } TAnimation <optimize=false>;
 
@@ -1208,7 +1243,7 @@ typedef struct( u32 version )
     SetRandomBackColor();
 
     ETargetKind TargetKind;
-    s32 TargetId;
+    s32 TargetId<format=hex>;
     THashString TargetName( version );
     u32 LayerCount;
     struct TAnimationLayer Layers( version )[ LayerCount ];
@@ -1217,41 +1252,41 @@ typedef struct( u32 version )
 typedef struct( u32 version )
 {
     SetRandomBackColor();
-    
+
     EKeyType KeyType;
     u32 KeyCount;
-    
+
     if ( KeyCount > 0 )
     {
         f32 KeyTimings[ KeyCount ];
-        
+
         switch ( KeyType )
         {
             case EKeyType_NodePR: struct TNodePRKey Keys[ KeyCount ]; break;
             case EKeyType_NodePRS: struct TNodePRSKey Keys[ KeyCount ]; break;
-        
+
             case EKeyType_NodePRHalf_2:
-            case EKeyType_NodePRHalf: 
-                struct TNodePRHalf Keys[ KeyCount ]; 
+            case EKeyType_NodePRHalf:
+                struct TNodePRHalf Keys[ KeyCount ];
                 break;
-        
+
             case EKeyType_NodePRSHalf: struct TNodePRSHalf Keys[ KeyCount ]; break;
             case EKeyType_NodeRHalf: struct TNodeRHalf Keys[ KeyCount ]; break;
             case EKeyType_NodeSHalf: struct TNodeSHalf Keys[ KeyCount ]; break;
-        
+
             case EKeyType_Vector3:
-            case EKeyType_Vector3_2: 
+            case EKeyType_Vector3_2:
             case EKeyType_Vector3_3:
             case EKeyType_Vector3_4:
             case EKeyType_MaterialVector3_5:
                 struct TVector3Key Keys[ KeyCount ];
                 break;
-        
+
             case EKeyType_Quaternion:
             case EKeyType_Quaternion_2:
                 struct TQuaternionKey Keys[ KeyCount ];
                 break;
-        
+
             case EKeyType_Single:
             case EKeyType_Single_2:
             case EKeyType_Single_3:
@@ -1265,18 +1300,18 @@ typedef struct( u32 version )
             case EKeyType_SingleAlt_3:
                 struct TSingleKey Keys[ KeyCount ];
                 break;
-        
+
             case EKeyType_Single5:
             case EKeyType_Single5_2:
             case EKeyType_Single5Alt:
-                struct TSingle5Key Keys[ KeyCount ]; 
+                struct TSingle5Key Keys[ KeyCount ];
                 break;
-        
+
             case EKeyType_PRSByte: struct TPRSByteKey Keys[ KeyCount ]; break;
             case EKeyType_Single3Byte: struct TSingle3ByteKey Keys[ KeyCount ]; break;
             case EKeyType_SingleByte: struct TSingleByteKey Keys[ KeyCount ]; break;
             case EKeyType_Type22: struct TKeyType22 Keys[ KeyCount ]; break;
-        
+
             case EKeyType_Type31:
                 {
                     #ifndef CFB_GAP
@@ -1286,22 +1321,22 @@ typedef struct( u32 version )
                     #endif
                 }
                 break;
-				
+
 			// P5R keys
 			case 34: struct TKeyType34P5R Keys [ KeyCount ]; break;
 			//case 34: byte UnkKeyType [ KeyCount*12 ]; break;
 			case 35: struct TKeyType35P5R Keys [ KeyCount ]; break;
-			
+
             default:
 			    local string buffer;
                 SPrintf( buffer, "Unknown/Invalid Key frame type %01d", KeyType );
                 Assert( false, buffer );
         }
-        
+
          // Read scale values for compressed keys
         if ( KeyType == EKeyType_NodePRHalf   || KeyType == EKeyType_NodePRSHalf ||
              KeyType == EKeyType_NodePRHalf_2 || KeyType == EKeyType_Type31 ||
-             KeyType == EKeyType_NodeRHalf    || KeyType == EKeyType_NodeSHalf || 
+             KeyType == EKeyType_NodeRHalf    || KeyType == EKeyType_NodeSHalf ||
 			 KeyType == EKeyType_34P5R        || KeyType == EKeyType_35P5R      )
         {
             TVector3 PositionScale;
@@ -1433,7 +1468,7 @@ typedef struct( u32 version )
     EEplFlags Flags;
     TNode RootNode( version );
     struct TEplAnimation Animation( version );
-    
+
     if ( version > 0x1105060 )
     {
         u16 Field40;
@@ -1450,32 +1485,30 @@ typedef struct( u32 version )
     u32 Field00;
     f32 Field04;
     TAnimation Animation( version );
-    u32 Field10;
+    u32 ControllerCount;
 
     local u32 i;
     local u32 controllerCount = Animation.ControllerCount;
-    //for ( i = 0; i < controllerCount; ++i )
-    //    keyCountsBuffer[i] = Animation.Controllers.Controllers[i].Layers[0].KeyCount;
 
-    struct TEplAnimationController Controllers( version, keyCountsBuffer )[ Field10 ];
+    struct TEplAnimationController Controllers( version, keyCountsBuffer )[ ControllerCount ];
 } TEplAnimation  <optimize=false>;
 
 typedef struct( u32 version, u32 keyCounts[] )
 {
     SetRandomBackColor();
 
-    f32 Field00;  
-    f32 Field04;
+    f32 Field00;
+    f32 Duration;
     s32 ControllerIndex; // 0x08
 
     if ( ControllerIndex != -1 )
     {
         //local u32 keyCount = Animation.Controller[ControllerIndex].KeyCount;
         local u32 keyCount = keyCounts[ControllerIndex];
-    
+
         if ( keyCount != 0 )
         {
-            struct TEplAnimationKey Keys[keyCount]; 
+            struct TEplAnimationKey Keys[keyCount];
         }
     }
 
@@ -1485,33 +1518,31 @@ typedef struct( u32 version, u32 keyCounts[] )
 typedef struct( u32 version )
 {
     SetRandomBackColor();
-
     EEplLeafFlags Flags; // 0x2C
     THashString Name( version ); // 0x30
-
     local u32 type = ReadInt( FTell() + 0 );
-    
+
     // 0x40
     switch ( type )
     {
-        case 0: struct TEplDummy Data( version ); break;
-        case 1: struct TEplParticle Data( version ); break;
-        case 2: struct TEplFlashPolygon Data( version ); break;
-        case 3: struct TEplCirclePolygon Data( version ); break;
-        case 4: struct TEplLightningPolygon Data( version ); break;
-        case 5: struct TEplTrajectoryPolygon Data( version ); break;
-        case 6: struct TEplWindPolygon Data( version ); break;
-        case 7: struct TEplModel Data( version ); break;
-        case 8: struct TEplTrajectoryPolygon Data( version ); break; // TEplSoulPolygon
-        case 9: struct TEplBoardPolygon Data( version ); break;
-        case 10: struct TEplObjectParticles Data( version ); break;
-        case 11: struct TEplGlitterPolygon Data( version ); break;
-        case 12: struct TEplGlitterPolygon Data( version ); break; // TEplBrightLightPolygon
-        case 13: struct TEplDirectionalParticles Data( version ); break;
-        case 14: struct TEplCamera Data( version ); break;
-        case 15: struct TEplLight Data( version ); break;
-        case 16: struct TEplPostEffect Data( version ); break;
-        case 17: struct TEplHelper Data( version ); break;
+        case 0: struct TEplDummy Data( version );                break;
+        case 1: struct TEplParticle Data( version );             break;
+        case 2: struct TEplFlashPolygon Data( version );         break;
+        case 3: struct TEplCirclePolygon Data( version );        break;
+        case 4: struct TEplLightningPolygon Data( version );     break;
+        case 5: struct TEplTrajectoryPolygon Data( version );    break;
+        case 6: struct TEplWindPolygon Data( version );          break;
+        case 7: struct TEplModel Data( version );                break;
+        case 8: struct TEplTrajectoryPolygon Data( version );    break; // TEplSoulPolygon
+        case 9: struct TEplBoardPolygon Data( version );         break;
+        case 10:struct TEplObjectParticles Data( version );      break;
+        case 11:struct TEplGlitterPolygon Data( version );       break;
+        case 12:struct TEplGlitterPolygon Data( version );       break; // TEplBrightLightPolygon
+        case 13:struct TEplDirectionalParticles Data( version ); break;
+        case 14:struct TEplCamera Data( version );               break;
+        case 15:struct TEplLight Data( version );                break;
+        case 16:struct TEplPostEffect Data( version );           break;
+        case 17:struct TEplHelper Data( version );               break;
         default: Assert(false, "Not implemented"); break;
     }
 } TEplLeaf  <optimize=false>;
@@ -1528,14 +1559,14 @@ typedef struct( u32 version )
 
     THashString FileName( version );
     u32 Field18;
-    
+
     if ( Field18 == 2 )
     {
-        u32 Field00;
+        u32 Filetype; // filetype vtable - 0x14226adf0, P5R.exe v1.01
         u32 DataLength;
         //u8 Data[ DataLength ];
 
-        switch ( Field00 )
+        switch ( Filetype )
         {
             case 0: break;
             case 1: u8 TextureData[ DataLength ]; break; // texture
@@ -1545,7 +1576,7 @@ typedef struct( u32 version )
             case 5: struct TModelPackFile GmdModel; break; // GMD model, untested
             case 6: struct TEpdFile EplDisplacement; break; // EPL displacement
             default: Assert( false );
-        }  
+        }
     }
     //else if ( Field18 != 1 )
     //{
@@ -1559,36 +1590,47 @@ typedef struct( u32 version, u32 in_type )
 
     local u32 type = in_type;
 
+    //u32 Field00 = Rotation
+    //u32 Field04 = ParticleAmount
+
     u32 RandomSpawnDelay;
     f32 ParticleLife; 
     u32 AngleSeed; 
     f32 DespawnTimer; 
-    TVector2 SpawnChoker; 
+    TVector2 SpawnChoker;
     f32 ColorOverLifeOffset; 
     u32 FieldC4; 
     TVector2 OpacityOverLife; 
     
     if ( version >= 0x1104041 )
-        struct TEplLeafCommonData6 ColorOverLife_Bezier;
+        struct TEplLeafCommonData6 ColorOverLife_Bezier(version); 
 
     if ( version >= 0x1104701 )
-        f32 FieldC0;     
+        f32 FieldC0; 
 
     if ( version < 0x1104041 )
-        struct TEplLeadCommonData5 FieldC8;
+        struct TEplLeafCommonData5 FieldC8;
     else 
-        struct TEplLeafCommonData6 SizeOverLife;
+        struct TEplLeafCommonData6 SizeOverLife(version); 
 
     f32 Field12C; //Nothing
     f32 Field130;
-    TVector2 SpawnerAngles;
-    TVector2 CycleRate_FromBirth;
+    if ( version >= 0x1104041 ) { // 0x146f0f478
+        TVector2 SpawnerAngles;
+        TVector2 CycleRate_FromBirth;
+    } else {
+        struct TEplLeafCommonData5 SpawnAngleAndCycleRate;
+    }
     f32 CycleRate_Global;
     u32 Field148;
-    u32 Field14C;
-    f32 Field150;
-    f32 ParticleScale;
-    f32 ParticleSpeed;
+    if ( version > 0x1104170 ) { // 0x146f0f53f
+        u32 ParticleMultiplier;
+        f32 Field150;
+    }
+    if ( version > 0x1104050 ) { // 0x146f0f582
+        f32 ParticleScale;
+        f32 ParticleSpeed;
+    } 
 
     switch ( type )
     {
@@ -1603,12 +1645,12 @@ typedef struct( u32 version, u32 in_type )
     }
 } TEplParticleEmitter <optimize=false>;
 
-typedef struct 
+typedef struct
 {
     SetRandomBackColor();
 
     u16 Type;
-    
+
     switch ( Type )
     {
         case 0:
@@ -1642,61 +1684,57 @@ typedef struct
         }
     }
 
-    TVector4 Field14;
-    u8 Field24[46];
+    TVector4 ValueKeyframes;
+    u16 TimeShift[23]<read=Str("%d (%.4f)", this, (f32)this / (1 * 65535))>;
 } TEplLeafCommonData5 <optimize=false>;
 
-typedef struct 
+typedef struct(u32 version)
 {
     SetRandomBackColor();
 
     u16 Type;
-    
+
     switch ( Type )
     {
         case 0:
         {
-            s32 Field04;
-            s32 Field0C;
-            s32 Field14;
-            s32 Field1C;
+            s32 Int1; // time less than 0.33 secs
+            s32 Int2; // between 0 - 0.67 secs
+            s32 Int3; // between 0.33 - 1 secs
+            s32 Int4; // time more than 0.67 secs
             break;
         }
 
         case 1:
         {
-            f32 Field04;
-            f32 Field0C;
-            f32 Field14;
-            f32 Field1C;
+            f32 Float1;
+            f32 Float2;
+            f32 Float3;
+            f32 Float4;
             break;
         }
 
         case 2:
         {
-            u8 Color1[4];
-            u8 Color2[4];
-            u8 Color3[4];
-            u8 Color4[4];
+            TColor8 Color1;
+            TColor8 Color2;
+            TColor8 Color3;
+            TColor8 Color4;
             break;
         }
 
         case 3:
         {
-            f32 Field04;
-            f32 Field08;
-            f32 Field0C;
-            f32 Field10;
-            f32 Field14;
-            f32 Field18;
-            f32 Field1C;
-            f32 Field20;
+            TVector2 Vec1;
+            TVector2 Vec2;
+            TVector2 Vec3;
+            TVector2 Vec4;
             break;
         }
     }
 
-    TVector4 Field14;
-    u8 Field24[46];
+    TVector4 ValueKeyframes;
+    u16 TimeShift[23]<read=Str("%d (%.4f)", this, (f32)this / (1 * 65535))>;
 } TEplLeafCommonData6 <optimize=false>;
 
 // verified
@@ -1711,10 +1749,10 @@ typedef struct( u32 version )
 {
     SetRandomBackColor();
     TEplLeafDataHeader Header;
-    
+
     // 0(r4)
-    u32 Type;
-    
+    u32 Type; // particle emitter type
+
     if ( version < 0x1104170 )
         FSeek(4);
 
@@ -1722,7 +1760,7 @@ typedef struct( u32 version )
     {
         u32 Field10;
     }
-    
+
     // 0(r27)
     struct TEplParticleEmitter Emitter( version, Type );
 
@@ -1738,23 +1776,23 @@ typedef struct( u32 version )
     TEplLeafDataHeader Header;
 
     u32 Type;
-    u32 Field00;
-    f32 Field04;
-    u32 Field08;
-    f32 Field14;
-    u32 Field24;
-    u32 Field84;
-    TVector2 Field08;
-    TVector2 Field18;
-    struct TEplLeafCommonData5 Field28;
+    u32 RenderType;
+    f32 AnimationLength;
+    u32 RayCount;
+    f32 Intensity;
+    u32 LayerMode;
+    u32 Seed;
+    TVector2 RaySpawnSpeed;
+    TVector2 FadeParams;
+    struct TEplLeafCommonData5 RayDistanceParams;
 
     if ( version > 0x1104700 )
         f32 Field20;
 
     if ( version > 0x1104050 )
     {
-        f32 Field7C;
-        f32 Field80;
+        f32 Size;
+        f32 Speed;
     }
 
     switch ( Type )
@@ -1773,69 +1811,69 @@ typedef struct( u32 version )
 
 typedef struct( u32 version )
 {
-    u32 Field88;
-    u32 Field8C;
-    TVector2 Field90;
-    TVector2 Field98;
-    TVector2 FieldA0;
-    TVector2 FieldA8;
-    f32 FieldB0;
+    u32 InnerColor;
+    u32 OuterColor;
+    TVector2 FlashWidthInner;
+    TVector2 FlashWidthOuter;
+    TVector2 FlashLength;
+    TVector2 OrbitSpeed;
+    f32 OrbitSpeedVelocity;
     u32 FieldB4;
 } TEplFlashPolygonRadiation;
 
 typedef struct( u32 version )
 {
-    TVector2 Field88;
-    u32 Field90;
-    u32 Feild94;
-    TVector2 Field94;
-    TVector2 FieldA0;
-    TVector2 FieldA8;
-    f32 FieldB0;
+    TVector2 Radius;
+    u32 InnerColor;
+    u32 OuterColor;
+    TVector2 FlashWidth;
+    TVector2 FlashLength;
+    TVector2 ExplodeSpeed;
+    f32 ExplodeSpeedVelocity;
 } TEplFlashPolygonExplosion;
 
 typedef struct( u32 version )
 {
-    struct TEplLeafCommonData5 Field88;
-    struct TEplLeafCommonData5 FieldDC;
-    u32 Field130;
-    u32 Field134;
-    TVector2 Field138;
-    TVector2 Field140;
-    TVector2 Field148;
-    TVector2 Field150;
-    f32 Field158;
+    struct TEplLeafCommonData5 RingRadius;
+    struct TEplLeafCommonData5 RotationSpeed;
+    u32 InnerColor;
+    u32 OuterColor;
+    TVector2 FlashWidthInner;
+    TVector2 FlashWidthOuter;
+    TVector2 FlashLength;
+    TVector2 OrbitSpeed;
+    f32 OrbitSpeedVelocity;
     u32 Field15C;
 } TEplFlashPolygonRing;
 
 typedef struct( u32 version )
 {
-    struct TEplLeafCommonData5 Field88;
-    struct TEplLeafCommonData5 FieldDC;
-    u32 Field130;
-    u32 Field134;
-    TVector2 Field138;
-    TVector2 Field140;
-    TVector2 Field148;
-    TVector2 Field150;
-    f32 Field158;
+    struct TEplLeafCommonData5 RingRadius;
+    struct TEplLeafCommonData5 RotationSpeed;
+    u32 InnerColor;
+    u32 OuterColor;
+    TVector2 FlashWidthInner;
+    TVector2 FlashWidthOuter;
+    TVector2 FlashLength;
+    TVector2 LiftSpeed;
+    f32 LiftVelocity;
 } TEplFlashPolygonSplash;
 
 typedef struct( u32 version )
 {
-    struct TEplLeafCommonData5 Field88;
-    
-    if ( version <= 0x1104040 )
-        struct TEplLeafCommonData5 FieldDC;
-    else
-        struct TEplLeafCommonData6 FieldDC;
+    struct TEplLeafCommonData5 CylinderRadius;
 
-    TVector2 Field140;
-    TVector2 Field148;
-    TVector2 Field150;
-    f32 Field158;
-    TVector2 Field15C;
-    f32 Field164;
+    if ( version <= 0x1104040 )
+        struct TEplLeafCommonData5 ColorOverTime;
+    else
+        struct TEplLeafCommonData6 ColorOverTime(version);
+
+    TVector2 FlashWidth;
+    TVector2 FlashLength;
+    TVector2 LiftSpeed;
+    f32 LiftVelocity;
+    TVector2 OrbitSpeed;
+    f32 OrbitVelocity;
     u32 Field168;
 } TEplFlashPolygonCylinder;
 
@@ -1846,17 +1884,17 @@ typedef struct( u32 version )
     TEplLeafDataHeader Header;
 
     u32 Type;
-    u32 Field00;
-    f32 Field04;
+    u32 RenderType;
+    f32 AnimationLength;
     u32 Field10;
     u32 Field1C;
-    u32 Field20;
-    TVector2 Field08;
+    u32 InstanceCount;
+    TVector2 FadeParams;
 
     if ( version > 0x1104050 )
     {
-        f32 Field14;
-        f32 Field18;
+        f32 Size;
+        f32 Speed;
     }
 
     switch ( Type )
@@ -1870,7 +1908,7 @@ typedef struct( u32 version )
     }
 
     // if (*(int*)(0xCE251C + ((Type * 0x1c) + 0x18)) !=  0x0) {
-    if ( Type != 1 && Type != 3 )
+    if ( Type != 1 && Type != 3 && Type != 0 ) // Type != 0 is temp
         struct TEplEmbeddedFile EmbeddedFile( version );
 } TEplCirclePolygon;
 
@@ -1889,8 +1927,8 @@ typedef struct( u32 version )
 {
     f32 Field24;
     f32 Field28;
-    struct TEplLeafCommonData6 Field2C;
-    struct TEplLeafCommonData6 Field90;
+    struct TEplLeafCommonData5 Field2C;
+    struct TEplLeafCommonData5 Field90;
     f32 FieldF4;
     f32 FieldF8;
     f32 FieldFC;
@@ -1901,8 +1939,8 @@ typedef struct( u32 version )
 {
     f32 Field24;
     struct TEplLeafCommonData5 Field28;
-    struct TEplLeafCommonData6 Field7C;
-    struct TEplLeafCommonData6 FieldE0;
+    struct TEplLeafCommonData6 Field7C(version);
+    struct TEplLeafCommonData6 FieldE0(version);
 } TEplCirclePolygonFill;
 
 typedef struct( u32 version )
@@ -1912,9 +1950,9 @@ typedef struct( u32 version )
     f32 Field30;
     struct TEplLeafCommonData5 Field34;
     TVector2 Field88;
-    struct TEplLeafCommonData6 Field90;
-    struct TEplLeafCommonData6 FieldF4;
-    struct TEplLeafCommonData6 Field158;
+    struct TEplLeafCommonData6 Field90(version);
+    struct TEplLeafCommonData6 FieldF4(version);
+    struct TEplLeafCommonData6 Field158(version);
     f32 Field1BC;
     f32 Field1C0;
 } TEplCirclePolygonHoop;
@@ -1926,28 +1964,30 @@ typedef struct( u32 version )
     TEplLeafDataHeader Header;
 
     u32 Type;
-    u32 Field00;
-    f32 Field04;
-    u32 Field08;
+    u32 BoltCount1;
+    f32 PersistanceTime;
+    u32 BoltCount2;
     u32 Field1C;
-    u32 Feild20;
-    f32 Field44;
-    f32 Field48;
-    u32 Field4C;
-    u32 Field50;
+    u32 LightningPoints;
+    f32 InnerGlowIntensity;
+    f32 OuterGlowIntensity;
+    u32 InnerColor;
+    u32 OuteColor;
     u32 Field54;
     u32 Field60;
-    TVector2 Field0C;
-    TVector2 Field24;
-    TVector2 Field2C;
-    TVector2 Field34;
-    TVector2 Field14;
-    TVector2 Field3C;
+    TVector2 SpawnRate;
+    TVector2 LightningWaveFrequency;
+    TVector2 LightningWaveAmplitude;
+    TVector2 LightningRandomAmplitude;
+    f32 FadeInTime;
+    f32 LightningSpeed;
+    f32 SizeReduction;
+    f32 Field40;
 
     if ( version > 0x1104050 )
     {
-        f32 Field58;
-        f32 Field5C;
+        f32 ModelSize;
+        f32 AnimationSpeed;
     }
 
     switch ( Type )
@@ -1962,23 +2002,23 @@ typedef struct( u32 version )
 // verified
 typedef struct( u32 version )
 {
-    TVector2 Field64;
+    f32 RodHeight;
+    f32 RodHeightVariation;
 } TEplLightningPolygonRod;
 
 // verified
 typedef struct( u32 version )
 {
-    struct TEplLeafCommonData5 Field64;
-    TVector2 FieldB8;
-    TVector2 FieldC0;
+    struct TEplLeafCommonData5 BallRadius;
+    TVector2 LightningLength;
+    TVector2 OrbitSpeed;
     f32 FieldC8;
     u32 FieldCC;
-    TVector2 FieldD0;
+    TVector2 ParticleRotate;
     f32 FieldD8;
     u32 FieldDC;
 } TEplLightningPolygonBall;
 
-// verified
 typedef struct( u32 version )
 {
     SetRandomBackColor();
@@ -2007,7 +2047,7 @@ typedef struct( u32 version )
     bool HasEmbeddedFile;
 
     if ( HasEmbeddedFile )
-        struct TEplEmbeddedFile EmbeddedFile;
+        struct TEplEmbeddedFile EmbeddedFile( version );
 
 } TEplTrajectoryPolygon;
 
@@ -2018,21 +2058,20 @@ typedef struct( u32 version )
     TEplLeafDataHeader Header;
 
     u32 Type;
-    f32 Field00;
+    u32 Field00;
     f32 Field04;
-    u8 Field08[3];
-    u8 ParticleCount;
+    u32 ParticleCount;
     f32 WindOpacity;
-    u32 Field88;
+    u32 TextureDrawFlags;
     u32 WindPolyCount;
     u32 WindSeed;
 
     if ( version <= 0x1104040 )
         struct TEplLeafCommonData5 ColorOverLifeBezier;
     else
-        struct TEplLeafCommonData6 ColorOverLifeBezier;
+        struct TEplLeafCommonData6 ColorOverLifeBezier(version);
 
-    TVector2 Field0C;
+    TVector2 ParticleDensity;
     TVector2 Field90;
     TVector2 Field98;
     TVector2 Field7C;
@@ -2088,9 +2127,9 @@ typedef struct( u32 version )
     TVector4 Field12;
     u8 Field26[46];
 
-    TVector2 Field1A8;
-    TVector2 Field1B0;
-    TVector2 Field1B8;
+    TVector2 RingOnSpherePos;
+    TVector2 ParticleOrbitSpeed;
+    TVector2 RingRotateSpeed;
     f32 Field1C0;
     u32 Field1C4;
     TVector2 Field1C8;
@@ -2099,12 +2138,12 @@ typedef struct( u32 version )
 // verified
 typedef struct( u32 version )
 {
-    struct TEplLeafCommonData5 FieldAC;
-    TVector2 Field100;
-    TVector2 Field108;
+    struct TEplLeafCommonData5 ExplosionRadius;
+    TVector2 ExplodeSize;
+    TVector2 OrbitSpeed;
     f32 Field110;
     f32 Field114;
-    
+
     if ( version > 0x1104080 )
         TVector2 Field118;
 } TEplWindPolygonExplosion;
@@ -2112,10 +2151,10 @@ typedef struct( u32 version )
 // verified
 typedef struct( u32 version )
 {
-    struct TEplLeafCommonData5 FieldAC;
-    struct TEplLeafCommonData5 Field100;
-    TVector2 Field154;
-    TVector2 Field15C;
+    struct TEplLeafCommonData5 BallRadius;
+    struct TEplLeafCommonData5 ParticleSize;
+    TVector2 WindLength;
+    TVector2 OrbitSpeed;
     f32 Field164;
     u32 Field168;
     TVector2 Field16C;
@@ -2132,8 +2171,8 @@ typedef struct( u32 version )
 
     if ( version > 0x1104050 )
     {
-        f32 Field04;
-        f32 Field08;
+        f32 ModelSize;
+        f32 AnimSpeed;
     }
     else
     {
@@ -2158,7 +2197,7 @@ typedef struct( u32 version )
     {
         case 0: break;
         case 1: struct TEplModel3DData Data( version ); break;
-        case 2: struct TEplModel2DData Data( version ); break; 
+        case 2: struct TEplModel2DData Data( version ); break;
         default: Assert(false, "Not implemented"); break;
     }
 
@@ -2175,7 +2214,7 @@ typedef struct( u32 version )
 // verified
 typedef struct( u32 version )
 {
-    f32 Field0C;
+    f32 DistanceFromCamera;
 } TEplModel2DData;
 
 typedef struct( u32 version )
@@ -2184,13 +2223,13 @@ typedef struct( u32 version )
     TEplLeafDataHeader Header;
 
     u32 Type;
-    u32 Field00;
-    f32 Field04;
-    u32 Field10;
-    u32 Field1C;
-    TVector2 Field08;
-    f32 Field14;
-    f32 Field18;
+    u32 RenderType;
+    f32 AnimationLength;
+    u32 LayerMode;
+    u32 Seed;
+    TVector2 FadeParams;
+    f32 Size;
+    f32 Speed;
 
     switch ( Type )
     {
@@ -2205,11 +2244,11 @@ typedef struct( u32 version )
 
 typedef struct( u32 version )
 {
-    struct TEplLeafCommonData6 Field28;
-    struct TEplLeafCommonData6 Field8C;
-    TVector2 FieldFC;
-    f32 FieldF0;
-    f32 Field104;
+    struct TEplLeafCommonData6 SizeOverTime(version);
+    struct TEplLeafCommonData6 ColorOverTime(version);
+    TVector2 Rotation;
+    f32 Opacity;
+    f32 RotationVelocity;
     u32 Field108;
 
     if ( version > 0x1104280 )
@@ -2217,8 +2256,8 @@ typedef struct( u32 version )
         TVector2 FieldF4;
 
         if ( version > 0x1104290 )
-        { 
-            f32 Field20; 
+        {
+            f32 Field20;
             f32 Field24;
         }
     }
@@ -2226,16 +2265,16 @@ typedef struct( u32 version )
 
 typedef struct( u32 version )
 {
-    struct TEplLeafCommonData6 Field28;
-    struct TEplLeafCommonData6 Field8C;
-    struct TEplLeafCommonData6 FieldF0;
-    TVector2 Field160;
-    f32 Field154;
-    f32 Field168;
+    struct TEplLeafCommonData6 SizeXOverTime(version);
+    struct TEplLeafCommonData6 SizeYOverTime(version);
+    struct TEplLeafCommonData6 ColorOverTime(version);
+    TVector2 Rotation;
+    f32 Opacity;
+    f32 RotationVelocity;
     u32 Field158;
     TVector2 Field16C;
-    f32 Field20;
-    f32 Field24;
+    f32 OffsetX;
+    f32 OffsetY;
 } TEplRectangleBoardPolygon;
 
 typedef struct( u32 version )
@@ -2245,7 +2284,7 @@ typedef struct( u32 version )
 
     u32 Type;
     u32 Field00;
-    u32 Field04;
+    u32 ParticleCount;
     f32 Field08;
     f32 Field0C;
     f32 Field10;
@@ -2271,8 +2310,8 @@ typedef struct( u32 version )
     TVector2 Field14;
     struct TEplLeafCommonData5 FieldEC;
     f32 Field1C;
-    struct TEplLeafCommonData6 Field24;
-    struct TEplLeafCommonData6 Field88;
+    struct TEplLeafCommonData6 Field24(version);
+    struct TEplLeafCommonData6 Field88(version);
     f32 Field140;
     f32 Field144;
     f32 Field148;
@@ -2286,7 +2325,7 @@ typedef struct( u32 version )
         case 3: struct TEplGlitterPolygonCylinder Polygon( version ); break;
         case 4: struct TEplGlitterPolygonWall Polygon( version ); break;
         default: Assert(false, "Not implemented"); break;
-    }    
+    }
 
     bool Field70; // r30
     if ( Field70 )
@@ -2356,73 +2395,73 @@ typedef struct( u32 version )
 {
     SetRandomBackColor();
 
-    f32 Field170;
-    TVector2 Field174;
-    TVector2 Field17C;
-    TVector2 Field184;
-    TVector2 Field18C;
-    TVector2 Field194;
+    f32 GlobalDisperseDistance;
+    TVector2 SlideUpSpeed;
+    TVector2 SlideDownSpeed;
+    TVector2 DisperseStartDistance;
+    TVector2 DisperseEndDistance;
+    TVector2 DisperseRotation;
 } TEplSmokeEffectParams;
 
 typedef struct( u32 version )
 {
     SetRandomBackColor();
 
-    TVector2 Field170;
-    TVector2 Field188;
-    TVector2 Field178;
-    TVector2 Field180;
-    TVector2 Field190;
-    f32 Field198;
+    TVector2 DistanceTravelled;
+    TVector2 LaunchSpeed;
+    TVector2 ExplodeRotation;
+    TVector2 ExpolodePitch;
+    TVector2 GravityStrength;
+    f32 ParticleSpeed;
 } TEplExplosionEffectParams;
 
 typedef struct( u32 version )
 {
     SetRandomBackColor();
 
-    f32 Field170;
-    TVector2 Field174;
-    TVector2 Field17C;
-    TVector2 Field184;
-    f32 Field18C;
-    TVector2 Field190;
-    TVector2 Field198;
+    f32 SpiralHeight;
+    TVector2 SpiralStartRadius;
+    TVector2 SpiralEndRadius;
+    TVector2 SoftSpiralRotation;
+    f32 HardSprialRotation;
+    TVector2 SlideUpSpeed;
+    TVector2 SlideDownSpeed;
 } TEplSpiralEffectParams;
 
 typedef struct( u32 version )
 {
     SetRandomBackColor();
 
-    TVector2 Field170;
-    TVector2 Field178;
-    TVector2 Field180;
-    f32 Field188;
-    TVector2 Field18C;
+    TVector2 RadiusStart;
+    TVector2 RadiusEnd;
+    TVector2 OrbitSpeed;
+    f32 OrbitSpeedMultiplier;
+    TVector2 GravityStrength;
 } TEplBallEffectParams;
 
 typedef struct( u32 version )
 {
     SetRandomBackColor();
 
-    TVector2 Field170;
-    TVector2 Field180;
-    f32 Field188;
-    TVector2 Field18C;
-    f32 Field194;
-    TVector2 Field178;
-    TVector2 Field198;
+    TVector2 CircleRadius;
+    TVector2 RingExpand;
+    f32 RingContract;
+    TVector2 OrbitSpeed;
+    f32 OrbitSpeedMultiplier;
+    TVector2 RingPositionOnSphere;
+    TVector2 LiftSpeed;
 } TEplCircleEffectParams;
 
 typedef struct( u32 version )
 {
     SetRandomBackColor();
 
-    f32 Field170;   
-    TVector2 Field174;
-    TVector2 Field17C;
-    TVector2 Field184;
-    TVector2 Field18C;
-    TVector2 Field194;
+    f32 LineLength;
+    TVector2 LiftSpeed;
+    TVector2 GravityStrength;
+    TVector2 DisperseInward;
+    TVector2 DisperseOutward;
+    TVector2 OscillateSpeed;
 } TEplStraightLineEffectParams;
 
 typedef struct( u32 version )
@@ -2450,7 +2489,7 @@ typedef struct( u32 version )
 } TEplCamera;
 
 typedef struct( u32 version )
-{   
+{
     // empty
 } TEplCameraMeshParams;
 
@@ -2501,7 +2540,7 @@ typedef struct( u32 version )
     u32 Field18;
     u32 Field1C;
     u32 Field20;
-    
+
     if ( version > 0x1104910 )
     {
         f32 Field24;
@@ -2546,13 +2585,13 @@ typedef struct( u32 version )
 // verified
 typedef struct( u32 version )
 {
-    TEplLeafCommonData6 Field10;
+    TEplLeafCommonData6 Color(version);
     u32 Field74;
-    TEplLeafCommonData6 Field78;
-    f32 FieldDC;
+    TEplLeafCommonData6 BlurParams0(version);
+    f32 blurParams1;
     f32 FieldE0;
     f32 FieldE4;
-    
+
     if ( version > 0x1104930 )
     {
         u8 FieldE8;
@@ -2562,20 +2601,20 @@ typedef struct( u32 version )
 // verified
 typedef struct( u32 version )
 {
-    TEplLeafCommonData6 Field10;
+    TEplLeafCommonData6 Field10(version);
     u32 Field74;
-    TEplLeafCommonData6 Field78;
+    TEplLeafCommonData6 Field78(version);
     f32 FieldDC;
 } TEplPostEffectStraightBlurData;
 
 // verified
 typedef struct( u32 version )
 {
-    TEplLeafCommonData6 Field10;
+    TEplLeafCommonData6 Field10(version);
     u32 Field74;
-    TEplLeafCommonData6 Field78;
-    TEplLeafCommonData6 FieldDC;
-    
+    TEplLeafCommonData6 Field78(version);
+    TEplLeafCommonData6 FieldDC(version);
+
     if ( version > 0x1104920 )
     {
         u8 Field140;
@@ -2585,23 +2624,23 @@ typedef struct( u32 version )
 // verified
 typedef struct( u32 version )
 {
-    TEplLeafCommonData6 Field10;
-    u32 Field74;
-    TEplLeafCommonData6 Field78;
-    TEplLeafCommonData6 FieldDC;
-    f32 Field140;
-    f32 Field144;
-    f32 Field148;
-    f32 Field14C;
+    TEplLeafCommonData6 AlphaOverTime(version);
+    u32 LayerMode;
+    TEplLeafCommonData6 DistortAmountA(version);
+    TEplLeafCommonData6 DistortAmountB(version);
+    f32 DistortSpeedAX;
+    f32 DistortSpeedAY;
+    f32 DistortSpeedBX;
+    f32 DistortSpeedBY;
 } TEplPostEffectDistortionBlurData;
 
 // verified
 typedef struct( u32 version )
 {
-    TEplLeafCommonData6 Field10;
-    TEplLeafCommonData6 Field74;
-    TEplLeafCommonData6 FieldD8;
-    TEplLeafCommonData6 Field13C;
+    TEplLeafCommonData6 Field10(version);
+    TEplLeafCommonData6 Field74(version);
+    TEplLeafCommonData6 FieldD8(version);
+    TEplLeafCommonData6 Field13C(version);
     u32 FieldlA0;
 } TEplPostEffectFillData;
 
@@ -2611,27 +2650,27 @@ typedef struct( u32 version )
     u32 Field10;
     u32 Field14;
     u32 Field18;
-    TEplLeafCommonData6 Field1C;
+    TEplLeafCommonData6 Field1C(version);
     f32 Field80;
 } TEplPostEffectLensFlareData;
 
 // verified
 typedef struct( u32 version )
 {
-    f32 Field10;
-    f32 Field14;
-    f32 Field18;
-    f32 Field1C;
-    f32 Field20;
-    f32 Field24;
-    TVector2 Field28;
+    f32 CyanRed;
+    f32 MagentaGreen;
+    f32 YellowBlue;
+    f32 Exposure;
+    f32 Contrast;
+    f32 Opacity;
+    TVector2 FadeTimes;
 } TEplPostEffectColorCorrectionData;
 
 // verified
 typedef struct( u32 version )
 {
-    f32 Field10;
-    TVector2 Field14;
+    f32 Opacity;
+    TVector2 FadeTimes;
 } TEplPostEffectMonotoneData;
 
 // verified
@@ -2639,7 +2678,7 @@ typedef struct( u32 version )
 {
     u32 Field10;
     u32 Field20;
-    TEplLeafCommonData6 FieldA0;
+    TEplLeafCommonData6 FieldA0(version);
     f32 Field60;
     f32 Field64;
     f32 Field68;
@@ -2661,9 +2700,9 @@ typedef struct( u32 version )
 // verified
 typedef struct( u32 version )
 {
-    TEplLeafCommonData6 Field10;
+    TEplLeafCommonData6 Field10(version);
     u32 Field74;
-    TEplLeafCommonData6 Field78;
+    TEplLeafCommonData6 Field78(version);
     f32 FieldDC;
     f32 FieldE0;
 } TEplPostEffectMotionBlur;
@@ -2671,9 +2710,9 @@ typedef struct( u32 version )
 // verified
 typedef struct( u32 version )
 {
-    TEplLeafCommonData6 Field10;
+    TEplLeafCommonData6 Field10(version);
     u32 Field74;
-    TEplLeafCommonData6 Field78;
+    TEplLeafCommonData6 Field78(version);
     f32 FieldDC;
 } TEplPostEffectAfterimageBlur;
 
@@ -2687,7 +2726,7 @@ typedef struct( u32 version )
     u32 Field00;
     f32 Field04;
     f32 Field08;
-    f32 Field0C;  
+    f32 Field0C;
     bool Field84; // r30
     if ( Field84 )
         TEplEmbeddedFile EmbeddedFile1( version );
@@ -2715,17 +2754,19 @@ typedef struct
 	f32 Field138;
 	f32 Field134;
 	f32 Field130;
-	u32 Entry1Count;
-	u32 Entry2Count;
-	u32 Entry3Count;
+	u32 Entry1Count<name="Bone Dictionary Count">;
+	u32 Entry2Count<name="Collision Capsule Count">;
+	u32 Entry3Count<name="Bone Collection Count">;
 } TChunkTypePhysicsDictionaryHeader <name="PhysicsDictionaryHeader">;
 
 typedef struct( u32 version )
 {
 	f32 MotionScale;
 	f32 Field38;
-	f32 Field3C;
-	f32 SpringRate;
+    if (version > 0x1104121) {
+        f32 Field3C;
+	    f32 SpringRate;
+    }
 	TBool8 hasName;
 	if (hasName > 0)
 	{
@@ -2736,7 +2777,7 @@ typedef struct( u32 version )
 		f32 Field14;
 		f32 Field10;
 	}
-	
+
 }TEntryType1<name = "Bone Dictionary">;
 
 typedef struct( u32 version )
@@ -2758,7 +2799,7 @@ typedef struct( u32 version )
 typedef struct{
 	f32 Gravity;
 	f32 Field04;
-	
+
 	f32 BoneThickness;
 	u16 parentBone;
 	u16 childBone;
@@ -2797,7 +2838,7 @@ string NameToStringT1( TEntryType1& value )
 		return buffer;
 	}
 	else buffer = "null";
-	
+
 	return buffer;
 }
 
@@ -2810,7 +2851,7 @@ string NameToStringT2( TEntryType2& value )
 		return buffer;
 	}
 	else buffer = "null";
-	
+
 	return buffer;
 }
 
@@ -2851,7 +2892,7 @@ typedef struct
     SetRandomBackColor();
 
     TFileHeader Header;
-    
+
     // Read chunks
     local u32 chunkStart;
     local u32 chunkType;
@@ -2883,7 +2924,7 @@ typedef struct
                 struct TAnimationPack AnimationPack;
                 break;
 
-			case EChunkType_PhysicsDictionary:
+            case EChunkType_PhysicsDictionary:
                 struct TPhysicsDictionary PhysicsChunkType;
                 break;
 
@@ -2910,47 +2951,65 @@ typedef struct
 // -- BED types
 //
 
+typedef enum<u32> {
+    Enum0x1 = 1,
+} BEDFooterFlags1;
+
+typedef enum<u32> {
+    UseFieldModelDiffuseColor = 1,
+    Flags2Enum0x2 = 1 << 1,
+    Flags2Enum0x4 = 1 << 2,
+} BEDFooterFlags2;
+
+typedef enum<u32> {
+    Flags3Enum0x2 = 1 << 1,
+} BEDFooterFlags3;
+
+typedef enum<u32> {
+    Flags4Enum0x2 = 1 << 1,
+} BEDFooterFlags4;
+
+typedef enum<u32> {
+    Flags5Enum0x2 = 1 << 1,
+} BEDFooterFlags5;
+
+typedef struct {
+    f32 fieldModelBrightness;
+    BEDFooterFlags1 FieldModelBrightness; // 0x1, 0x2
+    TColor8 FieldModelDiffuseStart;
+    BEDFooterFlags2 FieldModelColorFlags;
+
+    if ( BEDVersion >= 0x01000001 )
+    {
+        f32 Field94;
+        BEDFooterFlags3 ENVRelatedFlag1;
+        f32 Field9C; // flashes something in the field model at higher values
+        BEDFooterFlags4 ENVRelatedFlag2;
+        f32 ENVBrightnessIncreaseOverTime;
+        BEDFooterFlags5 ENVBrightnessIncreaseFlags;
+    }
+    TColor8 FieldModelDiffuseEnd;
+    f32 FieldB0;
+    f32 FieldB4;
+    u32 FieldA8;
+} SkillEnvBlock;
+
 typedef struct
 {
     SetRandomBackColor();
 
     TFileHeader Header;
-    u32 Field00; // 0x00
-    
-    if ( Field00 > 0x01010000 )
+    u32 BEDVersion; // 0x00
+
+    if ( BEDVersion > 0x01010000 )
     {
         f32 FieldBC;
         u32 FieldB8;
     }
 
     struct TBedList1Entry Entries( Header.Version )[3];
-
-    f32 Field84;
-    u32 Field80;
-    u8 Field8C;
-    u8 Field8D;
-    u8 Field8F;
-    u8 Field8E;
-    u32 Field88;
-    
-    if ( Field00 >= 0x01000001 )
-    {
-        f32 Field94;
-        u32 Field90;
-        f32 Field9C;
-        u32 Field98<format=hex>;
-        f32 FieldA4;
-        u32 FieldA0;
-    }
-
-    u8 FieldAC;
-    u8 FieldAD;
-    u8 FieldAF;
-    u8 FieldAE;
-    f32 FieldB0;
-    f32 FieldB4;
-    u32 FieldA8; 
-} TBedFile;
+    SkillEnvBlock BEDEnvBlock;
+} TBedFile; // btl::Skill (contained inside a btl::action::Participate::BED instance)
 
 typedef struct( u32 version )
 {
@@ -2964,18 +3023,51 @@ typedef struct( u32 version )
     {
         struct TBedList2Entry Entries( Header.Version )[EntryCount];
     }
-} TBedList1Entry <optimize=false>;
+} TBedList1Entry <optimize=false>; // btl::Skill::Cut
+
+typedef enum<u16> {
+    OnTarget = 0,
+    BehindTarget = 1,
+    BehindTarget2 = 2,
+    CenterOfTargetGroup = 3,
+    CenterOfSourceGroup = 4,
+    CenterOfAllUnits = 5,
+    OnTarget2 = 6,
+    OnTarget3 = 7,
+    OnTarget4 = 8,
+    Origin = 9,
+} SkillCutItemGroundPositionType;
+
+typedef enum<u16> {
+    Normal = 0,
+    SlightlyAbove = 1,
+    ModeratelyAbove = 2,
+    VeryAbove = 3,
+    Normal2 = 4,
+} SkillCutItemVerticalPositionType;
+
+typedef enum<u16> {
+    // See 0x14099104a for available values
+    // From 0 to 7, they are constant values
+    // 8, 9 and 10 do a bunch of extra stuff
+} SkillCutItemPositionType3;
+
+typedef struct {
+    // Most of the research done to name these fields have been through analysing FUN_140990190 on P5R.exe v1.0.1
+    // As it handles reading these values and repositioning the EPL during the first frame of Skill Cut running
+    SkillCutItemGroundPositionType GroundPositionShift; // seems to be a flag setting various things on first frame
+    SkillCutItemVerticalPositionType VerticalPositionShift; // handles stuff regarding camera controller
+    SkillCutItemPositionType3 PositionShift3; // some other position shift thing, doesn't seem to do *much*
+    f32 PositionShift4; // position shift 4, doesn't seem to do anything notable
+} SkillCutItemPositionAdjustments;
 
 typedef struct( u32 version )
 {
-    f32 DummyField04;
-    u16 DummyField08;
-    u16 DummyField0C;
-    u16 DummyField10;
-    f32 DummyField14;
-    s32 DummyField18;
+    f32 Dummy3; // something with skill duration
+    SkillCutItemPositionAdjustments positionAdjustment;
+    s32 Dummy8; // ???
     TEpl Epl( version );
-} TBedList2Entry <optimize=false>;
+} TBedList2Entry <optimize=false>; // btl::Skill::Cut::Item
 
 //
 // -- End BED types
@@ -3043,7 +3135,11 @@ typedef struct
 {
     SetRandomBackColor();
     TFileHeader Header;
-    struct TBflList1Entry Entries[5];
+    struct TBflList1Entry Normal;
+    struct TBflList1Entry Danger;
+    struct TBflList1Entry Holdup;
+    struct TBflList1Entry BulletHail; // player anims are stuck looping through gun pull out anim
+    struct TBflList1Entry CloseRange;
 } TBflFile <optimize=true>;
 
 typedef struct
@@ -3068,12 +3164,11 @@ typedef struct
 {
     SetRandomBackColor();
     u8 Field0C;
-    f32 Field10;
-    f32 Field14;
+    TVector2 position;
     u16 Field00;
     f32 Field04;
     f32 Field08;
-} TBflList3Entry <optimize=true>;
+} TBflList3Entry <optimize=true, read=TVector2ToString(position)>;
 
 typedef struct
 {
@@ -3097,7 +3192,7 @@ typedef struct
 //
 typedef struct
 {
-    
+
 } TEnvFile;
 
 //

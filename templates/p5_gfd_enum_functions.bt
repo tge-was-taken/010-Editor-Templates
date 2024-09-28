@@ -1,0 +1,33 @@
+string setTexcoordDisplay(EMaterialMapsTexcoord texcoord) {
+    string buffer;
+    switch (texcoord) {
+        case 7: SPrintf(buffer, "~"); break;
+        default: SPrintf(buffer, "%d", texcoord); break;
+    }
+    return buffer;
+}
+
+string showMaterialTexcoord(TMaterialMapsTexcoord& texcoord) {
+    string buffer;
+    SPrintf(buffer, "%s %s %s %s %s %s %s %s %s", 
+        setTexcoordDisplay(texcoord.ShadowMap), setTexcoordDisplay(texcoord.DetailMap), setTexcoordDisplay(texcoord.NightMap), 
+        setTexcoordDisplay(texcoord.GlowMap), setTexcoordDisplay(texcoord.HighlightMap), setTexcoordDisplay(texcoord.ReflectionMap), 
+        setTexcoordDisplay(texcoord.SpecularMap), setTexcoordDisplay(texcoord.NormalMap), setTexcoordDisplay(texcoord.DiffuseMap)
+    );
+    return buffer;
+}
+
+u32 showMaterialTexcoord2(TMaterialMapsTexcoord& texcoord) {
+    u32 out;
+    out += texcoord.DiffuseMap;
+    out += texcoord.NormalMap << 3;
+    out += texcoord.SpecularMap << 6;
+    out += texcoord.ReflectionMap << 9;
+    out += texcoord.HighlightMap << 12;
+    out += texcoord.GlowMap << 15;
+    out += texcoord.NightMap << 18;
+    out += texcoord.DetailMap << 21;
+    out += texcoord.ShadowMap << 24;
+    out += texcoord.Filler << 27;
+    return out;
+}
