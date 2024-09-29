@@ -9,26 +9,27 @@ string setTexcoordDisplay(EMaterialMapsTexcoord texcoord) {
 
 string showMaterialTexcoord(TMaterialMapsTexcoord& texcoord) {
     string buffer;
-    SPrintf(buffer, "%s %s %s %s %s %s %s %s %s", 
-        setTexcoordDisplay(texcoord.ShadowMap), setTexcoordDisplay(texcoord.DetailMap), setTexcoordDisplay(texcoord.NightMap), 
-        setTexcoordDisplay(texcoord.GlowMap), setTexcoordDisplay(texcoord.HighlightMap), setTexcoordDisplay(texcoord.ReflectionMap), 
-        setTexcoordDisplay(texcoord.SpecularMap), setTexcoordDisplay(texcoord.NormalMap), setTexcoordDisplay(texcoord.DiffuseMap)
+    SPrintf(buffer, "%s %s %s %s %s %s %s %s %s %s", 
+        setTexcoordDisplay(texcoord.Texture1), setTexcoordDisplay(texcoord.Texture2), setTexcoordDisplay(texcoord.Texture3), 
+        setTexcoordDisplay(texcoord.Texture4), setTexcoordDisplay(texcoord.Texture5), setTexcoordDisplay(texcoord.Texture6), 
+        setTexcoordDisplay(texcoord.Texture7), setTexcoordDisplay(texcoord.Texture8), setTexcoordDisplay(texcoord.Texture9),
+        setTexcoordDisplay(texcoord.Texture10)
     );
     return buffer;
 }
 
 u32 showMaterialTexcoord2(TMaterialMapsTexcoord& texcoord) {
     u32 out;
-    out += texcoord.DiffuseMap;
-    out += texcoord.NormalMap << 3;
-    out += texcoord.SpecularMap << 6;
-    out += texcoord.ReflectionMap << 9;
-    out += texcoord.HighlightMap << 12;
-    out += texcoord.GlowMap << 15;
-    out += texcoord.NightMap << 18;
-    out += texcoord.DetailMap << 21;
-    out += texcoord.ShadowMap << 24;
-    out += texcoord.Filler << 27;
+    out += texcoord.Texture1;
+    out += texcoord.Texture2 << 3;
+    out += texcoord.Texture3 << 6;
+    out += texcoord.Texture4 << 9;
+    out += texcoord.Texture5 << 12;
+    out += texcoord.Texture6 << 15;
+    out += texcoord.Texture7 << 18;
+    out += texcoord.Texture8 << 21;
+    out += texcoord.Texture9 << 24;
+    out += texcoord.Texture10 << 27;
     return out;
 }
 

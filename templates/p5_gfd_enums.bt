@@ -603,19 +603,36 @@ typedef enum<u32>
     TEplLeafType_Helper = 17
 } TEplLeafType;
 
-
 typedef struct
 {
-    EMaterialMapsTexcoord Filler           : 5;
-    EMaterialMapsTexcoord ShadowMap        : 3;
-    EMaterialMapsTexcoord DetailMap        : 3;
-    EMaterialMapsTexcoord NightMap         : 3;
-    EMaterialMapsTexcoord GlowMap          : 3;
-    EMaterialMapsTexcoord HighlightMap     : 3;
-    EMaterialMapsTexcoord ReflectionMap    : 3;
-    EMaterialMapsTexcoord SpecularMap      : 3;
-    EMaterialMapsTexcoord NormalMap        : 3;
-    EMaterialMapsTexcoord DiffuseMap       : 3;
+    if (IsLittleEndian())
+    {
+        EMaterialMapsTexcoord Texture1        : 3;
+        EMaterialMapsTexcoord Texture2        : 3;
+        EMaterialMapsTexcoord Texture3        : 3;
+        EMaterialMapsTexcoord Texture4        : 3;
+        EMaterialMapsTexcoord Texture5        : 3;
+        EMaterialMapsTexcoord Texture6        : 3;
+        EMaterialMapsTexcoord Texture7        : 3;
+        EMaterialMapsTexcoord Texture8        : 3;
+        EMaterialMapsTexcoord Texture9        : 3;
+        EMaterialMapsTexcoord Texture10       : 3;
+        u32 Padding                           : 2;
+    }
+    else
+    {
+        u32 Padding                           : 2;
+        EMaterialMapsTexcoord Texture10       : 3;
+        EMaterialMapsTexcoord Texture9        : 3;
+        EMaterialMapsTexcoord Texture8        : 3;
+        EMaterialMapsTexcoord Texture7        : 3;
+        EMaterialMapsTexcoord Texture6        : 3;
+        EMaterialMapsTexcoord Texture5        : 3;
+        EMaterialMapsTexcoord Texture4        : 3;
+        EMaterialMapsTexcoord Texture3        : 3;
+        EMaterialMapsTexcoord Texture2        : 3;
+        EMaterialMapsTexcoord Texture1        : 3;
+    }
 } TMaterialMapsTexcoord<read=showMaterialTexcoord>;
 
 typedef enum<u16>
