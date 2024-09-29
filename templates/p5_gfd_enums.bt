@@ -101,39 +101,39 @@ typedef enum<u8>
 
 typedef enum<u32>
 {
-    EMaterialFlags_Bit0             = 1 << 0,
-    EMaterialFlags_Bit1             = 1 << 1,
-    EMaterialFlags_Bit2             = 1 << 2,
-    EMaterialFlags_Bit3             = 1 << 3,
-    EMaterialFlags_HasVertexColors  = 1 << 4,
-    EMaterialFlags_Bit5             = 1 << 5,
-    EMaterialFlags_Bit6             = 1 << 6,
-    EMaterialFlags_EnableLight      = 1 << 7,
-    EMaterialFlags_Bit8             = 1 << 8,
-    EMaterialFlags_Bit9             = 1 << 9,
-    EMaterialFlags_Bit10            = 1 << 10,
-    EMaterialFlags_EnableLight2     = 1 << 11,
-    EMaterialFlags_PurpleWireframe  = 1 << 12,
-    EMaterialFlags_Bit13            = 1 << 13,
-    EMaterialFlags_ReceiveShadow    = 1 << 14,
-    EMaterialFlags_CastShadow       = 1 << 15,
-    EMaterialFlags_HasAttributes    = 1 << 16,
-    EMaterialFlags_HasOutline       = 1 << 17,
-    EMaterialFlags_Bit18            = 1 << 18,
-    EMaterialFlags_DisableBloom     = 1 << 19,
-    EMaterialFlags_HasDiffuseMap    = 1 << 20,
-    EMaterialFlags_HasNormalMap     = 1 << 21,
-    EMaterialFlags_HasSpecularMap   = 1 << 22,
-    EMaterialFlags_HasReflectionMap = 1 << 23,
-    EMaterialFlags_HasHighlightMap  = 1 << 24,
-    EMaterialFlags_HasGlowMap       = 1 << 25,
-    EMaterialFlags_HasNightMap      = 1 << 26,
-    EMaterialFlags_HasDetailMap     = 1 << 27,
-    EMaterialFlags_HasShadowMap     = 1 << 28,
-    EMaterialFlags_Bit29            = 1 << 29,
-    EMaterialFlags_Bit30            = 1 << 30,
-    EMaterialFlags_Bit31            = 1 << 31
-} EMaterialFlags;
+    EMaterialFlags_Ambient             = 1 << 0,   // 0x00000001
+    EMaterialFlags_Diffuse             = 1 << 1,   // 0x00000002
+    EMaterialFlags_Specular            = 1 << 2,   // 0x00000004
+    EMaterialFlags_Transparency        = 1 << 3,   // 0x00000008
+    EMaterialFlags_VertexColor         = 1 << 4,   // 0x00000010
+    EMaterialFlags_Fog                 = 1 << 5,   // 0x00000020
+    EMaterialFlags_Diffusivity         = 1 << 6,   // 0x00000040
+    EMaterialFlags_UVTransform         = 1 << 7,   // 0x00000080
+    EMaterialFlags_Emissive            = 1 << 8,   // 0x00000100
+    EMaterialFlags_Reflection          = 1 << 9,   // 0x00000200
+    EMaterialFlags_Shadow              = 1 << 10,  // 0x00000400
+    EMaterialFlags_Light               = 1 << 11,  // 0x00000800
+    EMaterialFlags_Wireframe           = 1 << 12,  // 0x00001000
+    EMaterialFlags_AlphaTest           = 1 << 13,  // 0x00002000
+    EMaterialFlags_ShadowReceiver      = 1 << 14,  // 0x00004000
+    EMaterialFlags_ShadowCaster        = 1 << 15,  // 0x00008000
+    EMaterialFlags_Extension           = 1 << 16,  // 0x00010000 // extension
+    EMaterialFlags_Outline             = 1 << 17,  // 0x00020000
+    EMaterialFlags_SpNormalAlpha       = 1 << 18,  // 0x00040000
+    EMaterialFlags_ReflectionCaster    = 1 << 19,  // 0x00080000
+    EMaterialFlags_Texture1            = 1 << 20,  // 0x00100000
+    EMaterialFlags_Texture2            = 1 << 21,  // 0x00200000
+    EMaterialFlags_Texture3            = 1 << 22,  // 0x00400000
+    EMaterialFlags_Texture4            = 1 << 23,  // 0x00800000
+    EMaterialFlags_Texture5            = 1 << 24,  // 0x01000000
+    EMaterialFlags_Texture6            = 1 << 25,  // 0x02000000
+    EMaterialFlags_Texture7            = 1 << 26,  // 0x04000000
+    EMaterialFlags_Texture8            = 1 << 27,  // 0x08000000
+    EMaterialFlags_Texture9            = 1 << 28,  // 0x10000000
+    EMaterialFlags_Texture10           = 1 << 29,  // 0x20000000
+    EMaterialFlags_SSAO                = 1 << 30,  // 0x40000000
+    EMaterialFlags_ConstantColor       = 1 << 31   // 0x80000000
+} EMaterialFlags <read=EMaterialFlagsToString, write=StringToEMaterialFlags>;
 
 typedef enum<u32>
 {
@@ -166,156 +166,156 @@ typedef enum<u32>
 
 typedef enum<u32>
 {
-    EMaterialAttributeFlags_Bit0 = 1 << 0,
+    EMaterialAttributeFlags_0 = 1 << 0,
 } EMaterialAttributeFlags;
 
 typedef enum<u32>
 {
-    EMaterialAttributeToonShadingFlags_Bit0 = 1 << 0,
-    EMaterialAttributeToonShadingFlags_Bit1 = 1 << 1,
-    EMaterialAttributeToonShadingFlags_Bit2 = 1 << 2,
-    EMaterialAttributeToonShadingFlags_Bit3 = 1 << 3,
-    EMaterialAttributeToonShadingFlags_Bit4 = 1 << 4,
-    EMaterialAttributeToonShadingFlags_Bit5 = 1 << 5,
+    EMaterialAttributeToonShadingFlags_0 = 1 << 0,
+    EMaterialAttributeToonShadingFlags_1 = 1 << 1,
+    EMaterialAttributeToonShadingFlags_2 = 1 << 2,
+    EMaterialAttributeToonShadingFlags_3 = 1 << 3,
+    EMaterialAttributeToonShadingFlags_4 = 1 << 4,
+    EMaterialAttributeToonShadingFlags_5 = 1 << 5,
 } EMaterialAttributeToonShadingFlags;
 
 typedef enum<u32>
 {
-    EMaterialAttributeInnerGlowFlags_Bit0 = 1 << 0,
+    EMaterialAttributeInnerGlowFlags_0 = 1 << 0,
     EMaterialAttributeInnerGlowFlags_DisableEdgeBacklight = 1 << 1,
-    EMaterialAttributeInnerGlowFlags_Bit2 = 1 << 2,
-    EMaterialAttributeInnerGlowFlags_Bit3 = 1 << 3,
-    EMaterialAttributeInnerGlowFlags_Bit4 = 1 << 4,
-    EMaterialAttributeInnerGlowFlags_Bit5 = 1 << 5,
-    EMaterialAttributeInnerGlowFlags_Bit6 = 1 << 6,
-    EMaterialAttributeInnerGlowFlags_Bit7 = 1 << 7,
+    EMaterialAttributeInnerGlowFlags_2 = 1 << 2,
+    EMaterialAttributeInnerGlowFlags_3 = 1 << 3,
+    EMaterialAttributeInnerGlowFlags_4 = 1 << 4,
+    EMaterialAttributeInnerGlowFlags_5 = 1 << 5,
+    EMaterialAttributeInnerGlowFlags_6 = 1 << 6,
+    EMaterialAttributeInnerGlowFlags_7 = 1 << 7,
 } EMaterialAttributeInnerGlowFlags;
 
 typedef enum<u32>
 {
     EMaterialAttributeWaterFlags_WaterReflection = 1 << 0,
-    EMaterialAttributeWaterFlags_Bit1 = 1 << 1,
+    EMaterialAttributeWaterFlags_1 = 1 << 1,
     EMaterialAttributeWaterFlags_WaterFresnel = 1 << 2,
 } EMaterialAttributeWaterFlags;
 
 typedef enum<u32>
 {
-    EMaterialAttributeScrollingTextureFlags_Bit0 = 1 << 0,
+    EMaterialAttributeScrollingTextureFlags_0 = 1 << 0,
     EMaterialAttributeScrollingTextureFlags_DisableEdgeBacklight = 1 << 1,
-    EMaterialAttributeScrollingTextureFlags_Bit2 = 1 << 2,
-    EMaterialAttributeScrollingTextureFlags_Bit3 = 1 << 3,
-    EMaterialAttributeScrollingTextureFlags_Bit4 = 1 << 4,
-    EMaterialAttributeScrollingTextureFlags_Bit5 = 1 << 5,
-    EMaterialAttributeScrollingTextureFlags_Bit6 = 1 << 6,
+    EMaterialAttributeScrollingTextureFlags_2 = 1 << 2,
+    EMaterialAttributeScrollingTextureFlags_3 = 1 << 3,
+    EMaterialAttributeScrollingTextureFlags_4 = 1 << 4,
+    EMaterialAttributeScrollingTextureFlags_5 = 1 << 5,
+    EMaterialAttributeScrollingTextureFlags_6 = 1 << 6,
 } EMaterialAttributeScrollingTextureFlags;
 
 typedef enum<u32>
 {
-    EMaterialAttributeType8Flags_Bit0 = 1 << 0,
-    EMaterialAttributeType8Flags_Bit1 = 1 << 1,
-    EMaterialAttributeType8Flags_Bit2 = 1 << 2,
-    EMaterialAttributeType8Flags_Bit3 = 1 << 3,
-    EMaterialAttributeType8Flags_Bit4 = 1 << 4,
-    EMaterialAttributeType8Flags_Bit5 = 1 << 5,
-    EMaterialAttributeType8Flags_Bit6 = 1 << 6,
-    EMaterialAttributeType8Flags_Bit7 = 1 << 7,
-    EMaterialAttributeType8Flags_Bit8 = 1 << 8,
-    EMaterialAttributeType8Flags_Bit9 = 1 << 9,
-    EMaterialAttributeType8Flags_Bit10 = 1 << 10,
-    EMaterialAttributeType8Flags_Bit11 = 1 << 11,
-    EMaterialAttributeType8Flags_Bit12 = 1 << 12,
-    EMaterialAttributeType8Flags_Bit13 = 1 << 13,
-    EMaterialAttributeType8Flags_Bit14 = 1 << 14,
-    EMaterialAttributeType8Flags_Bit15 = 1 << 15,
-    EMaterialAttributeType8Flags_Bit16 = 1 << 16,
-    EMaterialAttributeType8Flags_Bit17 = 1 << 17,
-    EMaterialAttributeType8Flags_Bit18 = 1 << 18,
-    EMaterialAttributeType8Flags_Bit19 = 1 << 19,
-    EMaterialAttributeType8Flags_Bit20 = 1 << 20,
-    EMaterialAttributeType8Flags_Bit21 = 1 << 21,
-    EMaterialAttributeType8Flags_Bit22 = 1 << 22,
-    EMaterialAttributeType8Flags_Bit23 = 1 << 23,
-    EMaterialAttributeType8Flags_Bit24 = 1 << 24,
-    EMaterialAttributeType8Flags_Bit25 = 1 << 25,
-    EMaterialAttributeType8Flags_Bit26 = 1 << 26,
-    EMaterialAttributeType8Flags_Bit27 = 1 << 27,
-    EMaterialAttributeType8Flags_Bit28 = 1 << 28,
-    EMaterialAttributeType8Flags_Bit29 = 1 << 29,
-    EMaterialAttributeType8Flags_Bit30 = 1 << 30,
-    EMaterialAttributeType8Flags_Bit31 = 1 << 31,
+    EMaterialAttributeType8Flags_0 = 1 << 0,
+    EMaterialAttributeType8Flags_1 = 1 << 1,
+    EMaterialAttributeType8Flags_2 = 1 << 2,
+    EMaterialAttributeType8Flags_3 = 1 << 3,
+    EMaterialAttributeType8Flags_4 = 1 << 4,
+    EMaterialAttributeType8Flags_5 = 1 << 5,
+    EMaterialAttributeType8Flags_6 = 1 << 6,
+    EMaterialAttributeType8Flags_7 = 1 << 7,
+    EMaterialAttributeType8Flags_8 = 1 << 8,
+    EMaterialAttributeType8Flags_9 = 1 << 9,
+    EMaterialAttributeType8Flags_10 = 1 << 10,
+    EMaterialAttributeType8Flags_11 = 1 << 11,
+    EMaterialAttributeType8Flags_12 = 1 << 12,
+    EMaterialAttributeType8Flags_13 = 1 << 13,
+    EMaterialAttributeType8Flags_14 = 1 << 14,
+    EMaterialAttributeType8Flags_15 = 1 << 15,
+    EMaterialAttributeType8Flags_16 = 1 << 16,
+    EMaterialAttributeType8Flags_17 = 1 << 17,
+    EMaterialAttributeType8Flags_18 = 1 << 18,
+    EMaterialAttributeType8Flags_19 = 1 << 19,
+    EMaterialAttributeType8Flags_20 = 1 << 20,
+    EMaterialAttributeType8Flags_21 = 1 << 21,
+    EMaterialAttributeType8Flags_22 = 1 << 22,
+    EMaterialAttributeType8Flags_23 = 1 << 23,
+    EMaterialAttributeType8Flags_24 = 1 << 24,
+    EMaterialAttributeType8Flags_25 = 1 << 25,
+    EMaterialAttributeType8Flags_26 = 1 << 26,
+    EMaterialAttributeType8Flags_27 = 1 << 27,
+    EMaterialAttributeType8Flags_28 = 1 << 28,
+    EMaterialAttributeType8Flags_29 = 1 << 29,
+    EMaterialAttributeType8Flags_30 = 1 << 30,
+    EMaterialAttributeType8Flags_31 = 1 << 31,
 } EMaterialAttributeType8Flags;
 
 typedef enum<u32>
 {
-    EMeshFlags_HasVertexWeights  = 1 << 0,
-    EMeshFlags_HasMaterial       = 1 << 1,
-    EMeshFlags_HasTriangles      = 1 << 2,
-    EMeshFlags_HasBoundingBox    = 1 << 3,
-    EMeshFlags_HasBoundingSphere = 1 << 4,
-    EMeshFlags_Flag20            = 1 << 5, // render flag
-    EMeshFlags_HasMorphTargets   = 1 << 6,
-    EMeshFlags_Flag80            = 1 << 7, // render flag
-    EMeshFlags_Flag100           = 1 << 8,
-    EMeshFlags_Flag200           = 1 << 9,
-    EMeshFlags_Flag400           = 1 << 10,
-    EMeshFlags_Flag800           = 1 << 11,
-    EMeshFlags_Flag1000          = 1 << 12, // 2 floats
-    EMeshFlags_Flag2000          = 1 << 13,
-    EMeshFlags_Flag4000          = 1 << 14, // render flag
-    EMeshFlags_Flag8000          = 1 << 15,
-    EMeshFlags_Flag10000         = 1 << 16,
-    EMeshFlags_Flag20000         = 1 << 17,
-    EMeshFlags_Flag40000         = 1 << 18,
-    EMeshFlags_Flag80000         = 1 << 19,
-    EMeshFlags_Flag100000        = 1 << 20,
-    EMeshFlags_Flag200000        = 1 << 21,
-    EMeshFlags_Flag400000        = 1 << 22,
-    EMeshFlags_Flag800000        = 1 << 23,
-    EMeshFlags_Flag1000000       = 1 << 24,
-    EMeshFlags_Flag2000000       = 1 << 25,
-    EMeshFlags_Flag4000000       = 1 << 26,
-    EMeshFlags_Flag8000000       = 1 << 27,
-    EMeshFlags_Flag10000000      = 1 << 28,
-    EMeshFlags_Flag20000000      = 1 << 29,
-    EMeshFlags_Flag40000000      = 1 << 30, // r7 |= 8
-    EMeshFlags_Flag80000000      = 1u << 31,
-} EMeshFlags;
+    EMeshFlags_Skin                  = 1 << 0,
+    EMeshFlags_Material              = 1 << 1,
+    EMeshFlags_Triangles             = 1 << 2,
+    EMeshFlags_BoundingBox           = 1 << 3,
+    EMeshFlags_BoundingSphere        = 1 << 4,
+    EMeshFlags_Hidden                = 1 << 5,
+    EMeshFlags_MorphTargets          = 1 << 6,
+    EMeshFlags_ReflectionCaster      = 1 << 7, 
+    EMeshFlags_Billboard             = 1 << 8,
+    EMeshFlags_BillboardAlignX       = 1 << 9,
+    EMeshFlags_BillboardAlignY       = 1 << 10,
+    EMeshFlags_BillboardAlignZ       = 1 << 11,
+    EMeshFlags_Lod                   = 1 << 12, // 2 floats
+    EMeshFlags_LodChild              = 1 << 13,
+    EMeshFlags_Cull                  = 1 << 14, // render flag
+    EMeshFlags_TransparencyMaskDepth = 1 << 15,
+    EMeshFlags_TransparencyMask      = 1 << 16,
+    EMeshFlags_PostTransparencyMask  = 1 << 17,
+    EMeshFlags_18                    = 1 << 18,
+    EMeshFlags_19                    = 1 << 19,
+    EMeshFlags_20                    = 1 << 20,
+    EMeshFlags_21                    = 1 << 21,
+    EMeshFlags_22                    = 1 << 22,
+    EMeshFlags_23                    = 1 << 23,
+    EMeshFlags_24                    = 1 << 24,
+    EMeshFlags_25                    = 1 << 25,
+    EMeshFlags_26                    = 1 << 26,
+    EMeshFlags_27                    = 1 << 27,
+    EMeshFlags_BlendState            = 1 << 28,
+    EMeshFlags_DepthState            = 1 << 29,
+    EMeshFlags_System                = 1 << 30, // r7 |= 8
+    EMeshFlags_Command               = 1u << 31,
+} EMeshFlags <read=EMeshFlagsToString, write=StringToEMeshFlags>;
 
 typedef enum<u32>
 {
-    EVertexAttributeFlags_Flag1        = 1 << 0,
-    EVertexAttributeFlags_Position     = 1 << 1,
-    EVertexAttributeFlags_Flag4        = 1 << 2,
-    EVertexAttributeFlags_Flag8        = 1 << 3,
-    EVertexAttributeFlags_Normal       = 1 << 4, // might be normals. maybe normal should be position
-    EVertexAttributeFlags_Flag20       = 1 << 5,
-    EVertexAttributeFlags_Color0       = 1 << 6,
-    EVertexAttributeFlags_Flag40       = 1 << 7,
+    EVertexAttributeFlags_0            = 1 << 0,
+    EVertexAttributeFlags_PositionXYZ  = 1 << 1, 
+    EVertexAttributeFlags_PositionXYZW = 1 << 2,
+    EVertexAttributeFlags_3            = 1 << 3,
+    EVertexAttributeFlags_Normal       = 1 << 4, 
+    EVertexAttributeFlags_5            = 1 << 5,
+    EVertexAttributeFlags_DiffuseColor = 1 << 6, // Diffuse vertex color
+    EVertexAttributeFlags_7            = 1 << 7,
     EVertexAttributeFlags_TexCoord0    = 1 << 8,
     EVertexAttributeFlags_TexCoord1    = 1 << 9,
     EVertexAttributeFlags_TexCoord2    = 1 << 10,
-    EVertexAttributeFlags_Color2       = 1 << 11, // used in Metaphor, comes after normals, binormals
-    EVertexAttributeFlags_TexCoord4    = 1 << 12,
-    EVertexAttributeFlags_TexCoord5    = 1 << 13,
-    EVertexAttributeFlags_TexCoord6    = 1 << 14,
-    EVertexAttributeFlags_TexCoord7    = 1 << 15,
-    EVertexAttributeFlags_Flag10000    = 1 << 16,
-    EVertexAttributeFlags_lag20000    = 1 << 17,
-    EVertexAttributeFlags_Flag40000    = 1 << 18,
-    EVertexAttributeFlags_Flag80000    = 1 << 19,
-    EVertexAttributeFlags_Flag100000   = 1 << 20,
-    EVertexAttributeFlags_Flag200000   = 1 << 21,
-    EVertexAttributeFlags_Flag400000   = 1 << 22,
-    EVertexAttributeFlags_Flag800000   = 1 << 23,
-    EVertexAttributeFlags_Flag1000000  = 1 << 24,
-    EVertexAttributeFlags_Flag2000000  = 1 << 25,
-    EVertexAttributeFlags_Flag4000000  = 1 << 26,
-    EVertexAttributeFlags_Flag8000000  = 1 << 27,
-    EVertexAttributeFlags_Tangent      = 1 << 28,
-    EVertexAttributeFlags_Binormal     = 1 << 29, // 12 bytes, after tangent -- binormal?
-    EVertexAttributeFlags_Color1       = 1 << 30, // 4 bytes, after tex coord 2
-    EVertexAttributeFlags_Flag80000000 = 1u << 31, // 20 bytes, after HasBoundingBox
-} EVertexAttributeFlags;
+    EVertexAttributeFlags_Color2       = 1 << 11, // RGBA vertex color. used in Metaphor, comes after normals, binormals
+    EVertexAttributeFlags_12           = 1 << 12,
+    EVertexAttributeFlags_13           = 1 << 13,
+    EVertexAttributeFlags_14           = 1 << 14,
+    EVertexAttributeFlags_15           = 1 << 15,
+    EVertexAttributeFlags_16           = 1 << 16,
+    EVertexAttributeFlags_17           = 1 << 17,
+    EVertexAttributeFlags_18           = 1 << 18,
+    EVertexAttributeFlags_19           = 1 << 19,
+    EVertexAttributeFlags_20           = 1 << 20,
+    EVertexAttributeFlags_21           = 1 << 21,
+    EVertexAttributeFlags_22           = 1 << 22,
+    EVertexAttributeFlags_23           = 1 << 23,
+    EVertexAttributeFlags_24           = 1 << 24,
+    EVertexAttributeFlags_25           = 1 << 25,
+    EVertexAttributeFlags_26           = 1 << 26,
+    EVertexAttributeFlags_27           = 1 << 27,
+    EVertexAttributeFlags_Binormal     = 1 << 28,
+    EVertexAttributeFlags_Tangent      = 1 << 29,
+    EVertexAttributeFlags_Color3       = 1 << 30, // P5 beta: TerrainXYZ. RGBA vertex color. 4 bytes, after tex coord 2
+    EVertexAttributeFlags_31           = 1u << 31, // P5 beta: TerrainPoint. 20 bytes, after HasBoundingBox
+} EVertexAttributeFlags <read=EVertexAttributeFlagsToString, write=StringToEVertexAttributeFlags>;
 
 typedef enum<u16>
 {
@@ -326,39 +326,39 @@ typedef enum<u16>
 
 typedef enum<u32>
 {
-    EModelFlags_HasBoundingBox    = 1 << 0,
-    EModelFlags_HasBoundingSphere = 1 << 1,
-    EModelFlags_HasSkinning       = 1 << 2,
-    EModelFlags_HasMorphs         = 1 << 3,
-    EModelFlags_Bit4 = 1 << 4,
-    EModelFlags_Bit5 = 1 << 5,
-    EModelFlags_Bit6 = 1 << 6,
-    EModelFlags_Bit7 = 1 << 7,
-    EModelFlags_Bit8 = 1 << 8,
-    EModelFlags_Bit9 = 1 << 9,
-    EModelFlags_Bit10 = 1 << 10,
-    EModelFlags_Bit11 = 1 << 11,
-    EModelFlags_Bit12 = 1 << 12,
-    EModelFlags_Bit13 = 1 << 13,
-    EModelFlags_Bit14 = 1 << 14,
-    EModelFlags_Bit15 = 1 << 15,
-    EModelFlags_Bit16 = 1 << 16,
-    EModelFlags_Bit17 = 1 << 17,
-    EModelFlags_Bit18 = 1 << 18,
-    EModelFlags_Bit19 = 1 << 19,
-    EModelFlags_Bit20 = 1 << 20,
-    EModelFlags_Bit21 = 1 << 21,
-    EModelFlags_Bit22 = 1 << 22,
-    EModelFlags_Bit23 = 1 << 23,
-    EModelFlags_Bit24 = 1 << 24,
-    EModelFlags_Bit25 = 1 << 25,
-    EModelFlags_Bit26 = 1 << 26,
-    EModelFlags_Bit27 = 1 << 27,
-    EModelFlags_Bit28 = 1 << 28,
-    EModelFlags_Bit29 = 1 << 29,
-    EModelFlags_Bit30 = 1 << 30,
-    EModelFlags_Bit31 = 1 << 31,
-} EModelFlags;
+    EModelFlags_BoundingBox             = 1 << 0,
+    EModelFlags_BoundingSphere          = 1 << 1,
+    EModelFlags_Skin                    = 1 << 2,
+    EModelFlags_Morph                   = 1 << 3,
+    EModelFlags_4                    = 1 << 4,
+    EModelFlags_Cull                    = 1 << 5,
+    EModelFlags_Billboard               = 1 << 6,
+    EModelFlags_BillboardAlignX         = 1 << 7,
+    EModelFlags_BillboardAlignY         = 1 << 8,
+    EModelFlags_BillboardAlignZ         = 1 << 9,
+    EModelFlags_Hidden                  = 1 << 10,
+    EModelFlags_Attachment              = 1 << 11,
+    EModelFlags_12                   = 1 << 12,
+    EModelFlags_Realtime                = 1 << 13,
+    EModelFlags_LightCulling            = 1 << 14,
+    EModelFlags_2D                      = 1 << 15,
+    EModelFlags_LightHidden             = 1 << 16,
+    EModelFlags_TransparencyMask        = 1 << 17,
+    EModelFlags_PostTransparencyMask    = 1 << 18,
+    EModelFlags_19                   = 1 << 19,
+    EModelFlags_20                   = 1 << 20,
+    EModelFlags_21                   = 1 << 21,
+    EModelFlags_22                   = 1 << 22,
+    EModelFlags_23                   = 1 << 23,
+    EModelFlags_24                   = 1 << 24,
+    EModelFlags_25                   = 1 << 25,
+    EModelFlags_26                   = 1 << 26,
+    EModelFlags_27                   = 1 << 27,
+    EModelFlags_PhysicsReset            = 1 << 28,
+    EModelFlags_29                   = 1 << 29,
+    EModelFlags_30                   = 1 << 30,
+    EModelFlags_31                   = 1 << 31,
+} EModelFlags <read=EModelFlagsToString, write=StringToEModelFlags>;
 
 typedef enum<u32>
 {
@@ -376,9 +376,9 @@ typedef enum<u32>
 
 typedef enum<u32>
 {
-    ELightFlags_Bit1 = 1 << 0,
-    ELightFlags_Bit2 = 1 << 1,
-    ELightFlags_Bit3 = 1 << 2,
+    ELightFlags_1 = 1 << 0,
+    ELightFlags_2 = 1 << 1,
+    ELightFlags_3 = 1 << 2,
 } ELightFlags;
 
 typedef enum<u32>
@@ -390,73 +390,74 @@ typedef enum<u32>
 
 typedef enum<u32>
 {
-    EAnimationPackFlags_Flag1           = 1 << 0,
-    EAnimationPackFlags_Flag2           = 1 << 1,
-    EAnimationPackFlags_Flag4           = 1 << 2,
-    EAnimationPackFlags_Flag8           = 1 << 3,
-    EAnimationPackFlags_Flag10          = 1 << 4,
-    EAnimationPackFlags_Flag20          = 1 << 5,
-    EAnimationPackFlags_Flag40          = 1 << 6,
-    EAnimationPackFlags_Flag80          = 1 << 7,
-    EAnimationPackFlags_Flag100         = 1 << 8,
-    EAnimationPackFlags_Flag200         = 1 << 9,
-    EAnimationPackFlags_Flag400         = 1 << 10,
-    EAnimationPackFlags_Flag800         = 1 << 11,
-    EAnimationPackFlags_Flag1000        = 1 << 12,
-    EAnimationPackFlags_Flag2000        = 1 << 13,
-    EAnimationPackFlags_Flag4000        = 1 << 14,
-    EAnimationPackFlags_Flag8000        = 1 << 15,
-    EAnimationPackFlags_Flag10000       = 1 << 16,
-    EAnimationPackFlags_Flag20000       = 1 << 17,
-    EAnimationPackFlags_Flag40000       = 1 << 18,
-    EAnimationPackFlags_Flag80000       = 1 << 19,
-    EAnimationPackFlags_Flag100000      = 1 << 20,
-    EAnimationPackFlags_Flag200000      = 1 << 21,
-    EAnimationPackFlags_Flag400000      = 1 << 22,
-    EAnimationPackFlags_Flag800000      = 1 << 23,
-    EAnimationPackFlags_Flag1000000     = 1 << 24,
-    EAnimationPackFlags_Flag2000000     = 1 << 25,
-    EAnimationPackFlags_Flag4000000     = 1 << 26,
-    EAnimationPackFlags_Flag10000000    = 1 << 28,
-    EAnimationPackFlags_Flag20000000    = 1 << 29,
-    EAnimationPackFlags_Flag40000000    = 1 << 30,
-    EAnimationPackFlags_Flag80000000    = 1 << 31,
-} EAnimationPackFlags;
+    EAnimationPackFlags_0   = 1 << 0,
+    EAnimationPackFlags_1   = 1 << 1,
+    EAnimationPackFlags_2   = 1 << 2,
+    EAnimationPackFlags_3   = 1 << 3,
+    EAnimationPackFlags_4   = 1 << 4,
+    EAnimationPackFlags_5   = 1 << 5,
+    EAnimationPackFlags_6   = 1 << 6,
+    EAnimationPackFlags_7   = 1 << 7,
+    EAnimationPackFlags_8   = 1 << 8,
+    EAnimationPackFlags_9   = 1 << 9,
+    EAnimationPackFlags_10  = 1 << 10,
+    EAnimationPackFlags_11  = 1 << 11,
+    EAnimationPackFlags_12  = 1 << 12,
+    EAnimationPackFlags_13  = 1 << 13,
+    EAnimationPackFlags_14  = 1 << 14,
+    EAnimationPackFlags_15  = 1 << 15,
+    EAnimationPackFlags_16  = 1 << 16,
+    EAnimationPackFlags_17  = 1 << 17,
+    EAnimationPackFlags_18  = 1 << 18,
+    EAnimationPackFlags_19  = 1 << 19,
+    EAnimationPackFlags_20  = 1 << 20,
+    EAnimationPackFlags_21  = 1 << 21,
+    EAnimationPackFlags_22  = 1 << 22,
+    EAnimationPackFlags_23  = 1 << 23,
+    EAnimationPackFlags_24  = 1 << 24,
+    EAnimationPackFlags_25  = 1 << 25,
+    EAnimationPackFlags_26  = 1 << 26,
+    EAnimationPackFlags_27  = 1 << 27,
+    EAnimationPackFlags_28  = 1 << 28,
+    EAnimationPackFlags_29  = 1 << 29,
+    EAnimationPackFlags_30  = 1 << 30,
+    EAnimationPackFlags_31  = 1 << 31,
+} EAnimationPackFlags <read=EAnimationPackFlagsToString, write=StringToEAnimationPackFlags>;
 
-typedef enum<u32>
-{
-    EAnimationFlags_Flag1           = 1 << 0,
-    EAnimationFlags_Flag2           = 1 << 1,
-    EAnimationFlags_Flag4           = 1 << 2,
-    EAnimationFlags_Flag8           = 1 << 3,
-    EAnimationFlags_Flag10          = 1 << 4,
-    EAnimationFlags_Flag20          = 1 << 5,
-    EAnimationFlags_Flag40          = 1 << 6,
-    EAnimationFlags_Flag80          = 1 << 7,
-    EAnimationFlags_Flag100         = 1 << 8,
-    EAnimationFlags_Flag200         = 1 << 9,
-    EAnimationFlags_Flag400         = 1 << 0,
-    EAnimationFlags_Flag800         = 1 << 11,
-    EAnimationFlags_Flag1000        = 1 << 12,
-    EAnimationFlags_Flag2000        = 1 << 13,
-    EAnimationFlags_Flag4000        = 1 << 14,
-    EAnimationFlags_Flag8000        = 1 << 15,
-    EAnimationFlags_Flag10000       = 1 << 16,
-    EAnimationFlags_Flag20000       = 1 << 17,
-    EAnimationFlags_Flag40000       = 1 << 18,
-    EAnimationFlags_Flag80000       = 1 << 19,
-    EAnimationFlags_Flag100000      = 1 << 20,
-    EAnimationFlags_Flag200000      = 1 << 21,
-    EAnimationFlags_Flag400000      = 1 << 22,
-    EAnimationFlags_HasProperties   = 1 << 23,
-    EAnimationFlags_Flag1000000     = 1 << 24,
-    EAnimationFlags_HasSpeed        = 1 << 25,
-    EAnimationFlags_Flag4000000     = 1 << 26,
-    EAnimationFlags_Flag10000000    = 1 << 28,
-    EAnimationFlags_Flag20000000    = 1 << 29,
-    EAnimationFlags_HasBoundingBox  = 1 << 30,
-    EAnimationFlags_Flag80000000    = 1 << 31,
-} EAnimationFlags;
+typedef enum<u32> {
+    EAnimationFlags_0           = 1 << 0,   // 0x00000001
+    EAnimationFlags_1           = 1 << 1,   // 0x00000002
+    EAnimationFlags_2           = 1 << 2,   // 0x00000004
+    EAnimationFlags_3           = 1 << 3,   // 0x00000008
+    EAnimationFlags_4           = 1 << 4,   // 0x00000010
+    EAnimationFlags_5           = 1 << 5,   // 0x00000020
+    EAnimationFlags_6           = 1 << 6,   // 0x00000040
+    EAnimationFlags_7           = 1 << 7,   // 0x00000080
+    EAnimationFlags_8           = 1 << 8,   // 0x00000100
+    EAnimationFlags_9           = 1 << 9,   // 0x00000200
+    EAnimationFlags_10          = 1 << 10,  // 0x00000400
+    EAnimationFlags_11          = 1 << 11,  // 0x00000800
+    EAnimationFlags_12          = 1 << 12,  // 0x00001000
+    EAnimationFlags_13          = 1 << 13,  // 0x00002000
+    EAnimationFlags_14          = 1 << 14,  // 0x00004000
+    EAnimationFlags_15          = 1 << 15,  // 0x00008000
+    EAnimationFlags_16          = 1 << 16,  // 0x00010000
+    EAnimationFlags_17          = 1 << 17,  // 0x00020000
+    EAnimationFlags_18          = 1 << 18,  // 0x00040000
+    EAnimationFlags_19          = 1 << 19,  // 0x00080000
+    EAnimationFlags_20          = 1 << 20,  // 0x00100000
+    EAnimationFlags_21          = 1 << 21,  // 0x00200000
+    EAnimationFlags_22          = 1 << 22,  // 0x00400000
+    EAnimationFlags_HasProperties = 1 << 23, // 0x00800000
+    EAnimationFlags_24          = 1 << 24,  // 0x01000000
+    EAnimationFlags_HasSpeed     = 1 << 25,  // 0x02000000
+    EAnimationFlags_26          = 1 << 26,  // 0x04000000
+    EAnimationFlags_27          = 1 << 27,  // 0x08000000
+    EAnimationFlags_28          = 1 << 28,  // 0x10000000
+    EAnimationFlags_29          = 1 << 29,  // 0x20000000
+    EAnimationFlags_HasBoundingBox = 1 << 30, // 0x40000000
+    EAnimationFlags_31          = 1 << 31,  // 0x80000000
+} EAnimationFlags <read=EAnimationFlagsToString, write=StringToEAnimationFlags>;
 
 typedef enum<u16>
 {
@@ -510,74 +511,74 @@ typedef enum<u32>
 
 typedef enum<u32>
 {
-    EEplFlags_Bit0 = 1 << 0,
-    EEplFlags_Bit1 = 1 << 1,
-    EEplFlags_Bit2 = 1 << 2, // Set on load
-    EEplFlags_Bit3 = 1 << 3,
-    EEplFlags_Bit4 = 1 << 4,
-    EEplFlags_Bit5 = 1 << 5,
-    EEplFlags_Bit6 = 1 << 6,
-    EEplFlags_Bit7 = 1 << 7,
-    EEplFlags_Bit8 = 1 << 8,
-    EEplFlags_Bit9 = 1 << 9,
-    EEplFlags_Bit10 = 1 << 10,
-    EEplFlags_Bit11 = 1 << 11,
-    EEplFlags_Bit12 = 1 << 12,
-    EEplFlags_Bit13 = 1 << 13,
-    EEplFlags_Bit14 = 1 << 14,
-    EEplFlags_Bit15 = 1 << 15,
-    EEplFlags_Bit16 = 1 << 16,
-    EEplFlags_Bit17 = 1 << 17,
-    EEplFlags_Bit18 = 1 << 18,
-    EEplFlags_Bit19 = 1 << 19,
-    EEplFlags_Bit20 = 1 << 20,
-    EEplFlags_Bit21 = 1 << 21,
-    EEplFlags_Bit22 = 1 << 22,
-    EEplFlags_Bit23 = 1 << 23,
-    EEplFlags_Bit24 = 1 << 24,
-    EEplFlags_Bit25 = 1 << 25,
-    EEplFlags_Bit26 = 1 << 26,
-    EEplFlags_Bit27 = 1 << 27,
-    EEplFlags_Bit28 = 1 << 28,
-    EEplFlags_Bit29 = 1 << 29,
-    EEplFlags_Bit30 = 1 << 30,
-    EEplFlags_Bit31 = 1 << 31,
+    EEplFlags_0 = 1 << 0,
+    EEplFlags_1 = 1 << 1,
+    EEplFlags_2 = 1 << 2, // Set on load
+    EEplFlags_3 = 1 << 3,
+    EEplFlags_4 = 1 << 4,
+    EEplFlags_5 = 1 << 5,
+    EEplFlags_6 = 1 << 6,
+    EEplFlags_7 = 1 << 7,
+    EEplFlags_8 = 1 << 8,
+    EEplFlags_9 = 1 << 9,
+    EEplFlags_10 = 1 << 10,
+    EEplFlags_11 = 1 << 11,
+    EEplFlags_12 = 1 << 12,
+    EEplFlags_13 = 1 << 13,
+    EEplFlags_14 = 1 << 14,
+    EEplFlags_15 = 1 << 15,
+    EEplFlags_16 = 1 << 16,
+    EEplFlags_17 = 1 << 17,
+    EEplFlags_18 = 1 << 18,
+    EEplFlags_19 = 1 << 19,
+    EEplFlags_20 = 1 << 20,
+    EEplFlags_21 = 1 << 21,
+    EEplFlags_22 = 1 << 22,
+    EEplFlags_23 = 1 << 23,
+    EEplFlags_24 = 1 << 24,
+    EEplFlags_25 = 1 << 25,
+    EEplFlags_26 = 1 << 26,
+    EEplFlags_27 = 1 << 27,
+    EEplFlags_28 = 1 << 28,
+    EEplFlags_29 = 1 << 29,
+    EEplFlags_30 = 1 << 30,
+    EEplFlags_31 = 1 << 31,
 } EEplFlags;
 
 typedef enum<u32>
 {
-    EEplLeafFlags_Bit0 = 1 << 0,
-    EEplLeafFlags_Bit1 = 1 << 1,
-    EEplLeafFlags_Bit2 = 1 << 2,
-    EEplLeafFlags_Bit3 = 1 << 3,
-    EEplLeafFlags_Bit4 = 1 << 4,
-    EEplLeafFlags_Bit5 = 1 << 5,
-    EEplLeafFlags_Bit6 = 1 << 6,
-    EEplLeafFlags_Bit7 = 1 << 7,
-    EEplLeafFlags_Bit8 = 1 << 8,
-    EEplLeafFlags_Bit9 = 1 << 9,
-    EEplLeafFlags_Bit10 = 1 << 10,
-    EEplLeafFlags_Bit11 = 1 << 11,
-    EEplLeafFlags_Bit12 = 1 << 12,
-    EEplLeafFlags_Bit13 = 1 << 13,
-    EEplLeafFlags_Bit14 = 1 << 14,
-    EEplLeafFlags_Bit15 = 1 << 15,
-    EEplLeafFlags_Bit16 = 1 << 16,
-    EEplLeafFlags_Bit17 = 1 << 17,
-    EEplLeafFlags_Bit18 = 1 << 18,
-    EEplLeafFlags_Bit19 = 1 << 19,
-    EEplLeafFlags_Bit20 = 1 << 20,
-    EEplLeafFlags_Bit21 = 1 << 21,
-    EEplLeafFlags_Bit22 = 1 << 22,
-    EEplLeafFlags_Bit23 = 1 << 23,
-    EEplLeafFlags_Bit24 = 1 << 24,
-    EEplLeafFlags_Bit25 = 1 << 25,
-    EEplLeafFlags_Bit26 = 1 << 26,
-    EEplLeafFlags_Bit27 = 1 << 27,
-    EEplLeafFlags_Bit28 = 1 << 28,
-    EEplLeafFlags_Bit29 = 1 << 29,
-    EEplLeafFlags_Bit30 = 1 << 30,
-    EEplLeafFlags_Bit31 = 1 << 31,
+    EEplLeafFlags_0 = 1 << 0,
+    EEplLeafFlags_1 = 1 << 1,
+    EEplLeafFlags_2 = 1 << 2,
+    EEplLeafFlags_3 = 1 << 3,
+    EEplLeafFlags_4 = 1 << 4,
+    EEplLeafFlags_5 = 1 << 5,
+    EEplLeafFlags_6 = 1 << 6,
+    EEplLeafFlags_7 = 1 << 7,
+    EEplLeafFlags_8 = 1 << 8,
+    EEplLeafFlags_9 = 1 << 9,
+    EEplLeafFlags_10 = 1 << 10,
+    EEplLeafFlags_11 = 1 << 11,
+    EEplLeafFlags_12 = 1 << 12,
+    EEplLeafFlags_13 = 1 << 13,
+    EEplLeafFlags_14 = 1 << 14,
+    EEplLeafFlags_15 = 1 << 15,
+    EEplLeafFlags_16 = 1 << 16,
+    EEplLeafFlags_17 = 1 << 17,
+    EEplLeafFlags_18 = 1 << 18,
+    EEplLeafFlags_19 = 1 << 19,
+    EEplLeafFlags_20 = 1 << 20,
+    EEplLeafFlags_21 = 1 << 21,
+    EEplLeafFlags_22 = 1 << 22,
+    EEplLeafFlags_23 = 1 << 23,
+    EEplLeafFlags_24 = 1 << 24,
+    EEplLeafFlags_25 = 1 << 25,
+    EEplLeafFlags_26 = 1 << 26,
+    EEplLeafFlags_27 = 1 << 27,
+    EEplLeafFlags_28 = 1 << 28,
+    EEplLeafFlags_29 = 1 << 29,
+    EEplLeafFlags_30 = 1 << 30,
+    EEplLeafFlags_31 = 1 << 31,
 } EEplLeafFlags;
 
 typedef enum<u32>
@@ -605,7 +606,7 @@ typedef enum<u32>
 
 typedef struct
 {
-    EMaterialMapsTexcoord Filler           : 5<hidden=true>;
+    EMaterialMapsTexcoord Filler           : 5;
     EMaterialMapsTexcoord ShadowMap        : 3;
     EMaterialMapsTexcoord DetailMap        : 3;
     EMaterialMapsTexcoord NightMap         : 3;
@@ -619,17 +620,17 @@ typedef struct
 
 typedef enum<u16>
 {
-    EnableBloom             = 1 << 0,
-    LightMapModulateMode    = 1 << 1,
-    LightMapModulate2       = 1 << 2,
-    Bit3                    = 1 << 3,
-    DisableCharacterOutline = 1 << 5, 
-    Bit7                    = 1 << 7,
-    Bit8                    = 1 << 8,
-    Bit9                    = 1 << 9,
-    FogDisable              = 1 << 10,
-    ShadowDisable           = 1 << 11,
-    Bit12                   = 1 << 12,
+    EMaterialFlags2_EnableBloom             = 1 << 0,
+    EMaterialFlags2_LightMapModulateMode    = 1 << 1,
+    EMaterialFlags2_LightMapModulate2       = 1 << 2,
+    EMaterialFlags2_3                    = 1 << 3,
+    EMaterialFlags2_DisableCharacterOutline = 1 << 5, 
+    EMaterialFlags2_7                    = 1 << 7,
+    EMaterialFlags2_8                    = 1 << 8,
+    EMaterialFlags2_9                    = 1 << 9,
+    EMaterialFlags2_FogDisable              = 1 << 10,
+    EMaterialFlags2_ShadowDisable           = 1 << 11,
+    EMaterialFlags2_12                   = 1 << 12,
 } EMaterialFlags2;
 
 typedef enum<u16>
