@@ -1,0 +1,190 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: metpahor_evt_ecs.bt
+//   Authors: Rirurin (based on p5_evt_ecs.bt by TGE)
+//   Version: 1.0
+//   Purpose: Parse Metaphor: Refantazio evt & ecs files
+//  Category: GFD
+// File Mask: *.evt, *.ecs
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h"
+
+// Math types
+typedef struct
+{
+    f32 X;
+    f32 Y;
+    f32 Z;
+} Vector3 <read=ReadVector3, write=WriteVector3>;
+
+string ReadVector3( Vector3& value )
+{
+    local char buffer[255];
+    SPrintf( buffer, "[%.6f, %.6f, %.6f]", value.X, value.Y, value.Z );
+
+    return buffer;
+}
+
+void WriteVector3( Vector3& value, string s )
+{
+    SScanf( s, "[%f, %f, %f]", value.X, value.Y, value.Z );
+}
+
+typedef struct
+{
+    f32 X;
+    f32 Y;
+    f32 Z;
+    f32 W;
+} Quaternion <read=ReadQuaternion, write=WriteQuaternion>;
+
+string ReadQuaternion( Quaternion& value )
+{
+    local char buffer[255];
+    SPrintf( buffer, "[%.6f, %.6f, %.6f, %.6f]", value.X, value.Y, value.Z, value.W );
+
+    return buffer;
+}
+
+void WriteQuaternion( Quaternion& value, string s )
+{
+    SScanf( s, "[%f, %f, %f, %f]", value.X, value.Y, value.Z, value.W );
+}
+
+// Field Scene
+// Indicates which field object should be loaded as the current scene.
+typedef struct
+{
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    u32 Field0C;
+    u32 Field10;
+    u32 Field14;
+    f32 Field18;
+    u32 Field1C;
+    u32 Field20;
+    u32 Field24;
+    u32 Field28;
+    u32 Field2C;
+    u32 Field30;
+    u32 Field34;
+    u32 Field38;
+    u32 Field3C;
+
+} CommandData_FS;
+
+typedef struct {
+    SetRandomBackColor();
+    char Magic[3];
+    u8 SwapEndian<hidden=true>;
+    u32 Version<format=hex>;
+    u16 Field08;
+    u16 Field0A;
+    u8 Field0C;
+    u8 FIeld0D;
+    u8 Field0E;
+    u8 Field0F;
+    u32 Field10;
+    u32 Field14;
+    u32 Field18;
+    s32 Field1C;
+    u8 Field20;
+    u8 Field21;
+    u16 Field22;
+    u16 Field24;
+    u16 Field26;
+    u32 Field28;
+    u32 Field2C;
+    u32 FirstSectionCount;
+    u32 HeaderSize;
+    u32 FirstSectionEntrySize;
+    u32 Field3C;
+    u32 Field40;
+    u32 Field44;
+    u32 Field48;
+    u32 Field4C;
+    u32 Field50;
+    u32 Field54;
+    u32 Field58;
+    u32 Field5C;
+    u32 Field60;
+    u32 Field64;
+    u32 Field68;
+    u32 Field6C;
+    u32 Field70[8];
+    u8 Field90[0x40];
+    s32 FieldD0;
+    s32 FieldD4;
+    s32 FieldD8;
+    s32 FieldDC;
+    s32 FieldE0;
+} EvtHeader<read=Str("Version 0x%X", Version)>;
+
+typedef struct(EvtHeader& header) {
+    u32 Field00;
+    u32 Field04;
+    u32 majorId;
+    u32 minorId;
+    u32 subId0;
+    u32 subId1;
+    char Filename[0x100];
+} EvtObjectFile<read=Filename>;
+
+typedef struct(EvtHeader& header) {
+    SetRandomBackColor();
+    u32 ObjectId;
+    u32 Field04;
+    u32 Field08;
+    u32 Field0C;
+    u32 MajorId;
+    u16 Field14;
+    u16 Field16;
+    u32 Field18;
+    u32 Field1C;
+    
+    u32 Field20;
+    EvtObjectFile Field24(header);
+    EvtObjectFile Field13C(header);
+    EvtObjectFile Field254(header);
+    EvtObjectFile Field36C(header);
+    u32 Field484;
+    u32 Field488;
+    u32 Field48C;
+    u8 Field490[0x40];
+    u8 Field4D0[0x40];
+} EvtObjects<optimize=false, read=Str("ID %d", ObjectId)>;
+
+typedef struct {
+    SetRandomBackColor();
+    char Cmd[0x4];
+    u16 Field04;        // 0, 1, 2 usually
+    u16 Field06;        // always 0?
+    u32 ObjectId;       // reference to event object
+    u32 Field0C;        // always 0?
+    u32 Frame;
+    u32 Duration;
+    u32 DataOffset;     // offset to data in the file
+    u32 DataSize;       // size of the data stored in the file
+    u8 header_data[0x50]<hidden=true>;
+    local u32 ret = FPush();
+    FSeek(DataOffset);
+    switch (Cmd) {
+        case "FS__":
+            CommandData_FS cmd_data;
+            break;
+        default:
+            u8 cmd_data[DataSize];
+            break;
+    }
+    FPop();
+} EvtCommands<optimize=false,read=Str("Command: %s || Frame: %04d || Duration: %03d || ObjectID: %02d", Cmd, Frame, Duration, ObjectId)>;
+
+EvtHeader header;
+FSeek(header.HeaderSize);
+EvtObjects section1(header)[header.FirstSectionCount];
+EvtCommands commands[header.Field40];

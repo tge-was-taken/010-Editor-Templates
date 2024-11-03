@@ -1,0 +1,420 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: metaphor_fld.bt
+//   Authors: Rirurin
+//   Version: 1.0
+//   Purpose: Parse Metaphor: Refantazio field files
+//  Category: 
+// File Mask: *.acttbl, *.act, *.doortbl, *.eff, *.enmtbl, *.enm, *gpstbl, *.gem, *.gmk, *.hourtbl, *.ladtbl, *.plt, *.bbx, *.mps, *.npctbl, *.mobtbl, *.pcd, *.pos, *.layout, *.crv, *.tbx
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h";
+
+// Common types
+
+typedef struct {
+    f32 x;
+    f32 y;
+    f32 z;
+} Vector3 <read=ReadVector3>;
+
+string ReadVector3(Vector3& self) {
+    string buffer;
+    SPrintf(buffer, "<%g, %g, %g>", self.x, self.y, self.z);
+    return buffer;
+}
+
+typedef struct {
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 w;
+} Vector4 <read=ReadVector4>;
+
+string ReadVector4(Vector4& self) {
+    string buffer;
+    SPrintf(buffer, "<%g, %g, %g, %g>", self.x, self.y, self.z, self.w);
+    return buffer;
+}
+
+// Resource Background types
+
+typedef struct {
+    SetRandomBackColor();
+    char Magic[4];
+    u32 type;
+    u32 ver;
+    u32 count;
+} resrcBgDataHeader<read=Str("%s (type %d): ver %x, %d entries", Magic, type, ver, count)>;
+
+typedef struct {
+    u32 id;
+    char name[0x40];
+} resrcBgData_Entry_Common;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    if (ver > 0x20200712) {
+        u32 Field68;
+        u8 filler[0x34];
+    } else {
+        u8 filler[0x38];
+    }
+} resrcBgData_pos_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    Vector3 v4;
+    if (ver > 0x20200712) {
+        u32 values_ex[3];
+        u8 filler[0x20];
+    } else {
+        u8 filler[0x2c];
+    }
+} resrcBgData_collis_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    if (ver > 0x20200712) {
+        u32 values_ex;
+        u8 filler[0x34];
+    } else {
+        u8 filler[0x38];
+    }
+    
+} resrcBgData_npc_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    u16 v0;
+    u16 v1;
+    u16 v2;
+    u16 v3;
+    local u32 filler_size = 0x30;
+    if (ver > 0x20200712) {
+        u32 v4;
+        filler_size = 0x2c;
+    }
+    if (ver > 0x20211014) {
+        u16 v5;
+        u16 v6;
+        filler_size = 0x28;
+    }
+    u8 filler[filler_size];
+    
+} resrcBgData_tbox_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    u16 v0;
+    u16 v1;
+    u16 v2;
+    u16 v3;
+    local u32 filler_size = 0x30;
+    if (ver > 0x20200712) {
+        u32 v4;
+        filler_size = 0x2c;
+    }
+    if (ver > 0x20211014) {
+        u16 v5;
+        u16 v6;
+        filler_size = 0x28;
+    }
+    if (ver > 0x20220530) {
+        u32 v7;
+        filler_size = 0x24;
+    }
+    u8 filler[filler_size];
+    
+} resrcBgData_obj_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    Vector3 v4;
+    local u32 filler_size = 0x2c;
+    if (ver > 0x20200712) {
+        u32 v5;
+        filler_size = 0x28;
+    }
+    u8 filler[filler_size];
+} resrcBgData_action_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    Vector3 v4;
+    u32 v5;
+    u32 v6;
+    u8 filler[0x24];
+} resrcBgData_bbox_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    u16 v4;
+    u16 v5;
+    u16 v6;
+    u16 padding;
+    u32 v7;
+    u8 filler[0x2c];
+    char eplName[0x100];
+} resrcBgData_effect_Entry<read=Str("%s\t (%s) | T %s | R %s | S %s |", id.name, eplName, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    u16 v4;
+    u16 v5;
+    u16 v6;
+    u16 padding;
+    u32 v7;
+    u8 filler[0x2c];
+} resrcBgData_mission_pos_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    Vector3 v4;
+    u64 v5;
+    u32 v6;
+    u8 filler[0x20];
+} resrcBgData_collis_GAYA_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+// Excel File types
+
+typedef struct {
+    SetRandomBackColor();
+    char Magic[8];
+    u32 count;
+    u32 resrv;
+} fldExcelCnvData;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[160];
+} fldActionHitLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x70];
+} fldDoorLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x28];
+} fldEnemyLayout_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x2c];
+} fldGatherLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0xec];
+} fldGimmickLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0xcc];
+} fldGayaHitLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x80];
+} fldScriptHitLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x98];
+} fldHourNpcLayout_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x34];
+} fldLadderLinkLayout_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x2c];
+} fldTboxLink_Data<optimize=false>;
+
+// Spline
+typedef struct {
+    SetRandomBackColor();
+    char Magic[0x10]; // FIELD_CURVE
+} splineHeader;
+typedef struct {
+    u32 HasValue;
+    u32 Count;
+    u32 Offset;
+    u32 Resrv;
+} splineEntryHead;
+typedef struct {
+    SetRandomBackColor();
+    char name[0x40];
+    splineEntryHead head;
+    FPush();
+    FSeek(head.Offset);
+    Vector4 points[head.Count];
+    FPop();
+} splineEntry<read=name, optimize=false>;
+
+// Parse file
+
+local string filePath = GetFileName();
+local string fileName = FileNameGetBase( filePath, false );
+local string fileExt = FileNameGetExtension( filePath );
+
+switch (fileExt) {
+    // Resource Background
+    case ".pos": // 1
+    case ".hit": // 2
+    case ".npc": // 3
+    case ".enm": // 4
+    case ".tbx": // 5
+    case ".gem": // 6
+    case ".gmk": // 7
+    case ".ob1": // 8
+    case ".act": // 9
+    case ".bbx": // 10
+    case ".eff": // 11
+    //case ".plt": // 12
+    case ".mps": // 14
+    case ".ght": // 17
+        resrcBgDataHeader head;
+        switch (head.type) {
+            case 1:
+                resrcBgData_pos_Entry body(head.ver)[head.count];
+                break;
+            case 2:
+                resrcBgData_collis_Entry body(head.ver)[head.count];
+                break;
+            case 3:
+            case 4:
+                resrcBgData_npc_Entry body(head.ver)[head.count];
+                break;
+            case 5:
+            case 6:
+            case 7:
+                resrcBgData_tbox_Entry body(head.ver)[head.count];
+                break;
+            case 8:
+                resrcBgData_obj_Entry body(head.ver)[head.count];
+                break;
+            case 9:
+                resrcBgData_action_Entry body(head.ver)[head.count];
+                break;
+            case 10:
+                resrcBgData_bbox_Entry body(head.ver)[head.count];
+                break;
+            case 11:
+                resrcBgData_effect_Entry body(head.ver)[head.count];
+                break;
+            case 14:
+                resrcBgData_mission_pos_Entry body(head.ver)[head.count];
+                break;
+            case 17:
+                resrcBgData_collis_GAYA_Entry body(head.ver)[head.count];
+                break;
+            default:
+                Assert(false, Str("Unimplemented resrcBg type %d", type));
+                break;
+        }
+        break;
+    // Excel files
+    case ".acttbl":
+    case ".doortbl":
+    case ".enmtbl":
+    case ".gpstbl":
+    case ".gmctbl":
+    case ".ghttbl":
+    case ".hittbl":
+    case ".hourtbl":
+    case ".ladtbl":
+    case ".tbxtbl":
+        fldExcelCnvData head;
+        switch (head.Magic) {
+            case "ACTTBL":
+                fldActionHitLink_Data body[head.count];
+                break;
+            case "DORTBL":
+                fldDoorLink_Data body[head.count];
+                break;
+            case "ENMTBL":
+                fldEnemyLayout_Data body[head.count];
+                break;
+            case "GPSTBL":
+                fldGatherLink_Data body[head.count];
+                break;
+            case "GMCTBL":
+                fldGimmickLink_Data body[head.count];
+                break;
+            case "GAYATBL":
+                fldGayaHitLink_Data body[head.count];
+                break;
+            case "HITTBL":
+                fldScriptHitLink_Data body[head.count];
+                break;
+            case "HOURTBL":
+                fldHourNpcLayout_Data body[head.count];
+                break;
+            case "LADTBL":
+                fldLadderLinkLayout_Data body[head.count];
+                break;
+            case "TBXTBL":
+                fldTboxLink_Data body[head.count];
+                break;
+        }
+        break;
+    // Spline
+    case ".crv":
+        splineHeader head;
+        splineEntryHead first_entry;
+        splineEntry points[first_entry.Count];
+        break;
+    // Layout
+    // Camera Path
+    default:
+        Assert(false, Str("Unimplemented file extension %s", fileExt));
+        break;
+}
