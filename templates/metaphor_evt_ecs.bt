@@ -1,7 +1,7 @@
 //------------------------------------------------
 //--- 010 Editor v12.0.1 Binary Template
 //
-//      File: metpahor_evt_ecs.bt
+//      File: metaphor_evt_ecs.bt
 //   Authors: Rirurin (based on p5_evt_ecs.bt by TGE)
 //   Version: 1.0
 //   Purpose: Parse Metaphor: Refantazio evt & ecs files
@@ -14,25 +14,30 @@
 #include "common/include.h"
 
 // Math types
-typedef struct
-{
-    f32 X;
-    f32 Y;
-    f32 Z;
+
+typedef struct {
+    f32 x;
+    f32 y;
+} Vector2 <read=ReadVector2, write=WriteVector2>;
+string ReadVector2(Vector2& self) { return Str("<%g, %g>", self.x, self.y); }
+void WriteVector2(Vector2& self, string s) { SScanf(s, "<%g, %g>", self.x, self.y); }
+
+typedef struct {
+    f32 x;
+    f32 y;
+    f32 z;
 } Vector3 <read=ReadVector3, write=WriteVector3>;
+string ReadVector3(Vector3& self) { return Str("<%g, %g, %g>", self.x, self.y, self.z); }
+void WriteVector3(Vector3& self, string s) { SScanf(s, "<%g, %g, %g>", self.x, self.y, self.z); }
 
-string ReadVector3( Vector3& value )
-{
-    local char buffer[255];
-    SPrintf( buffer, "[%.6f, %.6f, %.6f]", value.X, value.Y, value.Z );
-
-    return buffer;
-}
-
-void WriteVector3( Vector3& value, string s )
-{
-    SScanf( s, "[%f, %f, %f]", value.X, value.Y, value.Z );
-}
+typedef struct {
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 a;
+} ColorRGBAByte <read=ReadColorRGBAByte, write=WriteColorRGBAByte>;
+string ReadColorRGBAByte(ColorRGBAByte& self) { return Str("#%02X%02X%02X%02X", self.r, self.g, self.b, self.a); }
+void WriteColorRGBAByte(ColorRGBAByte& self, string s) { SScanf(s, "#%02X%02X%02X%02X", self.r, self.g, self.b, self.a); }
 
 typedef struct
 {
@@ -55,10 +60,970 @@ void WriteQuaternion( Quaternion& value, string s )
     SScanf( s, "[%f, %f, %f, %f]", value.X, value.Y, value.Z, value.W );
 }
 
-// Field Scene
-// Indicates which field object should be loaded as the current scene.
-typedef struct
+// Enums
+
+enum<u8> Boolean
 {
+    False = false,
+    True = true,
+};
+
+string GetBooleanString(Boolean value) {
+    string buffer;
+    if (value == False) {
+        SPrintf(buffer, "False");
+    } else {
+        SPrintf(buffer, "True");
+    }
+    return buffer;
+}
+
+enum<int> FadeType
+{
+    FadeType_None,
+    FadeType_BlackIn,
+    FadeType_BlackOut,
+    FadeType_WhiteIn,
+    FadeType_WhiteOut,
+};
+
+typedef enum<u32> {
+    CameraMoveDirectFlags_HasPosition = 1 << 0,
+    CameraMoveDirectFlags_HasRotation = 1 << 1,
+    CameraMoveDirectFlags_Flag0x4 = 1 << 2,
+    CameraMoveDirectFlags_Flag0x8 = 1 << 3,
+    CameraMoveDirectFlags_SetCameraPlane = 1 << 5,
+} ECameraMoveDirectFlags<read=CMDFlagsToString, write=StringToCMDFlags>;
+
+string CMDFlagsToString(u64 value)
+{
+    local u32 prefixLength = Strlen("CameraMoveDirectFlags_"), i;
+    local ECameraMoveDirectFlags current; local string result, currentStr;
+    for (i = 0; i <= 31; ++i) 
+    {
+        if (!(current = value & (1 << i))) continue; 
+        currentStr = SubStr(EnumToString(current), prefixLength);
+        result = i == 0 ? currentStr : Str("%s|%s", result, currentStr);
+    }
+    return result;
+}
+
+void StringToCMDFlags(ECameraMoveDirectFlags& result, string input)
+{
+    local s32 prefixLength = Strlen("CameraMoveDirectFlags_"), i, pos, nextPos;
+    local ECameraMoveDirectFlags current;
+    result = 0;
+    while (pos < Strlen(input)) {
+        nextPos = Strstr(SubStr(input, pos), "|");
+        if (nextPos == -1) nextPos = Strlen(input) - pos;
+        for (i = 0; i <= 31; ++i) {
+            current = 1 << i;
+            if (Strcmp(SubStr(EnumToString(current), prefixLength), SubStr(input, pos, nextPos)) == 0)
+                result |= current;
+        }
+        pos = pos + nextPos + 1;
+    }
+}
+
+typedef struct(u32 version) // CAMERA_MOVE_DIRECT
+{
+    ECameraMoveDirectFlags Flags; // 0x0
+    Vector3 PovPos; // 0x4
+    Vector3 RotEuler; // 0x10
+    Vector3 Fov; // 0x1c
+    u32 InterpParam; // 0x28
+    f32 FocalPlane;
+    f32 NearBlurPlane;
+    f32 FarBlurPlane;
+    f32 BlurScale;
+    f32 DOF_OC;
+    u32 DOF_10;
+    u32 GaussType;
+    f32 Field48;
+    u32 Field4C;
+    if (version > 5) {
+        f32 Field50;
+        f32 Field54;
+    }
+} CommandData_CMD;
+
+typedef struct // CAMERA_SET_ASSET
+{
+    u32 Flags;
+    u32 AssetID;
+    u32 AnimNo;
+    f32 AnimSpeed;
+    u32 AnimStartFrame;
+    Vector3 PovPos;
+    Vector3 RotEuler;
+    u32 Reserve_3_4;
+    f32 FocalPlane;
+    f32 NearBlurPlane;
+    f32 FarBlurPlane;
+    f32 BlurScale;
+    f32 Field40;
+    f32 Field44;
+    f32 Field48;
+    f32 Field4C;
+    u32 Field50;
+    f32 Field54;
+    f32 Field58;
+    u8 Field5C;
+    u8 Field5D;
+    u16 Field5E;
+    f32 Field60;
+    f32 Field64;
+} CommandData_CSA;
+
+typedef struct // CAMERA_SET_DIRECT
+{
+    u32 Flags;
+    Vector3 Position;
+    Vector3 Rotation; // in degrees
+    f32 Fov;
+    f32 Field20;
+    f32 Field24;
+    f32 Field28;
+    f32 Field2C;
+    f32 Field30;
+    f32 Field34;
+    f32 Field38;
+    f32 Field3C;
+    u32 Field40;
+    u32 Field44;
+    u32 Field48;
+    u32 Field4C;
+} CommandData_CSD;
+
+typedef struct { // CAMERA_SHAKE
+    u32 Flags;
+    u32 ShakeMode;
+    u32 Field08;
+    f32 Field0C;
+    f32 Field10;
+} CommandData_CShk;
+
+typedef struct // GAME_DATE
+{
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    u32 Field0C;
+    u32 Field10;
+    u32 Field14;
+    u32 Field18;
+} CommandData_Date;
+
+typedef struct // EFFECT_ALPHA
+{
+    u32 Flags;
+    ColorRGBAByte AlphaValue;
+    u32 InterpParam;
+    u32 Reserve_1_4;
+} CommandData_EAlp<read=Str("Alpha %s", ReadColorRGBAByte(AlphaValue))>;
+
+typedef struct // ENV_BGCOLOR
+{
+    u32 Flags;
+    u32 InterpParam;
+    u32 Reserve_1_3;
+    ColorRGBAByte ColorRGBA;
+} CommandData_EnBc<read=Str("BG Color %s", ReadColorRGBAByte(ColorRGBA))>;
+
+typedef struct // ENV_COLOR_CORRECTION
+{
+    u32 Field00;
+    u32 Field04;
+    f32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
+    u32 Field28;
+} CommandData_EnCc;
+
+typedef struct // ENV_DOF
+{
+    u32 Flags;
+    u32 InterpParam;
+    f32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
+} CommandData_EnDf;
+
+typedef struct // ENV_HDR
+{
+    u32 Flags;
+    u32 InterpParam;
+    u32 Reserve_1_3;
+    u32 Reserve_1_4;
+    f32 MiddleGray;
+    f32 BloomScale;
+    f32 AdaptedLum;
+    f32 ElapsedTime;
+    u32 StarNumLines;
+    f32 StarLength;
+    f32 StarScale;
+    f32 StarGlareCA;
+    f32 StarGlareSI;
+    f32 Field34;
+    f32 Field38;
+    f32 Field3C;
+} CommandData_EnHd;
+
+typedef struct // ENV_LIGHT (ENV_LIGHT_0, ENV_LIGHT_1, ENV_LIGHT_INDEP)
+{
+    u32 Flags;
+    u32 InterpParam;
+    u32 Reserve_1_3;
+    u32 Reserve_1_4;
+    ColorRGBAByte AmbientColor;
+    ColorRGBAByte DiffuseColor;
+    ColorRGBAByte SpecularColor;
+    Vector3 Dir;
+    u32 Field28;
+    u32 Field2C;
+} CommandData_EnL0;
+
+typedef struct // ENV_OUTLINE
+{
+    u32 Flags;
+    u32 InterpParam;
+    f32 Field08;
+    f32 Field0C;
+    f32 Range;
+    f32 Width;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
+} CommandData_EnOl;
+
+typedef struct // ENV_PHYSICS
+{
+    u32 Flags;
+} CommandData_EnPh;
+
+typedef struct // ENV_SHADOW
+{
+    u32 Flags;
+    u32 InterpParam;
+    u32 Reserve_1_3;
+    u32 Reserve_1_4;
+    u32 ShadowFlags;
+    f32 DepthRange;
+    f32 Bias;
+    f32 DimmerAmb;
+    f32 DimmerDif;
+    f32 Split;
+    f32 Field28;
+    f32 Field2C;
+    f32 Field30;
+    f32 Field34;
+} CommandData_EnSh;
+
+typedef struct // ENV_SET
+{
+    u32 Flags;
+    u32 AssetID;
+} CommandData_Env<read=Str("ENV Asset ID: %d", AssetID)>;
+
+typedef struct // EFFECT_REGISTER
+{
+    u32 Flags;
+    u32 RegisterType;
+    u32 SceneType;
+    u32 Reserve_1_4;
+} CommandData_ERgs<read=Str("Reg type %d, Scene type %d", RegisterType, SceneType)>;
+
+typedef struct // EFFECT_SCALE
+{
+    u32 Flags;
+    u32 InterpParam;
+    f32 Scale;
+    u32 Reserve_1_4;
+} CommandData_EScl<read=Str("Scale: %g", Scale)>;
+
+typedef struct // EFFECT_SET_HELPER
+{
+    u32 Flags;
+    Vector3 Pos;
+    Vector3 RotEuler;
+    u32 Field1C;
+} CommandData_ESD<read=Str("| T %s | R %s |", ReadVector3(Pos), ReadVector3(RotEuler))>;
+
+typedef struct // EFFECT_SET_HELPER
+{
+    u32 Flags;
+    u16 FrameLengthIn;
+    u16 FrameLengthOut;
+    u32 InterpParamIn;
+    u32 InterpParamOut;
+    u32 TargetAssetID;
+    u32 HelperID;
+    u32 Field18;
+    u32 Field1C;
+} CommandData_ESH<read=Str("Target Asset %d, Helper ID %d", TargetAssetID, HelperID)>;
+
+typedef struct // FIELD_OBJ_ANIM_BASE
+{
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    u32 Field0C;
+    u32 Field10;
+    u32 Field14;
+    u32 Field18;
+    u32 Field1C;
+    u32 Field20;
+    u32 Field24;
+} CommandData_FAB;
+
+typedef struct // FADE
+{
+    u32 Field00;
+	
+    enum<u8>{
+        FadeOut = 1,
+		FadeIn = 2,
+	}FadeMode;
+	
+    u8 FadeTypeId;
+	u16 Field06;
+	u32 Field08;
+    u32 Field0C;
+    u32 Field10;
+    u32 Field14;
+    u32 Field18;
+    u32 Field1C;
+    u32 Field20;
+    u32 Field24;
+    u32 Field28;
+    u32 Field2C;
+    u32 Field30;
+    u32 Field34;
+    u32 Field38;
+    u32 Field3C;
+} CommandData_Fd<read=Str("%s: %d", EnumToString(FadeMode), FadeTypeId)>;
+
+typedef struct // FIELD_OBJ_DISP
+{
+    u32 Flags;       
+    u32 TargetObjectID;       
+    u32 Reserve_1_3;
+    u32 Reserve_1_4;
+} CommandData_FOD;
+
+typedef struct // FRAME_JUMP
+{
+    u32 FrameJump; // Frame to jump to
+    u32 Field04;
+    u32 Field08;
+    u32 Field0C;
+} CommandData_FrJ;
+
+typedef struct { // FRAME_UNSKIPPABLE
+    u32 Field00;
+} CommandData_Frus;
+
+typedef struct // FIELD_SCENE
+{
+    u32 Flags;
+    u32 Reserve_1_2;
+    u32 Reserve_1_3;
+    u32 Reserve_1_4;
+    Vector3 Position;
+    f32 RotYawDeg;
+    Vector3 RotBasePos;
+    f32 Field2C;
+    f32 Field30;
+    f32 Field34;
+    f32 Field38;
+    f32 Field3C;
+
+} CommandData_FS;
+
+typedef struct // GAME_FOLLOWER_RANK_UP
+{
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    u32 Field0C;
+} CommandData_GCAP;
+
+typedef struct // MODEL_ANIM_ADD
+{
+    u32 TrackNo;
+    u32 AnimNo;
+    u32 AnimBlendFrame;
+    f32 AnimWeight;
+    u32 AnimFlags;
+    f32 AnimSpeed;
+    u32 AnimStartFrame;
+    u32 Flags;
+} CommandData_MAA;
+
+typedef struct {
+    u32 AnimNo;
+    u16 Field04;
+    u16 Field06;
+    u32 Flags;
+    f32 Speed;
+} ModelAnimBaseAnimEntry;
+
+typedef struct // MODEL_ANIM_BASE
+{
+    ModelAnimBaseAnimEntry Anim1;
+    ModelAnimBaseAnimEntry Anim2;
+    u32 Flags;
+    u32 Anim1StartFrame;
+    u32 Anim1EndFrame;
+    u32 Anim2StartFrame;
+    u32 Anim2EndFrame;
+    u32 Anim1WaitFrame;
+} CommandData_MAB;
+
+typedef struct // MODEL_ALPHA
+{
+    u32 Flags;
+    ColorRGBAByte Alpha;
+    u32 InterpParam;
+    u8 TransparencyMode;
+    u8 Reserve_1_4_2;
+    u8 Reserve_1_4_3;
+    u8 Reserve_1_4_4;
+} CommandData_MAlp;
+
+typedef struct // MODEL_ATTACH
+{
+    u32 Flags;
+    u32 HelperID;     // BoneHelperId of Object that is having something attach to it
+    u32 TargetAssetID;         // ID of the Object that is being attached
+    u32 Reserve_1_4;
+    Vector3 Pos;
+    Vector3 RotEuler;
+    u32 Field28;
+    Vector3 Field2C;
+    Vector3 Field38;
+    u32 Field44;
+    u32 Field48;
+    f32 Field4C;
+} CommandData_MAt;
+
+typedef struct // MODEL_DETACH
+{
+    u32 Flags;
+    u32 HelperID;     // BoneHelperId of Object that is having something deatched from it
+    u32 TargetAssetID;         // ID of the Object that is being detached
+    u32 Reserve_1_4;
+    Vector3 Pos;
+    Vector3 RotEuler;
+    u32 Field28;
+    Vector3 Field2C;
+    Vector3 Field38;
+    u32 Field44;
+    u32 Field48;
+    f32 Field4C;
+} CommandData_MDt;
+
+typedef struct // MODEL_ICON
+{
+    u32 Flags;
+    u32 IconType; // Index of the emote icon
+    u32 IconIndex;
+    u32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+} CommandData_MIc;
+
+typedef struct // MODEL_LOOK_AT
+{
+    u16 Flags;
+    u16 MotionFlags;
+    u16 MotionType;
+    u16 TargetType;
+    u16 ResetPhysicsCount;
+    u16 SpeedType;
+    Vector3 Target;
+    u32 TargetAssetID;
+    u32 TargetHelperID;
+    f32 Field20;
+    f32 Field24;
+    f32 Field28;
+    f32 Field2C;
+    f32 Field30;
+} CommandData_MLa<read=Str("TGT %s", ReadVector3(Target))>;
+
+typedef struct // MODEL_MOVE_DIRECT
+{
+    struct {
+        u32 PathType;
+        u32 PointNum;
+        Vector3 Positions[ 24 ];
+    } EvtPathData<read=Str("Type %d, %d points", PathType, PointNum)>;
+    u32 Flags;
+    f32 Speed;
+    u32 MoveFrameLength;
+    u8 SpeedTypeEarly;
+    u8 SpeedTypeLate;
+    u16 Reserve_1_4;
+    u32 MoveAnimNo;
+    u32 MoveAnimBlendFrame;
+    u32 MoveAnimFlags;
+    f32 MoveAnimSpeed;
+    u32 MoveAnimStartFrame;
+    u32 MoveAnimEndFrame;
+    u32 Reserve_3_3;
+    u32 Reserve_3_4;
+    u32 WaitAnimNo;
+    u32 WaitAnimBlendFrame;
+    u32 WaitAnimFlags;
+    f32 WaitAnimSpeed;
+    u32 WaitAnimStartFrame;
+    u32 WaitAnimEndFrame;
+    u32 Field170;
+    u32 Field174;
+    u32 Field178;
+    u32 Field17C;
+} CommandData_MMD;
+
+typedef struct // MODEL_REGISTER
+{
+    u32 Flags;
+    u32 RegisterType;
+    u32 SceneType;
+    u32 Reserve_1_4;
+} CommandData_MRgs<read=Str("Reg Type %d, Scene Type %d", RegisterType, SceneType)>;
+
+typedef struct // MODEL_ROTATION
+{
+    u32 Flags;
+    Vector3 RotEuler;
+    u32 InterpParam;
+    u32 TurnFrame;
+    u32 Reserve_2_3;
+    u32 Reserve_2_4;
+    u32 TurnAnimNo;
+    u32 TurnAnimBlendFrame;
+    u32 TurnAnimFlags;
+    f32 TurnAnimSpeed;
+    u32 TurnAnimStartFrame;
+    u32 TurnAnimEndFrame;
+    u32 Reserve_4_3;
+    u32 Reserve_4_4;
+    u32 WaitAnimNo;
+    u32 WaitAnimBlendFrame;
+    u32 WaitAnimFlags;
+    f32 WaitAnimSpeed;
+    u32 WaitAnimStartFrame;
+    u32 WaitAnimEndFrame;
+    f32 Reserve_6_3;
+    f32 Reserve_6_4;
+} CommandData_MRot;
+
+typedef struct // MODEL_SCALE
+{
+    u32 Flags;
+    u32 InterpParam;
+    f32 Scale; // Scale of the object, 1 is default
+    u32 Reserve_1_4;
+} CommandData_MScl;
+
+typedef struct { // MODEL_TURN
+    u32 Field00;
+    f32 Field04;
+    f32 Field08;
+    f32 Field0C;
+} CommandData_MTr;
+
+typedef struct { // MODEL_SET_DIRECT
+    Vector3 Pos;
+    Vector3 RotEuler;
+    u32 WaitAnimNo;
+    u32 WaitAnimBlendFrame;
+    u32 WaitAnimFlags;
+    f32 WaitAnimSpeed;
+    u32 Flags;
+    u32 WaitAnimStartFrame;
+    u32 ResetPhysicsCount;
+} CommandData_MSD<read=Str("| T %s | R %s |", ReadVector3(Pos), ReadVector3(RotEuler))>;
+
+
+typedef struct  // MESSAGE
+{
+    u32 Flags;
+    u16 MsgLabelMajorID;
+    u8 MsgLabelMinorID;
+    u8 MsgLabelSubID;
+    u16 SelLabelMajorID;
+    u8 SelLabelMinorID;
+    u8 SelLabelSubID;
+    u32 SelResultIndex;
+    u16 Field10;
+    u32 Field12;
+    u32 Field16;
+    u16 Field1a;
+    u32 Field1C;
+    u32 Field20;
+    u32 Field24;
+} CommandData_Msg;
+typedef struct  // MESSAGE_VOICE
+{
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    u32 Field0C;
+} CommandData_MsgV;
+
+typedef struct // MOVIE_PLAY
+{
+    u32 Field00;
+    f32 Field04;
+    f32 Field08;
+} CommandData_MvPl;
+
+typedef struct // PFX_BLUR_RADIAL
+{
+    u32 Flags;
+    u16 FrameLengthIn;
+    u16 FrameLengthOut;
+    u32 InterpParamIn;
+    u32 InterpParamOut;
+    Vector2 CenterPos;
+    f32 Power;
+    f32 FallOff;
+    u32 BlendType;
+    ColorRGBAByte ColorRGBA;
+    u32 Field28;
+    u32 Field2C;
+} CommandData_PBRd<read=Str("| T %s | Power %g | Falloff %g | Col %s |", ReadVector2(CenterPos), Power, FallOff, ReadColorRGBAByte(ColorRGBA))>;
+
+typedef struct // PFX_BLUR_STRAIGHT
+{
+    u32 Flags;
+    u16 FrameLengthIn;
+    u16 FrameLengthOut;
+    u32 InterpParamIn;
+    u32 InterpParamOut;
+    f32 Direction;
+    f32 Power;
+    u32 BlendType;
+    ColorRGBAByte ColorRGBA;
+} CommandData_PBSt<read=Str("| Dir %g | Power %g | Col %s |", Direction, Power, ReadColorRGBAByte(ColorRGBA))>;
+
+typedef struct // PFX_COLOR_CORRECT
+{
+    u32 Flags;
+    u16 FrameLengthIn;
+    u16 FrameLengthOut;
+    u32 InterpParamIn;
+    u32 InterpParamOut;
+    Vector2 Pos;
+    Vector2 Size;
+    f32 Width;
+    f32 Height;
+    f32 Cyan;
+    f32 Magenta;
+    f32 Yellow;
+    f32 Dodge;
+    f32 Burn;
+    f32 Alpha;
+    u32 TextureAssetID;
+} CommandData_PCc<read=Str("| T %s | S %s |", ReadVector2(Pos), ReadVector2(Size))>;
+
+typedef struct // PFX_LENSFLARE
+{
+    u32 TemplateType;
+    Vector3 Position;
+    ColorRGBAByte ColorRGBA;
+    f32 Brightness;
+    u32 FilterType;
+    Boolean FilterVisible;
+    Boolean LightGlowVisible;
+    Boolean TerminateGlowVisible;
+    u8 Reserve;
+    u32 InterpFrameIn;
+    u32 InterpFrameOut;
+    u32 InterpParamIn;
+    u32 InterpParamOut;
+    u32 Field30;
+    u32 Field34;
+    u32 Field38;
+} CommandData_PLf;
+
+typedef struct // PAD_RUMBLE
+{
+    u32 Flag;
+    u32 Field04; // frame count?
+} CommandData_PRum;
+
+typedef struct // SCRIPT
+{
+    u32 Flags;
+    u32 ScrIndex;
+    char ScrName[0x40];
+} CommandData_Scr<read=ScrName>;
+
+// ECS
+
+typedef struct // SOUND
+{
+    u32 Flags;
+	
+    enum<u32>{
+		Bgm = 1,
+        System = 2,
+        Event = 3,
+	}SoundType;
+	
+    enum<u32>{
+		Play = 1,
+        Stop = 2,
+	}CtrlType;
+	
+    u32 ChannelNo;
+    u32 SoundNo;
+    f32 Volume;
+    u32 FadeFrame;
+    u32 Field1C;
+} CommandData_Snd<read=Str("%s %s Cue: %d, on Channel: %d", EnumToString(CtrlType), EnumToString(SoundType), SoundNo, ChannelNo)>;
+
+// METAPHOR ONLY (EVT)
+
+typedef struct { // CAMERA_SET_FIELD
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
+} CommandData_CSF;
+
+typedef struct { // ENV_CLOUD
+    u32 Flags;
+    f32 Field04;
+    f32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    u32 Field20;
+    u32 Field24;
+    f32 Field28;
+    f32 Field2C;
+    f32 Field30;
+    f32 Field34;
+    f32 Field38;
+    f32 Field3C;
+} CommandData_EnC;
+
+typedef struct { // ENV_CHARA_LIGHT
+    u32 Flags;
+    f32 Field04;
+    u32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    u32 Field24[0x20];
+    u32 FieldA4;
+    f32 FieldA8;
+} CommandData_EnCL;
+
+typedef struct { // ENV_DIFFUSION
+    u32 Field00;
+    u32 Field04;
+    f32 Field08;
+    f32 Field0C;
+} CommandData_EnDi;
+
+typedef struct { // ENV_EXPONENTIAL_FOG
+    u32 Field00;
+    u32 Field04;
+    f32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
+    f32 Field28;
+    f32 Field2C;
+    f32 Field30;
+    f32 Field34;
+    f32 Field38;
+    f32 Field3C;
+    f32 Field40;
+    f32 Field44;
+} CommandData_Enef;
+
+typedef struct { // ENV_PLANE_GRADATION
+    u32 Field00;
+    f32 Field04;
+    f32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
+    f32 Field28;
+    f32 Field2C;
+    f32 Field30;
+    f32 Field34;
+    f32 Field38;
+    f32 Field3C;
+} CommandData_EnPg;
+
+typedef struct { // ENV_SKYDOME
+    u32 Enabled;
+} CommandData_EnSD<read=Str("Enabled: %d", Enabled)>;
+
+typedef struct { // ENV_SSAO
+    u32 Flags;
+    u32 InterpParam;
+    u32 Reserve_1_3;
+    u32 Reserve_1_4;
+    f32 DepthRange;
+    f32 OccluderRadius;
+    f32 FalloffRadius;
+    f32 Brightness;
+    f32 BlurScale;
+} CommandData_EnSs;
+
+typedef struct { // FIELD_FEATURE_DISP
+    u32 Field00;
+} CommandData_FFD;
+
+typedef struct { // FIELD_MOB_DISP
+    u32 Field00;
+    u32 Field04;
+} CommandData_FMD;
+
+typedef struct { // FIELD_MOB_DISP_BOX
+    u32 Field00;
+    f32 Field04;
+    f32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
+} CommandData_FMDB;
+
+typedef struct { // FIELD_LIGHTS
+    u32 Field00;
+    f32 Field04;
+} CommandData_FL;
+
+typedef struct { // FIELD_REGISTER
+    u32 Field00;
+    u32 Field04;
+} CommandData_FR;
+
+typedef struct { // GAME_AREA_NAME
+    u32 Field00;
+} CommandData_GAn;
+
+typedef struct { // GAME_BASE_PARAM_UP
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    u32 Field0C;
+    u32 Field10;
+    char name[0x40];
+} CommandData_GBpu<read=name>;
+
+typedef struct { // GAME_HUMAN_PARAM_UP
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    u32 Field0C;
+    u32 Field10;
+    u32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
+    u32 Field28;
+    char name[0x40];
+} CommandData_GHpu<read=name>;
+
+typedef struct {
+    char name[0x40];
+} GameItemName<read=name>;
+
+typedef struct { // GAME_ITEM
+    u32 Field00;
+    u32 Field04;
+    u32 Field08[8];
+    u32 Field28[8];
+    GameItemName ItemNames[8];
+    u32 Field248;
+    GameItemName Field24C;
+} CommandData_GI;
+
+typedef struct { // GAME_MONEY
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    char name[0x40];
+} CommandData_GM;
+
+typedef struct { // GAME_NAME_ENTRY
+    u32 Field00;
+} CommandData_GNe;
+
+typedef struct { // GAME_PLAYER_NAME_ENTRY
+    u32 Field00;
+} CommandData_GPne;
+
+typedef struct { // GAME_QUEST
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    char name[0x40];
+} CommandData_GQ;
+
+typedef struct { // GAME_SORTIE_MAP
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+} CommandData_GSm;
+
+typedef struct { // GAME_TUTORIAL
+    u32 Field00;
+    u32 Field04;
+    char name[0x40];
+} CommandData_GTut;
+
+typedef struct { // MODEL_AEX
+    u32 Field00;
+    u32 Field04;
+} CommandData_MAex;
+
+typedef struct { // MOB_ANIM_BASE
     u32 Field00;
     u32 Field04;
     u32 Field08;
@@ -69,61 +1034,279 @@ typedef struct
     u32 Field1C;
     u32 Field20;
     u32 Field24;
+} CommandData_Mbab;
+
+typedef struct { // MOB_ICON
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    u32 Field1C;
+} CommandData_Mbic;
+
+typedef struct { // MOB_LOOKAT
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    u32 Field18;
+    u32 Field1C;
+} CommandData_Mbla;
+
+typedef struct { // MOB_REGISTER
+    u32 Field00;
+    u32 Field04;
+} CommandData_Mbr;
+
+typedef struct { // MOB_SET_DIRECT
+    u32 Field00;
+    f32 Field04;
+    f32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    u32 Field1C;
+    u32 Field20;
+    u32 Field24;
+} CommandData_Mbsd;
+
+typedef struct { // MODEL_CLOTH_ENABLE
+    u32 Field00;
+    u32 Field04;
+} CommandData_MCe;
+
+typedef struct { // MODEL_CLOTH
+    u32 Field00;
+    u32 Field04;
+} CommandData_MCPr;
+
+typedef struct { // MODEL_FACIAL_BLEND
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    u32 Field0C;
+    u32 Field10;
+} CommandData_MFb;
+
+typedef struct // MODEL_ICON_TERMINATE
+{
+    u32 Field00;
+} CommandData_MIct;
+
+typedef struct // MODEL_LIPSYNC
+{
+    u32 Field00;
+    f32 Field04;
+    f32 Field08;
+} CommandData_MLs;
+
+typedef struct { // MODEL_MOVE_ANIM
+    u32 Field00;
+    u32 Field04;
+    f32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    u32 Field24;
+} CommandData_Mma;
+
+typedef struct { // MODEL_MOVIE_START_ANIM
+    u32 Field00;
+    u32 Field04;
+    f32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    u32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    u32 Field24;
+} CommandData_Mmsa;
+
+typedef struct { // MODEL_OBJ_DISP
+    u32 Field00;
+    u32 Field04;
+} CommandData_MOD;
+
+typedef struct { // MODEL_PLANE_GRADATION
+    u32 Field00;
+    f32 Field04;
+    f32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
+    f32 Field28;
+    f32 Field2C;
+    f32 Field30;
+    f32 Field34;
+    f32 Field38;
+    f32 Field3C;
+} CommandData_MPg;
+
+typedef struct { // MASK_BLEND
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    u32 Field24;
+    u32 Field28;
+    f32 Field2C;
+    f32 Field30;
+} CommandData_mskb;
+
+typedef struct { // MASK_LAYER_BLEND
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    u32 Field0C;
+    f32 Field10;
+    f32 Field14;
+    f32 Field18;
+    f32 Field1C;
+    f32 Field20;
+    f32 Field24;
     u32 Field28;
     u32 Field2C;
-    u32 Field30;
-    u32 Field34;
-    u32 Field38;
-    u32 Field3C;
+    f32 Field30;
+    f32 Field34;
+} CommandData_mskl;
 
-} CommandData_FS;
+typedef struct {
+    u32 Field00;
+    f32 Field04;
+    f32 Field08;
+    f32 Field0C;
+    f32 Field10;
+    f32 Field14;
+} CommandData_PMn;
+
+typedef struct { // SUBTITLE
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    u32 Field0C;
+} CommandData_Subs;
+
+typedef struct { // TEX_COLOR_CORRECT
+    u32 Flags; // these fields are currently a guess, test that these are correct
+    Vector2 Pos;
+    f32 Width;
+    f32 Height;
+    f32 Cyan;
+    f32 Magenta;
+    f32 Yellow;
+    f32 Dodge;
+    f32 Burn;
+    f32 Alpha;
+} CommandData_TCc<read=Str("| T %s | %d x %d | ", ReadVector2(Pos), Width, Height)>;
+
+typedef struct { // TEXTURE
+    u32 Flags;
+    u16 FrameLengthIn;
+    u16 FrameLengthOut;
+    u32 InterpParamIn;
+    u32 InterpParamOut;
+    Vector3 Pos;
+    Vector2 Scale;
+    Vector2 TexcoordTopLeft;
+    Vector2 TexcoordBottomRight;
+    u32 RenderPrio;
+    u32 BlendType;
+    ColorRGBAByte ColorRGBA;
+} CommandData_Tex<read=Str("| T %s | S %s | C %s |", ReadVector3(Pos), ReadVector2(Scale), ReadColorRGBAByte(ColorRGBA))>;
+
+typedef struct { // WIPE
+    u32 Field00;
+    u32 Field04;
+    u32 Field08;
+    u32 Field0C;
+} CommandData_Wp;
+
+// METAPHOR ONLY (ECS)
+
+typedef struct { // MODEL_FOOTSTEPS
+    u32 Field00;
+    u32 Field04;
+} CommandData_MFs;
+
+typedef struct { // SOUND_AMBIENT
+    u32 Field00;
+    u32 Field04;
+    f32 Field08;
+} CommandData_SndA;
 
 typedef struct {
     SetRandomBackColor();
     char Magic[3];
     u8 SwapEndian<hidden=true>;
     u32 Version<format=hex>;
-    u16 Field08;
-    u16 Field0A;
-    u8 Field0C;
-    u8 FIeld0D;
-    u8 Field0E;
+    u16 MajorID;
+    u16 MinorID;
+    u8 Rank;
+    u8 Level;
+    u8 Chapter;
     u8 Field0F;
-    u32 Field10;
-    u32 Field14;
-    u32 Field18;
-    s32 Field1C;
-    u8 Field20;
-    u8 Field21;
-    u16 Field22;
-    u16 Field24;
+    u32 FileSize;
+    u32 FileHeaderSize;
+    u32 Flags;
+    s32 TotalFrame;
+    u8 FrameRate;
+    u8 InitScriptIndex;
+    u16 StartFrame;
+    u16 LetterBoxInFrame;
     u16 Field26;
-    u32 Field28;
-    u32 Field2C;
-    u32 FirstSectionCount;
-    u32 HeaderSize;
-    u32 FirstSectionEntrySize;
-    u32 Field3C;
-    u32 Field40;
-    u32 Field44;
-    u32 Field48;
-    u32 Field4C;
-    u32 Field50;
-    u32 Field54;
-    u32 Field58;
-    u32 Field5C;
-    u32 Field60;
-    u32 Field64;
-    u32 Field68;
-    u32 Field6C;
-    u32 Field70[8];
+    u32 InitEnvAssetID;
+    u32 InitEnvAssetIDDbg;
+    u32 AssetNums;
+    u32 AssetDataOfs;
+    u32 AssetDataSize;
+    u32 AssetReserve;
+    u32 CommandNums;
+    u32 CommandHeaderOfs;
+    u32 CommandHeaderSize;
+    u32 CommandReserve;
+    u32 MessagePathOfs;
+    u32 MessagePathSize;
+    u32 MessageFileOfs;
+    u32 MessageFileSize;
+    u32 ScriptPathOfs;
+    u32 ScriptPathSize;
+    u32 ScriptFileOfs;
+    u32 ScriptFileSize;
+    u32 MarkerFrame[8];
     u8 Field90[0x40];
     s32 FieldD0;
     s32 FieldD4;
     s32 FieldD8;
     s32 FieldDC;
     s32 FieldE0;
-} EvtHeader<read=Str("Version 0x%X", Version)>;
+} EvtHeader<read=Str("ver 0x%X, rank %d, level %d, %d frames, %d FPS", Version, Rank, Level, TotalFrame, FrameRate)>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 CommandNums;
+    u32 CommandHeaderOfs;
+    u32 CommandHeaderSize;
+    u32 CommandReserve;
+} EcsHeader;
 
 typedef struct(EvtHeader& header) {
     u32 Field00;
@@ -137,17 +1320,16 @@ typedef struct(EvtHeader& header) {
 
 typedef struct(EvtHeader& header) {
     SetRandomBackColor();
-    u32 ObjectId;
-    u32 Field04;
-    u32 Field08;
-    u32 Field0C;
-    u32 MajorId;
-    u16 Field14;
-    u16 Field16;
-    u32 Field18;
-    u32 Field1C;
-    
-    u32 Field20;
+    u32 AssetID;
+    u32 ResrcTypeID;
+    u32 ResrcCategory;
+    u32 ResrcUniqueID;
+    u32 ResrcMajorID;
+    u16 ResrcSubID;
+    u16 ResrcMinorID;
+    u32 Flags;
+    u32 BaseMotNo;
+    u32 ExtBaseMotNo;
     EvtObjectFile Field24(header);
     EvtObjectFile Field13C(header);
     EvtObjectFile Field254(header);
@@ -157,34 +1339,153 @@ typedef struct(EvtHeader& header) {
     u32 Field48C;
     u8 Field490[0x40];
     u8 Field4D0[0x40];
-} EvtObjects<optimize=false, read=Str("ID %d", ObjectId)>;
+} EvtObjects<optimize=false, read=Str("ID %d: %d_%d_%d", AssetID, ResrcMajorID, ResrcMinorID, ResrcSubID)>;
 
 typedef struct {
     SetRandomBackColor();
-    char Cmd[0x4];
-    u16 Field04;        // 0, 1, 2 usually
-    u16 Field06;        // always 0?
-    u32 ObjectId;       // reference to event object
-    u32 Field0C;        // always 0?
-    u32 Frame;
-    u32 Duration;
-    u32 DataOffset;     // offset to data in the file
-    u32 DataSize;       // size of the data stored in the file
-    u8 header_data[0x50]<hidden=true>;
+    char CommandCode[0x4];
+    u16 CommandVersion;
+    u16 CommandType;
+    u32 AssetID;
+    u32 Flags;
+    u32 FrameStart;
+    u32 FrameLength;
+    u32 CommandParamOfs;
+    u32 CommandParamSize;
+    u32 CondType;
+    u32 CondIndex;
+    u32 CondValue;
+    u32 CondCompType;
+    char CondName[0x40];
     local u32 ret = FPush();
-    FSeek(DataOffset);
-    switch (Cmd) {
-        case "FS__":
-            CommandData_FS cmd_data;
-            break;
-        default:
-            u8 cmd_data[DataSize];
-            break;
+    FSeek(CommandParamOfs);
+    switch (CommandCode) {
+        case "CMD_": CommandData_CMD cmd_data(CommandVersion); break;
+        case "CSA_": CommandData_CSA cmd_data; break;
+        case "CSD_": CommandData_CSD cmd_data; break;
+        case "CSF_": CommandData_CSF cmd_data; break;
+        case "CShk": CommandData_CShk cmd_data; break;
+        case "Date": CommandData_Date cmd_data; break;
+        case "EAlp": CommandData_EAlp cmd_data; break;
+        case "EnBc": CommandData_EnBc cmd_data; break;
+        case "EnC_": CommandData_EnC cmd_data; break;
+        case "EnCc": CommandData_EnCc cmd_data; break;
+        case "EnCL": CommandData_EnCL cmd_data; break;
+        case "EnDf": CommandData_EnDf cmd_data; break;
+        case "EnDi": CommandData_EnDi cmd_data; break;
+        case "Enef": CommandData_Enef cmd_data; break;
+        case "EnHd": CommandData_EnHd cmd_data; break;
+        case "EnL0": case "EnL1": CommandData_EnL0 cmd_data; break;
+        case "EnOl": CommandData_EnOl cmd_data; break;
+        case "EnPg": CommandData_EnPg cmd_data; break;
+        case "EnPh": CommandData_EnPh cmd_data; break;
+        case "EnSD": CommandData_EnSD cmd_data; break;
+        case "EnSh": CommandData_EnSh cmd_data; break;
+        case "EnSs": CommandData_EnSD cmd_data; break;
+        case "Env_": CommandData_Env cmd_data; break;
+        case "ERgs": CommandData_ERgs cmd_data; break;
+        case "EScl": CommandData_EScl cmd_data; break;
+        case "ESD_": CommandData_ESD cmd_data; break;
+        case "ESH_": CommandData_ESH cmd_data; break;
+        case "FAB_": CommandData_FAB cmd_data; break;
+        case "Fd__": CommandData_Fd cmd_data; break;
+        case "FFD_": CommandData_FFD cmd_data; break;
+        case "FL__": CommandData_FL cmd_data; break;
+        case "FMD_": CommandData_FMD cmd_data; break;
+        case "FMDB": CommandData_FMDB cmd_data; break;
+        case "FOD_": CommandData_FOD cmd_data; break;
+        case "FR__": CommandData_FR cmd_data; break;
+        case "FrJ_": CommandData_FrJ cmd_data; break;
+        case "Frus": CommandData_Frus cmd_data; break;
+        case "FS__": CommandData_FS cmd_data; break;
+        case "GAn_": CommandData_GAn cmd_data; break;
+        case "GBpu": CommandData_GBpu cmd_data; break;
+        case "GCAP": CommandData_GCAP cmd_data; break;
+        case "GHpu": CommandData_GHpu cmd_data; break;
+        case "GI__": CommandData_GI cmd_data; break;
+        case "GM__": CommandData_GM cmd_data; break;
+        case "GNe_": CommandData_GNe cmd_data; break;
+        case "GPne": CommandData_GPne cmd_data; break;
+        case "GQ__": CommandData_GQ cmd_data; break;
+        case "GSm_": CommandData_GSm cmd_data; break;
+        case "GTut": CommandData_GTut cmd_data; break;
+        case "MAA_": CommandData_MAA cmd_data; break;
+        case "MAB_": CommandData_MAB cmd_data; break;
+        case "MAex": CommandData_MAex cmd_data; break;
+        case "MAlp": CommandData_MAlp cmd_data; break;
+        case "MAt_": CommandData_MAt cmd_data; break;
+        case "Mbab": CommandData_Mbab cmd_data; break;
+        case "Mbic": CommandData_Mbic cmd_data; break;
+        case "Mbla": CommandData_Mbla cmd_data; break;
+        case "Mbr_": CommandData_Mbr cmd_data; break;
+        case "Mbsd": CommandData_Mbsd cmd_data; break;
+        case "MCe_": CommandData_MCe cmd_data; break;
+        case "MCPr": CommandData_MCPr cmd_data; break;
+        case "MDt_": CommandData_MDt cmd_data; break;
+        case "MFb_": CommandData_MFb cmd_data; break;
+        case "MFs_": CommandData_MFs cmd_data; break;
+        case "MIc_": CommandData_MIc cmd_data; break;
+        case "MIct": CommandData_MIct cmd_data; break;
+        case "MLa_": CommandData_MLa cmd_data; break;
+        case "MLs_": CommandData_MLs cmd_data; break;
+        case "Mma_": CommandData_Mma cmd_data; break;
+        case "MMD_": CommandData_MMD cmd_data; break;
+        case "Mmsa": CommandData_Mmsa cmd_data; break;
+        case "MOD_": CommandData_MOD cmd_data; break;
+        case "MPg_": CommandData_MPg cmd_data; break;
+        case "MRgs": CommandData_MRgs cmd_data; break;
+        case "MRot": CommandData_MRot cmd_data; break;
+        case "MScl": CommandData_MScl cmd_data; break;
+        case "MSD_": CommandData_MSD cmd_data; break;
+        case "Msg_": CommandData_Msg cmd_data; break;
+        case "MsgV": CommandData_MsgV cmd_data; break;
+        case "mskb": CommandData_mskb cmd_data; break;
+        case "mskl": CommandData_mskl cmd_data; break;
+        case "MTr_": CommandData_MTr cmd_data; break;
+        case "MvPl": CommandData_MvPl cmd_data; break;
+        case "PBRd": CommandData_PBRd cmd_data; break;
+        case "PBSt": CommandData_PBSt cmd_data; break;
+        case "PCc_": CommandData_PCc cmd_data; break;
+        case "PLf_": CommandData_PLf cmd_data; break;
+        case "PMn_": CommandData_PMn cmd_data; break;
+        case "PRum": CommandData_PRum cmd_data; break;
+        case "Scr_": CommandData_Scr cmd_data; break;
+        case "Snd_": CommandData_Snd cmd_data; break;
+        case "SndA": CommandData_SndA cmd_data; break;
+        case "Subs": CommandData_Subs cmd_data; break;
+        case "TCc_": CommandData_TCc cmd_data; break;
+        case "Tex_": CommandData_Tex cmd_data; break;
+        case "Wp__": CommandData_Wp cmd_data; break;
+        default: u8 cmd_data[CommandParamSize]; break;
     }
     FPop();
-} EvtCommands<optimize=false,read=Str("Command: %s || Frame: %04d || Duration: %03d || ObjectID: %02d", Cmd, Frame, Duration, ObjectId)>;
+} EvtCommands<optimize=false,read=Str("Command: %s || Version: %02d || Frame: %04d || Duration: %03d || ObjectID: %02d", CommandCode, CommandVersion, FrameStart, FrameLength, AssetID)>;
 
-EvtHeader header;
-FSeek(header.HeaderSize);
-EvtObjects section1(header)[header.FirstSectionCount];
-EvtCommands commands[header.Field40];
+local string filePath = GetFileName();
+local string fileName = FileNameGetBase( filePath, false );
+local string fileExt = FileNameGetExtension( filePath );
+
+switch (fileExt) {
+    case ".EVT":
+        EvtHeader header;
+        FSeek(header.FileHeaderSize);
+        EvtObjects section1(header)[header.AssetNums];
+        EvtCommands commands[header.CommandNums];
+        if (header.MessagePathOfs > 0) {
+            FSeek(header.MessagePathOfs);
+            char MessagePath[header.MessagePathSize];
+        }
+        if (header.ScriptPathOfs > 0) {
+            FSeek(header.ScriptPathOfs);
+            char ScriptPath[header.ScriptPathSize];
+        }
+        break;
+    case ".ECS":
+        EcsHeader header;
+        FSeek(header.CommandHeaderOfs);
+        EvtCommands commands[header.CommandNums];
+        break;
+    default:
+        Assert(false, Str("Unsupported file extension %s", fileExt));
+        break;
+}
