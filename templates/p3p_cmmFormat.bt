@@ -1,0 +1,182 @@
+
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: cmmFromat.dat
+//   Authors: BonQ
+//   Version: 1.0
+//   Purpose: Parse Persona 3 Portable cmmFormat.dat
+//  Category: Persona 3 Portable
+// File Mask: cmmFormat.dat
+//  ID Bytes:
+//   History:
+//   1.0 - Initial release
+//------------------------------------------------
+
+//---------------------------------------------
+// Type definition
+//---------------------------------------------
+typedef ubyte u8;
+typedef short s16;
+typedef ushort u16;
+typedef uint u32;
+typedef float f32;
+
+enum<byte>bool
+{
+    False = 0,
+    True = 1,
+};
+
+typedef struct
+{
+    u8 bit0 : 1;
+    u8 bit1 : 1;
+    u8 bit2 : 1;
+    u8 bit3 : 1;
+    u8 bit4 : 1;
+    u8 bit5 : 1;
+    u8 bit6 : 1;
+    u8 bit7 : 1;
+} b8;
+
+typedef struct
+{
+    u8 bit0 : 1;
+    u8 bit1 : 1;
+    u8 bit2 : 1;
+    u8 bit3 : 1;
+    u8 bit4 : 1;
+    u8 bit5 : 1;
+    u8 bit6 : 1;
+    u8 bit7 : 1;
+    u8 bit8 : 1;
+    u8 bit9 : 1;
+    u8 bit10 : 1;
+    u8 bit11 : 1;
+    u8 bit12 : 1;
+    u8 bit13 : 1;
+    u8 bit14 : 1;
+    u8 bit15 : 1;
+} b16;
+
+typedef struct
+{
+    u8 bit0 : 1;
+    u8 bit1 : 1;
+    u8 bit2 : 1;
+    u8 bit3 : 1;
+    u8 bit4 : 1;
+    u8 bit5 : 1;
+    u8 bit6 : 1;
+    u8 bit7 : 1;
+    u8 bit8 : 1;
+    u8 bit9 : 1;
+    u8 bit10 : 1;
+    u8 bit11 : 1;
+    u8 bit12 : 1;
+    u8 bit13 : 1;
+    u8 bit14 : 1;
+    u8 bit15 : 1;
+    u8 bit16 : 1;
+    u8 bit17 : 1;
+    u8 bit18 : 1;
+    u8 bit19 : 1;
+    u8 bit20 : 1;
+    u8 bit21 : 1;
+    u8 bit22 : 1;
+    u8 bit23 : 1;
+    u8 bit24 : 1;
+    u8 bit25 : 1;
+    u8 bit26 : 1;
+    u8 bit27 : 1;
+    u8 bit28 : 1;
+    u8 bit29 : 1;
+    u8 bit30 : 1;
+    u8 bit31 : 1;
+} b32;
+
+
+//---------------------------------------------
+// Includes
+//---------------------------------------------
+#include "p3p_enums.bt"
+#include "p3p_structs.bt"
+//---------------------------------------------
+// Helper functions
+//---------------------------------------------
+local uint __RandomSeed = 0xDEADBABE;
+local uint __RandomBit = 0;
+local uint __RandomCount = 0;
+
+uint MyRandom( uint to )
+{
+    ++__RandomCount;
+    __RandomBit  = ( (__RandomSeed >> 0 ) ^ ( __RandomSeed >> 2 ) ^ ( __RandomSeed >> 3 ) ^ ( __RandomSeed >> 5 ) ) & 1;
+    __RandomSeed = ( ( ( ( __RandomBit << 15 ) | ( __RandomSeed >> 1 ) ) + ( 0xBABE / __RandomCount ) ) % to );
+
+    while( __RandomSeed < 0 )
+        __RandomSeed += to;
+
+    return __RandomSeed;
+}
+
+void DetectEndianness()
+{
+    // Test endianness
+    LittleEndian();
+    local uint sizeTest = ReadUInt();
+    if ( sizeTest & 0xFF000000 )
+        BigEndian();
+}
+
+u32 Align( u32 value, u32 alignment )
+{
+  return (value + (alignment - 1)) & ~(alignment - 1);
+}
+
+void FAlign( u32 alignment )
+{
+  FSeek( Align( FTell(), alignment ) );
+}
+
+// Custom colors
+SetBackColor(cGray);
+SetForeColor(cBlack);
+
+typedef struct {
+    
+    SetBackColor(cYellow);
+    ArcanaID SocialLinkID; // Social Link Arcana
+    
+    SetBackColor(cGray);
+    byte padding[3];       // Alignment padding
+    
+    SetBackColor(cGreen);
+    uint16 unknown3[10];   // Reserved values
+    
+    
+    SetBackColor(cBlue);
+    // Points needed for each rank up
+    struct {
+        uint16 PointsRank1<name = "Point requirement to Rank 1">;  // Points needed for Rank 1
+        uint16 PointsRank2<name = "Point requirement to Rank 2">;  // Points needed for Rank 2
+        uint16 PointsRank3<name = "Point requirement to Rank 3">;  // Points needed for Rank 3
+        uint16 PointsRank4<name = "Point requirement to Rank 4">;  // Points needed for Rank 4
+        uint16 PointsRank5<name = "Point requirement to Rank 5">;  // Points needed for Rank 5
+        uint16 PointsRank6<name = "Point requirement to Rank 6">;  // Points needed for Rank 6
+        uint16 PointsRank7<name = "Point requirement to Rank 7">;  // Points needed for Rank 7
+        uint16 PointsRank8<name = "Point requirement to Rank 8">;  // Points needed for Rank 8
+        uint16 PointsRank9<name = "Point requirement to Rank 9">; // Points needed for Rank 9
+        uint16 PointsRank10<name = "Point requirement to Rank 10">; // Points needed for Rank 10
+    } RankUpPoints;
+    
+    SetBackColor(cGray);
+    byte unknown2[72];     // Additional data
+} Entry;
+
+// File structure
+SetBackColor(cWhite);
+uint32 fileSize;           // Total file size
+uint32 entryCount;         // Number of social link entries
+Entry Entries[entryCount]; // Array of social link entries
