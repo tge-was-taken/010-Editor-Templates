@@ -1,0 +1,18 @@
+typedef struct {
+    byte MonthStart;
+    byte DayStart;
+    byte MonthEnd;
+    byte DayEnd;
+    uint16 ItemID;
+    uint16 ItemCount;
+    uint16 ItemID2;
+    uint16 ItemCount2;
+    uint16 Price;
+    uint16 padding;
+    byte data[20];
+} Entry;
+
+uint32 fileSize;
+uint32 entryCount;
+
+Entry Entries[entryCount];
