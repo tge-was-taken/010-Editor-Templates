@@ -6476,6 +6476,13 @@ enum<ushort> MusicID
     RiversInTheDesert = 8,
     Yaldabaoth = 12,
     OurBeginning = 14,
+    KeepYourFaith = 15,
+    ThrowAwayYourMask = 16,
+    PrisonLabor= 17,
+    MassDestruction = 18,
+    ReachOutToTheTruth = 19,
+    TakeOver = 20,
+    ContinuePriorMusic = 99,
 };
 
 enum<byte> ArcanaID

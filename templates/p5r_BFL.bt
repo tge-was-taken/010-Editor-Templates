@@ -1,0 +1,121 @@
+//------------------------------------------------
+//--- 010 Editor v11.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+typedef char bool;
+typedef char s8;
+typedef uchar u8;
+typedef int16 s16;
+typedef uint16 u16;
+typedef int16 s16;
+typedef int32 s32;
+typedef uint32 u32;
+typedef int64 s64;
+typedef uint64 u64;
+typedef hfloat f16;
+typedef float f32;
+typedef double f64;
+
+typedef struct
+{
+	f32 x;
+	f32 y;
+
+} Vector2<optimize=false>;
+
+typedef struct
+{
+	f32 Float1;
+	f32 Float2;
+	f32 Float3;
+	f32 Float4;
+
+} Vector4<optimize=false>;
+
+
+enum<u8> Boolean
+{
+    False = false,
+    True = true,
+};
+
+typedef struct
+{
+	Boolean Active;
+	Vector2 Center;
+	s16 Rotate;
+	f32 Radius;
+	u8 Flags;
+	u8 Undefined3[3];
+} FormationUnit<optimize=false>;
+
+typedef struct
+{
+	Vector4 Eye;
+	Vector2 Target;
+	f32 Roll;
+	f32 FOV;
+} FormationCamera<optimize=false>;
+
+typedef struct
+{
+	u16 sizeS;
+	u16 sizeM;
+	u16 sizeL;
+	u16 Count;
+} FormationClassify<optimize=false>;
+
+typedef struct
+{
+	FormationUnit Player[4];
+	FormationUnit Enemy[5];
+	FormationClassify classify;
+	FormationCamera Command[4];
+} FormationList<optimize=false>;
+
+typedef struct
+{
+	FormationList list;
+} FormationCategory<optimize=false>;
+
+typedef struct
+{
+	FormationCategory Category[32];
+} FormationData<optimize=false>;
+
+typedef struct
+{
+	FormationCategory Normal;
+    FormationCategory Pinch;
+    FormationCategory HoldUp;
+    FormationCategory Advantage;
+    FormationCategory Intimidation;
+    if (version >= 0x01105080)
+    {
+        FormationCategory Unknown1;
+    }
+} FormationPack<optimize=false, read=NameRead>;
+
+string NameRead(FormationPack& block )
+{
+	char buffer[32];
+	SPrintf( buffer, "S: %.1d M: %.1d L: %.1d", block.Normal.list.classify.sizeS, block.Normal.list.classify.sizeM, block.Normal.list.classify.sizeL);
+	return buffer;
+}
+
+struct
+{
+    BigEndian();
+    u32 magic;    
+    u32 version;
+    u8 Undefined1[8];
+    FormationPack Pack[32];
+} Header<optimize=false>;
