@@ -2,18 +2,18 @@ typedef struct
 {
         u16 RESERVE<format=hex>;
         byte : 5;
-        bool Kasumi : 1 <name = "Equippable by Kasumi">;
-        bool Goro : 1 <name = "Equippable by Goro">;
-        bool Futaba : 1 <name = "Equippable by Futaba">;
-        bool Haru : 1 <name = "Equippable by Haru">;
-        bool Makoto : 1 <name = "Equippable by Makoto">;
-        bool Yusuke : 1 <name = "Equippable by Yusuke">;
-        bool Ann : 1 <name = "Equippable by Ann">;
-        bool Morgana : 1 <name = "Equippable by Morgana">;
-        bool Ryuji : 1 <name = "Equippable by Ryuji">;
-        bool Joker : 1 <name = "Equippable by Joker">;
-        byte : 1;
-} EquippableUsers <name = "Equippable User(s)">;
+        u8 Kasumi : 1 <name = "Equippable by Kasumi">;
+        u8 Goro : 1 <name = "Equippable by Goro">;
+        u8 Futaba : 1 <name = "Equippable by Futaba">;
+        u8 Haru : 1 <name = "Equippable by Haru">;
+        u8 Makoto : 1 <name = "Equippable by Makoto">;
+        u8 Yusuke : 1 <name = "Equippable by Yusuke">;
+        u8 Ann : 1 <name = "Equippable by Ann">;
+        u8 Morgana : 1 <name = "Equippable by Morgana">;
+        u8 Ryuji : 1 <name = "Equippable by Ryuji">;
+        u8 Joker : 1 <name = "Equippable by Joker">;
+        u8 : 1;
+} EquippableUsers <edit=flags, name = "Equippable User(s)">;
 
 typedef struct
 {
@@ -26,7 +26,7 @@ typedef struct
     u8 Repel : 1;
     u8 Block : 1;
 	u8 Multiplier <name = "Multiplier (in increments of 5%)", comment = "Multiplies damage & ailment chance. 20 is Neutral since 20 x 5% = 100% of normal dmg & ail. chance. 80 x 5% = 400% = 4x multiplier. 0 is ignored (does not nullify attack).">;
-} AffinityBitfield <name = "Affinity Status">;
+} AffinityBitfield <edit=flags, name = "Affinity Status">;
 
 typedef struct
 {
@@ -67,7 +67,7 @@ typedef struct
   u32 AilmentStatus_02_Shock : 1<name = "Shock">;
   u32 AilmentStatus_01_Freeze : 1<name = "Freeze">;
   u32 AilmentStatus_00_Burn : 1<name = "Burn">;
-} AilmentStatus;
+} AilmentStatus<edit=flags>;
 
 typedef struct
 {
@@ -76,23 +76,23 @@ typedef struct
     u8 Endurance <name = "Endurance">;
     u8 Agility <name = "Agility">;
     u8 Luck <name = "Luck">;
-} PersonaStats;
+} PersonaStats<edit=flags>;
 
 typedef struct
 {
     byte : 6;
-    bool DLC : 1 <name = "DLC">;
-    bool Treasure : 1 <name = "Treasure Demon">;
-    bool Unknown : 1;
-    bool Unknown : 1;
-    bool PartyPersona : 1;
-    bool StoryPersona : 1;
-    bool NotRegisterable : 1;
-    bool Unknown : 1;
-    bool NoNormalFusion : 1 <name = "Cannot Be Fused Normally", comment = "Set this to True to prevent this Persona from being fused through standard two-Persona fusion">;
-    bool Evolved : 1 <name = "Evolved">;
+    u8 DLC : 1 <name = "DLC">;
+    u8 Treasure : 1 <name = "Treasure Demon">;
+    u8 Unknown : 1;
+    u8 Unknown : 1;
+    u8 PartyPersona : 1;
+    u8 StoryPersona : 1;
+    u8 NotRegisterable : 1;
+    u8 Unknown : 1;
+    u8 NoNormalFusion : 1 <name = "Cannot Be Fused Normally", comment = "Set this to True to prevent this Persona from being fused through standard two-Persona fusion">;
+    u8 Evolved : 1 <name = "Evolved">;
     
-} PersonaFlags;
+} PersonaFlags<edit=flags>;
 
 typedef struct
 {
@@ -104,4 +104,4 @@ typedef struct
     u8 motionse_acb : 1;
     u8 swordtrack : 1;
     u8 motionse_dat : 1;
-} b8_exist;
+} b8_exist<edit=flags>;

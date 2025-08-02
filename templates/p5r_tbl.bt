@@ -22,12 +22,6 @@ typedef ushort u16;
 typedef uint u32;
 typedef float f32;
 
-enum<byte>u8
-{
-    False = 0,
-    True = 1,
-};
-
 typedef struct
 {
     u8 bit7 : 1;
