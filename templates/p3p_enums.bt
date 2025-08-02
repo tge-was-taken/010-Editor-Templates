@@ -1557,9 +1557,12 @@ enum<ushort>CharacterID
 enum<ushort>MusicID
 {
     MassDestruction = 0,
-    MasterOfShadow = 1,
-    UnavoidableBattle = 2,
-    MasterOfTartarus = 3,
+    MasterOfTartarus = 1,
+    MasterOfShadow = 2,
+    UnavoidableBattle = 3,
+    BurnMyDreadFinal = 4,
+    BattleHymnOfTheSoul = 5,
+    MasterOfTartarus_ = 6,
 	HeartfulCry = 7,
 	Darkness = 8,
 };

@@ -247,8 +247,7 @@ struct FTDFile
 			byte unk2;
 			int16 unk3;
 			MusicID musicID;
-			int16 unk4;
-			int16 flagCondition;
+			int32 flagCondition<format=hex>;
 		}bgmcondblock[numOfEntries]<name="BGM Condition Blocks", read=GetFieldName>;
 		ubyte padd2[(0x10 - FTell() % 0x10) % 0x10]<name="padding">;
 	}bgmcondstruct<name="File">;
@@ -257,6 +256,6 @@ struct FTDFile
 string GetFieldName(BGMCondBlock &block)
 {
 	string buffer;
-    SPrintf( buffer, "field: %03d_%03d,  Time period: %02d/%02d - %02d/%02d, Flag: %05d, Music ID: %04d", block.fldMajorID, block.fldMinorID, block.monthStart, block.dayStart, block.monthEnd, block.dayEnd, block.flagCondition, block.musicID );
+    SPrintf( buffer, "field: %03d_%03d,  Time period: %02d/%02d - %02d/%02d, FlagCondition: 0x%08X, Music ID: %04d", block.fldMajorID, block.fldMinorID, block.monthStart, block.dayStart, block.monthEnd, block.dayEnd, block.flagCondition, block.musicID );
 	return buffer;
 }

@@ -1,0 +1,182 @@
+//------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: 
+//   Authors: DeathChaos
+//   Version: 1.00
+//   Purpose: P5 Dan dancing exe music table
+//   History
+//   1.00    2024-04-23  DeathChaos - started this
+//------------------------------------------------
+
+
+LittleEndian();
+
+enum<uint>charID
+{
+    MainDancer = 0,
+	Yu = 1,
+	Yosuke = 2,
+	Chie = 3,
+	Yukiko = 4,
+	Rise = 5,
+	Kanji = 6,
+	Naoto = 7,
+	Teddie = 8,
+	Kanami = 9,
+	Nanako = 10,
+	Marie = 12,
+	Adachi = 13,
+	MakotoYuki = 101,
+	Yukari = 102,
+	Junpei = 103,
+	Akihiko = 104,
+	Mitsuru = 105,
+	Fuuka = 106,
+	Aigis = 107,
+	Ken = 108,
+	KoromaruDummy = 109,
+	Shinji = 110,
+	Elizabeth = 111,
+	Theodore = 112,
+	Labrys = 113,
+	MikuP3D = 114,
+	Sho = 115,
+	Margaret = 116,
+	Ren = 201,
+	Ryuji = 202,
+	Morgana = 203,
+	Ann = 204,
+	Yusuke = 205,
+	Makoto = 206,
+	Haru = 207,
+	Futaba = 208,
+	Akechi = 209,
+	Justine = 210,
+	Caroline = 211,
+	Lavenza = 212,
+};
+
+typedef struct
+{
+	int Bit0_SelectPartner : 1;
+	int Bit1_Makoto : 1;
+	int Bit2_Yukari : 1;
+	int Bit3_Junpei : 1;
+	int Bit4_Akihiko : 1;
+	int Bit5_Mitsuru : 1;
+	int Bit6_Fuuka : 1;
+	int Bit7_Aigis : 1;
+	int Bit8_Ken : 1;
+	int Bit9_Koro : 1;
+	int Bit10_Shinji : 1;
+	int Bit11_Elizabeth : 1;
+	int Bit12_Theodore : 1;
+	int Bit13_Labrys : 1;
+	int Bit14_Miku_P3 : 1;
+	int Bit15_Sho : 1;
+	int Bit16_Margaret : 1;
+	int Bit17 : 1;
+	int Bit18_Ren : 1;
+	int Bit19_Ryuji : 1;
+	int Bit20_Mona : 1;
+	int Bit21_Ann : 1;
+	int Bit22_Yusuke : 1;
+	int Bit23_Makoto : 1;
+	int Bit24_Haru : 1;
+	int Bit25_Futaba : 1;
+	int Bit26_Akechi : 1;
+	int Bit27_Justine : 1;
+	int Bit28_Caroline : 1;
+	int Bit29_Lavenza : 1;
+	int Bit30 : 1;
+	int Bit31 : 1;
+} SongBitsField30;
+
+typedef struct
+{
+	int Bit0_000 : 1;
+	int Bit1_Dummy : 1;
+	int Bit2_Yu : 1;
+	int Bit3_Yosuke : 1;
+	int Bit4_Chie : 1;
+	int Bit5_Yukiko : 1;
+	int Bit6_Rise : 1;
+	int Bit7_Kanji : 1;
+	int Bit8_Naoto : 1;
+	int Bit9_Teddie : 1;
+	int Bit10_Kanami : 1;
+	int Bit11_Nanako : 1;
+	int Bit12_Margaret : 1;
+	int Bit13_Marie : 1;
+	int Bit14_Adachi : 1;
+	int Bit15_Miku : 1;
+	int Bit16 : 1;
+	int Bit17 : 1;
+	int Bit18 : 1;
+	int Bit19 : 1;
+	int Bit20 : 1;
+	int Bit21 : 1;
+	int Bit22 : 1;
+	int Bit23 : 1;
+	int Bit24 : 1;
+	int Bit25 : 1;
+	int Bit26 : 1;
+	int Bit27 : 1;
+	int Bit28 : 1;
+	int Bit29 : 1;
+	int Bit30 : 1;
+	int Bit31 : 1;
+} SongBitsField34;
+
+typedef struct
+{
+  int isHideDancerArtistNameTex : 1;
+  int isDLC : 1;
+  int isGroupDance : 1;
+  int isHaveStageMaybe : 1;
+  int isSongHaveDancer : 1;
+  int SongBit_Bit05 : 1;
+  int isP3DSong : 1;
+  int isP5DSong : 1;
+} SongBits;
+
+typedef struct {
+	uint NamePTR;
+	SongBits Flags<format=hex>;
+	float BPM_1;
+	float BPM_2;
+	int Field10;
+	float Duration;
+	byte unk[4];
+	charID DancerID;
+	short Field20;
+	short Field22;
+	short Field24;
+	short Field26;
+	short Field28;
+	short Field2A;
+	short Field2C;
+	short Field2E;
+	SongBitsField30 Field30;
+	SongBitsField34 Field34;
+} SongData <optimize=false, read=GetName>;
+
+typedef struct {
+	int SongID;
+	int Flags;
+	short Field08;
+	short Field0A;
+	short Field0C;
+	short Field0E;
+	int linkedUnlocks[4];
+} SongUnlockData <optimize=false, read=Str("song %03d", this.SongID)>;
+
+typedef struct {
+	FSeek( 0x3C6250 );
+	SongData songs[89]<read=Str("%s - %s", EnumToString(this.DancerID), ReadString(this.NamePTR - 0x80FFEF20)) >;
+	FSeek( 0x3CF1E0 );
+	SongUnlockData unlock[87];
+} P5DEboot;
+
+P5DEboot SongTableData<name="Song Data Table">;

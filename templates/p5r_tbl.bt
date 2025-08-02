@@ -22,7 +22,7 @@ typedef ushort u16;
 typedef uint u32;
 typedef float f32;
 
-enum<byte>bool
+enum<byte>u8
 {
     False = 0,
     True = 1,
@@ -30,143 +30,144 @@ enum<byte>bool
 
 typedef struct
 {
-    u8 bit0 : 1;
-    u8 bit1 : 1;
-    u8 bit2 : 1;
-    u8 bit3 : 1;
-    u8 bit4 : 1;
-    u8 bit5 : 1;
-    u8 bit6 : 1;
     u8 bit7 : 1;
-} b8;
+    u8 bit6 : 1;
+    u8 bit5 : 1;
+    u8 bit4 : 1;
+    u8 bit3 : 1;
+    u8 bit2 : 1;
+    u8 bit1 : 1;
+    u8 bit0 : 1;
+} b8<edit=flags>;
 
 typedef struct
 {
-    u8 nonbegging : 1 <name = "No Begging Shadows", comment = "Enemies will never beg regardless of their personality (Meaning, it is as if it's always irritable)">;
-    u8 hidingstatus : 1 <name = "Hiding the status", comment = "Enemies status can be hidden similar to boss">;
-    u8 bit2 : 1;
-    u8 bit3 : 1;
-    u8 GuaranteePersonaMask : 1 <name = "Guarantee Persona Mask", comment = "For some reason, turning this on will make the shadow has drop coin effect and shadow visual appearance. It will also no longer return to battle after obtaining Persona.">;
-    u8 nonnegotiable : 1 <name = "Not negotiable", comment = "Enemies will never be able to negotiate">;
-    u8 bit6 : 1;
-    u8 bit7 : 1;
-    u8 bit8 : 1;
-    u8 bit9 : 1;
-    u8 bit10 : 1;
-    u8 bit11 : 1;
-    u8 bit12 : 1;
-    u8 hidingstatus2 : 1 <name = "Hiding the status", comment = "Enemies status can be hidden similar to boss. This is used on Boss">;
-    u8 infiniteSP : 1 <name = "Infinite SP", comment = "Enemies will be able to use any skill regardless of SP pool">;
+    u8 nonbegging : 1 <name = "No Begging Shadows (bit 15)", comment = "Enemies will never beg regardless of their personality (Meaning, it is as if it's always irritable)">;
+    u8 hidingstatus : 1 <name = "Hiding the status (bit 14)", comment = "Enemies status can be hidden similar to boss">;
     u8 bit13 : 1;
+    u8 bit12 : 1;
+    u8 GuaranteePersonaMask : 1 <name = "Guarantee Persona Mask (bit 11)", comment = "For some reason, turning this on will make the shadow has drop coin effect and shadow visual appearance. It will also no longer return to battle after obtaining Persona.">;
+    u8 nonnegotiable : 1 <name = "Not negotiable (bit 10)", comment = "Enemies will never be able to negotiate">;
+    u8 bit9 : 1;
+    u8 bit8 : 1;
+    u8 bit7 : 1;
+    u8 bit6 : 1;
+    u8 bit5 : 1;
+    u8 bit4 : 1;
+    u8 bit3 : 1;
+    u8 hidingstatus2 : 1 <name = "Hiding the status(bit 2)", comment = "Enemies status can be hidden similar to boss. This is used on Boss">;
+    u8 infiniteSP : 1 <name = "Infinite SP (bit 1)", comment = "Enemies will be able to use any skill regardless of SP pool">;
+    u8 bit0 : 1;
 } b16;
 
 typedef struct
 {
-    u8 bit0 : 1;
-    u8 bit1 : 1;
-    u8 bit2 : 1;
-    u8 bit3 : 1;
-    u8 bit4 : 1;
-    u8 bit5 : 1;
-    u8 bit6 : 1;
-    u8 bit7 : 1;
-    u8 bit8 : 1;
-    u8 bit9 : 1;
-    u8 bit10 : 1;
-    u8 bit11 : 1;
-    u8 bit12 : 1;
-    u8 bit13 : 1;
-    u8 bit14 : 1;
-    u8 bit15 : 1;
-    u8 nonbegging : 1 <name = "No Begging Shadows", comment = "Enemies will never beg regardless of their personality (Meaning, it is as if it's always irritable)">;
-    u8 hidingstatus : 1 <name = "Hiding the status", comment = "Enemies status can be hidden similar to boss">;
-    u8 bit18 : 1;
-    u8 bit19 : 1;
-    u8 GuaranteePersonaMask : 1 <name = "Guarantee Persona Mask", comment = "For some reason, turning this on will make the shadow has drop coin effect and shadow visual appearance. It will also no longer return to battle after obtaining Persona.">;
-    u8 nonnegotiable : 1 <name = "Not negotiable", comment = "Enemies will never be able to negotiate">;
-    u8 bit22 : 1;
-    u8 bit23 : 1;
-    u8 bit24 : 1;
-    u8 bit25 : 1;
-    u8 bit26 : 1;
-    u8 bit27 : 1;
-    u8 bit28 : 1;
-    u8 hidingstatus2 : 1 <name = "Hiding the status", comment = "Enemies status can be hidden similar to boss. This is used on Boss">;
-    u8 infiniteSP : 1 <name = "Infinite SP", comment = "Enemies will be able to use any skill regardless of SP pool">;
     u8 bit31 : 1;
-} b32_unit;
+    u8 bit30 : 1;
+    u8 bit29 : 1;
+    u8 bit28 : 1;
+    u8 bit27 : 1;
+    u8 bit26 : 1;
+    u8 bit25 : 1;
+    u8 bit24 : 1;
+    u8 bit23 : 1;
+    u8 bit22 : 1;
+    u8 bit21 : 1;
+    u8 bit20 : 1;
+    u8 bit19 : 1;
+    u8 bit18 : 1;
+    u8 savage : 1 <name = "Is Savage Enemy (bit 17)", comment ="Enemy will not negotiate until at 25% health or less">;
+    u8 bit16 : 1;
+    u8 nonbegging : 1 <name = "No Begging Shadows (bit 15)", comment = "Enemies will never beg regardless of their personality (Meaning, it is as if it's always irritable)">;
+    u8 hidestats : 1 <name = "Hide stats on analysis screen (bit 14)", comment = "Enemies status can be hidden similar to boss">;
+    u8 bit13 : 1;
+    u8 bit12 : 1;
+    u8 treasuredemon : 1 <name = "Is Treasure Demon (bit 11)", comment = "Enemy acts as Treasure Demon, dropping coins and guaranteeing its Persona mask">;
+    u8 nonnegotiable : 1 <name = "Not negotiable (bit 10)", comment = "Enemies will never be able to negotiate">;
+    u8 nocrit : 1 <name = "Disable Critical(bit 9)", comment ="Skills will never land a Critical hit on the enemy" >;
+    u8 bit8 : 1;
+    u8 downshot : 1 <name = "Disable Down Shot (bit 7)", comment = "Down Shot will always miss" >;
+    u8 bit6 : 1;
+    u8 bit5 : 1;
+    u8 bit4 : 1;
+    u8 bit3 : 1;
+    u8 hidestatsboss : 1 <name = "Hide stats/No disappearing when defeated (bit 2)", comment = "Status screen hides skills/stats. Used for bosses, loads special name graphic if the enemy has one (this is hardcoded to their ID).">;
+    u8 infiniteSP : 1 <name = "Infinite SP (bit 1)", comment = "Enemies will be able to use any skill regardless of SP pool">;
+    u8 bit0 : 1;
+} b32_unit<edit=flags>;
 
 typedef struct
 {
-    u8 bit0 : 1;
-    u8 bit1 : 1;
-    u8 bit2 : 1;
-    u8 bit3 : 1;
-    u8 bit4 : 1;
-    u8 bit5 : 1;
-    u8 bit6 : 1;
-    u8 bit7 : 1;
-    u8 bit8 : 1;
-    u8 bit9 : 1;
-    u8 bit10 : 1;
-    u8 bit11 : 1;
-    u8 NonNegotiable : 1 <name = "No Negotiation", comment = "If this turns on, every enemy in that battle can't be negotiated">;
-    u8 bit13 : 1;
-    u8 bit14 : 1;
-    u8 bit15 : 1;
-    u8 PreventKnockdown : 1 <name = "Prevent Knockdown", comment = "Enemy can never get knockdown 100% by Critical but not WEAK">;
-    u8 PositionHack : 1 <name = "Position Hack", comment = "Triggers Position Hack when you enter the battle">;
-    u8 NoHoldUp : 1 <name = "No Hold Up", comment = "Hold up after downing all enemies will not trigger">;
-    u8 shadownotdisappearinbattle : 1 <name = "Not Disappear in Battle", comment = "When the shadow HP reaches 0, it will not disperse if this is turned ON in ENCOUNT.TBL Flag">;
-    u8 BulletHailonstart : 1 <name = "Bullet Hail on Start", comment = "When you start the battle, you will always start with Bullet Hail">;
-    u8 NoNavigator : 1 <name = "No Navigator in Battle", comment = "This disables Navigator in battle">;
-    u8 bit22 : 1;
-    u8 loadbattlescript : 1 <name = "Battle script load", comment = "This will load the battle script for this particular battle (CAUTION: Will cause freeze if the battle script file is not exist)">;
-    u8 bit24 : 1;
-    u8 bit25 : 1;
-    u8 loadbattlescript2 : 1 <name = "BFL Battle script load", comment = "This will load the battle script including Battle Formation for this particular battle (CAUTION: Will cause freeze if the battle script file is not exist)">;
-    u8 EnemyFirstAct : 1 <name = "Enemy First Act", comment = "This will cause all enemies to act first turn as if party got ambushed. (Whether it must be scripted or random encounter is still unknown.">;
-    u8 NoCritical : 1 <name = "No Critical", comment = "Even if you have a skill with 100% Critical, it will never trigger critical if this is ON">;
-    u8 bit29 : 1;
+    u8 bit31 : 1;
     u8 bit30 : 1;
-    u8 NoEscape : 1 <name = "No Escape", comment = "This will make your battle unescapable if it is ON">;
+    u8 bit29 : 1;
+    u8 bit28 : 1;
+    u8 bit27 : 1;
+    u8 bit26 : 1;
+    u8 bit25 : 1;
+    u8 bit24 : 1;
+    u8 bit23 : 1;
+    u8 bit22 : 1;
+    u8 bit21 : 1;
+    u8 bit20 : 1;
+    u8 NonNegotiable : 1 <name = "No Negotiation (bit 19)", comment = "If this turns on, every enemy in that battle can't be negotiated">;
+    u8 bit18 : 1;
+    u8 bit17 : 1;
+    u8 bit16 : 1;
+    u8 PreventKnockdown : 1 <name = "Prevent Knockdown (bit 15)", comment = "Enemy can never get knockdown 100% by Critical but not WEAK">;
+    u8 PositionHack : 1 <name = "Position Hack (bit 14)", comment = "Triggers Position Hack when you enter the battle">;
+    u8 NoHoldUp : 1 <name = "No Hold Up (bit 13)", comment = "Hold up after downing all enemies will not trigger">;
+    u8 shadownotdisappearinbattle : 1 <name = "Not Disappear in Battle (bit 12)", comment = "When the shadow HP reaches 0, it will not disperse if this is turned ON in ENCOUNT.TBL Flag">;
+    u8 BulletHailonstart : 1 <name = "Bullet Hail on Start (bit 11)", comment = "When you start the battle, you will always start with Bullet Hail">;
+    u8 NoNavigator : 1 <name = "No Navigator in Battle (bit 10)", comment = "This disables Navigator in battle">;
+    u8 bit9 : 1;
+    u8 loadbattlescript : 1 <name = "Battle script load (bit 8)", comment = "This will load the battle script for this particular battle (CAUTION: Will cause freeze if the battle script file is not exist)">;
+    u8 bit7 : 1;
+    u8 bit6 : 1;
+    u8 loadbattlescript2 : 1 <name = "BFL Battle script load (bit 5)", comment = "This will load the battle script including Battle Formation for this particular battle (CAUTION: Will cause freeze if the battle script file is not exist)">;
+    u8 EnemyFirstAct : 1 <name = "Enemy First Act (bit 4)", comment = "This will cause all enemies to act first turn as if party got ambushed. (Whether it must be scripted or random encounter is still unknown.">;
+    u8 NoCritical : 1 <name = "No Critical (bit 3)", comment = "Even if you have a skill with 100% Critical, it will never trigger critical if this is ON">;
+    u8 bit2 : 1;
+    u8 bit1 : 1;
+    u8 NoEscape : 1 <name = "No Escape (bit 0)", comment = "This will make your battle unescapable if it is ON">;
 } b32;
 
+
 typedef struct
 {
-    bool Unknown : 1 <name = "Unknown">;
-    bool Unknown : 1 <name = "Unknown">;
-    bool Gift : 1 <name = "Gift">;
-    bool CraftingMaterial : 1 <name = "Crafting Material">;
-    bool DungeonItem : 1 <name = "Dungeon Item">;
-    bool Outfit : 1 <name = "Outfit">;
-    bool SkillCard : 1 <name = "Skill Card">;
-    bool Treasure : 1 <name = "Treasure">;
-    bool KeyItem : 1 <name = "Key Item">;
-    bool Consumable : 1 <name = "Consumable">;
-    bool Accessory : 1 <name = "Accessory">;
-    bool Armor : 1 <name = "Armor">;
-    bool Unknown : 1 <name = "Unknown">;
-    bool LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
-    bool ToyGun : 1 <name = "Toy Gun (Akechi)">;
-    bool GL : 1 <name = "Grenade Launcher (Haru)">;
-    bool Revolver : 1 <name = "Revolver (Makoto)">;
-    bool AR : 1 <name = "Assault Rifle (Yusuke)">;
-    bool Slingshot : 1 <name = "Slingshot (Morgana)">;
-    bool SMG : 1 <name = "SMG (Ann)">;
-    bool Shotgun : 1 <name = "Shotgun (Ryuji)">;
-    bool Handgun : 1 <name = "Handgun (Joker)">;
-    bool Unknown : 1 <name = "Unknown">;
-    bool Rapier : 1 <name = "Rapier (Kasumi)">;
-    bool BeamSword : 1 <name = "Beam Sword (Goro)">;
-    bool Axe : 1 <name = "Axe (Haru)">;
-    bool FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
-    bool Katana : 1 <name = "Katana (Yusuke)">;
-    bool BanditSword : 1 <name = "Bandit Sword (Morgana)">;
-    bool Whip : 1 <name = "Whip (Ann)">;
-    bool Crowbar : 1 <name = "Crowbar (Ryuji)">;
-    bool Dagger : 1 <name = "Dagger (Joker)">;
-} ItemType <name = "Icon">;
+    u8 Unknown : 1 <name = "Unknown">;
+    u8 Unknown : 1 <name = "Unknown">;
+    u8 Gift : 1 <name = "Gift">;
+    u8 CraftingMaterial : 1 <name = "Crafting Material">;
+    u8 DungeonItem : 1 <name = "Dungeon Item">;
+    u8 Outfit : 1 <name = "Outfit">;
+    u8 SkillCard : 1 <name = "Skill Card">;
+    u8 Treasure : 1 <name = "Treasure">;
+    u8 KeyItem : 1 <name = "Key Item">;
+    u8 Consumable : 1 <name = "Consumable">;
+    u8 Accessory : 1 <name = "Accessory">;
+    u8 Armor : 1 <name = "Armor">;
+    u8 Unknown : 1 <name = "Unknown">;
+    u8 LAR : 1 <name = "Lever-Action Rifle (Kasumi)">;
+    u8 ToyGun : 1 <name = "Toy Gun (Akechi)">;
+    u8 GL : 1 <name = "Grenade Launcher (Haru)">;
+    u8 Revolver : 1 <name = "Revolver (Makoto)">;
+    u8 AR : 1 <name = "Assault Rifle (Yusuke)">;
+    u8 Slingshot : 1 <name = "Slingshot (Morgana)">;
+    u8 SMG : 1 <name = "SMG (Ann)">;
+    u8 Shotgun : 1 <name = "Shotgun (Ryuji)">;
+    u8 Handgun : 1 <name = "Handgun (Joker)">;
+    u8 Unknown : 1 <name = "Unknown">;
+    u8 Rapier : 1 <name = "Rapier (Kasumi)">;
+    u8 BeamSword : 1 <name = "Beam Sword (Goro)">;
+    u8 Axe : 1 <name = "Axe (Haru)">;
+    u8 FistWeapons : 1 <name = "Fist Weapons (Makoto)">;
+    u8 Katana : 1 <name = "Katana (Yusuke)">;
+    u8 BanditSword : 1 <name = "Bandit Sword (Morgana)">;
+    u8 Whip : 1 <name = "Whip (Ann)">;
+    u8 Crowbar : 1 <name = "Crowbar (Ryuji)">;
+    u8 Dagger : 1 <name = "Dagger (Joker)">;
+} ItemType <edit=flags, name = "Icon">;
 
 
 //---------------------------------------------
@@ -629,10 +630,10 @@ typedef struct()
 
     struct
         {
-            byte : 6;
-            bool Enemies : 1 <name = "Enemies">;
-            bool Allies : 1 <name = "Allies">;
-        } ValidTargets <name = "Valid Targets">;
+            u8 : 6;
+            u8 Enemies : 1 <name = "Enemies">;
+            u8 Allies : 1 <name = "Allies">;
+        } ValidTargets <edit=flags,name = "Valid Targets">;
     
     Skill_TargetRestrictions TargetRestrictions <name = "Additional Target Restrictions">;
     u8 Unknown <name = "Unknown">;
@@ -654,87 +655,87 @@ typedef struct()
 
    struct
         {
-            bool Counter : 1 <name = "Counter?", comment = "it may be possibly counter mode exclusive to Yaldabaoth">;
-            bool Mouse : 1 <name = "Mouse", comment = "Only affects the Phantom Thieves">;
-            bool Gluttony : 1 <name = "Gluttony?", comment = "it may be possibly Gluttony ailment exclusive to Yaldabaoth">;
-            bool KnockDown : 1 <name = "Knock Down">;
-            bool Unconscious : 1 <name = "Unconscious">;
-            bool WeakToAllElements : 1 <name = "Weak to all Elements", comment = "Shock,Knockdown,Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
-            bool Jealousy : 1 <name = "Jealousy">;
-            bool Wrath : 1 <name = "Wrath">;
-        } Effect1 <name = "Effect List 1">;
+            u8 Counter : 1 <name = "Counter?", comment = "it may be possibly counter mode exclusive to Yaldabaoth">;
+            u8 Mouse : 1 <name = "Mouse", comment = "Only affects the Phantom Thieves">;
+            u8 Gluttony : 1 <name = "Gluttony?", comment = "it may be possibly Gluttony ailment exclusive to Yaldabaoth">;
+            u8 KnockDown : 1 <name = "Knock Down">;
+            u8 Unconscious : 1 <name = "Unconscious">;
+            u8 WeakToAllElements : 1 <name = "Weak to all Elements", comment = "Shock,Knockdown,Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            u8 Jealousy : 1 <name = "Jealousy">;
+            u8 Wrath : 1 <name = "Wrath">;
+        } Effect1 <edit=flags,name = "Effect List 1">;
 
     struct
         {
-            bool Lust : 1 <name = "Lust", comment = "Lust, Rage, Berserk can be combined into 1 single ailment">;
-            bool Panic : 1 <name = "Panic", comment = "Will cause Shadows to run away">;
-            bool Berserk : 1 <name = "Berserk", comment = "Visual effect only. Also, Lust, Rage, Berserk can be combined into 1 single ailment">;
-            bool Desparation : 1 <name = "Desparation", comment = "Attack up, Defense down; not affected by other buffs/debuffs">;
-            bool Brainwash : 1 <name = "Brainwash">;
-            bool Despair : 1 <name = "Despair", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
-            bool Rage : 1 <name = "Rage", comment = "Lust, Rage, Berserk can be combined into 1 single ailment">;
-            bool Sleep : 1 <name = "Sleep", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
-        } Effect2 <name = "Effect List 2">;
+            u8 Lust : 1 <name = "Lust", comment = "Lust, Rage, Berserk can be combined into 1 single ailment">;
+            u8 Panic : 1 <name = "Panic", comment = "Will cause Shadows to run away">;
+            u8 Berserk : 1 <name = "Berserk", comment = "Visual effect only. Also, Lust, Rage, Berserk can be combined into 1 single ailment">;
+            u8 Desparation : 1 <name = "Desparation", comment = "Attack up, Defense down; not affected by other buffs/debuffs">;
+            u8 Brainwash : 1 <name = "Brainwash">;
+            u8 Despair : 1 <name = "Despair", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            u8 Rage : 1 <name = "Rage", comment = "Lust, Rage, Berserk can be combined into 1 single ailment">;
+            u8 Sleep : 1 <name = "Sleep", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+        } Effect2 <edit=flags,name = "Effect List 2">;
 
    struct
         {
-            bool Hunger : 1 <name = "Hunger", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
-            bool Forget : 1 <name = "Forget", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
-            bool Fear : 1 <name = "Fear", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
-            bool Confuse : 1 <name = "Confuse", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
-            bool Dizzy : 1 <name = "Dizzy", comment = "Dizzy, Weakness and Knockdown can be combined into 1 single ailment">;
-            bool Shock : 1 <name = "Shock", comment = "Shock, Weakness and Knockdown can be combined into 1 single ailment">;
-            bool Freeze : 1 <name = "Freeze", comment = "Burn and Freeze can be combined into 1 single ailment">;
-            bool Burn : 1 <name = "Burn", comment = "Burn and Freeze can be combined into 1 single ailment">;
-        } Effect3 <name = "Effect List 3">;
+            u8 Hunger : 1 <name = "Hunger", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            u8 Forget : 1 <name = "Forget", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            u8 Fear : 1 <name = "Fear", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            u8 Confuse : 1 <name = "Confuse", comment = "Sleep,Hunger,Forget,Fear,Confuse,Weak,Despair can be combined into 1 single ailment">;
+            u8 Dizzy : 1 <name = "Dizzy", comment = "Dizzy, Weakness and Knockdown can be combined into 1 single ailment">;
+            u8 Shock : 1 <name = "Shock", comment = "Shock, Weakness and Knockdown can be combined into 1 single ailment">;
+            u8 Freeze : 1 <name = "Freeze", comment = "Burn and Freeze can be combined into 1 single ailment">;
+            u8 Burn : 1 <name = "Burn", comment = "Burn and Freeze can be combined into 1 single ailment">;
+        } Effect3 <edit=flags, name = "Effect List 3">;
 
    struct
         {
-            bool CoverPsy : 1 <name = "Cover Psy Weakness", comment = "Changes innate Psy weakness to neutral">;
-            bool CoverNuke : 1 <name = "Cover Nuke Weakness", comment = "Changes innate Nuke weakness to neutral">;
-            bool CoverWind : 1 <name = "Cover Wind Weakness", comment = "Changes innate Wind weakness to neutral">;
-            bool CoverElec : 1 <name = "Cover Electric Weakness", comment = "Changes innate Electric weakness to neutral">;
-            bool CoverIce : 1 <name = "Cover Ice Weakness", comment = "Changes innate Ice weakness to neutral">;
-            bool CoverFire : 1 <name = "Cover Fire Weakness", comment = "Changes innate Fire weakness to neutral">;
-            bool InstakillShield : 1 <name = "Instakill Shield", comment = "Blocks one instakill attack">;
-            bool BreakMagicShield : 1 <name = "Break Magic Shield", comment = "Breaks magic-reflecting shields like Makarakarn">;
-        } Effect4 <name = "Effect List 4">;
+            u8 CoverPsy : 1 <name = "Cover Psy Weakness", comment = "Changes innate Psy weakness to neutral">;
+            u8 CoverNuke : 1 <name = "Cover Nuke Weakness", comment = "Changes innate Nuke weakness to neutral">;
+            u8 CoverWind : 1 <name = "Cover Wind Weakness", comment = "Changes innate Wind weakness to neutral">;
+            u8 CoverElec : 1 <name = "Cover Electric Weakness", comment = "Changes innate Electric weakness to neutral">;
+            u8 CoverIce : 1 <name = "Cover Ice Weakness", comment = "Changes innate Ice weakness to neutral">;
+            u8 CoverFire : 1 <name = "Cover Fire Weakness", comment = "Changes innate Fire weakness to neutral">;
+            u8 InstakillShield : 1 <name = "Instakill Shield", comment = "Blocks one instakill attack">;
+            u8 BreakMagicShield : 1 <name = "Break Magic Shield", comment = "Breaks magic-reflecting shields like Makarakarn">;
+        } Effect4 <edit=flags, name = "Effect List 4">;
 
    struct
         {
-            bool BreakPhysicalShield : 1 <name = "Break Physical Shield", comment = "Breaks physical-reflecting shields like Tetrakarn">;
-            bool AilmentSusceptibility : 1 <name = "Ailment Susceptibility", comment = "increases the likelihood of recieving effects from Effect Lists 2 and 3">;
-            bool NegatePsyResist : 1 <name = "Negate Psy Resistance", comment = "Changes innate Psy resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
-            bool NegateNukeResist : 1 <name = "Negate Nuke Resistance", comment = "Changes innate Nuke resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
-            bool NegateWindResist : 1 <name = "Negate Wind Resistance", comment = "Changes innate Wind resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
-            bool NegateElecResist : 1 <name = "Negate Electric Resistance", comment = "Changes innate Electric resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
-            bool NegateIceResist : 1 <name = "Negate Ice Resistance", comment = "Changes innate Ice resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
-            bool NegateFireResist : 1 <name = "Negate Fire Resistance", comment = "Changes innate Fire resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
-        } Effect5 <name = "Effect List 5">;
+            u8 BreakPhysicalShield : 1 <name = "Break Physical Shield", comment = "Breaks physical-reflecting shields like Tetrakarn">;
+            u8 AilmentSusceptibility : 1 <name = "Ailment Susceptibility", comment = "increases the likelihood of recieving effects from Effect Lists 2 and 3">;
+            u8 NegatePsyResist : 1 <name = "Negate Psy Resistance", comment = "Changes innate Psy resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
+            u8 NegateNukeResist : 1 <name = "Negate Nuke Resistance", comment = "Changes innate Nuke resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
+            u8 NegateWindResist : 1 <name = "Negate Wind Resistance", comment = "Changes innate Wind resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
+            u8 NegateElecResist : 1 <name = "Negate Electric Resistance", comment = "Changes innate Electric resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
+            u8 NegateIceResist : 1 <name = "Negate Ice Resistance", comment = "Changes innate Ice resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
+            u8 NegateFireResist : 1 <name = "Negate Fire Resistance", comment = "Changes innate Fire resistance to neutral; does not override Cover Weakness effects from Effect List 4">;
+        } Effect5 <edit=flags, name = "Effect List 5">;
 
    struct
         {
-            bool MagicShield : 1 <name = "Magic Shield", comment = "Reflects the next magic attack received">;
-            bool PhysicalShield : 1 <name = "Physical Shield", comment = "Reflects the next physical attack received">;
-            bool CritWayUp : 1 <name = "Critical Chance Way Up">;
-            bool CritUp : 1 <name = "Critical Chance Up">;
-            bool RemoveDebuffs : 1 <name = "Remove Debuffs", comment = "Removes stat-lowering debuffs from the Buff/Debuff List">;
-            bool RemoveBuffs : 1 <name = "Remove Buffs", comment = "Removes stat-raising buffs from the Buff/Debuff List">;
-            bool Concentrate : 1 <name = "Concentrate", comment = "Next Magic-based attack deals 2.5x damage">;
-            bool Charge : 1 <name = "Charge", comment = "Next Strength-based attack deals 2.5x damage">;
-        } Effect6 <name = "Effect List 6">;
+            u8 MagicShield : 1 <name = "Magic Shield", comment = "Reflects the next magic attack received">;
+            u8 PhysicalShield : 1 <name = "Physical Shield", comment = "Reflects the next physical attack received">;
+            u8 CritWayUp : 1 <name = "Critical Chance Way Up">;
+            u8 CritUp : 1 <name = "Critical Chance Up">;
+            u8 RemoveDebuffs : 1 <name = "Remove Debuffs", comment = "Removes stat-lowering debuffs from the Buff/Debuff List">;
+            u8 RemoveBuffs : 1 <name = "Remove Buffs", comment = "Removes stat-raising buffs from the Buff/Debuff List">;
+            u8 Concentrate : 1 <name = "Concentrate", comment = "Next Magic-based attack deals 2.5x damage">;
+            u8 Charge : 1 <name = "Charge", comment = "Next Strength-based attack deals 2.5x damage">;
+        } Effect6 <edit=flags, name = "Effect List 6">;
 
     struct
         {
-            bool AccuracyDown : 1 <name = "Accuracy Down">;
-            bool AccuracyUp : 1 <name = "Accuracy Up">;
-            bool DefenseDown : 1 <name = "Defense Down">;
-            bool DefenseUp : 1 <name = "Defense Up">;
-            bool EvasionDown : 1 <name = "Evasion Down">;
-            bool EvasionUp : 1 <name = "Evasion Up">;
-            bool AttackDown : 1 <name = "Attack Down">;
-            bool AttackUp : 1 <name = "Attack Up">;
-        } BuffDebuff <name = "Buffs and Debuffs">;
+            u8 AccuracyDown : 1 <name = "Accuracy Down">;
+            u8 AccuracyUp : 1 <name = "Accuracy Up">;
+            u8 DefenseDown : 1 <name = "Defense Down">;
+            u8 DefenseUp : 1 <name = "Defense Up">;
+            u8 EvasionDown : 1 <name = "Evasion Down">;
+            u8 EvasionUp : 1 <name = "Evasion Up">;
+            u8 AttackDown : 1 <name = "Attack Down">;
+            u8 AttackUp : 1 <name = "Attack Up">;
+        } BuffDebuff <edit=flags, name = "Buffs and Debuffs">;
 
     u8 UnknownR;
     u16 RESERVE_2A;
@@ -743,7 +744,7 @@ typedef struct()
     u8 CritChance <name = "Crit Chance", comment = "Only works for Physical or Gun skills">;
     u8 ForItem <name = "For Item?", comment = "Not sure what this does since it has 20 value on Firecracker, Magatama item">;
     u8 Unknown <name = "Unknown">;
-} TSkill_ActiveSkillData <name="Active Skill Data", read=Str("Base Damage - %03d", this.BaseDamage)>;
+} TSkill_ActiveSkillData <name="Active Skill Data">;
 
 typedef struct
 {
