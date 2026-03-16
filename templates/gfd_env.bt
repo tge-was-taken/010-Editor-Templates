@@ -1,0 +1,716 @@
+//------------------------------------------------
+//--- 010 Editor v12.0 Binary Template
+//
+//      File: gfd_env.bt
+//   Authors: Rirurin (based on p5_env by TGE, Cherry, Sierra, SecreC)
+//   Version: 1.0
+//   Purpose: Parse Persona 5 / Metaphor: Refantazio ENV files
+//  Category: GFD
+// File Mask: *.env
+//  ID Bytes:
+//   History:
+//------------------------------------------------
+
+typedef char bool;
+typedef char s8;
+typedef uchar u8;
+typedef int16 s16;
+typedef uint16 u16;
+typedef int16 s16;
+typedef int32 s32;
+typedef uint32 u32;
+typedef int64 s64;
+typedef uint64 u64;
+typedef hfloat f16;
+typedef float f32;
+typedef double f64;
+
+local f32 ColorExp = 2.2;
+
+enum<u8> Boolean
+{
+    False = false,
+    True = true,
+};
+
+string GetBooleanString(Boolean value) {
+    string buffer;
+    if (value == False) {
+        SPrintf(buffer, "False");
+    } else {
+        SPrintf(buffer, "True");
+    }
+    return buffer;
+}
+
+local uint __RandomSeed = 0xDEADBABE;
+local uint __RandomBit = 0;
+local uint __RandomCount = 0;
+
+uint MyRandom(uint to)
+{
+    ++__RandomCount;
+    __RandomBit = ((__RandomSeed >> 0) ^ (__RandomSeed >> 2) ^ (__RandomSeed >> 3) ^ (__RandomSeed >> 5)) & 1;
+    __RandomSeed = ((((__RandomBit << 15) | (__RandomSeed >> 1)) + (0xBABE / __RandomCount)) % to);
+
+    while (__RandomSeed < 0)
+        __RandomSeed += to;
+
+    return __RandomSeed;
+}
+
+typedef struct {
+    f32 x;
+    f32 y;
+    f32 z;
+} Vector3 <read=(Str("vec3(%g, %g, %g)", x, y, z))>;
+
+typedef struct {
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 a;
+} ByteColorRGBA<read=(Str("#%.2x%.2x%.2x%.2x", r, g, b, a))>;
+
+typedef struct {
+    f32 r;
+    f32 g;
+    f32 b;
+} FloatColorRGB <read=(Str("#%.2x%.2x%.2x", r * 255, g * 255, b * 255))>;
+
+string ReadFloatColorRGBA(struct FloatColorRGBA& self) {
+    string buffer;
+    SPrintf(buffer, "#%.2x%.2x%.2x%.2x <%g, %g, %g, %g>", 
+        self.r * 255, self.g * 255,self. b * 255, self.a * 255,
+        Pow(self.r, ColorExp), Pow(self.g, ColorExp), Pow(self.b, ColorExp), Pow(self.a, ColorExp)
+    );
+    return buffer;
+}
+
+typedef struct {
+    f32 r;
+    f32 g;
+    f32 b;
+    f32 a;
+} FloatColorRGBA <read=ReadFloatColorRGBA>;
+
+local uint sHashTable[256] =
+{
+  0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3,
+  0x0EDB8832, 0x79DCB8A4, 0xE0D5E91E, 0x97D2D988, 0x09B64C2B, 0x7EB17CBD, 0xE7B82D07, 0x90BF1D91,
+  0x1DB71064, 0x6AB020F2, 0xF3B97148, 0x84BE41DE, 0x1ADAD47D, 0x6DDDE4EB, 0xF4D4B551, 0x83D385C7,
+  0x136C9856, 0x646BA8C0, 0xFD62F97A, 0x8A65C9EC, 0x14015C4F, 0x63066CD9, 0xFA0F3D63, 0x8D080DF5,
+  0x3B6E20C8, 0x4C69105E, 0xD56041E4, 0xA2677172, 0x3C03E4D1, 0x4B04D447, 0xD20D85FD, 0xA50AB56B,
+  0x35B5A8FA, 0x42B2986C, 0xDBBBC9D6, 0xACBCF940, 0x32D86CE3, 0x45DF5C75, 0xDCD60DCF, 0xABD13D59,
+  0x26D930AC, 0x51DE003A, 0xC8D75180, 0xBFD06116, 0x21B4F4B5, 0x56B3C423, 0xCFBA9599, 0xB8BDA50F,
+  0x2802B89E, 0x5F058808, 0xC60CD9B2, 0xB10BE924, 0x2F6F7C87, 0x58684C11, 0xC1611DAB, 0xB6662D3D,
+  0x76DC4190, 0x01DB7106, 0x98D220BC, 0xEFD5102A, 0x71B18589, 0x06B6B51F, 0x9FBFE4A5, 0xE8B8D433,
+  0x7807C9A2, 0x0F00F934, 0x9609A88E, 0xE10E9818, 0x7F6A0DBB, 0x086D3D2D, 0x91646C97, 0xE6635C01,
+  0x6B6B51F4, 0x1C6C6162, 0x856530D8, 0xF262004E, 0x6C0695ED, 0x1B01A57B, 0x8208F4C1, 0xF50FC457,
+  0x65B0D9C6, 0x12B7E950, 0x8BBEB8EA, 0xFCB9887C, 0x62DD1DDF, 0x15DA2D49, 0x8CD37CF3, 0xFBD44C65,
+  0x4DB26158, 0x3AB551CE, 0xA3BC0074, 0xD4BB30E2, 0x4ADFA541, 0x3DD895D7, 0xA4D1C46D, 0xD3D6F4FB,
+  0x4369E96A, 0x346ED9FC, 0xAD678846, 0xDA60B8D0, 0x44042D73, 0x33031DE5, 0xAA0A4C5F, 0xDD0D7CC9,
+  0x5005713C, 0x270241AA, 0xBE0B1010, 0xC90C2086, 0x5768B525, 0x206F85B3, 0xB966D409, 0xCE61E49F,
+  0x5EDEF90E, 0x29D9C998, 0xB0D09822, 0xC7D7A8B4, 0x59B33D17, 0x2EB40D81, 0xB7BD5C3B, 0xC0BA6CAD,
+  0xEDB88320, 0x9ABFB3B6, 0x03B6E20C, 0x74B1D29A, 0xEAD54739, 0x9DD277AF, 0x04DB2615, 0x73DC1683,
+  0xE3630B12, 0x94643B84, 0x0D6D6A3E, 0x7A6A5AA8, 0xE40ECF0B, 0x9309FF9D, 0x0A00AE27, 0x7D079EB1,
+  0xF00F9344, 0x8708A3D2, 0x1E01F268, 0x6906C2FE, 0xF762575D, 0x806567CB, 0x196C3671, 0x6E6B06E7,
+  0xFED41B76, 0x89D32BE0, 0x10DA7A5A, 0x67DD4ACC, 0xF9B9DF6F, 0x8EBEEFF9, 0x17B7BE43, 0x60B08ED5,
+  0xD6D6A3E8, 0xA1D1937E, 0x38D8C2C4, 0x4FDFF252, 0xD1BB67F1, 0xA6BC5767, 0x3FB506DD, 0x48B2364B,
+  0xD80D2BDA, 0xAF0A1B4C, 0x36034AF6, 0x41047A60, 0xDF60EFC3, 0xA867DF55, 0x316E8EEF, 0x4669BE79,
+  0xCB61B38C, 0xBC66831A, 0x256FD2A0, 0x5268E236, 0xCC0C7795, 0xBB0B4703, 0x220216B9, 0x5505262F,
+  0xC5BA3BBE, 0xB2BD0B28, 0x2BB45A92, 0x5CB36A04, 0xC2D7FFA7, 0xB5D0CF31, 0x2CD99E8B, 0x5BDEAE1D,
+  0x9B64C2B0, 0xEC63F226, 0x756AA39C, 0x026D930A, 0x9C0906A9, 0xEB0E363F, 0x72076785, 0x05005713,
+  0x95BF4A82, 0xE2B87A14, 0x7BB12BAE, 0x0CB61B38, 0x92D28E9B, 0xE5D5BE0D, 0x7CDCEFB7, 0x0BDBDF21,
+  0x86D3D2D4, 0xF1D4E242, 0x68DDB3F8, 0x1FDA836E, 0x81BE16CD, 0xF6B9265B, 0x6FB077E1, 0x18B74777,
+  0x88085AE6, 0xFF0F6A70, 0x66063BCA, 0x11010B5C, 0x8F659EFF, 0xF862AE69, 0x616BFFD3, 0x166CCF45,
+  0xA00AE278, 0xD70DD2EE, 0x4E048354, 0x3903B3C2, 0xA7672661, 0xD06016F7, 0x4969474D, 0x3E6E77DB,
+  0xAED16A4A, 0xD9D65ADC, 0x40DF0B66, 0x37D83BF0, 0xA9BCAE53, 0xDEBB9EC5, 0x47B2CF7F, 0x30B5FFE9,
+  0xBDBDF21C, 0xCABAC28A, 0x53B39330, 0x24B4A3A6, 0xBAD03605, 0xCDD70693, 0x54DE5729, 0x23D967BF,
+  0xB3667A2E, 0xC4614AB8, 0x5D681B02, 0x2A6F2B94, 0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
+};
+
+uint BitwiseRotateLeft( uint x, int amount )
+{
+  return ( x << amount ) | ( x >> ( ( 32 - amount ) & 31 ) );
+}
+
+int GenerateStringHash( char value[] )
+{
+  local uint len = Strlen( value );
+
+  if ( !len )
+    return 0;
+
+  local uint hash = len;
+
+  local int i;
+  local uint tableIdx;
+
+  for ( i = 0; i < len; i++ )
+  {
+    tableIdx = hash ^ ( byte )( value[i] );
+    tableIdx = ( BitwiseRotateLeft( tableIdx, 2 ) & 0x000003FC ) / sizeof( uint );
+    hash = BitwiseRotateLeft( hash, 24 ) & 0x00FFFFFF;
+    hash ^= sHashTable[tableIdx];
+  }
+
+  return ( int )hash;
+}
+
+string THashStringToString( struct THashString& value )
+{
+    if ( value.Length == 0 )
+        return "<empty string>";
+
+    string buffer;
+    SPrintf( buffer, "%s (%08X) [%08X]", value.Str, value.Hash, GenerateStringHash( value.Str ) );
+
+    return buffer;
+}
+
+typedef struct
+{
+  SetBackColor(MyRandom(0xFFFFFFFF));
+  u16 Length;
+
+  if ( Length )
+  {
+    char Str[Length];
+
+    if ( header.Version > 0x01080000 )
+    {
+      u32 Hash;
+    }
+  }
+} THashString <optimize=false, read=THashStringToString>;
+
+typedef struct
+{
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    char Magic[4];
+    u32 Version<format = hex, name = "GFS Version">;
+    Printf("\nVersion Number: %Lx\n", Version);
+    u32 FileType<name = "File Type">;
+    u32 Field0C;
+
+} Header<read=Str("%s, ver 0x%x", Magic, Version)>;
+
+string ReadGfdEnvironmentLight(struct GfdEnvironmentLightBase& self) {
+    string buffer;
+    SPrintf(buffer, "light type %d: amb %s, diff %s, spec %s", self.type, ReadFloatColorRGBA(self.ambient), ReadFloatColorRGBA(self.diffuse), ReadFloatColorRGBA(self.specular));
+    return buffer;
+}
+
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Boolean active<name="Is Active?">;
+    u8 type<name="Light Type">;
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    FloatColorRGBA ambient<name="Ambient Color">;
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    FloatColorRGBA diffuse<name="Diffuse Color">;
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    FloatColorRGBA specular<name="Specular Color">;
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    f32 kC;
+    f32 kL;
+    f32 kQ;
+    f32 theta;
+    f32 phi;
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Vector3 position<name="Light Position">;
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Vector3 rotation<name="Light Rotation">;
+    
+} GfdEnvironmentLightBase<read=ReadGfdEnvironmentLight>;
+
+typedef struct {
+    GfdEnvironmentLightBase data;
+    if (header.Version >= 0x2098001) {
+        f32 MetaphorField0;
+        if (header.Version >= 0x2104001) {
+            f32 MetaphorField1;
+        }
+    }
+} GfdEnvironmentLightField<read=ReadGfdEnvironmentLight(data)>;
+typedef struct {
+    GfdEnvironmentLightBase data;
+    if (header.Version >= 0x2098001) {
+        f32 MetaphorField0;
+    }
+} GfdEnvironmentLightIndependence<read=ReadGfdEnvironmentLight(data)>;
+
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    f32 fovy;
+    f32 nearClip;
+    f32 farClip;
+} GfdEnvironmentCamera;
+
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Boolean Enabled;
+    f32 Field200;
+    f32 Field204<name="fogParametersR">;
+    f32 Field208<name="fogParametersG", read=Str("%g -> %g", this, (50-this)*0.0001)>;
+    f32 Field20c<name="fogColorParameterA">;
+    f32 Field210<name="fogParametersA", read=Str("%d -> %d", this, this*0.001*200000)>;
+    f32 Field214;
+    f32 Field218<name="fogColorR">;
+    f32 Field21c<name="fogColorG">;
+    f32 Field220<name="fogColorB">;
+    f32 Field228<name="dirInscatColorA">;
+    f32 Field22c<name="dirInscatStartDistance", read=Str("%g -> %g", this, this*200000)>;
+    f32 Field230<name="dirInscatColorR">;
+    f32 Field234<name="dirInscatColorG">;
+    f32 Field238<name="dirInscatColorB">;
+    if (header.Version >= 0x2101001) {
+        f32 Field224<name="fogColorMultiplyFactor">;
+        f32 Field23c<name="dirInscatMultiplyFactor">;
+        if (header.Version >= 0x2110111) {
+            f32 Field258<name="fogColorParameter_skyR">;
+            f32 Field25c<name="fogColorParameter_skyG">;
+            f32 Field260<name="fogColorParameter_skyB">;
+            f32 Field264<name="fogColorParameter_skyMultiplyFactor">;
+            f32 Field24c<name="fogColorParameter_skyA">;
+            if (header.Version >= 0x2110175) {
+                f32 Field280;
+                f32 Field284;
+                f32 Field288;
+                f32 Field28c;
+                f32 Field290;
+                u8 Field294;
+            }
+        }    
+    }
+} MetaphorSection1<read=Str("Enabled: %s", GetBooleanString(Enabled))>;
+
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Boolean Active;
+    f32 end;
+    f32 start;
+    FloatColorRGBA color<name="Height Fog Color">;
+} GfdEnvironmentHeightFog;
+
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    if (header.Version >= 0x2110188) {
+        f32 Field240;
+        f32 Field244;
+        f32 Field248;
+        f32 Field250;
+        f32 Field254;
+        f32 Field268;
+        f32 Field26c;
+        f32 Field270;
+        f32 Field274;
+        f32 Field278;
+        f32 Field27c;
+    }
+    Boolean Active;
+    if (header.Version >= 0x2110219) {
+        Boolean Field298;
+    }
+    if (header.Version > 0x1102000) {
+        u16 Mode;
+    }
+    Boolean CameraClip;
+    f32 NearClip;
+    f32 FarClip;
+    FloatColorRGBA color<name="Fog Color">;
+    if (header.Version >= 0x2110194) {
+        f32 Field2BC;
+        f32 Field2C0;
+        FloatColorRGBA Field2C4;
+    }
+    if (header.Version >= 0x2110175) {
+        FloatColorRGBA Field2D4;
+        u8 Field2E4;
+    }
+    if (header.Version > 0x1104020) {
+        GfdEnvironmentHeightFog heightFog<name="Height Fog">;
+    }
+    if (header.Version >= 0x2110174) {
+        f32 Field304;
+        f32 Field308;
+    }
+    if (header.Version > 0x2110120) {
+        FloatColorRGBA Field30C<name="fogHeightColor_sky">;
+    }
+    if (header.Version >= 0x2110175) {
+        FloatColorRGBA Field31C;
+        u8 Field32C;
+    }
+} GfdEnvironmentFog;
+
+typedef struct {
+    Boolean ToneMap;
+    Boolean StarFilter;
+    Boolean AdaptedLumAuto;
+    f32 middleGray;
+    f32 bloomScale;
+    f32 starScale;
+    f32 adaptedLum;
+    f32 elapsedTime;
+    if (header.Version >= 0x1104301) {
+        f32 starLength;
+        f32 starGlareCA;
+        f32 starGlareSI;
+        u32 starNumLines;
+    }
+    if (header.Version >= 0x1105041) {
+        if (header.Version < 0x1105051) {
+            u8 P5RField0;
+            u32 P5RField1;
+            u32 P5RField2;
+            u32 P5RField3;
+        } else {
+            u8 Field337;
+            f32 Field35C;
+            f32 Field360;
+            if (header.Version >= 0x2109401) {
+                f32 Field36C;
+            }
+            if (header.Version >= 0x2110181) f32 Field368;
+            if (header.Version >= 0x2110197) f32 Field370;
+            if (header.Version >= 0x2110201) f32 Field374;
+            if (header.Version >= 0x2110202) {
+                f32 Field378;
+                u8 Field37C;
+                f32 Field380;
+            }
+            if (header.Version >= 0x2110171) {
+                f32 Field384;
+                f32 Unk;
+            }
+        }
+    }
+} GfdDeviceHDRParams<read=Str("Tone Map: %s, Star Filter: %s, Adapted Lum Auto: %s", GetBooleanString(ToneMap), GetBooleanString(StarFilter), GetBooleanString(AdaptedLumAuto))>;
+
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Boolean active;
+    GfdDeviceHDRParams params;
+} GfdEnvironmentHDR<read=Str("Enabled: %s", GetBooleanString(active))>;
+
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Boolean Enabled;
+    f32 FilmSlope;
+    f32 FilmToe;
+    f32 FilmShoulder;
+    f32 FilmBlackClip;
+    f32 FilmWhiteClip;
+    if (header.Version > 0x2103000) {
+        f32 FilmAlpha;
+    }
+} MetaphorSection2<read=Str("Enabled: %s", GetBooleanString(Enabled))>;
+
+// TODO
+typedef struct {
+    f32 focalPlane;
+    f32 NearBlurPlane;
+    f32 FarBlurPlane;
+    f32 FarBlurLimit;
+    f32 BlurScale;
+    if (header.Version < 0x2099001) {
+        if (header.Version > 0x1105000) {
+            u32 GaussType;
+        }
+    } else {
+        f32 Field3BC;
+        f32 Field3C0;
+        u32 GaussType;    
+    }
+    
+} gfdDeviceDOFParams;
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Boolean Enabled;
+    if (header.Version > 0x2110219) {
+        u8 Field3C9;
+    }
+    f32 Field3E0;
+    f32 Field3E4;
+    f32 Field3E8;
+    f32 Field3EC;
+    if (header.Version < 0x2110187) {
+        f32 Unk0;
+        f32 Unk1;
+    } else {
+        FloatColorRGBA Field3F0<name="Composite Color">;
+    }
+} MetaphorSection11<read=Str("Enabled: %s", GetBooleanString(Enabled))>;
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Boolean Enabled;
+    u32 Field404;
+    f32 Field408<name="Shadow Far Clip (shadowSplit.b)">;
+    if (header.Version > 0x2110220) {
+        f32 Field40C;
+    }
+    f32 Field410;
+    f32 Field414;
+    f32 Field418;
+    f32 Field41c;
+    f32 Field420;
+    f32 Field424;
+    f32 Field428;
+    if (header.Version >= 0x2050011 ) {
+        FloatColorRGBA Field42C;
+    }
+} MetaphorSection12<read=Str("Enabled: %s", GetBooleanString(Enabled))>;
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Boolean Enabled_All;
+    f32 Field440<name="Screen Red/Cyan">;
+    f32 Field444<name="Screen Green/Magenta">;
+    f32 Field448<name="Screen Blue/Yellow">;
+    f32 Field44c<name="Screen Dodge">;
+    if (header.Version >= 0x1104141) {
+        f32 Field450<name="Screen Burn">;
+        if (header.Version >= 0x2000005) {
+            f32 Field454<name="Screen Hue">;
+            f32 Field458<name="Screen Saturation">;
+            f32 Field45c<name="Screen Lightness">;
+        }
+    }
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    if (header.Version < 0x2000002) {
+        FSeek(FTell() + 0x10);
+    } else if (header.Version >= 0x2092001) {
+        Boolean Enabled_Exct;
+        f32 Field464<name="Field Red/Cyan">;
+        f32 Field468<name="Field Green/Magenta">;
+        f32 Field46c<name="Field Blue/Yellow">;
+        f32 Field470<name="Field Dodge">;
+        f32 Field474<name="Field Burn">;
+        f32 Field478<name="Field Hue">;
+        f32 Field47c<name="Field Saturation">;
+        f32 Field480<name="Field Lightness">;
+    }
+} MetaphorSection10<read=Str("Screen: %s, Field: %s", GetBooleanString(Enabled_All), GetBooleanString(Enabled_Exct))>;
+
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Boolean active;
+    gfdDeviceDOFParams params;
+} GfdEnvironmentDOF<read=Str("Enabled: %s", GetBooleanString(active))>;
+
+// TODO
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Boolean Enabled;
+    f32 Field488;
+    if (header.Version >= 0x1104091) {
+        f32 Field48C;
+    }
+    if (header.Version >= 0x1104961) {
+        f32 Field490;
+    }
+    if (header.Version >= 0x1105021) {
+        f32 Field494;
+        f32 Field498;
+    }
+    if (header.Version >= 0x2093001) {
+        f32 Field49C;
+        f32 Field4A0;
+        f32 Field4A4;
+    }
+    if (header.Version >= 0x2110207) {
+        u8 Field4A8;
+        f32 Field4AC;
+    }
+} MetaphorSection4<read=Str("Enabled: %s", GetBooleanString(Enabled))>;
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Boolean Active;
+    Vector3 Direction;
+    f32 MinPower;
+    f32 MaxPower;
+    f32 MinCycle;
+    f32 MaxCycle;
+} GfdEnvironmentWind;
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Boolean Active;
+    f32 Gravity;
+    if (header.Version >= 0x1104121) {
+        GfdEnvironmentWind Wind;
+    }
+    if (header.Version >= 0x2109201) {
+        u32 Field4d8;
+        u8 Field4dc;
+        f32 Field4e0;
+    }
+} GfdEnvironmentPhysics<read=Str("Enabled: %s", GetBooleanString(Active))>;
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Boolean Enabled;
+    if (header.Version < 0x2109801) {
+        f32 Unk0;
+    } else {
+        f32 WobbFocalPlane;
+        f32 WobbNearRange;
+        f32 WobbFarRange;
+        f32 WobbFarBlurLimit;
+    }
+    if (header.Version >= 0x2020001) {
+        f32 WobbPower<read=Str("%g -> %g", this, this*0.0001)>;
+    }
+    if (header.Version < 0x2109801) {
+        f32 Unk0;
+    } else {
+        f32 EdgeFocalPlane;
+        f32 EdgeNearRange;
+        f32 EdgeFarRange;
+        f32 EdgeFarBlurLimit;
+    }
+    if (header.Version >= 0x2020001) {
+        f32 EdgeSize;
+        f32 EdgePower;
+    }
+    if (header.Version >= 0x2050011) {
+        f32 WobbScale<read=Str("%g -> %g", this, (1-this)*0.001)>;
+        if (header.Version >= 0x2100001) {
+            f32 EdgeLimit<read=Str("%g -> %g", this, this*0.01)>;
+        }
+        if (header.Version >= 0x2109301) {
+            f32 Field51C<name="EdgeColorR", read=Str("%g -> %g", this, Pow(this, ColorExp))>;
+            f32 Field520<name="EdgeColorG", read=Str("%g -> %g", this, Pow(this, ColorExp))>;
+            f32 Field524<name="EdgeColorB", read=Str("%g -> %g", this, Pow(this, ColorExp))>;
+        }
+        if (header.Version >= 0x2110081) {
+            f32 edgesize_sky;
+            f32 edgepower_sky;
+            f32 edgelimit_sky;
+        }
+    }
+} GfdEnvironmentTemperare<read=Str("Enabled: %s", GetBooleanString(Enabled))>;
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Boolean Enabled;
+    f32 Field538<name="Global Density">;
+    f32 Field53c<name="Phase">;
+    f32 Field540<name="Coverage">;
+    f32 Field544<name="Type">;
+    f32 Field548<name="Wetness">;
+    f32 Field54c<name="WindSpeed">;
+    f32 Field550<name="WindAngle">;
+    f32 Field554<name="GodrayWeight">;
+    f32 Field558<name="GodrayDensity">;
+    f32 Field55c<name="GodrayDecay">;
+    f32 Field560<name="SunDiskScale">;
+    f32 Field564<name="SunLuminance">;
+    f32 Field568<name="ResolutionDiv">;
+    s32 Field56c<name="StepMaxNum">;
+    if (header.Version >= 0x2110011) {
+        FloatColorRGBA CloudColor;
+    }
+} MetaphorSection8<read=Str("Enabled: %s", GetBooleanString(Enabled))>;
+// TODO
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Boolean Enabled;
+    f32 Field584<name="Weight">;
+    f32 Field588;
+} MetaphorSection5<read=Str("Enabled: %s", GetBooleanString(Enabled))>;
+// TODO
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    Boolean Enabled;
+    f32 Field594<name="Water Animated Speed", read=Str("%g ->  %g", this, this*0.01)>;
+    f32 Field598;
+    f32 Field59c<name="Wave Scale">;
+    f32 Field5a0<name="TC Scale">;
+    f32 Field5a4<name="Ocean Depth Scale">;
+    f32 Field5a8<name="Disturbance Camera Scale">;
+    f32 Field5ac<name="Disturbance Depth Scale">;
+    f32 Field5b0<name="Scattering Camera Scale">;
+    f32 Field5b4<name="Disturbance Tolerance">;
+    f32 Field5b8<name="Foam Tolerance">;
+    f32 Field5bc<name="Caustics Tolerance">;
+    Boolean Field5c0;
+    Boolean Field5c1;
+} MetaphorSection6<read=Str("Enabled: %s", GetBooleanString(Enabled))>;
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    FloatColorRGB Field5d0<name="Scene Ambient PBR">;
+    f32 Field5DC;
+    //FloatColorRGBA Field5e0<name="Color 2">;
+    f32 Field5E0;
+    f32 Field5E4;
+    f32 Field5E8<name="ENV_COLORS.sceneAmbientToon.B", read=Str("%g -> %g", this, Pow(this, ColorExp))>;
+    f32 Field5EC<name="ENV_COLORS.sceneToonShadowAlpha", read=Str("%g -> %g", this, Pow(this, ColorExp))>;
+} MetaphorSection9;
+
+// TODO
+typedef struct {
+    SetBackColor(MyRandom(0xFFFFFFFF));
+    FloatColorRGBA Field5F0<name="Scene Ambient Sky">;
+    f32 Field6C8;
+    FloatColorRGBA Field600<name="Scene Sky Color">; // * 3 (Brilehaven ENV)
+    FloatColorRGBA Field610<name="Scene ENV Color">;
+    FloatColorRGBA Field620<name="Scene ENV Color Toon">;
+    f32 Field630;
+    f32 Field634;
+    FloatColorRGBA Field638<name="Water Deep Color (No Skybox Influence)">;
+    FloatColorRGBA Field648<name="Water Scatter Color (No Skybox Influence)">;
+    FloatColorRGBA Field658<name="Water Reflection Color (No Skybox Influence)">;
+    FloatColorRGBA Field668<name="Water Foam Color (No Skybox Influence)">;
+    FloatColorRGBA Field678<name="Water Deep Color (Skybox Influenced)">;
+    FloatColorRGBA Field688<name="Water Deep Color (Skybox Influenced)">;
+    FloatColorRGBA Field698<name="Water Deep Color (Skybox Influenced)">;
+    FloatColorRGBA Field6A8<name="Water Deep Color (Skybox Influenced)">;
+    FloatColorRGBA Field6B8<name="Scene Sky Fog Color">;
+    u32 Field6CC;
+    THashString HDRFilename;
+    THashString IBLFilename;
+    THashString LUTFilename;
+    THashString EnvToonFilename;
+    Boolean Field789<name="Has Skybox Mesh">;
+    THashString SkyboxObject;
+    f32 Field784<name="Skybox Y Offset">;
+    Boolean Field788<name="Unknown Skybox Flag">;
+    f32 Field758;
+    f32 Field75C;
+
+} MetaphorSection7;
+
+if (ReadUInt() == 0x30534647) 
+{
+    BigEndian();
+}
+Header header<name = "ENV Header">;
+GfdEnvironmentLightField lights[3]<name="Field Lights">;
+GfdEnvironmentLightIndependence independenceLight<name="Character Light">;
+GfdEnvironmentCamera camera<name="Camera Settings">;
+if (header.Version >= 0x2020000)
+    MetaphorSection1 metaphorSection1<name="Fog Parameters 1 (GFD_PSCONST_FOG)">;
+GfdEnvironmentFog fog<name="Fog Parameters 2 (GFD_PSCONST_FOG)">;
+GfdEnvironmentHDR hdr<name="HDR (GFD_PSCONST_HDR)">;
+if (header.Version >= 0x2102001)
+    MetaphorSection2 section2<name="Tone Map (GFD_PSCONST_TONEMAP)">;
+GfdEnvironmentDOF dof<name="Depth of Field (GFD_PSCONST_DOF)">;
+if (header.Version >= 0x2099001)
+    MetaphorSection11 section11<name="SSAO (GFD_PSCONST_SSAO)">;
+MetaphorSection12 section12<name="Shadow? (GFD_PSCONST_SHADOW)">;
+MetaphorSection10 section10<name="Color Correction (GFD_PSCONST_CORRECT)">;
+MetaphorSection4 section4;
+GfdEnvironmentPhysics physics<name="Physics">;
+if (header.Version >= 0x2020001)
+    GfdEnvironmentTemperare temperare<name="Temperare (GFD_PSCONST_TEMPERARE)">;
+if (header.Version > 0x205ffff )
+    MetaphorSection8 section8<name="Clouds (GFD_PSCONST_CLOUDS)">;
+if (header.Version >= 0x2110173)
+    MetaphorSection5 section5<name="LUT Recolor Weighting (GFD_PSCONST_LUT)">;
+if (header.Version >= 0x2110205)
+    MetaphorSection6 section6<name="Infinite Ocean (gfdInfiniteOcean.gfs)">;
+if (header.Version >= 0x2110205)
+    MetaphorSection9 section9<name="LUT Recolor Parameters">;
+if (header.Version >= 0x2110185)
+    MetaphorSection7 section7<name="Environment Colors">;
+u32 EOF<hidden=true>;
+Assert(EOF == 0x12 || EOF == 0x52, "End of file got unexpected value. Should be 0x12");

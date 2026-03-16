@@ -1,0 +1,1746 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: metaphor_fld.bt
+//   Authors: Rirurin
+//   Version: 1.0
+//   Purpose: Parse Metaphor: Refantazio field files (COMMON\field\source, COMMON\init\data)
+//  Category: 
+// File Mask: *.acttbl, *.act, *.doortbl, *.eff, *.enmtbl, *.enm, *gpstbl, *.gem, *.gmk, *.hourtbl, *.ladtbl, *.plt, *.bbx, *.mps, *.npctbl, *.mobtbl, *.pcd, *.pos, *.layout, *.crv, *.tbx
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "common/include.h";
+
+// Common types
+
+typedef struct {
+    f32 x;
+    f32 y;
+    f32 z;
+} Vector3 <read=ReadVector3>;
+string ReadVector3(Vector3& self) { return Str("<%g, %g, %g>", self.x, self.y, self.z); }
+
+typedef struct {
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 w;
+} Vector4 <read=ReadVector4>;
+string ReadVector4(Vector4& self) { return Str("<%g, %g, %g, %g>", self.x, self.y, self.z, self.w); }
+
+typedef struct {
+    u8 data[0x10];
+} MsgHash<read=ReadMsgHash>;
+string ReadMsgHash(MsgHash& self) { 
+    return Str("[%02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X]", 
+    self.data[0], self.data[1], self.data[2], self.data[3],
+    self.data[4], self.data[5], self.data[6], self.data[7],
+    self.data[8], self.data[9], self.data[10], self.data[11],
+    self.data[12], self.data[13], self.data[14], self.data[15]
+);}
+
+// Resource Background types
+
+typedef struct {
+    SetRandomBackColor();
+    char Magic[4];
+    u32 type;
+    u32 ver;
+    u32 count;
+} resrcBgDataHeader<read=Str("%s (type %d): ver %x, %d entries", Magic, type, ver, count)>;
+
+typedef struct {
+    u32 id;
+    char name[0x40];
+} resrcBgData_Entry_Common;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    if (ver > 0x20200712) {
+        u32 Field68;
+        u8 filler[0x34];
+    } else {
+        u8 filler[0x38];
+    }
+} resrcBgData_pos_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    Vector3 v4;
+    if (ver > 0x20200712) {
+        u32 values_ex[3];
+        u8 filler[0x20];
+    } else {
+        u8 filler[0x2c];
+    }
+} resrcBgData_collis_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    if (ver > 0x20200712) {
+        u32 values_ex;
+        u8 filler[0x34];
+    } else {
+        u8 filler[0x38];
+    }
+    
+} resrcBgData_npc_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    u16 v0;
+    u16 v1;
+    u16 v2;
+    u16 v3;
+    local u32 filler_size = 0x30;
+    if (ver > 0x20200712) {
+        u32 v4;
+        filler_size = 0x2c;
+    }
+    if (ver > 0x20211014) {
+        u16 v5;
+        u16 v6;
+        filler_size = 0x28;
+    }
+    u8 filler[filler_size];
+    
+} resrcBgData_tbox_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    u16 v0;
+    u16 v1;
+    u16 v2;
+    u16 v3;
+    local u32 filler_size = 0x30;
+    if (ver > 0x20200712) {
+        u32 v4;
+        filler_size = 0x2c;
+    }
+    if (ver > 0x20211014) {
+        u16 v5;
+        u16 v6;
+        filler_size = 0x28;
+    }
+    if (ver > 0x20220530) {
+        u32 v7;
+        filler_size = 0x24;
+    }
+    u8 filler[filler_size];
+    
+} resrcBgData_obj_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    Vector3 v4;
+    local u32 filler_size = 0x2c;
+    if (ver > 0x20200712) {
+        u32 v5;
+        filler_size = 0x28;
+    }
+    u8 filler[filler_size];
+} resrcBgData_action_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    Vector3 v4;
+    u32 v5;
+    u32 v6;
+    u8 filler[0x24];
+} resrcBgData_bbox_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    u16 v4;
+    u16 v5;
+    u16 v6;
+    u16 padding;
+    u32 v7;
+    u8 filler[0x2c];
+    char eplName[0x100];
+} resrcBgData_effect_Entry<read=Str("%s\t (%s) | T %s | R %s | S %s |", id.name, eplName, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    f32 v4;
+    f32 v5;
+    f32 v6;
+    f32 v7;
+    f32 v8;
+    f32 v9;
+    f32 v10;
+    f32 v11;
+    f32 v12;
+    u32 v13;
+    u8 filler[0x10];
+} resrcBgData_plight_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    u16 v4;
+    u16 v5;
+    u16 v6;
+    u16 padding;
+    u32 v7;
+    u8 filler[0x2c];
+} resrcBgData_mission_pos_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+typedef struct(u32 ver) {
+    SetRandomBackColor();
+    resrcBgData_Entry_Common id;
+    Vector3 Translation;
+    Vector3 Rotation;
+    Vector3 Scale;
+    Vector3 v4;
+    u64 v5;
+    u32 v6;
+    u8 filler[0x20];
+} resrcBgData_collis_GAYA_Entry<read=Str("%s\t | T %s | R %s | S %s |", id.name, ReadVector3(Translation), ReadVector3(Rotation), ReadVector3(Scale)), optimize=false>;
+
+// Excel File types
+
+typedef struct {
+    SetRandomBackColor();
+    char Magic[8];
+    u32 count;
+    u32 resrv;
+} fldExcelCnvData<read=Str("%s: %d entries", Magic, count)>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[160];
+} fldActionHitLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x70];
+} fldDoorLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x28];
+} fldEnemyLayout_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x2c];
+} fldGatherLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0xec];
+} fldGimmickLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0xcc];
+} fldGayaHitLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x80];
+} fldScriptHitLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x98];
+} fldHourNpcLayout_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x34];
+} fldLadderLinkLayout_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x2c];
+} fldTboxLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x2c];
+} fldObjLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x194];
+} fldNpcLayout_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x40];
+} fldMobLayout_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x174];
+} fldAttackDefine_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x3c];
+} fldCameraDefine_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x60];
+} fldClassLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u16 Field00;
+    u16 Field02;
+    MsgHash msg[4];
+} fldDinnerArchetype_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    MsgHash msg0;
+} fldDinnerEnd_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x4c];
+} fldDinnerPlan_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x40];
+} fldDinnerStay_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x64];
+} fldDungeonGrid_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x34];
+} fldEnemyDefine_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u16 Field00;
+    u16 Field02;
+    char name[0x20];
+} fldHourSeason_Data<read=name, optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x64];
+} fldKeyFreeHint_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x7c];
+} fldMapCharaLight_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 data;
+} fldMapEventIconDefine_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x48];
+} fldMemberFormation_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x20];
+} fldMemberLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    f32 data;
+} fldMiscDefine_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x7c];
+} fldMobGroup_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x24];
+} fldMobLookAwaySeason_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x90];
+} fldReportLink_Data<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x2c];
+} fldEncountPack<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x34];
+} fldEventLink<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x30];
+} fldEventReward<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x82];
+} fldAccessSpotList<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x44];
+} fldDinnerRival<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x44];
+} fldDinnerSpot<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x44];
+} fldDinnerStatus<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x4c];
+} fldDinnerQuest<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 data;
+} fldSpecialDay<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0xc8];
+} fldMorningStatus<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x244];
+} fldMorningTravel<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x30];
+} fldMorningQuest<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x44];
+} fldMapBgm<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0xd0];
+} fldD07_GKDefine<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0xec];
+} fldQuestDungeon<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x24];
+} fldMapLink<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 data;
+} fldTravelPath<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x350];
+} fldTravelPoint<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0xa8];
+} fldEnvLink<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x44];
+} fldCharaLink<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x98];
+} fldPresetData_ArcheTypeCategoryEquip<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x84];
+} fldPresetData_Character<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x204];
+} fldPresetData_Counter<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x84];
+} fldPresetData_Flag<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x18];
+} fldPresetData_Follower<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x104];
+} fldPresetData_Item<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x200];
+} fldPresetData_Misc<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x5c];
+} fldPresetData_Party<optimize=false>;
+
+// init/data
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x18];
+} initAbilityTable<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 data[2];
+} initAddContentItemTable<optimize=false>;
+
+typedef struct {
+    char data[0x10];
+} initAddContentTableName<read=data>;
+
+typedef struct {
+    SetRandomBackColor();
+    u16 id;
+    initAddContentTableName name;
+    u8 pad0;
+    initAddContentTableName id;
+    u8 pad1;
+} initAddContentTable<read=Str("%s: %s", name.data, id.data), optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x24];
+} initAreaName<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 data[2];
+} initAreaNameLogo_Camp<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x1c];
+} initAreaNameLogo_Event<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 data;
+} initAreaNameLogo_Village<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x10];
+} initATCategoryTable<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x18];
+} initBgMapData<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x40];
+} initBountyCounter<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    MsgHash msg;
+} initBountySpotTitleID<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    MsgHash msg[2];
+} initCalendar<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x12];
+} initCalendarOpenMessage<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x6c];
+} initCharaID<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x24];
+} initCueToChannel<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x38];
+} initDaily<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x104];
+} initDebugFlagCounterSet<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x12];
+} initEnemyID<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 color;
+} initFadeColor<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0xc];
+} initFollowerItemEffect<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0xa];
+} initFollowerCheckTable<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x18a0];
+} initFollowerLayout<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x418];
+} initFollowerRankUp<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x1e];
+} initFollowerTable<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x48];
+} initGallicaTalk<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x38];
+} initGallicaTalkPlayspot<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x84];
+} initGallicaTalkQuest<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x68];
+} initGallicaTalkTown<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 data[2];
+} initKEISYO<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 data[4];
+} initLottoTable<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x2c];
+} initMapData<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    MsgHash hash[2];
+} initMapNameTable<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x48];
+} initMapShortcut<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 data;
+} initMsgIcon<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 data;
+} initNGPlus<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    char name[0x20];
+} initNovel<read=name, optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x20];
+} initNpcId<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x16];
+} initPcParamTable<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0xc];
+} initQuestDropTable<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0xe0];
+} initQuest<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x1e0];
+} initQuestNpcLayout<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x14];
+} initQuestProgression<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 data;
+} initQuestRequiredItemsEx<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x44];
+} initQuestVoice<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x44];
+} initQuestVoice2<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x42];
+} initResrcNpcModelComb<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x98];
+} initResrcSndEnv<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u8 data[0x14];
+} initShopTable<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u16 shopType;
+} initShopTypeTable<read=Str("%d", shopType), optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 data[0x3];
+} initSummonItemData<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 data[2];
+} initTravelersVoiceDTable<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 data[2];
+} initTravelersVoiceTable<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 data[3];
+} initWipeAreaChangeData<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 data[2];
+} initWipeAreaChangeDataCategory<optimize=false>;
+
+typedef struct {
+    SetRandomBackColor();
+    u32 values[4];
+    char wipe_in_usm[0x40];
+    char wipe_load_usm[0x40];
+    char wipe_out_usm[0x40];
+    char wipe_spr_out[0x20];
+    char wipe_spr_in[0x20];
+    u8 data[0x38];
+    char wipe_spr_cond[0x20];
+} initWipeData<optimize=false>;
+
+// Spline
+typedef struct {
+    SetRandomBackColor();
+    char Magic[0x10]; // FIELD_CURVE
+} splineHeader;
+typedef struct {
+    u32 HasValue;
+    u32 Count;
+    u32 Offset;
+    u32 Resrv;
+} splineEntryHead;
+typedef struct {
+    SetRandomBackColor();
+    char name[0x40];
+    splineEntryHead head;
+    FPush();
+    FSeek(head.Offset);
+    Vector4 points[head.Count];
+    FPop();
+} splineEntry<read=name, optimize=false>;
+
+// Camera path
+typedef struct {
+    SetRandomBackColor();
+    u32 ver;
+    u32 Field04;
+    f32 Field08;
+    u32 SectionCounts[8];
+} pcdHeader;
+typedef struct(u32 ver) {
+    switch (ver) {
+        case 1:
+            u8 data[0x14];
+            break;
+        case 2:
+            u8 data[0x30];
+            break;
+        case 3:
+            u8 data[0x50];
+            break;
+        case 4:
+            u8 data[0x70];
+            break;
+    }
+} pcdData<optimize=false>;
+
+// Layout
+typedef struct {
+    SetRandomBackColor();
+    char Magic[4];
+    u32 Field04;
+    u32 Field08;
+    u32 Field0C;
+    u32 Objects;
+    u32 ObjectStart;
+    u32 Imports;
+    u32 BodyStart;
+} layoutHeader;
+
+typedef struct {
+    SetRandomBackColor();
+    char filename[0x5c];
+    f32 Field5C[4];
+    u32 Field6C;
+} layoutDependency<read=filename, optimize=false>;
+
+typedef struct {
+    Vector3 Translation<name="Translation">;
+    u32 Field0C<hidden=true>;
+    Vector4 Rotation<name="Rotation">;
+    Vector3 Scale<name="Scale">;
+    u32 Field2C<hidden=true>;
+    u32 Field30;
+    u32 Field34;
+    u32 Field38;
+    u32 Field3C;
+    u32 Field40;
+    u32 Field44;
+    u32 Entries;
+    u32 EntryStart;
+} layoutObjectStart<optimize=false>;
+
+typedef struct(u32 _major, u32 _minor) {
+    local u32 major = _major;
+    local u32 minor = _minor;
+    u8 Field90;
+    u8 Field91;
+    u8 Field92;
+    u8 Field93;
+    f32 Field94;
+    u32 Flags;
+    u32 Field9C;
+    u32 FieldA0;
+    u8 filler[0x1c]<hidden=true>;
+} layoutObjectEntry_Obj<read=Str("COMMON/model/field/object/o_%04d_%03d_00.GMD", major, minor)>;
+
+typedef struct {
+    f32 Field90;
+    f32 Field94;
+    f32 Field88;
+    f32 Field9C;
+    f32 FieldA0;
+    f32 FieldA4;
+    f32 FieldA8;
+    f32 FieldAC;
+    f32 FieldB0;
+    u8 filler[0xc]<hidden=true>;
+} layoutObjectEntry_Plight;
+
+typedef struct {
+    f32 Field90;
+    f32 Field94;
+    f32 Field88;
+    f32 Field9C;
+    f32 FieldA0;
+    f32 FieldA4;
+    f32 FieldA8;
+    f32 FieldAC;
+    f32 FieldB0;
+    f32 FieldB4;
+    f32 FieldB8;
+    f32 FieldBC;
+} layoutObjectEntry_Slight;
+
+typedef struct {
+    u32 Field90;
+    u32 Field94;
+    f32 Field98;
+    f32 Field9C;
+    f32 FieldA0;
+    u8 filler[0x1c]<hidden=true>;
+} layoutObjectEntry_Box;
+
+typedef struct {
+    u32 Field90;
+    f32 Field94;
+    f32 Field98;
+    f32 Field9C;
+    f32 FieldA0;
+    f32 FieldA4;
+    u32 FieldA8;
+    f32 FieldAC;
+    f32 FieldB0;
+    f32 FieldB4;
+    f32 FieldB8;
+    u32 FieldBC;
+} layoutObjectEntry_Camera;
+
+typedef struct {
+    SetRandomBackColor();
+    char type[0x8];
+    char name[0x38];
+    u32 major<name="Resource Major ID">;
+    u32 minor<name="Resource Minor ID">;
+    u32 pad2;
+    u32 Field4C;
+    u32 Field50;
+    u32 Field54;
+    f32 Field58;
+    u32 Field5C;
+    Vector3 Translation<name="Translation">;
+    u32 Field6C<hidden=true>;
+    Vector4 Rotation<name="Rotation">;
+    Vector3 Scale<name="Scale">;
+    u32 Field8C;
+    switch (type) {
+        case "obj":
+            layoutObjectEntry_Obj data(major, minor);
+            break;
+        case "gppos":
+        case "enms":
+        case "enmg":
+        case "effect":
+            u8 data[0x30]<hidden=true>;
+            break;
+        case "p-light":
+            layoutObjectEntry_Plight data;
+            break;
+        case "s-light":
+            layoutObjectEntry_Slight data;
+            break;
+        case "box":
+            layoutObjectEntry_Box data;
+            break;
+        case "cmr_fix":
+        case "cmr_trc":
+        case "cmr_pth":
+        case "cmr_def":
+            layoutObjectEntry_Camera data;
+            break;
+        default:
+            u8 data[0x30];
+            break;
+    }
+} layoutObjectEntry<read=Str("%s: %s [ %d_%d ] | T %s | R %s | S %s |", type, name, major, minor, ReadVector3(Translation), ReadVector4(Rotation), ReadVector3(Scale)), optimize=false>;
+typedef struct {
+    SetRandomBackColor();
+    layoutObjectStart start;
+    layoutObjectEntry data[start.Entries];
+} layoutObject<optimize=false, read=Str("%d entries", start.Entries)>;
+
+string PrintBadFileMagic(string& filename) {
+    return Str("File %s has an incorrect magic value", filename);
+}
+
+// Parse file
+
+local string filePath = GetFileName();
+local string fileName = FileNameGetBase( filePath, false );
+local string fileExt = FileNameGetExtension( filePath );
+
+switch (fileExt) {
+    // Resource Background
+    case ".pos": // 1
+    case ".hit": // 2
+    case ".npc": // 3
+    case ".enm": // 4
+    case ".tbx": // 5
+    case ".gem": // 6
+    case ".gmk": // 7
+    case ".ob1": // 8
+    case ".act": // 9
+    case ".bbx": // 10
+    case ".eff": // 11
+    case ".plt": // 12
+    // 13 (resrcBgData_slight)
+    case ".mps": // 14
+    // 15 (resrcBgData_gathering)
+    // 16 (resrcBgData_collis_BTL)
+    case ".ght": // 17
+    // >= 18 (resrcBgData_aix)
+        resrcBgDataHeader head;
+        switch (head.type) {
+            case 1:
+                resrcBgData_pos_Entry body(head.ver)[head.count];
+                break;
+            case 2:
+                resrcBgData_collis_Entry body(head.ver)[head.count];
+                break;
+            case 3:
+            case 4:
+                resrcBgData_npc_Entry body(head.ver)[head.count];
+                break;
+            case 5:
+            case 6:
+            case 7:
+                resrcBgData_tbox_Entry body(head.ver)[head.count];
+                break;
+            case 8:
+                resrcBgData_obj_Entry body(head.ver)[head.count];
+                break;
+            case 9:
+                resrcBgData_action_Entry body(head.ver)[head.count];
+                break;
+            case 10:
+                resrcBgData_bbox_Entry body(head.ver)[head.count];
+                break;
+            case 11:
+                resrcBgData_effect_Entry body(head.ver)[head.count];
+                break;
+            case 12:
+                resrcBgData_plight_Entry body(head.ver)[head.count];
+                break;
+            case 14:
+                resrcBgData_mission_pos_Entry body(head.ver)[head.count];
+                break;
+            case 17:
+                resrcBgData_collis_GAYA_Entry body(head.ver)[head.count];
+                break;
+            default:
+                Assert(false, Str("Unimplemented resrcBg type %d", type));
+                break;
+        }
+        break;
+    // Excel files
+    case ".acttbl":
+    case ".doortbl":
+    case ".enmtbl":
+    case ".gpstbl":
+    case ".gmctbl":
+    case ".ghttbl":
+    case ".hittbl":
+    case ".hourtbl":
+    case ".ladtbl":
+    case ".tbxtbl":
+    case ".objtbl":
+    case ".mobtbl":
+    case ".npctbl":
+        fldExcelCnvData head;
+        switch (head.Magic) {
+            case "ACTTBL":
+                fldActionHitLink_Data body[head.count];
+                break;
+            case "DORTBL":
+                fldDoorLink_Data body[head.count];
+                break;
+            case "ENMTBL":
+                fldEnemyLayout_Data body[head.count];
+                break;
+            case "GPSTBL":
+                fldGatherLink_Data body[head.count];
+                break;
+            case "GMCTBL":
+                fldGimmickLink_Data body[head.count];
+                break;
+            case "GAYATBL":
+                fldGayaHitLink_Data body[head.count];
+                break;
+            case "HITTBL":
+                fldScriptHitLink_Data body[head.count];
+                break;
+            case "HOURTBL":
+                fldHourNpcLayout_Data body[head.count];
+                break;
+            case "LADTBL":
+                fldLadderLinkLayout_Data body[head.count];
+                break;
+            case "TBXTBL":
+                fldTboxLink_Data body[head.count];
+                break;
+            case "OBJTBL":
+                fldObjLink_Data body[head.count];
+                break;
+            case "NPCTBL":
+                fldNpcLayout_Data body[head.count];
+                break;
+            case "MOBTBL":
+                fldMobLayout_Data body[head.count];
+                break;
+            default:
+                Assert(false, Str("Unimplemented excel format %s", head.Magic));
+                break;
+        }
+        break;
+    // Spline
+    case ".crv":
+        splineHeader head;
+        splineEntryHead first_entry;
+        splineEntry points[first_entry.Count];
+        break;
+    // Layout
+    case ".layout":
+        FPush();
+        FPush();
+        layoutHeader head;
+        FPop();
+        FSeek(FTell() + head.BodyStart);
+        if (head.Imports > 0)
+            layoutDependency imports[head.Imports];
+        FPop();
+        FSeek(FTell() + head.ObjectStart);
+        if (head.Objects > 0)
+            layoutObject objects[head.Objects];
+        break;
+    // Camera Path
+    case ".pcd":
+        pcdHeader head;
+        local u32 count = 0;
+        for (count = 0; count < 8; count++) {
+            SetRandomBackColor();
+            pcdData data(head.ver)[head.SectionCounts[count]];
+        }
+        break;
+    // binary DB file, this is likely a singleton. check by filename
+    case ".bin":
+        switch (fileName) {
+            // EXCEL FILES
+            case "Attack_Data":
+                fldExcelCnvData head;
+                Assert(head.Magic == "ATKDEF", PrintBadFileMagic(fileName));
+                fldAttackDefine_Data body[head.count];
+                break;
+            case "Camera_Data":
+                fldExcelCnvData head;
+                Assert(head.Magic == "CAMERA", PrintBadFileMagic(fileName));
+                fldCameraDefine_Data body[head.count];
+                break;
+            case "Fast_AType_ACT_Data":
+                fldExcelCnvData head;
+                Assert(head.Magic == "CLASLNK", PrintBadFileMagic(fileName));
+                fldClassLink_Data body[head.count];
+                break;
+            case "DinnerArchetype":
+                fldExcelCnvData head;
+                Assert(head.Magic == "DIN_ARC", PrintBadFileMagic(fileName));
+                fldDinnerArchetype_Data body[head.count];
+                break;
+            case "DinnerEnd":
+                fldExcelCnvData head;
+                Assert(head.Magic == "DIN_END", PrintBadFileMagic(fileName));
+                fldDinnerEnd_Data body[head.count];
+                break;
+            case "DinnerGeneral":
+                fldExcelCnvData head;
+                Assert(head.Magic == "DIN_GEN", PrintBadFileMagic(fileName));
+                fldDinnerArchetype_Data body[head.count];
+                break;
+            case "DinnerPlan":
+                fldExcelCnvData head;
+                Assert(head.Magic == "DIN_PLA", PrintBadFileMagic(fileName));
+                fldDinnerPlan_Data body[head.count];
+                break;
+            case "DinnerStay":
+                fldExcelCnvData head;
+                Assert(head.Magic == "DIN_STY", PrintBadFileMagic(fileName));
+                fldDinnerStay_Data body[head.count];
+                break;
+            case "Enemy_Data":
+                fldExcelCnvData head;
+                Assert(head.Magic == "ENMDEF", PrintBadFileMagic(fileName));
+                fldEnemyDefine_Data body[head.count];
+                break;
+            case "HourSeason":
+                fldExcelCnvData head;
+                Assert(head.Magic == "HSEASON", PrintBadFileMagic(fileName));
+                fldHourSeason_Data body[head.count];
+                break;
+            case "KeyFreeHint":
+                fldExcelCnvData head;
+                Assert(head.Magic == "HINT", PrintBadFileMagic(fileName));
+                fldKeyFreeHint_Data body[head.count];
+                break;
+            case "MapCharaLight":
+                fldExcelCnvData head;
+                Assert(head.Magic == "Light", PrintBadFileMagic(fileName));
+                fldMapCharaLight_Data body[head.count];
+                break;
+            case "MapEventIcon":
+                fldExcelCnvData head;
+                Assert(head.Magic == "EVEICON", PrintBadFileMagic(fileName));
+                fldMapEventIconDefine_Data body[head.count];
+                break;
+            case "MemberFormation":
+                fldExcelCnvData head;
+                Assert(head.Magic == "F", PrintBadFileMagic(fileName));
+                fldMemberFormation_Data body[head.count];
+                break;
+            case "MemberLink":
+                fldExcelCnvData head;
+                Assert(head.Magic == "MemberI", PrintBadFileMagic(fileName));
+                fldMemberLink_Data body[head.count];
+                break;
+            case "MiscDefine":
+                fldExcelCnvData head;
+                Assert(head.Magic == "MISCDEF", PrintBadFileMagic(fileName));
+                fldMiscDefine_Data body[head.count];
+                break;
+            case "MobGroup_Data":
+                fldExcelCnvData head;
+                Assert(head.Magic == "MOBGRP", PrintBadFileMagic(fileName));
+                fldMobGroup_Data body[head.count];
+                break;
+            case "MobLookAwaySeason_Data":
+                fldExcelCnvData head;
+                Assert(head.Magic == "MOBLAS", PrintBadFileMagic(fileName));
+                fldMobLookAwaySeason_Data body[head.count];
+                break;
+            case "ReportData":
+                fldExcelCnvData head;
+                Assert(head.Magic == "REPTBL", PrintBadFileMagic(fileName));
+                fldReportLink_Data body[head.count];
+                break;
+            // FIELD SINGLETONS
+            case "Pack":
+                fldExcelCnvData head;
+                Assert(head.Magic == "ASLIST", PrintBadFileMagic(fileName));
+                fldEncountPack body[head.count];
+                break;
+            case "EventLink":
+                fldExcelCnvData head;
+                Assert(head.Magic == "EVTLINK", PrintBadFileMagic(fileName));
+                fldEventLink body[head.count];
+                break;
+            case "EventReward":
+                fldExcelCnvData head;
+                Assert(head.Magic == "EVEREW", PrintBadFileMagic(fileName));
+                fldEventReward body[head.count];
+                break;
+            case "AccessSpotList":
+                fldExcelCnvData head;
+                Assert(head.Magic == "ASLIST", PrintBadFileMagic(fileName));
+                fldAccessSpotList body[head.count];
+                break;
+            case "DinnerRival":
+                fldExcelCnvData head;
+                Assert(head.Magic == "DIN_RIV", PrintBadFileMagic(fileName));
+                fldDinnerRival body[head.count];
+                break;
+            case "DinnerSpot":
+                fldExcelCnvData head;
+                Assert(head.Magic == "DIN_SPO", PrintBadFileMagic(fileName));
+                fldDinnerSpot body[head.count];
+                break;
+            case "DinnerStatus":
+                fldExcelCnvData head;
+                Assert(head.Magic == "DIN_STA", PrintBadFileMagic(fileName));
+                fldDinnerStatus body[head.count];
+                break;
+            case "DinnerQuest":
+                fldExcelCnvData head;
+                Assert(head.Magic == "DIN_QUE", PrintBadFileMagic(fileName));
+                fldDinnerQuest body[head.count];
+                break;
+            case "SpecialDay":
+                fldExcelCnvData head;
+                Assert(head.Magic == "SPEDAY", PrintBadFileMagic(fileName));
+                fldSpecialDay body[head.count];
+                break;
+            case "MorningStatus":
+                fldExcelCnvData head;
+                Assert(head.Magic == "MSTATUS", PrintBadFileMagic(fileName));
+                fldMorningStatus body[head.count];
+                break;
+            case "MorningTraval":
+                fldExcelCnvData head;
+                Assert(head.Magic == "MTRAVAL", PrintBadFileMagic(fileName));
+                fldMorningTravel body[head.count];
+                break;
+            case "MapBgm":
+                fldExcelCnvData head;
+                Assert(head.Magic == "MAPBGM", PrintBadFileMagic(fileName));
+                fldMapBgm body[head.count];
+                break;
+            case "D07_GK":
+                fldExcelCnvData head;
+                Assert(head.Magic == "D07GK", PrintBadFileMagic(fileName));
+                fldD07_GKDefine body[head.count];
+                break;
+            case "QuestDungeon":
+                fldExcelCnvData head;
+                Assert(head.Magic == "QUESTD", PrintBadFileMagic(fileName));
+                fldQuestDungeon body[head.count];
+                break;
+            case "PreSetData_ArcheTypeCategoryEquip":
+                fldExcelCnvData head;
+                Assert(head.Magic == "PSETCE", PrintBadFileMagic(fileName));
+                fldPresetData_ArcheTypeCategoryEquip body[head.count];
+                break;
+            case "PreSetData_Counter":
+                fldExcelCnvData head;
+                Assert(head.Magic == "PSCUNT", PrintBadFileMagic(fileName));
+                fldPresetData_Counter body[head.count];
+                break;
+            case "PreSetData_Flag":
+                fldExcelCnvData head;
+                Assert(head.Magic == "PSFLAG", PrintBadFileMagic(fileName));
+                fldPresetData_Flag body[head.count];
+                break;
+            case "PreSetData_Follower":
+                fldExcelCnvData head;
+                Assert(head.Magic == "Follow", PrintBadFileMagic(fileName));
+                fldPresetData_Follower body[head.count];
+                break;
+            case "PreSetData_Item":
+                fldExcelCnvData head;
+                Assert(head.Magic == "PSETIT", PrintBadFileMagic(fileName));
+                fldPresetData_Item body[head.count];
+                break;
+            case "PreSetData_Misc":
+                fldExcelCnvData head;
+                Assert(head.Magic == "PSETMC", PrintBadFileMagic(fileName));
+                fldPresetData_Misc body[head.count];
+                break;
+            case "PreSetData_Party":
+                fldExcelCnvData head;
+                Assert(head.Magic == "PSETPA", PrintBadFileMagic(fileName));
+                fldPresetData_Party body[head.count];
+                break;
+            case "MapLink_Data":
+                fldExcelCnvData head;
+                Assert(head.Magic == "MAPLIK", PrintBadFileMagic(fileName));
+                fldMapLink body[head.count];
+                break;
+            case "TravelPath":
+                fldExcelCnvData head;
+                Assert(head.Magic == "TRVPAT", PrintBadFileMagic(fileName));
+                fldTravelPath body[head.count];
+                break;
+            case "TravelPoint":
+                fldExcelCnvData head;
+                Assert(head.Magic == "TRVPOT", PrintBadFileMagic(fileName));
+                fldTravelPoint body[head.count];
+                break;
+            case "EnvLink":
+                fldExcelCnvData head;
+                Assert(head.Magic == "ENVLINK", PrintBadFileMagic(fileName));
+                fldEnvLink body[head.count];
+                break;
+            case "CharaLink":
+                fldExcelCnvData head;
+                Assert(head.Magic == "Chara", PrintBadFileMagic(fileName));
+                fldCharaLink body[head.count];
+                break;
+            // init/data
+            case "AbilityTable":
+                fldExcelCnvData head;
+                Assert(head.Magic == "ABL", PrintBadFileMagic(fileName));
+                initAbilityTable body[head.count];
+                break;
+            case "AddContentItemTable":
+                fldExcelCnvData head;
+                Assert(head.Magic == "TV", PrintBadFileMagic(fileName));
+                initAddContentItemTable body[head.count];
+                break;
+            case "AddContentTable":
+                fldExcelCnvData head;
+                Assert(head.Magic == "TV", PrintBadFileMagic(fileName));
+                initAddContentTable body[head.count];
+                break;
+            case "AreaName":
+                fldExcelCnvData head;
+                Assert(head.Magic == "AREA", PrintBadFileMagic(fileName));
+                initAreaName body[head.count];
+                break;
+            case "AreaNameLogo_Camp":
+                fldExcelCnvData head;
+                Assert(head.Magic == "ARNMSPT", PrintBadFileMagic(fileName));
+                initAreaNameLogo_Camp body[head.count];
+                break;
+            case "AreaNameLogo_Event":
+                fldExcelCnvData head;
+                Assert(head.Magic == "ARNMSPT", PrintBadFileMagic(fileName));
+                initAreaNameLogo_Event body[head.count];
+                break;
+            case "AreaNameLogo_Village":
+                fldExcelCnvData head;
+                Assert(head.Magic == "ARNMSPT", PrintBadFileMagic(fileName));
+                initAreaNameLogo_Village body[head.count];
+                break;
+            case "ATCategoryTable":
+                fldExcelCnvData head;
+                Assert(head.Magic == "ATC", PrintBadFileMagic(fileName));
+                initATCategoryTable body[head.count];
+                break;
+            case "BgMapData":
+                fldExcelCnvData head;
+                Assert(head.Magic == "BGMAPD", PrintBadFileMagic(fileName));
+                initBgMapData body[head.count];
+                break;
+            case "BountyCounter":
+                fldExcelCnvData head;
+                Assert(head.Magic == "BOUNTYC", PrintBadFileMagic(fileName));
+                initBountyCounter body[head.count];
+                break;
+            case "BountySpotTitleID":
+                fldExcelCnvData head;
+                Assert(head.Magic == "BOUNTYS", PrintBadFileMagic(fileName));
+                initBountySpotTitleID body[head.count];
+                break;
+            case "Calendar":
+                fldExcelCnvData head;
+                Assert(head.Magic == "CLD", PrintBadFileMagic(fileName));
+                initCalendar body[head.count];
+                break;
+            case "CalendarOpenMessage":
+                fldExcelCnvData head;
+                Assert(head.Magic == "CLDOPEN", PrintBadFileMagic(fileName));
+                initCalendarOpenMessage body[head.count];
+                break;
+            case "CharaID":
+                fldExcelCnvData head;
+                Assert(head.Magic == "CHARA", PrintBadFileMagic(fileName));
+                initCharaID body[head.count];
+                break;
+            case "CueToChannel":
+                fldExcelCnvData head;
+                Assert(head.Magic == "WIPE", PrintBadFileMagic(fileName));
+                initCueToChannel body[head.count];
+                break;
+            case "Daily":
+                fldExcelCnvData head;
+                Assert(head.Magic == "DAILY", PrintBadFileMagic(fileName));
+                initDaily body[head.count];
+                break;
+            case "DebugFlagCounterSet":
+                fldExcelCnvData head;
+                Assert(head.Magic == "DBCFLU", PrintBadFileMagic(fileName));
+                initDebugFlagCounterSet body[head.count];
+                break;
+            case "EnemyID":
+                fldExcelCnvData head;
+                Assert(head.Magic == "ENEMY", PrintBadFileMagic(fileName));
+                initEnemyID body[head.count];
+                break;
+            case "FadeColor":
+                fldExcelCnvData head;
+                Assert(head.Magic == "FDCOL", PrintBadFileMagic(fileName));
+                initFadeColor body[head.count];
+                break;
+            case "FOLLOWER_ITEM_EFFECT":
+                fldExcelCnvData head;
+                Assert(head.Magic == "FLWITM", PrintBadFileMagic(fileName));
+                initFollowerItemEffect body[head.count];
+                break;
+            case "FollowerCheckTable":
+                fldExcelCnvData head;
+                Assert(head.Magic == "FOLLOWR", PrintBadFileMagic(fileName));
+                initFollowerCheckTable body[head.count];
+                break;
+            case "FollowerLayout":
+                fldExcelCnvData head;
+                Assert(head.Magic == "FLWLYT", PrintBadFileMagic(fileName));
+                initFollowerLayout body[head.count];
+                break;
+            case "FollowerRankUp":
+                fldExcelCnvData head;
+                Assert(head.Magic == "FLWRUP", PrintBadFileMagic(fileName));
+                initFollowerRankUp body[head.count];
+                break;
+            case "FollowerTable":
+                fldExcelCnvData head;
+                Assert(head.Magic == "FOLLOWR", PrintBadFileMagic(fileName));
+                initFollowerTable body[head.count];
+                break;
+            case "GalicaTalkAkademeia":
+            case "GalicaTalkDungeon":
+            case "GalicaTalkFollower":
+            case "GalicaTalkScenario":
+                fldExcelCnvData head;
+                Assert(head.Magic == "GALICA", PrintBadFileMagic(fileName));
+                initGallicaTalk body[head.count];
+                break;
+            case "GalicaTalkPlayspot":
+                fldExcelCnvData head;
+                Assert(head.Magic == "GALICA", PrintBadFileMagic(fileName));
+                initGallicaTalkPlayspot body[head.count];
+                break;
+            case "GalicaTalkQuest":
+                fldExcelCnvData head;
+                Assert(head.Magic == "GALICA", PrintBadFileMagic(fileName));
+                initGallicaTalkQuest body[head.count];
+                break;
+            case "GalicaTalkTown":
+                fldExcelCnvData head;
+                Assert(head.Magic == "GALICA", PrintBadFileMagic(fileName));
+                initGallicaTalkTown body[head.count];
+                break;
+            case "KEISYO":
+                fldExcelCnvData head;
+                Assert(head.Magic == "KEISYO", PrintBadFileMagic(fileName));
+                initKEISYO body[head.count];
+                break;
+            case "LottoTable":
+                fldExcelCnvData head;
+                Assert(head.Magic == "LOTTBL", PrintBadFileMagic(fileName));
+                initLottoTable body[head.count];
+                break;
+            case "MapData":
+                fldExcelCnvData head;
+                Assert(head.Magic == "MAPD", PrintBadFileMagic(fileName));
+                initMapData body[head.count];
+                break;
+            case "MapNameTable":
+                fldExcelCnvData head;
+                Assert(head.Magic == "MAPNAME", PrintBadFileMagic(fileName));
+                initMapNameTable body[head.count];
+                break;
+            case "MapShortcut":
+                fldExcelCnvData head;
+                Assert(head.Magic == "MAPSC", PrintBadFileMagic(fileName));
+                initMapShortcut body[head.count];
+                break;
+            case "MsgIcon_ATCategory":
+            case "MsgIcon_BadStatus":
+            case "MsgIcon_Equip":
+            case "MsgIcon_Item":
+                fldExcelCnvData head;
+                Assert(head.Magic == "MSGICN", PrintBadFileMagic(fileName));
+                initMsgIcon body[head.count];
+                break;
+            case "newgameplus_DiscardItem":
+            case "newgameplus_KeepCounter":
+            case "newgameplus_KeepFlag":
+            case "newgameplus_KeepValuableItem":
+            case "newgameplus_ResetDefeatCountEnemy":
+                fldExcelCnvData head;
+                Assert(head.Magic == "NGPLUS", PrintBadFileMagic(fileName));
+                initNGPlus body[head.count];
+                break;
+            case "novel":
+                fldExcelCnvData head;
+                Assert(head.Magic == "NOVEL", PrintBadFileMagic(fileName));
+                initNovel body[head.count];
+                break;
+            case "NpcID":
+                fldExcelCnvData head;
+                Assert(head.Magic == "NPC", PrintBadFileMagic(fileName));
+                initNpcId body[head.count];
+                break;
+            case "PCParamTable":
+                fldExcelCnvData head;
+                Assert(head.Magic == "PCPARAM", PrintBadFileMagic(fileName));
+                initPcParamTable body[head.count];
+                break;
+            case "QuestDropTable":
+                fldExcelCnvData head;
+                Assert(head.Magic == "DROPTBL", PrintBadFileMagic(fileName));
+                initQuestDropTable body[head.count];
+                break;
+            case "QuestID":
+                fldExcelCnvData head;
+                Assert(head.Magic == "QUEST", PrintBadFileMagic(fileName));
+                initQuest body[head.count];
+                break;
+            case "QuestNpcLayout":
+                fldExcelCnvData head;
+                Assert(head.Magic == "QNPCL", PrintBadFileMagic(fileName));
+                initQuestNpcLayout body[head.count / 3]; // ??? (TODO)
+                break;
+            case "QuestProgression":
+                fldExcelCnvData head;
+                Assert(head.Magic == "NPC", PrintBadFileMagic(fileName));
+                initQuestProgression body[head.count];
+                break;
+            case "QuestRequiredItemsEx":
+                fldExcelCnvData head;
+                Assert(head.Magic == "EXITEM", PrintBadFileMagic(fileName));
+                initQuestRequiredItemsEx body[head.count * 8];
+                break;
+            case "QuestVoice":
+                fldExcelCnvData head;
+                Assert(head.Magic == "QSTVC", PrintBadFileMagic(fileName));
+                initQuestVoice body[head.count];
+                break;
+            case "QuestVoice2":
+                fldExcelCnvData head;
+                Assert(head.Magic == "QSTVC2", PrintBadFileMagic(fileName));
+                initQuestVoice2 body[head.count];
+                break;
+            case "ResrcNpcModelComb":
+            case "ResrcNpcModelCombEvent":
+                fldExcelCnvData head;
+                Assert(head.Magic == "MDLC", PrintBadFileMagic(fileName));
+                initResrcNpcModelComb body[head.count];
+                break;
+            case "resrcSndEnv":
+                fldExcelCnvData head;
+                Assert(head.Magic == "RSNDL", PrintBadFileMagic(fileName));
+                while (!FEof()) { initResrcSndEnv entry; }
+                break;
+            case "ShopTable":
+                fldExcelCnvData head;
+                Assert(head.Magic == "SHOP", PrintBadFileMagic(fileName));
+                initShopTable body[head.count];
+                break;
+            case "ShopTypeTable":
+                fldExcelCnvData head;
+                Assert(head.Magic == "SHOPTYP", PrintBadFileMagic(fileName));
+                initShopTypeTable body[head.count];
+                break;
+            case "SummonItemData":
+                fldExcelCnvData head;
+                Assert(head.Magic == "SMNER", PrintBadFileMagic(fileName));
+                initSummonItemData body[head.count];
+                break;
+            case "TravelersVoiceDTable":
+                fldExcelCnvData head;
+                Assert(head.Magic == "TV", PrintBadFileMagic(fileName));
+                initTravelersVoiceDTable body[head.count];
+                break;
+            case "TravelersVoiceTable":
+                fldExcelCnvData head;
+                Assert(head.Magic == "TV", PrintBadFileMagic(fileName));
+                initTravelersVoiceTable body[head.count];
+                break;
+            case "wipeAreaChangeData":
+                fldExcelCnvData head;
+                Assert(head.Magic == "WIPE", PrintBadFileMagic(fileName));
+                initWipeAreaChangeData body[head.count];
+                break;
+            case "wipeAreaChangeDataCategory":
+                fldExcelCnvData head;
+                Assert(head.Magic == "WIPE", PrintBadFileMagic(fileName));
+                initWipeAreaChangeDataCategory body[head.count];
+                break;
+            case "wipeData":
+                fldExcelCnvData head;
+                Assert(head.Magic == "WIPE", PrintBadFileMagic(fileName));
+                initWipeData body[head.count];
+                break;
+            default:
+                // check for DungeonGrid files
+                if (Strnicmp(fileName, "DungeonGrid", 11) == 0) {
+                    fldExcelCnvData head;
+                    Assert(head.Magic == "DGRID", PrintBadFileMagic(fileName));
+                    fldDungeonGrid_Data body[head.count];
+                } else if (Strnicmp(fileName, "PreSetData_Chara", 16 ) == 0) {
+                    fldExcelCnvData head;
+                    Assert(head.Magic == "PSETCH", PrintBadFileMagic(fileName));
+                    fldPresetData_Character body[head.count];
+                } else {
+                    Assert(false, Str("Unimplemented binary database %s", fileName));
+                }
+                break;
+        }
+        break;
+    default:
+        Assert(false, Str("Unimplemented file extension %s", fileExt));
+        break;
+}

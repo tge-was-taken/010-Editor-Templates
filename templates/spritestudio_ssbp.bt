@@ -1,0 +1,270 @@
+//------------------------------------------------
+//--- 010 Editor v12.0.1 Binary Template
+//
+//      File: spritestudio_ssbp
+//   Authors: Rirurin
+//   Version: 0.1.0
+//   Purpose: 
+//  Category: 
+// File Mask: *.ssbp
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+// Part of the source code for Sprite Studio 6 is available at
+// https://github.com/SpriteStudio/SpriteStudio6-SDK
+
+#include "common/include.h"
+
+const u32 DATA_ID = 0x42505353;
+const u32 CURRENT_DATA_VERSION	= 11;
+
+typedef struct {
+    SetBackColorToShadeOfLastColor(0x10);
+    u32 offset;
+    FPushAbs(offset);
+    string text;
+    FPop();
+    SetBackColorToShadeOfLastColor(-0x10);
+} std_string<optimize=false, read=text>;
+
+typedef struct {
+    SetBackColorToShadeOfLastColor(0x10);
+    u32 offset;
+    FPushAbs(offset);
+    u32 unk;
+    std_string path;
+    std_string file;
+    FPop();
+    SetBackColorToShadeOfLastColor(-0x10);
+} string_filepath_project<read=file.text>;
+
+typedef struct {
+    SetBackColorToShadeOfLastColor(0x10);
+    u32 offset;
+    FPushAbs(offset);
+    std_string path;
+    std_string file;
+    FPop();
+    SetBackColorToShadeOfLastColor(-0x10);
+} string_filepath<read=file.text>;
+
+typedef struct {
+    u32 dataId<format=hex>;
+    Assert(dataId == DATA_ID);
+    u32 version;
+    Assert(version == CURRENT_DATA_VERSION);
+    u32 flags;
+    string_filepath_project imageBaseDir;
+    //u32 imageBaseDir;
+    u32 Cell;
+    u32 AnimePackData;
+    u32 EfffectFile;
+    u16 NumCells;
+    u16 NumAnimePacks;
+    u16 NumEffectFileList;
+    u16 NumSequencePacks;
+} ss_projectHeader<read=Str("%s: %d cells, %d anime packs, %d effect files, %d sequence packs", imageBaseDir.file.text, NumCells, NumAnimePacks, NumEffectFileList, NumSequencePacks)>;
+
+
+
+
+typedef struct {
+    SetRandomBackColor();
+    std_string name;
+    string_filepath imagePath;
+    u16 index;
+    u16 x;
+    u16 y;
+    u16 width;
+    u16 height;
+    u16 padding0<hidden=true>;
+    f32 pivot_x;
+    f32 pivot_y;
+    f32 u1;
+    f32 v1;
+    f32 u2;
+    f32 v2;
+} ss_cell<read=Str("%s @ %s, index %d, xy (%d x %d), wh (%d x %d)", name.text, imagePath.file.text, index, x, y, width, height)>;
+
+typedef struct(u32 offset, u32 count) {
+    FPushAbs(offset);
+    ss_cell data[count]<optimize=false>;
+    FPop();
+} ptr_cell;
+
+typedef struct {
+    SetBackColorToShadeOfLastColor(0x10);
+    std_string name;
+    u16 index;
+    u16 parentIndex;
+    u16 type;
+    u16 boundsType;
+    u16 alphaBlendType;
+    u16 padding;
+    std_string refName;
+    std_string effectName;
+    std_string colorLabel;
+    u16 maskInfluence;
+    u16 padding;
+    SetBackColorToShadeOfLastColor(-0x10);
+} ss_partData<read=Str("%s @ %d -> %d", name.text, index, parentIndex)>;
+
+typedef struct(u32 offset, u32 count) {
+    FPushAbs(offset);
+    ss_partData data[count]<optimize=false>;
+    FPop();
+} ptr_partData;
+
+typedef struct {
+    SetBackColorToShadeOfLastColor(0x20);
+    u16 index;
+    u32 lowflag;
+    u32 highflag;
+    u16 priority;
+    u16 cellIndex;
+    u16 opacity;
+    u16 localopacity;
+    u16 masklimen;
+    f32 positionX;
+    f32 positionY;
+    f32 positionZ;
+    f32 pivotX;
+    f32 pivotY;
+    f32 rotationX;
+    f32 rotationY;
+    f32 rotationZ;
+    f32 scaleX;
+    f32 scaleY;
+    f32 localscaleX;
+    f32 localscaleY;
+    f32 size_X;
+    f32 size_Y;
+    f32 uv_move_X;
+    f32 uv_move_Y;
+    f32 uv_rotation;
+    f32 uv_scale_X;
+    f32 uv_scale_Y;
+    f32 boundingRadius;
+    u32 unk;
+    u32 instanceValue_curKeyframe;
+    u32 instanceValue_startFrame;
+    u32 instanceValue_endFrame;
+    u32 instanceValue_loopNum;
+    f32 instanceValue_speed;
+    u32 instanceValue_loopflag;
+    u32 effectValue_curKeyframe;
+    u32 effectValue_startTime;
+    f32 effectValue_speed;
+    u32 effectValue_loopflag;
+    SetBackColorToShadeOfLastColor(-0x20);
+} ss_animationInitialData;
+
+typedef struct(u32 offset, u32 count) {
+    FPushAbs(offset);
+    ss_animationInitialData data[count]<optimize=false>;
+    FPop();
+} ptr_animationInitialData;
+
+typedef struct {
+    u32 ptr;
+    FPushAbs(ptr);
+    SetBackColorToShadeOfLastColor(0x10);
+    u16 index;
+    u16 padding<hidden=true>;
+    u32 flag1;
+    u32 flag2;
+    SetBackColorToShadeOfLastColor(-0x10);
+    FPop();
+} ss_frameDataIndex;
+
+typedef struct(u32 offset, u32 count) {
+    FPushAbs(offset);
+    ss_frameDataIndex data[count]<optimize=false>;
+    FPop();
+} ptr_frameDataIndex;
+
+typedef struct {
+} ss_userDataPerFrame;
+
+typedef struct {
+} ss_labelDataItem;
+
+typedef struct {
+    u32 uv;
+    FPushAbs(uv);
+    f32 uv;
+    FPop();
+} ss_meshDataUV;
+
+typedef struct(u32 offset, u32 count) {
+    FPushAbs(offset);
+    ss_meshDataUV data[count]<optimize=false>;
+    FPop();
+} ptr_meshDataUV;
+
+typedef struct {
+} ss_meshDataIndices;
+
+typedef struct {
+    SetBackColorToShadeOfLastColor(0x10);
+    std_string name;
+    u32 ptrdefaultData<hidden=true>;
+    u32 ptrframeData<hidden=true>;
+    u32 userData;
+    u32 labelData;
+    u32 meshdataUV;
+    u32 meshDataIndices;
+    u16 startFrames;
+    u16 endFrames;
+    u16 totalFrames;
+    u16 fps;
+    u16 labelNum;
+    u16 canvasSizeW;
+    u16 canvasSizeH;
+    u16 padding;
+    f32 canvasPivotX;
+    f32 canvasPivotY;
+    if (ptrdefaultData > 0) ptr_animationInitialData defaultData(ptrdefaultData, 2);
+    if (ptrframeData > 0) ptr_frameDataIndex frameData(ptrframeData, totalFrames);
+    if (meshdataUV > 0) ptr_meshDataUV meshDataUV(meshdataUV, 1);
+    SetBackColorToShadeOfLastColor(-0x10);
+} ss_animData<read=Str("%s", name.text)>;
+
+typedef struct(u32 offset, u32 count) {
+    FPushAbs(offset);
+    ss_animData data[count]<optimize=false>;
+    FPop();
+} ptr_animData;
+
+typedef struct {
+    SetRandomBackColor();
+    std_string name;
+    u32 ptrParts;
+    u32 ptrAnimations;
+    u16 partCount;
+    u16 animCount;
+    ptr_partData parts(ptrParts, partCount);
+    ptr_animData anim(ptrAnimations, animCount);
+} ss_anime<read=Str("%s, %d parts, %d anims", name.text, partCount, animCount)>;
+
+typedef struct(u32 offset, u32 count) {
+    FPushAbs(offset);
+    ss_anime data[count]<optimize=false>;
+    FPop();
+} ptr_anime;
+
+typedef struct {
+} ss_effectFileList;
+typedef struct {
+
+} ss_numSequencePacks;
+
+typedef struct {
+    SetRandomBackColor();
+    ss_projectHeader header;  
+    ptr_cell cells(header.Cell, header.NumCells);
+    ptr_anime anime(header.AnimePackData, header.NumAnimePacks);
+} ss_projectData<optimize=false>;
+
+ss_projectData entry;
