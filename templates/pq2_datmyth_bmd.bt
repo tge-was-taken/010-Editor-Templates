@@ -1,0 +1,90 @@
+//------------------------------------------------
+//--- 010 Editor v16.0.3 Binary Template
+//
+//      File: datmyth.bmd
+//   Authors: Lumi Platinum
+//   Version: 1.0
+//   Purpose: Parsing PQ2's datmyth.bmd
+//  Category: Persona Q2
+// File Mask: *.bmd
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//------------------------------------------------
+// Includes pq2_enums.bt for persona names.
+//------------------------------------------------
+#include "pq2_enums.bt"
+
+// 4 byte text chunk structure.
+typedef struct {
+    byte chunk[4];
+}intStr <read=chunk>;
+
+// Unknown Data block structure.
+typedef struct
+{
+    int Seven;
+    int FileLength;
+    intStr FileType; //probably
+    int Empty1;
+    int UnknownAddress;
+    int HeaderLength;
+    int TotalEntries;
+    int StopCode; //probably
+    for (short g = 0; g < 401; g++)
+    {int Blank; int Address;}
+    int Address;
+    int Blank;
+    int Blank;
+    int Blank;
+}EntryAddresses;
+
+// Prefixes block structure.
+typedef struct
+{
+    int Empty[4];
+    int SmallPrefix;
+    int IndexAddress;
+    int UnknownPrefix;
+    short BigPrefix[3];
+}PersonaPrefixes;
+
+// Compendium text block structure, variable length.
+typedef struct(ubyte len)
+{
+    byte text[len*2];
+}EntryText <read=text>;
+
+// Main table structure.
+typedef struct(short i, byte l)
+{
+    local PersonaName Name = i;
+    intStr myth;
+    intStr Index;
+    PersonaPrefixes Prefixes;
+    EntryText Entry(l-21) <name = "Compendium Entry">;
+}PersonaProfile <read=EnumToString(Name)>;
+
+FSeek(64431); 
+// The lengths are stored at the end, 
+// so we skip forward to read them first
+
+// Entry length array
+struct {
+    for (short g = 0; g < 400; g++)
+    {ubyte entryLength;}
+} LengthArray;
+
+FSeek(0);
+
+EntryAddresses Header;
+
+// Persona Profiles.
+struct {
+    for (short g = 0; g < 400; g++)
+        {PersonaProfile Persona(g,LengthArray.entryLength[g]);}
+    PersonaProfile Persona(g,28);
+} Compendium;
+
+byte UnknownArray[403];
