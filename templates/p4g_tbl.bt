@@ -553,7 +553,7 @@ typedef struct
 
     Skill_ExtraEffect ExtraEffect <name = "Extra Effects">;
     u8 CritChance <name = "Crit Chance", comment = "Only works for Physical skills">;
-    u8 DizzyChance <name = "Down Dizzy Chance">; //Determines the odds of this attack causing a downed enemy to become dizzy whe not critting/hitting weakness, can occur on initial knockdown
+    u8 DizzyChance <name = "Down Dizzy Chance">; //Determines the odds of this attack causing a downed enemy to become dizzy when not critting/hitting weakness, can occur on initial knockdown
     u8 Unknown <name = "Unknown">;
 } TSkill_ActiveSkillData <name="Active Skill Data: ">;
 
