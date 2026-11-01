@@ -969,7 +969,7 @@ typedef struct( string tableName, uint32 endOffset )
                 case 0: segmentType = TableSegmentType_AICalc_LevelDifferenceMult; break;
                 case 1: segmentType = TableSegmentType_AICalc_Unknown1; break;
                 case 2: segmentType = TableSegmentType_AICalc_Unknown2; break;
-                case 3: segmentType = TableSegmentType_AICalc_Unknown3; break;
+                case 3: segmentType = TableSegmentType_AICalc_MagicDamageBonus; break;
                 case 4: segmentType = TableSegmentType_AICalc_Unknown4; break;
                 case 5: segmentType = TableSegmentType_AICalc_Unknown5; break;
                 case 6: segmentType = TableSegmentType_AICalc_Unknown6; break;
