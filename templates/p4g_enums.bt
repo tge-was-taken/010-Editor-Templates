@@ -3888,26 +3888,15 @@ enum<byte> ArcanaID
 };
 
 // This enum represents elemental affinity status (i.e. weak, resist, etc.)
-enum<short> AffinityStatus
+enum<ubyte>AffinityType
 {
-    Neutral = 20,
-	Neutral2 = 25,
-    Weak = 2048,
-    Weak2 = 2303,
-	Weak3 = 2068,
-	Hidden_Resist = 1,
-	Hidden_Resist_50_Percent_Damage = 10,
-	Hidden_Resist_75_Percent_Damage = 15,
-    Resist = 4096,
-	Half_Resist = 4116,
-	Double_Resist = 8192,
-    Triple_Resist = 12288,
-    Block = 256,
-    Repel = 512,
-    Drain = 1024,
-    TooFarAwayToHit = 8272, // used in Cognitive Wakaba battle; needs more testing
-    Drain2 = 9216, // used in Shadow Madarame battle; needs more testing
-    WeakResist = 10240,
+    aff_Neutral = 0,
+    aff_Block = 1,
+    aff_Repel = 2,
+    aff_Drain = 4,
+    aff_Weak = 8,
+    aff_Resist = 16,
+    aff_BlockNeutral = 32 //Value unused uncertain specifics and forgot to comment why I called it this
 };
 
 enum<ubyte> ElementalType

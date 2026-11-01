@@ -1,4 +1,5 @@
 
+
 typedef struct
 {
     u8 Strength <name = "Strength">;
@@ -8,22 +9,43 @@ typedef struct
     u8 Luck <name = "Luck">;
 } PersonaStats;
 
+
+//For all Aff values below the actual % for the multiplier is 5x the listed value
+//so 20 is (20*5)/100 = 1.0, (255*5)/100 = 12.75
+//0 refers to a default value for each, I haven't tested all but Weak being 1.25x and Resist being 0.5x
+//Defaults are overridden completely when a value is presented so "2 Weak" isn't 0.1*1.25 it's just 0.1x
 typedef struct
 {
-    AffinityStatus PhysAffinity <name = "Physical">;
-    AffinityStatus FireAffinity <name = "Fire">;
-    AffinityStatus IceAffinity <name = "Ice">;
-    AffinityStatus ElecAffinity <name = "Electric">;
-    AffinityStatus WindAffinity <name = "Wind">;
-    AffinityStatus AlmightyAffinity <name = "Almighty">;
-    AffinityStatus LightAffinity <name = "Light">;
-    AffinityStatus DarkAffinity <name = "Dark">;
-    AffinityStatus PanicAffinity <name = "Panic">;
-    AffinityStatus PoisonAffinity <name = "Poison">;
-    AffinityStatus FearAffinity <name = "Fear">;
-    AffinityStatus RageAffinity <name = "Rage">;
-    AffinityStatus DizzyAffinity <name = "Dizzy">;
-    AffinityStatus ExhaustionAffinity <name = "Exhaustion">;
-    AffinityStatus EnervationAffinity <name = "Enervation">;
-    AffinityStatus SilenceAffinity <name = "Silence">;
-} ElementalAffinities <name = "Elemental Affinities">;
+    ubyte physAff;
+    AffinityType physAffType;
+    ubyte fireAff;
+    AffinityType fireAffType;
+    ubyte iceAff;
+    AffinityType iceAffType;
+    ubyte elecAff;
+    AffinityType elecAffType;
+    ubyte windAff;
+    AffinityType windAffType;
+    ubyte almightyAff;
+    AffinityType almightyAffType;
+    ubyte lightAff;
+    AffinityType lightAffType;
+    ubyte darkAff;
+    AffinityType darkAffType;
+    ubyte panicAff;
+    AffinityType panicAffType;
+    ubyte poisonAff;    
+    AffinityType poisonAffType;
+    ubyte fearAff;
+    AffinityType fearAffType;
+    ubyte rageAff;
+    AffinityType rageAffType;
+    ubyte dizzyAff;
+    AffinityType dizzyAffType;
+    ubyte exhaustionAff;
+    AffinityType exhaustionAffType;
+    ubyte enervationAff;
+    AffinityType enervationAffType;
+    ubyte silenceAff;
+    AffinityType silenceAffType;
+} ElementalAffinities;

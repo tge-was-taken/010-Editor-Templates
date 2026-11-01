@@ -51,7 +51,7 @@ typedef struct
 {
     u8 bit0 : 1;
     u8 bit1 : 1;
-    u8 bit2 : 1;
+    u8 bit2 : 1; //Encounter Formation Flag Hides Enemy Level, HP, SP, and Skills
     u8 bit3 : 1;
     u8 bit4 : 1;
     u8 bit5 : 1;
@@ -164,6 +164,163 @@ typedef struct
     MusicID MusicId <name = "Music">;
 } TEncounter <name = "Enemy Encounters">;
 
+typedef struct
+{
+    byte spawnWeightID; //Determines the Shadow Spawn Weight Set used for the floor
+    byte unkn1;
+    byte unkn2; 
+    byte unkn3;
+    byte unkn4;
+    byte unkn5;
+    int32 chestWeightID; //Determines the Chest Weight Set used for the floor
+}TFloorDetails <read=rTFloorDetails>; //Not sure how floor entries are chosen but they seem to be sequential for dungeons with empty floors skipped
+
+string rTFloorDetails(TFloorDetails& e)
+{
+    string s;
+    SPrintf(s, "%d - %d - %d - %d - %d - %d - %d", e.spawnWeightID, e.unkn1, e.unkn2, e.unkn3, e.unkn4, e.unkn5, e.chestWeightID);
+    return s;
+}
+
+typedef struct
+{
+    int16 formID0;
+    int16 formWeight0;
+    int16 formID1;
+    int16 formWeight1;
+    int16 formID2;
+    int16 formWeight2;
+    int16 formID3;
+    int16 formWeight3;
+    int16 formID4;
+    int16 formWeight4;
+    int16 formID5;
+    int16 formWeight5;
+    int16 formID6;
+    int16 formWeight6;
+    int16 formID7;
+    int16 formWeight7;
+    int16 formID8;
+    int16 formWeight8;
+    int16 formID9;
+    int16 formWeight9;
+    int16 formID10;
+    int16 formWeight10;
+    int16 formID11;
+    int16 formWeight11;
+    int16 formID12;
+    int16 formWeight12;
+    int16 formID13;
+    int16 formWeight13;
+    int16 formID14;
+    int16 formWeight14;
+    int16 formID15;
+    int16 formWeight15;
+    int16 formID16;
+    int16 formWeight16;
+    int16 formID17;
+    int16 formWeight17;
+    int16 formID18;
+    int16 formWeight18;
+    int16 formID19;
+    int16 formWeight19;
+
+}NormalForms;
+
+typedef struct
+{
+    int16 formID0;
+    int16 formWeight0;
+    int16 formID1;
+    int16 formWeight1;
+    int16 formID2;
+    int16 formWeight2;
+    int16 formID3;
+    int16 formWeight3;
+    int16 formID4;
+    int16 formWeight4;
+
+}SpecialForms; 
+
+typedef struct //Rainy Chances are used during Rain Weather, I haven't tested all weathers
+{
+    byte NormalWeight;
+    byte NormalWeightRainy;
+    byte NormalLimit; 
+    byte StrongWeight;
+    byte StrongWeightRainy;
+    byte StrongLimit;
+    byte RareWeight;
+    byte RareWeightRainy;
+    int32 RareLimit;
+    NormalForms NormalFormations;
+    SpecialForms StrongFormations;
+    SpecialForms RareFormations;
+    NormalForms NormalFormationsRainy;
+    SpecialForms StrongFormationsRainy;
+    SpecialForms RareFormationsRainy;
+}TSpawnWeight <read=rTSpawnWeight>;
+
+string rTSpawnWeight(TSpawnWeight& e)
+{
+    string s;
+    SPrintf(s, "%d/%d/%d -> %d/%d/%d Limit = %d/%d/%d", e.NormalWeight, e.StrongWeight, e.RareWeight, e.NormalWeightRainy, e.StrongWeightRainy, e.RareWeightRainy, e.NormalLimit, e.StrongLimit, e.RareLimit);
+    return s;
+}
+
+typedef struct
+{
+    int16 Weight; //Adds up to 1000 typically across all items within a chest set
+    Items itemID;
+    int16 chestStatus; //0 is default, 1 is locked, 10 is used for special chests containing shadows, uncertain on other values
+    byte itemQuantity; //1 in all but a single case
+    byte chestSize; //0 for small, 1 for large
+    int16 unkn3;
+    int16 unkn4;
+}ItemWeight<read=rItemWeight>;
+
+string rItemWeight(ItemWeight& e)
+{
+    string s;
+    string itemName = EnumToString(e.itemID);
+    SPrintf(s, "%d %s %d %d %d %d %d", e.Weight, itemName, e.chestStatus, e.itemQuantity, e.chestSize, e.unkn3, e.unkn4);
+    return s;
+}
+
+typedef struct
+{
+    ItemWeight weight0;
+    ItemWeight weight1;
+    ItemWeight weight2;
+    ItemWeight weight3;
+    ItemWeight weight4;
+    ItemWeight weight5;
+    ItemWeight weight6;
+    ItemWeight weight7;
+    ItemWeight weight8;
+    ItemWeight weight9;
+    ItemWeight weight10;
+    ItemWeight weight11;
+    ItemWeight weight12;
+    ItemWeight weight13;
+    ItemWeight weight14;
+    ItemWeight weight15;
+    ItemWeight weight16;
+    ItemWeight weight17;
+    ItemWeight weight18;
+    ItemWeight weight19;
+    ItemWeight weight20;
+    ItemWeight weight21;
+    ItemWeight weight22;
+    ItemWeight weight23;
+    ItemWeight weight24;
+    ItemWeight weight25;
+    ItemWeight weight26;
+    ItemWeight weight27;
+    ItemWeight weight28;
+}TChestWeight;
+
+
 //PERSONA.TBL
 
 typedef struct
@@ -266,8 +423,9 @@ typedef struct
 	u16 Unknown13;
 	u16 Unknown14;
 	u16 Unknown15;
-	u16 Unknown16;
-	u16 Unknown17;
+	u8 Unknown16;
+    u8 AttackAccuracy;
+	u16 AttackPower;
 } TEnemyUnitStats <name = "Enemy Unit Stats">;
 
 // SKILL.TBL
@@ -395,7 +553,7 @@ typedef struct
 
     Skill_ExtraEffect ExtraEffect <name = "Extra Effects">;
     u8 CritChance <name = "Crit Chance", comment = "Only works for Physical skills">;
-    u8 Unknown <name = "Unknown">;
+    u8 DizzyChance <name = "Down Dizzy Chance">; //Determines the odds of this attack causing a downed enemy to become dizzy when not critting/hitting weakness, can occur on initial knockdown
     u8 Unknown <name = "Unknown">;
 } TSkill_ActiveSkillData <name="Active Skill Data: ">;
 
@@ -417,13 +575,170 @@ typedef struct {
     char PersonaName[21] <name = "Persona Name">;
 } TMSG_PersonaNames <name = "Persona Names">;
 
+// AICALC.TBL
+
+typedef struct {
+    float Mult[63] <name = "Damage Multiplier">; //List is accessed via [Base+LevelDifference*4+7C], effectively starting at [31] and changing 1 float per (EnemyLevel-PlayerLevel)
+} TAICalc_LevelDifferenceMult <name = "Damage Multipliers">; // Appears to affect outgoing enemy damage, unsure if incoming is one of the two tables and disabled
+
+typedef struct{
+    float unkn0;
+    float unkn1;
+    float unkn2;
+    float unkn3;
+    float unkn4;
+    float unkn5;
+    float unkn6;
+    float unkn7;
+    float unkn8;
+    float unkn9;
+    float unkn10;
+    float unkn11;
+    float unkn12;
+} TAICalc_Unknown1;
+
+typedef struct{
+    float unkn;
+} TAICalc_Unknown2;
+
+typedef struct
+{
+    int16 bonus;
+} TAICalc_MagicDamageBonus; //Code appears to read value [0]-[9] based on the magic stat via Entry[TRUNC(magic/10)] on magic skills
+
+typedef struct{
+    int16 unkn;
+} TAICalc_Unknown4;
+
+typedef struct{
+    ubyte unkn0;
+    ubyte unkn1;
+    ubyte unkn2;
+} TAICalc_Unknown5;
+
+typedef struct{
+    float unkn;
+} TAICalc_Unknown6;
+
+typedef struct{
+    ubyte unkn;
+} TAICalc_Unknown7;
+
+typedef struct
+{
+    uint16 Weight0;
+    uint16 unkn0;
+    int32 unkn1;
+    uint16 Weight1;
+    uint16 unkn2;
+    int32 unkn3;
+    uint16 Weight2;
+    uint16 unkn4;
+    int32 unkn5;
+    uint16 Weight3;
+    uint16 unkn6;
+    int32 unkn7;
+    uint16 Weight4;
+    uint16 unkn8;
+    int32 unkn9;
+}TAICalc_Unknown8_Weight;
+    
+typedef struct
+{
+    int32 unkn0;
+    byte unkn1[3];
+    byte unkn2;
+    int32 unkn3;
+    int32 unkn4;    
+    byte unkn5[8];
+    int16 unkn6;
+    byte unkn7;
+    byte unkn8;
+    int16 unkn9;
+    byte unkn10;
+    byte unkn11;
+    int16 unkn12;   
+    byte unkn13;
+    byte unkn14;
+    byte unkn15[8];
+    TAICalc_Unknown8_Weight unkn16;
+    TAICalc_Unknown8_Weight unkn16;
+    TAICalc_Unknown8_Weight unkn16;
+} TAICalc_Unknown8;
+
+
+//MODEL.TBL
+typedef struct
+{
+    int16 unkn0;    
+    int16 baseAnimationRate;
+    int16 unkn2;
+    int16 unkn3;
+    int16 unkn4;
+}TModel_AnimationRates<read=rTModel_AnimationRates>;
+
+string rTModel_AnimationRates(TModel_AnimationRates& e)
+{
+    string s;
+    SPrintf(s, "%d %d %d %d %d", e.unkn0, e.baseAnimationRate, e.unkn2, e.unkn3, e.unkn4);
+    return s;
+
+}
+
+typedef struct
+{
+    int16 unkn0;
+    int16 unkn1;
+    int16 unkn2;
+    int16 largeSize; //Value used in calculation with the larger 2 of 4 values for size modifier
+    int16 smallSize; //Value used in calculation with the smaller 2 of 4 values for size modifier
+    int16 unkn5;
+    int16 unkn6;
+    int16 unkn7;
+    int16 unkn8;
+    int16 unkn9;
+    int16 baseSize; //Value used in calculation for generating enemy size multiplier, factored out of size multiplier when it is used as a damage multiplier
+    int16 unkn10;
+    int16 unkn11;
+    int16 unkn12;
+    int16 unkn13;
+    int16 unkn14;
+    int16 unkn15;
+    int16 unkn16;
+    int16 unkn17;
+    int16 unkn18;
+    int16 unkn19;
+    TModel_AnimationRates unkn20; //Idle
+    TModel_AnimationRates unkn21; //?
+    TModel_AnimationRates unkn22; //DamageStagger
+    TModel_AnimationRates unkn23; //Walking
+    TModel_AnimationRates unkn24; //Physical attack? (triggers on Power Slash/Deathbound on Nemean Beast)
+    TModel_AnimationRates unkn25; //? Assumed magical Attack
+    TModel_AnimationRates unkn26; //?
+    TModel_AnimationRates unkn27; //?
+    TModel_AnimationRates unkn28; //Getting Downed
+    TModel_AnimationRates unkn29; //Downed Idle
+    TModel_AnimationRates unkn30; //Downed Recovery
+    TModel_AnimationRates unkn31; //?
+    TModel_AnimationRates unkn32; //?
+    TModel_AnimationRates unkn33; //?
+    TModel_AnimationRates unkn34; //?
+    TModel_AnimationRates unkn35; //?
+    TModel_AnimationRates unkn36; //?
+    TModel_AnimationRates unkn37; //?
+    TModel_AnimationRates unkn38; //?
+}TModel_Unknown1;
+
 //---------------------------------------------
 // Parse file structure
 //---------------------------------------------
 enum TableSegmentType
 {
     TableSegmentType_Unknown,
-    TableSegmentType_Encounter,
+    TableSegmentType_Encounter_Formations,
+    TableSegmentType_Encounter_FloorDetails,
+    TableSegmentType_Encounter_SpawnWeight,
+    TableSegmentType_Encounter_ChestWeight,
     TableSegmentType_Persona_Stats,
     TableSegmentType_Persona_SkillsAndStatGrowths,
     TableSegmentType_Persona_PartyPersonas,
@@ -439,6 +754,16 @@ enum TableSegmentType
     TableSegmentType_MSG_SkillNames,
     TableSegmentType_MSG_EnemyNames,
     TableSegmentType_MSG_PersonaNames,
+    TableSegmentType_AICalc_LevelDifferenceMult,
+    TableSegmentType_AICalc_Unknown1,
+    TableSegmentType_AICalc_Unknown2,
+    TableSegmentType_AICalc_MagicDamageBonus,
+    TableSegmentType_AICalc_Unknown4,
+    TableSegmentType_AICalc_Unknown5,
+    TableSegmentType_AICalc_Unknown6,
+    TableSegmentType_AICalc_Unknown7,
+    TableSegmentType_AICalc_Unknown8,
+    TableSegmentType_Model_Unknown1
 };
 
 typedef struct( TableSegmentType _type )
@@ -448,10 +773,22 @@ typedef struct( TableSegmentType _type )
 
     switch ( type )
     {
-        case TableSegmentType_Encounter:
+        case TableSegmentType_Encounter_Formations:
             TEncounter TEncounters[ Size / sizeof( TEncounter ) ];
             break;
 
+        case TableSegmentType_Encounter_FloorDetails:
+            TFloorDetails FloorDetails[Size/sizeof(TFloorDetails)];
+            break;
+
+        case TableSegmentType_Encounter_SpawnWeight:
+            TSpawnWeight SpawnWeights[Size/sizeof(TSpawnWeight)];
+            break;
+
+        case TableSegmentType_Encounter_ChestWeight:
+            TChestWeight ChestWeights[Size/sizeof(TChestWeight)];
+            break;
+            
         case TableSegmentType_Persona_Stats:
             TPersonaStats Stats[ Size / sizeof( TPersonaStats ) ];
             break;
@@ -512,6 +849,46 @@ typedef struct( TableSegmentType _type )
             TMSG_PersonaNames PersonaNames[ Size / sizeof( TMSG_PersonaNames ) ];
             break;
 
+        case TableSegmentType_AICalc_LevelDifferenceMult:
+            TAICalc_LevelDifferenceMult LevelDifferenceMult[ Size / sizeof( TAICalc_LevelDifferenceMult ) ];
+            break;
+
+        case TableSegmentType_AICalc_Unknown1:
+            TAICalc_Unknown1 AICalcUnkn1;
+            break;
+        
+        case TableSegmentType_AICalc_Unknown2:
+            TAICalc_Unknown2 AICalcUnkn2[ Size / sizeof( TAICalc_Unknown2 ) ];
+            break;
+        
+        case TableSegmentType_AICalc_MagicDamageBonus:
+            TAICalc_MagicDamageBonus MagicDamageBonus[ Size / sizeof( TAICalc_MagicDamageBonus ) ];
+            break;
+        
+        case TableSegmentType_AICalc_Unknown4:
+            TAICalc_Unknown4 AICalcUnkn4[ Size / sizeof( TAICalc_Unknown4 ) ];
+            break;
+        
+        case TableSegmentType_AICalc_Unknown5:
+            TAICalc_Unknown5 AICalcUnkn5[ Size / sizeof( TAICalc_Unknown5 ) ];
+            break;
+        
+        case TableSegmentType_AICalc_Unknown6:
+            TAICalc_Unknown6 AICalcUnkn6[ Size / sizeof( TAICalc_Unknown6 ) ];
+            break;
+        
+        case TableSegmentType_AICalc_Unknown7:
+            TAICalc_Unknown7 AICalcUnkn7[ Size / sizeof( TAICalc_Unknown7 ) ];
+            break;
+        
+        case TableSegmentType_AICalc_Unknown8:
+            TAICalc_Unknown8 AICalcUnkn8[ Size / sizeof( TAICalc_Unknown8 ) ];
+            break;
+
+        case TableSegmentType_Model_Unknown1:
+            TModel_Unknown1 ModelUnkn1[Size/sizeof(TModel_Unknown1)];
+            break;        
+
         default:
             byte Data[ Size ];
     }
@@ -524,7 +901,7 @@ string TableSegmentToString( TTableSegment& segment )
     return EnumToString( segment.type );
 }
 
-typedef struct( string tableName, u16 endOffset )
+typedef struct( string tableName, uint32 endOffset )
 {
     local int segmentIndex = 0;
     local TableSegmentType segmentType;
@@ -537,7 +914,10 @@ typedef struct( string tableName, u16 endOffset )
         {
             switch ( segmentIndex )
             {
-                case 0: segmentType = TableSegmentType_Encounter; break;
+                case 0: segmentType = TableSegmentType_Encounter_Formations; break;
+                case 1: segmentType = TableSegmentType_Encounter_FloorDetails; break;
+                case 3: segmentType = TableSegmentType_Encounter_SpawnWeight; break;
+                case 4: segmentType = TableSegmentType_Encounter_ChestWeight; break;
             }
         }
         else if ( !Stricmp( tableName, "persona" ) )
@@ -581,7 +961,30 @@ typedef struct( string tableName, u16 endOffset )
                 case 1: segmentType = TableSegmentType_Skill_ActiveSkillData; break;
             }
         }
+        
+        if ( !Stricmp( tableName, "aicalc" ) )
+        {
+            switch ( segmentIndex )
+            {
+                case 0: segmentType = TableSegmentType_AICalc_LevelDifferenceMult; break;
+                case 1: segmentType = TableSegmentType_AICalc_Unknown1; break;
+                case 2: segmentType = TableSegmentType_AICalc_Unknown2; break;
+                case 3: segmentType = TableSegmentType_AICalc_MagicDamageBonus; break;
+                case 4: segmentType = TableSegmentType_AICalc_Unknown4; break;
+                case 5: segmentType = TableSegmentType_AICalc_Unknown5; break;
+                case 6: segmentType = TableSegmentType_AICalc_Unknown6; break;
+                case 7: segmentType = TableSegmentType_AICalc_Unknown7; break;
+                case 8: segmentType = TableSegmentType_AICalc_Unknown8; break;
+            }
+        }
 
+        if ( !Stricmp( tableName, "model" ) )
+        {
+            switch(segmentIndex)
+            {
+                case 1: segmentType = TableSegmentType_Model_Unknown1;
+            }
+        }
         Printf( "%s\n", EnumToString( segmentType ) );
         SetBackColor( MyRandom( 0xFFFFFFFF ) );
         TTableSegment Segment( segmentType );
@@ -635,4 +1038,5 @@ else if ( Stricmp( fileExt, ".tbl" ) == 0 )
     LittleEndian();
     TTable Table( fileName, FileSize() );
 }
+
 
