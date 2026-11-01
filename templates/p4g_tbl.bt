@@ -51,7 +51,7 @@ typedef struct
 {
     u8 bit0 : 1;
     u8 bit1 : 1;
-    u8 bit2 : 1; //Ecounter Formation Flag Hides Enemy Level, HP, SP, and Skills
+    u8 bit2 : 1; //Encounter Formation Flag Hides Enemy Level, HP, SP, and Skills
     u8 bit3 : 1;
     u8 bit4 : 1;
     u8 bit5 : 1;
@@ -464,7 +464,7 @@ typedef struct
             byte : 6;
         } ValidTargets <name = "Valid Targets">;
 
-    u8 Unknown1 <name = "Unknown">;
+    u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
     u8 Unknown <name = "Unknown">;
@@ -553,21 +553,9 @@ typedef struct
 
     Skill_ExtraEffect ExtraEffect <name = "Extra Effects">;
     u8 CritChance <name = "Crit Chance", comment = "Only works for Physical skills">;
-    u8 DizzyChance <name = "Down Dizzy Chance">;
+    u8 DizzyChance <name = "Down Dizzy Chance">; //Determines the odds of this attack causing a downed enemy to become dizzy whe not critting/hitting weakness, can occur on initial knockdown
     u8 Unknown <name = "Unknown">;
-} TSkill_ActiveSkillData <read=rTSkill_ActiveSkillData,name="Active Skill Data: ">;
-
-string rTSkill_ActiveSkillData(TSkill_ActiveSkillData& e)
-{
-    string s;
-    if(e.NumberOfTargets != 0 && e.CritChance > 5)
-    {
-        SPrintf(s,"--------");
-    }
-    //SPrintf(s,"%s %g %g %g %g-%g", s, e.SkillCost, e.BaseDamage, e.CritChance, e.MinHits, e.MaxHits);
-    SPrintf(s, "%g %g", e.Unknown1,e.ExtraEffect); 
-    return s;
-}
+} TSkill_ActiveSkillData <name="Active Skill Data: ">;
 
 // MSG.TBL
 
@@ -678,19 +666,8 @@ typedef struct
     TAICalc_Unknown8_Weight unkn16;
 } TAICalc_Unknown8;
 
-typedef struct
-{
-    int32 unkn0;
-    string unkn1;
-    byte padding[16-(FTell()%16)];
-}AIString;
 
-typedef struct
-{
-    int32 unkn0[28];
-    
-}TAICalc_Unknown9;
-
+//MODEL.TBL
 typedef struct
 {
     int16 unkn0;    
@@ -780,13 +757,12 @@ enum TableSegmentType
     TableSegmentType_AICalc_LevelDifferenceMult,
     TableSegmentType_AICalc_Unknown1,
     TableSegmentType_AICalc_Unknown2,
-    TableSegmentType_AICalc_Unknown3,
+    TableSegmentType_AICalc_MagicDamageBonus,
     TableSegmentType_AICalc_Unknown4,
     TableSegmentType_AICalc_Unknown5,
     TableSegmentType_AICalc_Unknown6,
     TableSegmentType_AICalc_Unknown7,
     TableSegmentType_AICalc_Unknown8,
-    TableSegmentType_AICalc_Unknown9,
     TableSegmentType_Model_Unknown1
 };
 
@@ -885,8 +861,8 @@ typedef struct( TableSegmentType _type )
             TAICalc_Unknown2 AICalcUnkn2[ Size / sizeof( TAICalc_Unknown2 ) ];
             break;
         
-        case TableSegmentType_AICalc_Unknown3:
-            TAICalc_Unknown3 AICalcUnkn3[ Size / sizeof( TAICalc_Unknown3 ) ];
+        case TableSegmentType_AICalc_MagicDamageBonus:
+            TAICalc_MagicDamageBonus MagicDamageBonus[ Size / sizeof( TAICalc_MagicDamageBonus ) ];
             break;
         
         case TableSegmentType_AICalc_Unknown4:
@@ -908,11 +884,7 @@ typedef struct( TableSegmentType _type )
         case TableSegmentType_AICalc_Unknown8:
             TAICalc_Unknown8 AICalcUnkn8[ Size / sizeof( TAICalc_Unknown8 ) ];
             break;
-/*        
-        case TableSegmentType_AICalc_Unknown9:
-            TAICalc_Unknown9 AICalcUnkn9[Size/sizeof(TAICalc_Unknown9)]<optimize=false>;
-            break;
-*/
+
         case TableSegmentType_Model_Unknown1:
             TModel_Unknown1 ModelUnkn1[Size/sizeof(TModel_Unknown1)];
             break;        
@@ -929,7 +901,7 @@ string TableSegmentToString( TTableSegment& segment )
     return EnumToString( segment.type );
 }
 
-typedef struct( string tableName, int32 endOffset )
+typedef struct( string tableName, uint32 endOffset )
 {
     local int segmentIndex = 0;
     local TableSegmentType segmentType;
@@ -1003,7 +975,6 @@ typedef struct( string tableName, int32 endOffset )
                 case 6: segmentType = TableSegmentType_AICalc_Unknown6; break;
                 case 7: segmentType = TableSegmentType_AICalc_Unknown7; break;
                 case 8: segmentType = TableSegmentType_AICalc_Unknown8; break;
-                case 9: segmentType = TableSegmentType_AICalc_Unknown9; break;
             }
         }
 
@@ -1052,7 +1023,7 @@ string FileToString( struct TFile& file )
 local string filePath = GetFileName();
 local string fileName = FileNameGetBase( filePath, false );
 local string fileExt = FileNameGetExtension( filePath );
-local int32 fileSize = FileSize();
+
 if ( Stricmp( fileExt, ".pac" ) == 0 )
 {
     // table.pac
@@ -1065,6 +1036,7 @@ else if ( Stricmp( fileExt, ".tbl" ) == 0 )
 {
     // tbl file
     LittleEndian();
-    TTable Table( fileName, fileSize );
+    TTable Table( fileName, FileSize() );
 }
+
 
